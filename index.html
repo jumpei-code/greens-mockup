@@ -81,7 +81,7 @@
   .st.done{background:#f1f5f9;color:#64748b;border-color:#e2e8f0;} /* 進行中以外＝グレー */
   .st.rej{background:#f1f5f9;color:#64748b;border-color:#e2e8f0;} /* 進行中以外＝グレー */
   .st.returned{background:#fef2f2;color:#b91c1c;border-color:#fecaca;}
-  /* 承認サインオフ（担当／上長／社長） */
+  /* 承認サインオフ（担当／上長／代表） */
   .signoffrow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:2px 0 6px;}
   .signoff{border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:#fff;}
   .signoff .so-role{font-size:10.5px;color:var(--sub);}
@@ -288,7 +288,7 @@
       <span class="pvlabel">🔎 プレビュー表示 <small>選んだ立場で画面の見え方が切り替わります</small></span>
       <div class="pvtoggle">
         <button id="role-staff" class="on" onclick="setRole('staff')">👤 営業担当</button>
-        <button id="role-boss" onclick="setRole('boss')">👔 永井社長</button>
+        <button id="role-boss" onclick="setRole('boss')">👔 代表</button>
         <span class="pvsep">｜承認の途中段階</span>
         <button id="role-mgr" class="sub" onclick="setRole('mgr')">上長</button>
       </div>
@@ -311,7 +311,7 @@ const DEALS = [
     area:'江戸川区◯◯1丁目', station:'都営新宿線「◯◯」駅 徒歩16分',
     land_m2:214.57, land_tsubo:64.9, yoseki:1.5, kenpei:0.6, period:12,
     owner:'A社（売主）', staff:'佐藤', status:'await_pres', updated:'06/27',
-    appr:{mgr:'鈴木 課長', mgrDate:'06/27', pres:'永井 社長', presDate:''},
+    appr:{mgr:'鈴木 課長', mgrDate:'06/27', pres:'代表', presDate:''},
     cost:12807900,
     costRows:[['土地原価（仕入＋解体整地ほか）',10750000],['建物原価（インフラ改修）',300000],['租税公課（取得税・登録免許税ほか）',582500],['販売管理費（販売手数料ほか）',770400],['営業外費用（借入金利ほか）',405000]],
     scen:[{t:'① 出値価格',price:16800000,profit:3992100},{t:'② 着地前後価格',price:15000000,profit:2192100},{t:'③ 下限価格',price:13800000,profit:992100}],
@@ -333,7 +333,7 @@ const DEALS = [
     area:'練馬区◯◯2丁目', station:'西武池袋線「◯◯」駅 徒歩13分',
     land_m2:165.3, land_tsubo:50.0, yoseki:1.5, kenpei:0.6, period:12,
     owner:'E社（売主）', staff:'高橋', status:'await_mgr', updated:'06/28',
-    appr:{mgr:'鈴木 課長', mgrDate:'', pres:'永井 社長', presDate:''},
+    appr:{mgr:'鈴木 課長', mgrDate:'', pres:'代表', presDate:''},
     cost:12670000,
     costRows:[['土地原価（仕入＋解体整地ほか）',10600000],['建物原価',0],['租税公課',560000],['販売管理費',900000],['営業外費用',610000]],
     scen:[{t:'① 出値価格',price:15200000,profit:2530000},{t:'② 着地前後価格',price:14000000,profit:1330000},{t:'③ 下限価格',price:13200000,profit:530000}],
@@ -355,7 +355,7 @@ const DEALS = [
     area:'杉並区◯◯3丁目', station:'JR中央線「◯◯」駅 徒歩9分',
     land_m2:155.4, land_tsubo:47.0, yoseki:2.0, kenpei:0.6, period:12,
     owner:'B社（売主）', staff:'田中', status:'sell', updated:'06/24',
-    appr:{mgr:'鈴木 課長', mgrDate:'06/22', pres:'永井 社長', presDate:'06/23'},
+    appr:{mgr:'鈴木 課長', mgrDate:'06/22', pres:'代表', presDate:'06/23'},
     cost:72376400,
     costRows:[['土地原価（仕入＋仲介ほか）',41386000],['建物原価（建築費ほか）',24588000],['租税公課',2334000],['販売管理費',3398400],['営業外費用',670000]],
     scen:[{t:'① 出値価格',price:82800000,profit:10423600},{t:'② 着地前後価格',price:79800000,profit:7423600},{t:'③ 下限価格',price:77800000,profit:5423600}],
@@ -370,7 +370,7 @@ const DEALS = [
     area:'北区◯◯2丁目', station:'JR京浜東北線「◯◯」駅 徒歩10分',
     land_m2:90.97, land_tsubo:27.5, yoseki:0.8, kenpei:1.5, period:18,
     owner:'C社（売主）', staff:'佐藤', status:'done', updated:'06/12',
-    appr:{mgr:'鈴木 課長', mgrDate:'06/08', pres:'永井 社長', presDate:'06/09'},
+    appr:{mgr:'鈴木 課長', mgrDate:'06/08', pres:'代表', presDate:'06/09'},
     cost:104496700,
     costRows:[['土地原価',54000000],['建物原価（建築費ほか）',45000000],['租税公課',945000],['販売管理費',4397200],['営業外費用',2272500]],
     scen:[{t:'① 利回5.5%',price:125672727,profit:21176027},{t:'② 利回6.0%',price:115200000,profit:10703300},{t:'③ 下限価格',price:108000000,profit:3503300}],
@@ -386,7 +386,7 @@ const DEALS = [
     area:'足立区◯◯1丁目', station:'東武線「◯◯」駅 徒歩18分',
     land_m2:120.0, land_tsubo:36.3, yoseki:1.5, kenpei:0.6, period:12,
     owner:'D社（売主）', staff:'田中', status:'rej', updated:'06/10',
-    appr:{mgr:'鈴木 課長', mgrDate:'06/09', pres:'永井 社長', presDate:'06/10'},
+    appr:{mgr:'鈴木 課長', mgrDate:'06/09', pres:'代表', presDate:'06/10'},
     cost:9800000,
     costRows:[['土地原価',8500000],['建物原価',0],['租税公課',420000],['販売管理費',560000],['営業外費用',320000]],
     scen:[{t:'① 出値価格',price:11200000,profit:1400000},{t:'② 着地前後価格',price:10400000,profit:600000},{t:'③ 下限価格',price:10000000,profit:200000}],
@@ -402,7 +402,7 @@ const DEALS = [
     area:'世田谷区◯◯3丁目', station:'小田急線「◯◯」駅 徒歩11分',
     land_m2:180.0, land_tsubo:54.5, yoseki:1.5, kenpei:0.6, period:12,
     owner:'F社（売主）', staff:'佐藤', status:'done', updated:'05/20',
-    appr:{mgr:'鈴木 課長', mgrDate:'04/02', pres:'永井 社長', presDate:'04/03'},
+    appr:{mgr:'鈴木 課長', mgrDate:'04/02', pres:'代表', presDate:'04/03'},
     cost:20600000,
     costRows:[['土地原価',18200000],['建物原価',0],['租税公課',900000],['販売管理費',1100000],['営業外費用',400000]],
     scen:[{t:'① 出値価格',price:25500000,profit:4900000},{t:'② 着地前後価格',price:23500000,profit:2900000},{t:'③ 下限価格',price:22000000,profit:1400000}],
@@ -415,7 +415,7 @@ const DEALS = [
     area:'板橋区◯◯1丁目', station:'都営三田線「◯◯」駅 徒歩8分',
     land_m2:120.0, land_tsubo:36.3, yoseki:2.0, kenpei:0.6, period:12,
     owner:'G社（売主）', staff:'田中', status:'done', updated:'12/15',
-    appr:{mgr:'鈴木 課長', mgrDate:'09/01', pres:'永井 社長', presDate:'09/02'},
+    appr:{mgr:'鈴木 課長', mgrDate:'09/01', pres:'代表', presDate:'09/02'},
     cost:58200000,
     costRows:[['土地原価',33000000],['建物原価',21000000],['租税公課',1800000],['販売管理費',1900000],['営業外費用',500000]],
     scen:[{t:'① 出値価格',price:66800000,profit:8600000},{t:'② 着地前後価格',price:63800000,profit:5600000},{t:'③ 下限価格',price:61800000,profit:3600000}],
@@ -428,7 +428,7 @@ const DEALS = [
     area:'川口市◯◯2丁目', station:'JR京浜東北線「◯◯」駅 徒歩9分',
     land_m2:110.0, land_tsubo:33.3, yoseki:2.0, kenpei:0.6, period:12,
     owner:'H社（売主）', staff:'佐藤', status:'done', updated:'10/30',
-    appr:{mgr:'鈴木 課長', mgrDate:'05/10', pres:'永井 社長', presDate:'05/11'},
+    appr:{mgr:'鈴木 課長', mgrDate:'05/10', pres:'代表', presDate:'05/11'},
     cost:92000000,
     costRows:[['土地原価',44000000],['建物原価',43000000],['租税公課',1200000],['販売管理費',3000000],['営業外費用',800000]],
     scen:[{t:'① 利回5.5%',price:112000000,profit:20000000},{t:'② 利回6.0%',price:103000000,profit:11000000},{t:'③ 下限価格',price:98000000,profit:6000000}],
@@ -450,7 +450,7 @@ function judge(d){
   if(r2>=0.08 && irr>=0.10) return {k:'warn',mark:'△',label:'条件付き可',cls:'j-warn'};
   return {k:'ng',mark:'×',label:'見送り',cls:'j-ng'};
 }
-const STATUS={await_mgr:['await','上長承認待ち'],await_pres:['await','社長承認待ち'],returned:['returned','差し戻し'],approved:['approved','承認済み（仕入決済前）'],sell:['sell','販売中'],done:['done','実績分析済'],rej:['rej','見送り']};
+const STATUS={await_mgr:['await','上長承認待ち'],await_pres:['await','代表承認待ち'],returned:['returned','差し戻し'],approved:['approved','承認済み（仕入決済前）'],sell:['sell','販売中'],done:['done','実績分析済'],rej:['rej','見送り']};
 function statusPill(s){ const x=STATUS[s]; return `<span class="st ${x[0]}">${x[1]}</span>`; }
 function dealById(id){ return DEALS.find(d=>d.id===id); }
 
@@ -577,7 +577,7 @@ function renderIntake(d){
 /* ---------- 画面遷移・権限 ---------- */
 let ROLE='staff';
 const CURRENT_STAFF='佐藤';   // ログイン中の営業担当（自分の案件だけ見える）
-// 営業担当は自分の案件のみ、上長・社長は全件
+// 営業担当は自分の案件のみ、上長・代表は全件
 function visibleDeals(){ return ROLE==='staff' ? DEALS.filter(d=>d.staff===CURRENT_STAFF) : DEALS; }
 function setRole(r){ ROLE=r; document.getElementById('role-staff').classList.toggle('on',r==='staff');
   document.getElementById('role-mgr').classList.toggle('on',r==='mgr');
@@ -616,7 +616,7 @@ function renderOps(){
   const scope = ROLE==='staff' ? `自分の案件（${CURRENT_STAFF}）` : '全社';
   c.innerHTML=`
     <div class="notebar">🏷️ <b>仕入・販売（進行中）</b>：承認後の案件をここで進めます（${scope}）。<b>仕入決済を登録 → 販売中 → 売却決済</b>へ。行をクリックすると収支シートが開き、最上段のパネルで操作できます。</div>
-    <div class="sectiontitle">¥ 仕入決済待ち（社長承認済み・要対応）</div>
+    <div class="sectiontitle">¥ 仕入決済待ち（代表承認済み・要対応）</div>
     ${settle.length?dealTable(settle,false):'<div class="card muted">仕入決済待ちはありません。</div>'}
     <div class="sectiontitle">◷ 販売中（売却活動）</div>
     ${selling.length?dealTable(selling,false):'<div class="card muted">販売中の案件はありません。</div>'}`;
@@ -625,7 +625,7 @@ function renderApprove(){
   const c=document.getElementById('content');
   if(ROLE==='mgr'||ROLE==='boss'){
     const list = ROLE==='boss'?DEALS.filter(d=>d.status==='await_pres'):DEALS.filter(d=>d.status==='await_mgr');
-    const roleName = ROLE==='boss'?'社長':'上長';
+    const roleName = ROLE==='boss'?'代表':'上長';
     c.innerHTML=`<div class="bubble">👤 <b>${roleName}の承認</b>：あなたの番の承認待ちが <b>${list.length}件</b>。行をクリックすると収支シートが開き、右下の承認パネルで「承認 / 差し戻し / 見送り」ができます。</div>
       <div class="sectiontitle">⏳ ${roleName} 承認待ち</div>
       ${list.length?dealTable(list,true):'<div class="card muted">承認待ちはありません。</div>'}`;
@@ -634,9 +634,9 @@ function renderApprove(){
   const mine=visibleDeals();
   const returned=mine.filter(d=>d.status==='returned');
   const waiting=mine.filter(d=>d.status==='await_mgr'||d.status==='await_pres');
-  c.innerHTML=`<div class="bubble">💡 <b>あなた（${CURRENT_STAFF}）の承認状況</b>：表示は自分の案件のみ。提出した案件が今どの段階か。差し戻しは修正して再提出します（上部のプレビュー切替で「上長」「永井社長」に切り替えると承認操作を体験できます）。</div>
+  c.innerHTML=`<div class="bubble">💡 <b>あなた（${CURRENT_STAFF}）の承認状況</b>：表示は自分の案件のみ。提出した案件が今どの段階か。差し戻しは修正して再提出します（上部のプレビュー切替で「上長」「代表」に切り替えると承認操作を体験できます）。</div>
     ${returned.length?`<div class="sectiontitle">↩ 差し戻し（要対応・修正して再提出）</div>${dealTable(returned,false)}`:''}
-    <div class="sectiontitle">⏳ 承認待ち（上長・社長）</div>
+    <div class="sectiontitle">⏳ 承認待ち（上長・代表）</div>
     ${waiting.length?dealTable(waiting,false):'<div class="card muted">承認待ちはありません。</div>'}`;
 }
 
@@ -652,24 +652,24 @@ function renderDashboard(){
 
   if(ROLE==='boss'){
     c.innerHTML=`
-      <div class="bubble">👤 <b>永井社長ビュー</b>：あなた（社長）の承認待ちが <b>${awaitPres.length}件</b>。上長承認を通った案件が最終判断としてここに集まります（＝必ず目に入る）。</div>
+      <div class="bubble">👤 <b>代表ビュー</b>：あなた（代表）の承認待ちが <b>${awaitPres.length}件</b>。上長承認を通った案件が最終判断としてここに集まります（＝必ず目に入る）。</div>
       <div class="kpis">
-        <div class="kpi"><div class="l">社長 承認待ち</div><div class="v">${awaitPres.length}<small> 件</small></div></div>
+        <div class="kpi"><div class="l">代表 承認待ち</div><div class="v">${awaitPres.length}<small> 件</small></div></div>
         <div class="kpi"><div class="l">上長 承認待ち</div><div class="v">${awaitMgr.length}<small> 件</small></div></div>
         <div class="kpi"><div class="l">販売中（仕入済）</div><div class="v">${selling}<small> 件</small></div></div>
         <div class="kpi"><div class="l">◎推奨 判定</div><div class="v">${ok}<small> 件</small></div></div>
       </div>
-      <div class="sectiontitle">⏳ あなた（社長）の承認待ち</div>
-      ${awaitPres.length?dealTable(awaitPres,true):'<div class="card muted">社長承認待ちはありません。</div>'}
+      <div class="sectiontitle">⏳ あなた（代表）の承認待ち</div>
+      ${awaitPres.length?dealTable(awaitPres,true):'<div class="card muted">代表承認待ちはありません。</div>'}
     `;
     return;
   }
   if(ROLE==='mgr'){
     c.innerHTML=`
-      <div class="bubble">👤 <b>上長ビュー</b>：あなた（上長）の承認待ちが <b>${awaitMgr.length}件</b>。担当が起案した案件は、まず上長のあなたが確認し、社長へ上げます。</div>
+      <div class="bubble">👤 <b>上長ビュー</b>：あなた（上長）の承認待ちが <b>${awaitMgr.length}件</b>。担当が起案した案件は、まず上長のあなたが確認し、代表へ上げます。</div>
       <div class="kpis">
         <div class="kpi"><div class="l">上長 承認待ち</div><div class="v">${awaitMgr.length}<small> 件</small></div></div>
-        <div class="kpi"><div class="l">社長へ送付済</div><div class="v">${awaitPres.length}<small> 件</small></div></div>
+        <div class="kpi"><div class="l">代表へ送付済</div><div class="v">${awaitPres.length}<small> 件</small></div></div>
         <div class="kpi"><div class="l">差し戻し中</div><div class="v">${returned.length}<small> 件</small></div></div>
         <div class="kpi"><div class="l">◎推奨 判定</div><div class="v">${ok}<small> 件</small></div></div>
       </div>
@@ -693,9 +693,9 @@ function renderDashboard(){
       </div>
       <div class="arrow">▶</div>
       <div class="stage st2">
-        <div class="sl">② 承認待ち（上長＋社長）</div>
+        <div class="sl">② 承認待ち（上長＋代表）</div>
         <div class="sv">${myAwait.length}<small> 件</small></div>
-        <div class="sc">上長 → 社長 の順に承認${myReturned.length?`<br><span class="branch">↩ 差し戻し ${myReturned.length}件（要対応）</span>`:''}</div>
+        <div class="sc">上長 → 代表 の順に承認${myReturned.length?`<br><span class="branch">↩ 差し戻し ${myReturned.length}件（要対応）</span>`:''}</div>
       </div>
       <div class="arrow">▶</div>
       <div class="stage st3">
@@ -757,7 +757,7 @@ function filterList(){
 function renderDetail(id){
   const d=dealById(id)||DEALS[0];
   const j=judge(d), r2=rate(d,1), irr=adoptedIRR(d);
-  const steps=[['物件入手',1],['事業計画',2],['上長承認',3],['社長承認',4],['仕入決済',5],['販売中',6],['売却決済',7],['実績分析',8]];
+  const steps=[['物件入手',1],['事業計画',2],['上長承認',3],['代表承認',4],['仕入決済',5],['販売中',6],['売却決済',7],['実績分析',8]];
   const stMap={returned:2, await_mgr:3, await_pres:4, rej:4, approved:5, sell:6, done:8};
   let curStep = stMap[d.status]||2;
   const types=['土地売り','戸建建売','アパート','業者売り'];
@@ -849,7 +849,7 @@ function signoffRow(d){
   return `<div class="signoffrow">
     ${soCell('担当（起案）',d.staff,'ok',d.updated)}
     ${soCell('上長',a.mgr,mgrState,a.mgrDate)}
-    ${soCell('社長',a.pres,presState,a.presDate)}
+    ${soCell('代表',a.pres,presState,a.presDate)}
   </div>`;
 }
 function approvalPanel(d){
@@ -858,7 +858,7 @@ function approvalPanel(d){
   let action='';
   if(s==='await_mgr'){
     if(ROLE==='mgr') action=`<div class="muted" style="font-size:12.5px;margin-bottom:8px">担当 ${d.staff} から提出。上長のあなたの承認待ちです。</div>
-      <div class="row"><button class="btn ok" onclick="act('mgr_approve','${d.id}')">✓ 承認して社長へ</button>
+      <div class="row"><button class="btn ok" onclick="act('mgr_approve','${d.id}')">✓ 承認して代表へ</button>
       <button class="btn ng" onclick="act('mgr_return','${d.id}')">↩ 差し戻し</button></div>${ta('コメント / 差し戻し理由')}`;
     else action=`<div class="muted" style="font-size:12.5px">上長（${(d.appr||{}).mgr||'上長'}）の承認待ちです。<br>上部のプレビュー切替で「上長」に切り替えると承認操作を体験できます。</div>`;
   } else if(s==='returned'){
@@ -866,21 +866,21 @@ function approvalPanel(d){
       <button class="btn primary" onclick="act('resubmit','${d.id}')">修正して再提出（上長承認へ）</button>`;
     else action=`<div class="muted" style="font-size:12.5px">担当 ${d.staff} が修正中（差し戻し）。</div>`;
   } else if(s==='await_pres'){
-    if(ROLE==='boss') action=`<div class="muted" style="font-size:12.5px;margin-bottom:8px">上長（${(d.appr||{}).mgr||'上長'}）承認済み。社長のあなたの最終判断待ちです。</div>
+    if(ROLE==='boss') action=`<div class="muted" style="font-size:12.5px;margin-bottom:8px">上長（${(d.appr||{}).mgr||'上長'}）承認済み。代表のあなたの最終判断待ちです。</div>
       <div class="row"><button class="btn ok" onclick="act('pres_approve','${d.id}')">✓ 承認して仕入れGO</button>
       <button class="btn ng" onclick="act('pres_reject','${d.id}')">× 見送り</button></div>${ta('コメント / 見送り理由')}`;
-    else action=`<div class="muted" style="font-size:12.5px">社長（${(d.appr||{}).pres||'永井 社長'}）の最終承認待ちです。<br>上部のプレビュー切替で「永井社長」に切り替えると承認操作を体験できます。</div>`;
+    else action=`<div class="muted" style="font-size:12.5px">代表（${(d.appr||{}).pres||'代表'}）の最終承認待ちです。<br>上部のプレビュー切替で「代表」に切り替えると承認操作を体験できます。</div>`;
   } else if(s==='rej'){
-    action=`<div class="muted" style="font-size:12.5px"><b style="color:var(--ng-fg)">見送り（社長判断）</b>：${d.rejReason||''}</div>
+    action=`<div class="muted" style="font-size:12.5px"><b style="color:var(--ng-fg)">見送り（代表判断）</b>：${d.rejReason||''}</div>
       <div class="muted" style="font-size:11.5px;margin-top:8px">この理由は「実績分析」に蓄積され、次の判断に活きます。</div>`;
   } else {
-    action=`<div class="muted" style="font-size:12.5px"><b style="color:var(--ok-fg)">上長・社長とも承認済み（仕入れGO）。</b><br>販売状況・実績は「実績分析」へ進みます。</div>`;
+    action=`<div class="muted" style="font-size:12.5px"><b style="color:var(--ok-fg)">上長・代表とも承認済み（仕入れGO）。</b><br>販売状況・実績は「実績分析」へ進みます。</div>`;
   }
   const j=judge(d);
   const pending=(s==='await_mgr'||s==='await_pres'||s==='returned');
   const tag = pending ? '<span class="tag todo">要対応</span>' : '<span class="tag">決裁記録</span>';
   return `<div class="card action-card phase-approve">
-    <div class="apptitle"><span class="lead"><span class="ic">✓</span>承認（上長 → 社長）</span>${tag}</div>
+    <div class="apptitle"><span class="lead"><span class="ic">✓</span>承認（上長 → 代表）</span>${tag}</div>
     <div class="appbody">
       <div class="apptarget">対象：<b>${d.name}</b>（${d.id}・担当 ${d.staff}・更新 ${d.updated}）　判定 <b style="color:var(--ink)">${j.mark} ${j.label}</b></div>
       ${signoffRow(d)}
@@ -893,14 +893,14 @@ function act(kind,id){
   else if(kind==='mgr_return'){ d.status='returned'; }
   else if(kind==='resubmit'){ d.status='await_mgr'; }
   else if(kind==='pres_approve'){ d.status='approved'; a.presDate=today; }
-  else if(kind==='pres_reject'){ d.status='rej'; a.presDate=today; d.rejReason=d.rejReason||'社長判断により見送り（モック）。'; }
+  else if(kind==='pres_reject'){ d.status='rej'; a.presDate=today; d.rejReason=d.rejReason||'代表判断により見送り（モック）。'; }
   else if(kind==='settle_buy'){ d.status='sell'; d.settle=Object.assign({buySettle:today},d.settle); }
   else if(kind==='settle_sell'){ const amt=gv('op_sell_amount')||d.scen[1].price; d.status='done'; d.actual={price:amt, profit:amt-d.cost, note:(amt>=d.scen[1].price?'販売活動の結果、着地見込み以上で成約':'着地見込みを下回って成約')+'（モック）'}; }
   go('detail',id);
-  const msg={mgr_approve:'✓ 上長が承認しました。案件は「社長承認待ち」へ進みます。',
+  const msg={mgr_approve:'✓ 上長が承認しました。案件は「代表承認待ち」へ進みます。',
     mgr_return:'↩ 担当へ差し戻しました。担当が修正して再提出します。',
     resubmit:'✓ 再提出しました。「上長承認待ち」に戻ります。',
-    pres_approve:'✓ 社長が承認しました（仕入れGO）。次は「仕入決済」です。',
+    pres_approve:'✓ 代表が承認しました（仕入れGO）。次は「仕入決済」です。',
     pres_reject:'× 見送りにしました。見送り理由は実績分析に蓄積されます。',
     settle_buy:'✓ 仕入決済を登録しました。案件は「販売中」へ進みます。',
     price_update:'✓ 売出価格・販売状況を更新しました。',
@@ -924,8 +924,8 @@ function settlementPanel(d){
   return `<div class="card action-card phase-buy">
     <div class="apptitle"><span class="lead"><span class="ic">¥</span>仕入決済（承認済み → 仕入実行）</span><span class="tag todo">要対応</span></div>
     <div class="appbody">
-      <div class="apptarget">対象：<b>${d.name}</b>（${d.id}・担当 ${d.staff}）　社長承認済み ${a.presDate||''}　想定原価 <b>${fmtY(d.cost)}</b></div>
-      <div class="muted" style="font-size:12.5px;margin-bottom:10px">社長承認（仕入れGO）済み。仕入の契約・決済を登録すると「販売中」へ進みます。</div>
+      <div class="apptarget">対象：<b>${d.name}</b>（${d.id}・担当 ${d.staff}）　代表承認済み ${a.presDate||''}　想定原価 <b>${fmtY(d.cost)}</b></div>
+      <div class="muted" style="font-size:12.5px;margin-bottom:10px">代表承認（仕入れGO）済み。仕入の契約・決済を登録すると「販売中」へ進みます。</div>
       <div class="grid2">
         ${pf('仕入契約日','date',(d.intake||{}).buyc&&/\d{4}\//.test((d.intake||{}).buyc)?(d.intake||{}).buyc.replace(/\//g,'-'):'')}
         ${pf('仕入決済日','date','')}
@@ -1552,7 +1552,7 @@ function recalcNew(){
         <div class="muted" style="font-size:11px;margin-top:2px">現在の原価合計 ${fmtY(cost)}</div>
       </div>
     </div>
-    <button class="btn primary" style="width:100%;margin-bottom:8px" onclick="submitNew()">保存して提出（社長承認へ）</button>
+    <button class="btn primary" style="width:100%;margin-bottom:8px" onclick="submitNew()">保存して提出（代表承認へ）</button>
     <button class="btn" style="width:100%" onclick="go('dashboard')">下書き保存して戻る</button>`;
   // 相場比較（仕入坪単価 vs 成約相場）
   const m2=gv('n_m2'), yo=gv('n_yoseki'), tsubo=m2*0.3025;
@@ -1586,7 +1586,7 @@ function recalcNew(){
   const ms=document.getElementById('m_sekisan'); if(ms) ms.textContent='¥'+Math.round(sekisan).toLocaleString();
 }
 function submitNew(){
-  document.getElementById('calc-panel').insertAdjacentHTML('afterbegin','<div class="flash">✓ 提出しました（モック表示）。案件は「上長承認待ち」としてダッシュボードに追加され、上長 → 社長の順に承認へ回ります。</div>');
+  document.getElementById('calc-panel').insertAdjacentHTML('afterbegin','<div class="flash">✓ 提出しました（モック表示）。案件は「上長承認待ち」としてダッシュボードに追加され、上長 → 代表の順に承認へ回ります。</div>');
   window.scrollTo(0,0);
 }
 
