@@ -44,13 +44,21 @@
 
   /* Main */
   .main{flex:1;min-width:0;display:flex;flex-direction:column;}
-  .topbar{background:#fff;border-bottom:1px solid var(--line);padding:12px 26px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5;}
+  .topbar{background:#fff;border-bottom:1px solid var(--line);padding:12px 26px;display:flex;align-items:center;justify-content:space-between;}
   .topbar h1{font-size:17px;margin:0;color:var(--ink);font-weight:700;}
   .topbar .crumb{font-size:11px;color:var(--sub);margin-bottom:2px;}
-  .rolewrap{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--sub);}
-  .roletoggle{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;}
-  .roletoggle button{border:0;background:#fff;color:var(--sub);padding:6px 14px;font-size:12px;cursor:pointer;font-family:inherit;}
-  .roletoggle button.on{background:var(--navy);color:#fff;font-weight:600;}
+  /* トップ常設のプレビュー切替バー（提案デモ用：立場を切り替えて見せる） */
+  .previewbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--navy);color:#dbe7f1;padding:9px 26px;position:sticky;top:0;z-index:6;border-bottom:1px solid rgba(255,255,255,.10);}
+  .previewbar .pvlabel{font-size:12px;font-weight:700;color:#fff;display:flex;align-items:center;gap:7px;}
+  .previewbar .pvlabel small{font-weight:500;color:#9fb6cc;font-size:11px;}
+  .pvtoggle{display:flex;gap:7px;align-items:center;margin-left:auto;flex-wrap:wrap;}
+  .pvtoggle button{border:1px solid rgba(255,255,255,.24);background:rgba(255,255,255,.07);color:#dbe7f1;padding:7px 17px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;border-radius:999px;}
+  .pvtoggle button:hover{background:rgba(255,255,255,.14);}
+  .pvtoggle button.on{background:#fff;color:var(--navy);border-color:#fff;}
+  .pvtoggle button.sub{font-weight:600;font-size:12px;padding:6px 13px;opacity:.9;}
+  .pvtoggle .pvsep{color:#7a93ad;font-size:11px;padding:0 1px;}
+  /* オプション（任意・追加費用）バッジ */
+  .optbadge{display:inline-block;background:#ef4444;color:#fff;font-size:9.5px;font-weight:800;letter-spacing:.04em;padding:1px 7px;border-radius:999px;margin-left:7px;vertical-align:middle;}
   .content{padding:24px 26px 60px;max-width:1180px;}
 
   /* generic */
@@ -263,29 +271,32 @@
       <button data-nav="ops" onclick="go('ops')"><span class="ic">◔</span>仕入・販売<span id="nav-ops-badge" class="navbadge" style="display:none"></span></button>
       <button data-nav="list" onclick="go('list')"><span class="ic">≣</span>物件一覧 / 検索</button>
       <button data-nav="review" onclick="go('review')"><span class="ic">↺</span>実績分析</button>
-      <button data-nav="market" class="addon" onclick="go('market')" style="margin-top:auto"><span class="ic">◎</span><span>相場調査<span class="addnote">※追加機能</span></span></button>
+      <div class="group" style="margin-top:auto">オプション機能（任意・別途費用）</div>
+      <button data-nav="market" class="addon" onclick="go('market')"><span class="ic">◎</span><span>相場調査<span class="optbadge">オプション</span></span></button>
     </nav>
     <div class="foot">
       モックアップ v1（試作）<br>
       <b>Spira Solutions</b> 受託案件<br>
-      ※数値はサンプル（マスキング）
+      ※数値はサンプル（マスキング）<br>
+      <span style="color:#fca5a5"><b style="color:#ef4444">オプション</b>＝任意の追加機能（別途費用）</span>
     </div>
   </aside>
 
   <!-- Main -->
   <div class="main">
+    <div class="previewbar">
+      <span class="pvlabel">🔎 プレビュー表示 <small>選んだ立場で画面の見え方が切り替わります</small></span>
+      <div class="pvtoggle">
+        <button id="role-staff" class="on" onclick="setRole('staff')">👤 営業担当</button>
+        <button id="role-boss" onclick="setRole('boss')">👔 永井社長</button>
+        <span class="pvsep">｜承認の途中段階</span>
+        <button id="role-mgr" class="sub" onclick="setRole('mgr')">上長</button>
+      </div>
+    </div>
     <div class="topbar">
       <div>
         <div class="crumb" id="crumb">ホーム</div>
         <h1 id="ptitle">ダッシュボード</h1>
-      </div>
-      <div class="rolewrap">
-        <span>表示する立場：</span>
-        <div class="roletoggle">
-          <button id="role-staff" class="on" onclick="setRole('staff')">営業担当</button>
-          <button id="role-mgr" onclick="setRole('mgr')">上長</button>
-          <button id="role-boss" onclick="setRole('boss')">永井社長</button>
-        </div>
       </div>
     </div>
     <div class="content" id="content"><!-- rendered by JS --></div>
@@ -573,7 +584,7 @@ function setRole(r){ ROLE=r; document.getElementById('role-staff').classList.tog
   document.getElementById('role-boss').classList.toggle('on',r==='boss');
   go(CUR.view, CUR.arg); }
 let CUR={view:'dashboard',arg:null};
-const TITLES={dashboard:['ホーム','ダッシュボード'],approve:['承認','承認（あなたの番の承認待ち）'],ops:['仕入・販売','仕入決済・販売中の案件'],list:['物件','物件一覧 / 検索'],detail:['物件 › 収支シート','事業収支シート'],market:['相場','相場調査（追加機能）'],review:['実績分析','実績分析'],new:['物件 › 新規起案','新規物件の起案（事業計画）']};
+const TITLES={dashboard:['ホーム','ダッシュボード'],approve:['承認','承認（あなたの番の承認待ち）'],ops:['仕入・販売','仕入決済・販売中の案件'],list:['物件','物件一覧 / 検索'],detail:['物件 › 収支シート','事業収支シート'],market:['相場','相場調査（オプション機能）'],review:['実績分析','実績分析'],new:['物件 › 新規起案','新規物件の起案（事業計画）']};
 function go(view,arg){
   CUR={view,arg};
   document.querySelectorAll('.nav button[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===view));
@@ -623,7 +634,7 @@ function renderApprove(){
   const mine=visibleDeals();
   const returned=mine.filter(d=>d.status==='returned');
   const waiting=mine.filter(d=>d.status==='await_mgr'||d.status==='await_pres');
-  c.innerHTML=`<div class="bubble">💡 <b>あなた（${CURRENT_STAFF}）の承認状況</b>：表示は自分の案件のみ。提出した案件が今どの段階か。差し戻しは修正して再提出します（右上で「上長」「永井社長」に切り替えると承認操作を体験できます）。</div>
+  c.innerHTML=`<div class="bubble">💡 <b>あなた（${CURRENT_STAFF}）の承認状況</b>：表示は自分の案件のみ。提出した案件が今どの段階か。差し戻しは修正して再提出します（上部のプレビュー切替で「上長」「永井社長」に切り替えると承認操作を体験できます）。</div>
     ${returned.length?`<div class="sectiontitle">↩ 差し戻し（要対応・修正して再提出）</div>${dealTable(returned,false)}`:''}
     <div class="sectiontitle">⏳ 承認待ち（上長・社長）</div>
     ${waiting.length?dealTable(waiting,false):'<div class="card muted">承認待ちはありません。</div>'}`;
@@ -849,7 +860,7 @@ function approvalPanel(d){
     if(ROLE==='mgr') action=`<div class="muted" style="font-size:12.5px;margin-bottom:8px">担当 ${d.staff} から提出。上長のあなたの承認待ちです。</div>
       <div class="row"><button class="btn ok" onclick="act('mgr_approve','${d.id}')">✓ 承認して社長へ</button>
       <button class="btn ng" onclick="act('mgr_return','${d.id}')">↩ 差し戻し</button></div>${ta('コメント / 差し戻し理由')}`;
-    else action=`<div class="muted" style="font-size:12.5px">上長（${(d.appr||{}).mgr||'上長'}）の承認待ちです。<br>右上で「上長」に切り替えると承認操作を体験できます。</div>`;
+    else action=`<div class="muted" style="font-size:12.5px">上長（${(d.appr||{}).mgr||'上長'}）の承認待ちです。<br>上部のプレビュー切替で「上長」に切り替えると承認操作を体験できます。</div>`;
   } else if(s==='returned'){
     if(ROLE==='staff') action=`<div class="muted" style="font-size:12.5px;margin-bottom:8px">上長から差し戻されました。事業計画を修正して再提出してください。</div>
       <button class="btn primary" onclick="act('resubmit','${d.id}')">修正して再提出（上長承認へ）</button>`;
@@ -858,7 +869,7 @@ function approvalPanel(d){
     if(ROLE==='boss') action=`<div class="muted" style="font-size:12.5px;margin-bottom:8px">上長（${(d.appr||{}).mgr||'上長'}）承認済み。社長のあなたの最終判断待ちです。</div>
       <div class="row"><button class="btn ok" onclick="act('pres_approve','${d.id}')">✓ 承認して仕入れGO</button>
       <button class="btn ng" onclick="act('pres_reject','${d.id}')">× 見送り</button></div>${ta('コメント / 見送り理由')}`;
-    else action=`<div class="muted" style="font-size:12.5px">社長（${(d.appr||{}).pres||'永井 社長'}）の最終承認待ちです。<br>右上で「永井社長」に切り替えると承認操作を体験できます。</div>`;
+    else action=`<div class="muted" style="font-size:12.5px">社長（${(d.appr||{}).pres||'永井 社長'}）の最終承認待ちです。<br>上部のプレビュー切替で「永井社長」に切り替えると承認操作を体験できます。</div>`;
   } else if(s==='rej'){
     action=`<div class="muted" style="font-size:12.5px"><b style="color:var(--ng-fg)">見送り（社長判断）</b>：${d.rejReason||''}</div>
       <div class="muted" style="font-size:11.5px;margin-top:8px">この理由は「実績分析」に蓄積され、次の判断に活きます。</div>`;
