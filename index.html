@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Greens 仕入れ収支システム（モックアップ v1）</title>
+<style>
+  :root{
+    --navy:#173a5e; --navy-2:#1e4d7b; --ink:#1f2937; --body:#374151; --sub:#6b7280;
+    --line:#e5e7eb; --bg:#f4f6f9; --card:#ffffff;
+    --ok-bg:#dcfce7; --ok-fg:#15803d; --warn-bg:#fef3c7; --warn-fg:#b45309; --ng-bg:#fee2e2; --ng-fg:#b91c1c;
+    --accent:#0e7490;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+    color:var(--body);background:var(--bg);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+  a{color:inherit;}
+  .app{display:flex;min-height:100vh;}
+
+  /* Sidebar */
+  .side{width:236px;background:var(--navy);color:#dbe7f1;flex-shrink:0;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;}
+  .brand{padding:20px 18px 16px;border-bottom:1px solid rgba(255,255,255,.12);}
+  .brand .logo{font-size:16px;font-weight:700;color:#fff;letter-spacing:.02em;}
+  .brand .logo span{color:#7dd3c0;}
+  .brand .sub{font-size:11px;color:#9fb6cc;margin-top:3px;}
+  .nav{padding:10px 10px;flex:1;display:flex;flex-direction:column;}
+  .nav button.addon{color:#f87171;align-items:flex-start;}
+  .nav button.addon:hover{background:rgba(248,113,113,.12);color:#fca5a5;}
+  .nav button.addon .ic{color:#f87171;opacity:1;}
+  .nav button.addon.active{background:rgba(248,113,113,.16);color:#fecaca;}
+  .nav button.addon .addnote{display:block;font-size:10px;color:#fca5a5;font-weight:400;margin-top:2px;}
+  .nav .group{font-size:10px;color:#7f9bb5;letter-spacing:.08em;padding:12px 10px 4px;}
+  .nav button{display:flex;align-items:center;gap:9px;width:100%;text-align:left;border:0;background:transparent;color:#cfdcea;
+    padding:9px 11px;border-radius:8px;cursor:pointer;font-size:13.5px;font-family:inherit;margin-bottom:2px;}
+  .nav button:hover{background:rgba(255,255,255,.07);color:#fff;}
+  .nav button.active{background:var(--navy-2);color:#fff;font-weight:600;}
+  .nav .ic{width:18px;text-align:center;opacity:.9;}
+  .nav .navbadge{margin-left:auto;background:#ef4444;color:#fff;font-size:10.5px;font-weight:700;min-width:18px;height:18px;border-radius:9px;align-items:center;justify-content:center;padding:0 5px;}
+  .nav .newbtn{margin:8px 6px 0;background:#7dd3c0;color:#0f2e1f;font-weight:700;justify-content:center;}
+  .nav .newbtn:hover{background:#6cc6b2;color:#0f2e1f;}
+  .side .foot{padding:14px 16px;border-top:1px solid rgba(255,255,255,.12);font-size:10.5px;color:#8ba3ba;}
+  .side .foot b{color:#c7d6e5;}
+
+  /* Main */
+  .main{flex:1;min-width:0;display:flex;flex-direction:column;}
+  .topbar{background:#fff;border-bottom:1px solid var(--line);padding:12px 26px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5;}
+  .topbar h1{font-size:17px;margin:0;color:var(--ink);font-weight:700;}
+  .topbar .crumb{font-size:11px;color:var(--sub);margin-bottom:2px;}
+  .rolewrap{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--sub);}
+  .roletoggle{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;}
+  .roletoggle button{border:0;background:#fff;color:var(--sub);padding:6px 14px;font-size:12px;cursor:pointer;font-family:inherit;}
+  .roletoggle button.on{background:var(--navy);color:#fff;font-weight:600;}
+  .content{padding:24px 26px 60px;max-width:1180px;}
+
+  /* generic */
+  .row{display:flex;gap:16px;flex-wrap:wrap;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;}
+  .card h3{margin:0 0 12px;font-size:14px;color:var(--ink);font-weight:700;}
+  .muted{color:var(--sub);}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+  .kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px;}
+  .kpi .l{font-size:12px;color:var(--sub);}
+  .kpi .v{font-size:26px;font-weight:700;color:var(--ink);margin-top:4px;}
+  .kpi .v small{font-size:13px;font-weight:600;color:var(--sub);}
+  .sectiontitle{font-size:13px;font-weight:700;color:var(--ink);margin:24px 0 10px;display:flex;align-items:center;gap:8px;}
+  .pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:700;line-height:1.7;}
+  .j-ok{background:var(--ok-bg);color:var(--ok-fg);} .j-warn{background:var(--warn-bg);color:var(--warn-fg);} .j-ng{background:var(--ng-bg);color:var(--ng-fg);}
+  .st{display:inline-block;padding:2px 9px;border-radius:6px;font-size:11px;font-weight:600;background:#eef2f7;color:#475569;border:1px solid #e2e8f0;}
+  .st.await{background:#fff7ed;color:#c2410c;border-color:#fed7aa;}
+  .st.sell{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe;}
+  .st.done{background:#f0fdf4;color:#15803d;border-color:#bbf7d0;}
+  .st.rej{background:#f8fafc;color:#64748b;border-color:#e2e8f0;}
+  .st.returned{background:#fef2f2;color:#b91c1c;border-color:#fecaca;}
+  /* 承認サインオフ（担当／上長／社長） */
+  .signoffrow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:2px 0 6px;}
+  .signoff{border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:#fff;}
+  .signoff .so-role{font-size:10.5px;color:var(--sub);}
+  .signoff .so-name{font-size:13px;font-weight:700;color:var(--ink);margin:2px 0;}
+  .signoff .so-state{font-size:11.5px;font-weight:700;}
+  .signoff .so-date{font-weight:400;color:var(--sub);margin-left:6px;font-size:10.5px;}
+  .signoff.ok{background:#f0fdf4;border-color:#bbf7d0;} .signoff.ok .so-state{color:#15803d;}
+  .signoff.wait{background:#fff7ed;border-color:#fed7aa;} .signoff.wait .so-state{color:#c2410c;}
+  .signoff.ret{background:#fef2f2;border-color:#fecaca;} .signoff.ret .so-state{color:#b91c1c;}
+  .signoff.rej{background:#f8fafc;} .signoff.rej .so-state{color:#64748b;}
+  .signoff.none{background:#fafafa;} .signoff.none .so-state{color:#9ca3af;}
+  .arrowstep{display:flex;align-items:center;justify-content:center;color:var(--sub);font-size:11px;}
+  /* 承認ダッシュボードのグラフ部品 */
+  .gaugewrap{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:6px;}
+  @media(max-width:600px){ .gaugewrap{grid-template-columns:1fr;} }
+  .gauge .gl{display:flex;justify-content:space-between;font-size:11.5px;color:var(--sub);margin-bottom:3px;}
+  .gauge .gl b{color:var(--ink);font-size:14px;}
+  .meter{position:relative;height:20px;background:#eef2f7;border-radius:6px;margin:14px 0 4px;}
+  .meter-fill{position:absolute;left:0;top:0;height:100%;border-radius:6px;}
+  .meter-mark{position:absolute;top:-2px;height:24px;width:2px;background:#334155;}
+  .meter-mark span{position:absolute;top:-15px;left:50%;transform:translateX(-50%);font-size:8.5px;color:#334155;white-space:nowrap;}
+  .barrow{display:grid;grid-template-columns:96px 1fr 86px;align-items:center;gap:10px;margin:7px 0;font-size:12px;}
+  .barrow .bt{color:var(--ink);font-weight:600;}
+  .barrow .bv{text-align:right;color:var(--sub);font-variant-numeric:tabular-nums;}
+  .stack{display:flex;height:22px;border-radius:6px;overflow:hidden;margin:8px 0 6px;}
+  .stack span{display:block;height:100%;}
+  .legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:11px;color:var(--body);}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px;}
+  .rangebar{position:relative;height:24px;background:#eef2f7;border-radius:6px;margin:20px 0 6px;}
+  .rangebar .band{position:absolute;top:0;height:100%;background:#c7e7d8;}
+  .rangebar .avg{position:absolute;top:0;height:100%;width:2px;background:#0f766e;opacity:.5;}
+  .rangebar .marker{position:absolute;top:-4px;height:32px;width:3px;background:#0f766e;border-radius:2px;}
+  .rangebar .marker span{position:absolute;top:-17px;left:50%;transform:translateX(-50%);font-size:9.5px;font-weight:700;color:#0f766e;white-space:nowrap;}
+  .kvcols{display:grid;grid-template-columns:repeat(3,1fr);gap:2px 22px;}
+  @media(max-width:900px){ .kvcols{grid-template-columns:repeat(2,1fr);} }
+  @media(max-width:560px){ .kvcols{grid-template-columns:1fr;} }
+  .kvcols .kvrow{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px dashed var(--line);font-size:12.5px;}
+  .kvcols .kvrow .k{color:var(--sub);white-space:nowrap;}
+  .kvcols .kvrow .v{color:var(--ink);font-weight:600;text-align:right;}
+  .subhead{font-size:11.5px;font-weight:700;color:#15564a;margin:14px 0 4px;letter-spacing:.02em;}
+  table .grp td{background:#eef6f3;font-weight:700;color:#0f3d33;}
+  /* アクションカード（各フェーズの最重要操作＝他と差別化） */
+  .action-card{border:2px solid #15564a;border-radius:14px;padding:0;overflow:hidden;box-shadow:0 10px 28px rgba(0,0,0,.12);background:#fff;}
+  .action-card .apptitle{background:#15564a;color:#fff;padding:13px 20px;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .action-card .apptitle .lead{display:flex;align-items:center;gap:9px;}
+  .action-card .apptitle .ic{width:26px;height:26px;border-radius:7px;background:rgba(255,255,255,.18);display:inline-flex;align-items:center;justify-content:center;font-size:15px;}
+  .action-card .apptitle .tag{font-size:10.5px;padding:4px 11px;border-radius:999px;font-weight:700;letter-spacing:.05em;background:rgba(255,255,255,.22);}
+  .action-card .apptitle .tag.todo{background:#fde68a;color:#92400e;}
+  .action-card .appbody{padding:16px 20px 18px;}
+  .action-card .apptarget{font-size:12px;color:var(--sub);margin-bottom:10px;padding-bottom:10px;border-bottom:1px dashed var(--line);}
+  .action-card .apptarget b{color:var(--ink);font-size:13.5px;}
+  .phase-approve{border-color:#15564a;} .phase-approve .apptitle{background:linear-gradient(90deg,#15564a,#1f8a70);}
+  .phase-buy{border-color:#1d4ed8;} .phase-buy .apptitle{background:linear-gradient(90deg,#1e3a8a,#2563eb);}
+  .phase-sell{border-color:#0e7490;} .phase-sell .apptitle{background:linear-gradient(90deg,#0e7490,#0891b2);}
+  .phase-done{border-color:#15803d;} .phase-done .apptitle{background:linear-gradient(90deg,#166534,#16a34a);}
+  .st.approved{background:#eef2ff;color:#4338ca;border-color:#c7d2fe;}
+  /* 振り返り：計画→実績の答え合わせ */
+  .insight{border:2px solid #1f8a70;background:linear-gradient(180deg,#effdf8,#ffffff);border-radius:12px;padding:16px 18px;margin-bottom:16px;}
+  .insight .big{font-size:22px;font-weight:800;line-height:1.3;}
+  .rvtable td{vertical-align:top;}
+  .rvtable tbody tr.rvnote td{padding-top:0;font-size:11px;color:var(--sub);}
+  .rvtag{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;white-space:nowrap;}
+  .rvtag.up{background:#dcfce7;color:#15803d;} .rvtag.down{background:#fef3c7;color:#b45309;}
+
+  table{width:100%;border-collapse:collapse;}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px;color:var(--body);}
+  th{font-size:11.5px;color:var(--sub);font-weight:600;background:#fafbfc;}
+  tr.clickable{cursor:pointer;}
+  tr.clickable:hover td{background:#f7fafc;}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;}
+
+  .btn{border:1px solid var(--line);background:#fff;color:var(--body);padding:8px 16px;border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit;}
+  .btn:hover{background:#f8fafc;}
+  .btn.primary{background:var(--navy);color:#fff;border-color:var(--navy);font-weight:600;}
+  .btn.primary:hover{background:var(--navy-2);}
+  .btn.ok{background:var(--ok-fg);color:#fff;border-color:var(--ok-fg);font-weight:600;}
+  .btn.ng{background:#fff;color:var(--ng-fg);border-color:#fca5a5;font-weight:600;}
+
+  /* lifecycle stepper */
+  .stepper{display:flex;gap:0;margin:6px 0 18px;flex-wrap:wrap;}
+  .step{display:flex;align-items:center;font-size:11.5px;color:var(--sub);}
+  .step .dot{width:22px;height:22px;border-radius:50%;background:#e5e7eb;color:#94a3b8;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;margin-right:6px;}
+  .step .lab{margin-right:6px;white-space:nowrap;}
+  .step .bar{width:22px;height:2px;background:#e5e7eb;margin-right:6px;}
+  .step.done .dot{background:#bbf7d0;color:#15803d;}
+  .step.cur .dot{background:var(--navy);color:#fff;}
+  .step.cur .lab{color:var(--ink);font-weight:700;}
+
+  .scen{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  .scen .s{border:1px solid var(--line);border-radius:10px;padding:14px;}
+  .scen .s.mid{border-color:var(--navy);box-shadow:0 0 0 2px rgba(23,58,94,.08);}
+  .scen .s .t{font-size:12px;color:var(--sub);}
+  .scen .s .p{font-size:20px;font-weight:700;color:var(--ink);margin:4px 0;}
+  .scen .s .r{font-size:13px;}
+  .badge-mid{font-size:10px;background:var(--navy);color:#fff;padding:1px 7px;border-radius:999px;margin-left:6px;vertical-align:middle;}
+
+  .judgebox{display:flex;align-items:center;gap:18px;padding:16px 20px;border-radius:12px;border:1px solid var(--line);}
+  .judgebox .big{font-size:32px;font-weight:800;}
+  .judgebox.j-ok{background:#f0fdf6;border-color:#bbf7d0;} .judgebox.j-ok .big{color:var(--ok-fg);}
+  .judgebox.j-warn{background:#fffbeb;border-color:#fde68a;} .judgebox.j-warn .big{color:var(--warn-fg);}
+  .judgebox.j-ng{background:#fef2f2;border-color:#fecaca;} .judgebox.j-ng .big{color:var(--ng-fg);}
+
+  .twocol{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;}
+  dl.kv{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;margin:0;}
+  dl.kv dt{color:var(--sub);font-size:12.5px;} dl.kv dd{margin:0;color:var(--ink);font-weight:600;}
+  .typeselect{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+  .typeselect span{font-size:12px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--sub);}
+  .typeselect span.on{background:#ecfeff;border-color:var(--accent);color:var(--accent);font-weight:700;}
+  .typeselect span.soon{opacity:.6;}
+  .notebar{background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:8px;padding:8px 12px;font-size:12px;margin-bottom:16px;}
+  .future{background:#f8fafc;border:1px dashed #cbd5e1;border-radius:10px;padding:16px;color:#475569;}
+  .future .tag{font-size:10.5px;background:#e2e8f0;color:#475569;padding:2px 8px;border-radius:999px;font-weight:700;}
+  .field label{display:block;font-size:11.5px;color:var(--sub);margin-bottom:3px;}
+  .field input,.field select{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:13px;font-family:inherit;color:var(--ink);background:#fff;}
+  .field input:focus,.field select:focus{outline:2px solid #bae6fd;border-color:var(--accent);}
+  .field.green-in input{background:#f0fdf4;border-color:#bbf7d0;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px;}
+  .cellin{width:100%;padding:6px 8px;border:1px solid #bbf7d0;background:#f0fdf4;border-radius:6px;font-family:inherit;font-size:12.5px;color:var(--ink);}
+  .calcpanel{position:sticky;top:84px;}
+  .srctag{display:inline-block;font-size:9.5px;background:#e2e8f0;color:#475569;padding:1px 6px;border-radius:999px;margin-left:6px;vertical-align:middle;font-weight:700;}
+  .srctag.sale{background:#dbeafe;color:#1d4ed8;} .srctag.rent{background:#fef3c7;color:#b45309;} .srctag.pub{background:#ede9fe;color:#6d28d9;}
+  .hidden{display:none;}
+  .flash{background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:14px;}
+  .back{font-size:12px;color:var(--accent);cursor:pointer;display:inline-block;margin-bottom:10px;}
+  .delta-up{color:var(--ng-fg);} .delta-dn{color:var(--ok-fg);}
+  /* 新規起票：表示切替トグル */
+  .viewtoggle{display:flex;align-items:center;gap:6px;margin-bottom:12px;}
+  .viewtoggle .vt-lab{font-size:11px;color:var(--sub);margin-right:4px;}
+  .viewtoggle button{border:1px solid var(--line);background:#fff;color:var(--sub);padding:7px 14px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:12.5px;font-weight:600;}
+  .viewtoggle button.on{background:var(--navy);color:#fff;border-color:var(--navy);}
+  /* 新規起票：エクセル風グリッド */
+  .xwrap{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;}
+  .xgrid{border-collapse:collapse;width:100%;font-size:12px;}
+  .xgrid td{border:1px solid #cbd5e1;padding:3px 7px;color:var(--ink);vertical-align:middle;}
+  .xgrid .sec{background:#15564a;color:#fff;font-weight:700;font-size:11.5px;letter-spacing:.02em;}
+  .xgrid .grp{background:#d7ece4;color:#0f3d33;font-weight:700;}
+  .xgrid .lbl{background:#f1f5f9;font-weight:600;color:#334155;white-space:nowrap;}
+  .xgrid .gin{background:#eafaf0;padding:0;}
+  .xgrid .auto{background:#fbfdff;color:#475569;}
+  .xgrid .rmk{color:#94a3b8;font-size:11px;white-space:nowrap;}
+  .xgrid .tot{background:#fff7ed;font-weight:800;color:var(--ink);}
+  .xgrid .num{text-align:right;}
+  .xgrid input.xin,.xgrid select.xin{width:100%;border:0;background:transparent;font-family:inherit;font-size:12px;color:var(--ink);padding:4px 6px;}
+  .xgrid .num input.xin{text-align:right;}
+  .xgrid input.xin:focus,.xgrid select.xin:focus{outline:2px solid #86efac;background:#fff;}
+  .xcols{display:grid;grid-template-columns:1fr 1.4fr;gap:14px;margin-top:14px;}
+  @media(max-width:860px){ .kpis{grid-template-columns:repeat(2,1fr);} .scen{grid-template-columns:1fr;} .twocol{grid-template-columns:1fr;} .side{display:none;} .xcols{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- Sidebar -->
+  <aside class="side">
+    <div class="brand">
+      <div class="logo">Greens <span>仕入れ収支</span></div>
+      <div class="sub">物件仕入れ判断システム</div>
+    </div>
+    <nav class="nav">
+      <button class="newbtn" onclick="go('new')">＋ 新規物件の起案</button>
+      <div class="group">メニュー</div>
+      <button data-nav="dashboard" class="active" onclick="go('dashboard')"><span class="ic">▣</span>ダッシュボード</button>
+      <button data-nav="approve" onclick="go('approve')"><span class="ic">✓</span>承認<span id="nav-appr-badge" class="navbadge" style="display:none"></span></button>
+      <button data-nav="ops" onclick="go('ops')"><span class="ic">◔</span>仕入・販売<span id="nav-ops-badge" class="navbadge" style="display:none"></span></button>
+      <button data-nav="list" onclick="go('list')"><span class="ic">≣</span>物件一覧 / 検索</button>
+      <button data-nav="review" onclick="go('review')"><span class="ic">↺</span>実績分析</button>
+      <button data-nav="market" class="addon" onclick="go('market')" style="margin-top:auto"><span class="ic">◎</span><span>相場調査<span class="addnote">※追加機能</span></span></button>
+    </nav>
+    <div class="foot">
+      モックアップ v1（試作）<br>
+      <b>Spira Solutions</b> 受託案件<br>
+      ※数値はサンプル（マスキング）
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <div class="crumb" id="crumb">ホーム</div>
+        <h1 id="ptitle">ダッシュボード</h1>
+      </div>
+      <div class="rolewrap">
+        <span>表示する立場：</span>
+        <div class="roletoggle">
+          <button id="role-staff" class="on" onclick="setRole('staff')">営業担当</button>
+          <button id="role-mgr" onclick="setRole('mgr')">上長</button>
+          <button id="role-boss" onclick="setRole('boss')">永井社長</button>
+        </div>
+      </div>
+    </div>
+    <div class="content" id="content"><!-- rendered by JS --></div>
+  </div>
+</div>
+
+<script>
+/* ---------- サンプルデータ（受領Excelのマスキング実数） ---------- */
+const DEALS = [
+  {
+    id:'GR-2026-0012', type:'土地売り', name:'江戸川区◯◯1丁目 土地',
+    area:'江戸川区◯◯1丁目', station:'都営新宿線「◯◯」駅 徒歩16分',
+    land_m2:214.57, land_tsubo:64.9, yoseki:1.5, kenpei:0.6, period:12,
+    owner:'A社（売主）', staff:'佐藤', status:'await_pres', updated:'06/27',
+    appr:{mgr:'鈴木 課長', mgrDate:'06/27', pres:'永井 社長', presDate:''},
+    cost:12807900,
+    costRows:[['土地原価（仕入＋解体整地ほか）',10750000],['建物原価（インフラ改修）',300000],['租税公課（取得税・登録免許税ほか）',582500],['販売管理費（販売手数料ほか）',770400],['営業外費用（借入金利ほか）',405000]],
+    scen:[{t:'① 出値価格',price:16800000,profit:3992100},{t:'② 着地前後価格',price:15000000,profit:2192100},{t:'③ 下限価格',price:13800000,profit:992100}],
+    irr:{12:0.171,18:0.111,24:0.082},
+    mkt:{avg:245000,lo:215000,hi:275000,isshu:163000},
+    intake:{chiban:'江戸川区◯◯一丁目825番1、825番19', bldgm2:122.04, youto:'第一種中高層住居専用地域', bouka:'準防火地域', kodo:'第2種高度地区', road:'北西側：7.2ｍ公道／南東側：4ｍ私道', etc:'最低敷地70㎡', kukaku:1,
+      seller:'A社', buyer:'（未定）', broker1:'◯◯不動産', broker2:'（未定）', buyc:'2026/06/20', buys:'2026/07/10', sellc:'（未定）', sells:'（未定）',
+      rosen:10000000, koteiRosen:10000000, beval:500000,
+      costDetail:[
+        ['土地原価',[['土地仕入原価',10000000],['仲介手数料',0],['業務委託手数料',0],['解体整地費用',750000],['ライフライン引き込み',0],['譲渡承諾料',0],['測量費用',0],['立退き費用',0],['その他',0]]],
+        ['建物原価',[['建築費',0],['設計費用',0],['地盤改良',0],['インフラ費用（改修）',300000],['外構費用',0],['瑕疵担保保険',0]]],
+        ['租税公課',[['取得税(土地)',150000],['取得税(建物)',15000],['固定資産税',140000],['都市計画税',1500],['登録免許税(土地)',200000],['登録免許税（建物）',10000],['抵当権',36000],['印紙税',30000]]],
+        ['販売管理費',[['司法書士報酬',50000],['予備費',100000],['その他',0],['販売手数料',620400]]],
+        ['営業外費用',[['借入金利',315000],['事務手数料',90000],['その他',0]]]
+      ]}
+  },
+  {
+    id:'GR-2026-0013', type:'土地売り', name:'練馬区◯◯2丁目 土地',
+    area:'練馬区◯◯2丁目', station:'西武池袋線「◯◯」駅 徒歩13分',
+    land_m2:165.3, land_tsubo:50.0, yoseki:1.5, kenpei:0.6, period:12,
+    owner:'E社（売主）', staff:'高橋', status:'await_mgr', updated:'06/28',
+    appr:{mgr:'鈴木 課長', mgrDate:'', pres:'永井 社長', presDate:''},
+    cost:12670000,
+    costRows:[['土地原価（仕入＋解体整地ほか）',10600000],['建物原価',0],['租税公課',560000],['販売管理費',900000],['営業外費用',610000]],
+    scen:[{t:'① 出値価格',price:15200000,profit:2530000},{t:'② 着地前後価格',price:14000000,profit:1330000},{t:'③ 下限価格',price:13200000,profit:530000}],
+    irr:{12:0.105,18:0.068,24:0.051},
+    mkt:{avg:262000,lo:235000,hi:292000,isshu:175000},
+    intake:{chiban:'練馬区◯◯二丁目1234番5', bldgm2:0, youto:'第一種低層住居専用地域', bouka:'準防火地域', kodo:'第1種高度地区', road:'南側：6ｍ公道', etc:'最低敷地100㎡', kukaku:1,
+      seller:'E社', buyer:'（未定）', broker1:'◯◯不動産', broker2:'（未定）', buyc:'（未定）', buys:'（未定）', sellc:'（未定）', sells:'（未定）',
+      rosen:9500000, koteiRosen:9500000, beval:0,
+      costDetail:[
+        ['土地原価',[['土地仕入原価',10000000],['仲介手数料',0],['業務委託手数料',0],['解体整地費用',600000],['ライフライン引き込み',0],['譲渡承諾料',0],['測量費用',0],['立退き費用',0],['その他',0]]],
+        ['建物原価',[['建築費',0],['設計費用',0],['地盤改良',0],['インフラ費用（改修）',0],['外構費用',0],['瑕疵担保保険',0]]],
+        ['租税公課',[['取得税(土地)',160000],['取得税(建物)',0],['固定資産税',150000],['都市計画税',0],['登録免許税(土地)',185000],['登録免許税（建物）',0],['抵当権',35000],['印紙税',30000]]],
+        ['販売管理費',[['司法書士報酬',50000],['予備費',100000],['その他',0],['販売手数料',750000]]],
+        ['営業外費用',[['借入金利',315000],['事務手数料',90000],['その他',205000]]]
+      ]}
+  },
+  {
+    id:'GR-2026-0011', type:'戸建建売', name:'杉並区◯◯3丁目 戸建',
+    area:'杉並区◯◯3丁目', station:'JR中央線「◯◯」駅 徒歩9分',
+    land_m2:155.4, land_tsubo:47.0, yoseki:2.0, kenpei:0.6, period:12,
+    owner:'B社（売主）', staff:'田中', status:'sell', updated:'06/24',
+    appr:{mgr:'鈴木 課長', mgrDate:'06/22', pres:'永井 社長', presDate:'06/23'},
+    cost:72376400,
+    costRows:[['土地原価（仕入＋仲介ほか）',41386000],['建物原価（建築費ほか）',24588000],['租税公課',2334000],['販売管理費',3398400],['営業外費用',670000]],
+    scen:[{t:'① 出値価格',price:82800000,profit:10423600},{t:'② 着地前後価格',price:79800000,profit:7423600},{t:'③ 下限価格',price:77800000,profit:5423600}],
+    irr:{12:0.103,18:0.067,24:0.050},
+    mkt:{avg:1720000,lo:1560000,hi:1880000,isshu:0},
+    intake:{chiban:'杉並区◯◯三丁目56番7', bldgm2:98.5, youto:'第一種住居地域', bouka:'準防火地域', kodo:'第2種高度地区', road:'東側：6ｍ公道', etc:'—', kukaku:2,
+      seller:'B社', buyer:'（未定）', broker1:'◯◯不動産', broker2:'（未定）', buyc:'2026/05/15', buys:'2026/06/05', sellc:'（未定）', sells:'（未定）',
+      rosen:38000000, koteiRosen:38000000, beval:18000000}
+  },
+  {
+    id:'GR-2026-0009', type:'アパート', name:'北区◯◯2丁目 収益レジ',
+    area:'北区◯◯2丁目', station:'JR京浜東北線「◯◯」駅 徒歩10分',
+    land_m2:90.97, land_tsubo:27.5, yoseki:0.8, kenpei:1.5, period:18,
+    owner:'C社（売主）', staff:'佐藤', status:'done', updated:'06/12',
+    appr:{mgr:'鈴木 課長', mgrDate:'06/08', pres:'永井 社長', presDate:'06/09'},
+    cost:104496700,
+    costRows:[['土地原価',54000000],['建物原価（建築費ほか）',45000000],['租税公課',945000],['販売管理費',4397200],['営業外費用',2272500]],
+    scen:[{t:'① 利回5.5%',price:125672727,profit:21176027},{t:'② 利回6.0%',price:115200000,profit:10703300},{t:'③ 下限価格',price:108000000,profit:3503300}],
+    irr:{12:0.203,18:0.131,24:0.097},
+    mkt:{avg:4050000,lo:3700000,hi:4400000,isshu:0},
+    intake:{chiban:'北区◯◯二丁目89番1', bldgm2:210.0, youto:'近隣商業地域', bouka:'準防火地域', kodo:'—', road:'西側：8ｍ公道', etc:'—', kukaku:1,
+      seller:'C社', buyer:'（売却済）', broker1:'◯◯不動産', broker2:'◯◯不動産', buyc:'2026/04/10', buys:'2026/04/28', sellc:'2026/06/01', sells:'2026/06/12',
+      rosen:50000000, koteiRosen:50000000, beval:30000000},
+    actual:{price:118000000,profit:13000000,note:'計画の着地見込み（利回6%）より好条件で売却'}
+  },
+  {
+    id:'GR-2026-0007', type:'土地売り', name:'足立区◯◯1丁目 土地',
+    area:'足立区◯◯1丁目', station:'東武線「◯◯」駅 徒歩18分',
+    land_m2:120.0, land_tsubo:36.3, yoseki:1.5, kenpei:0.6, period:12,
+    owner:'D社（売主）', staff:'田中', status:'rej', updated:'06/10',
+    appr:{mgr:'鈴木 課長', mgrDate:'06/09', pres:'永井 社長', presDate:'06/10'},
+    cost:9800000,
+    costRows:[['土地原価',8500000],['建物原価',0],['租税公課',420000],['販売管理費',560000],['営業外費用',320000]],
+    scen:[{t:'① 出値価格',price:11200000,profit:1400000},{t:'② 着地前後価格',price:10400000,profit:600000},{t:'③ 下限価格',price:10000000,profit:200000}],
+    irr:{12:0.061,18:0.040,24:0.030},
+    mkt:{avg:250000,lo:225000,hi:282000,isshu:166000},
+    intake:{chiban:'足立区◯◯一丁目23番4', bldgm2:0, youto:'第一種中高層住居専用地域', bouka:'準防火地域', kodo:'第2種高度地区', road:'北側：4ｍ位置指定道路', etc:'要セットバック', kukaku:1,
+      seller:'D社', buyer:'—', broker1:'◯◯不動産', broker2:'—', buyc:'（見送り）', buys:'—', sellc:'—', sells:'—',
+      rosen:8000000, koteiRosen:8000000, beval:0},
+    rejReason:'着地見込みの利益率が6%にとどまり、IRRも基準未達。立地・接道に対し仕入値が高い。'
+  },
+  {
+    id:'GR-2026-0003', type:'土地売り', name:'世田谷区◯◯3丁目 土地',
+    area:'世田谷区◯◯3丁目', station:'小田急線「◯◯」駅 徒歩11分',
+    land_m2:180.0, land_tsubo:54.5, yoseki:1.5, kenpei:0.6, period:12,
+    owner:'F社（売主）', staff:'佐藤', status:'done', updated:'05/20',
+    appr:{mgr:'鈴木 課長', mgrDate:'04/02', pres:'永井 社長', presDate:'04/03'},
+    cost:20600000,
+    costRows:[['土地原価',18200000],['建物原価',0],['租税公課',900000],['販売管理費',1100000],['営業外費用',400000]],
+    scen:[{t:'① 出値価格',price:25500000,profit:4900000},{t:'② 着地前後価格',price:23500000,profit:2900000},{t:'③ 下限価格',price:22000000,profit:1400000}],
+    irr:{12:0.141,18:0.091,24:0.068},
+    mkt:{avg:415000,lo:380000,hi:450000,isshu:277000},
+    actual:{price:24200000,profit:3600000,note:'着地見込みを上回り好条件で成約。エリア相場の上昇も追い風。'}
+  },
+  {
+    id:'GR-2025-0044', type:'戸建建売', name:'板橋区◯◯1丁目 戸建',
+    area:'板橋区◯◯1丁目', station:'都営三田線「◯◯」駅 徒歩8分',
+    land_m2:120.0, land_tsubo:36.3, yoseki:2.0, kenpei:0.6, period:12,
+    owner:'G社（売主）', staff:'田中', status:'done', updated:'12/15',
+    appr:{mgr:'鈴木 課長', mgrDate:'09/01', pres:'永井 社長', presDate:'09/02'},
+    cost:58200000,
+    costRows:[['土地原価',33000000],['建物原価',21000000],['租税公課',1800000],['販売管理費',1900000],['営業外費用',500000]],
+    scen:[{t:'① 出値価格',price:66800000,profit:8600000},{t:'② 着地前後価格',price:63800000,profit:5600000},{t:'③ 下限価格',price:61800000,profit:3600000}],
+    irr:{12:0.107,18:0.070,24:0.052},
+    mkt:{avg:1740000,lo:1580000,hi:1900000,isshu:0},
+    actual:{price:62500000,profit:4300000,note:'着地見込みをやや下回ったが利益確保。建築費の上振れが要因。'}
+  },
+  {
+    id:'GR-2025-0031', type:'アパート', name:'川口市◯◯2丁目 収益レジ',
+    area:'川口市◯◯2丁目', station:'JR京浜東北線「◯◯」駅 徒歩9分',
+    land_m2:110.0, land_tsubo:33.3, yoseki:2.0, kenpei:0.6, period:12,
+    owner:'H社（売主）', staff:'佐藤', status:'done', updated:'10/30',
+    appr:{mgr:'鈴木 課長', mgrDate:'05/10', pres:'永井 社長', presDate:'05/11'},
+    cost:92000000,
+    costRows:[['土地原価',44000000],['建物原価',43000000],['租税公課',1200000],['販売管理費',3000000],['営業外費用',800000]],
+    scen:[{t:'① 利回5.5%',price:112000000,profit:20000000},{t:'② 利回6.0%',price:103000000,profit:11000000},{t:'③ 下限価格',price:98000000,profit:6000000}],
+    irr:{12:0.120,18:0.078,24:0.058},
+    mkt:{avg:3380000,lo:3050000,hi:3700000,isshu:0},
+    actual:{price:106000000,profit:14000000,note:'利回り改善で着地見込み超え。賃料相場の上昇が寄与。'}
+  }
+];
+
+/* ---------- 計算ロジック（御社Excel準拠） ---------- */
+function fmtY(n){ return '¥'+Math.round(n).toLocaleString('ja-JP'); }
+function pct(n){ return (n*100).toFixed(1)+'%'; }
+function rate(d,i){ return d.scen[i].profit / d.scen[i].price; }       // 利益率 = 総利益 / 売上
+function adoptedIRR(d){ return d.irr[d.period]; }                       // 採用IRR = プロジェクト期間に対応
+function judge(d){
+  const r2 = rate(d,1);            // 販売想定②の利益率
+  const irr = adoptedIRR(d);
+  if(r2>=0.10 && irr>=0.10) return {k:'ok',mark:'◎',label:'推奨',cls:'j-ok'};
+  if(r2>=0.08 && irr>=0.10) return {k:'warn',mark:'△',label:'条件付き可',cls:'j-warn'};
+  return {k:'ng',mark:'×',label:'見送り',cls:'j-ng'};
+}
+const STATUS={await_mgr:['await','上長承認待ち'],await_pres:['await','社長承認待ち'],returned:['returned','差し戻し'],approved:['approved','承認済み（仕入決済前）'],sell:['sell','販売中'],done:['done','振り返り済'],rej:['rej','見送り']};
+function statusPill(s){ const x=STATUS[s]; return `<span class="st ${x[0]}">${x[1]}</span>`; }
+function dealById(id){ return DEALS.find(d=>d.id===id); }
+
+/* ---------- グラフ部品（外部ライブラリ不使用・自己完結） ---------- */
+const COLR={ok:'#16a34a',warn:'#d97706',ng:'#dc2626'};
+function clampW(v,max){ return Math.max(0,Math.min(100,v/max*100)); }
+function meter(value,max,marks,color){
+  return `<div class="meter"><div class="meter-fill" style="width:${clampW(value,max)}%;background:${color}"></div>
+    ${marks.map(m=>`<div class="meter-mark" style="left:${clampW(m.v,max)}%"><span>${m.label}</span></div>`).join('')}</div>`;
+}
+function gauge(label,value,max,marks,color){
+  return `<div class="gauge"><div class="gl"><span>${label}</span><b style="color:${color}">${pct(value)}</b></div>${meter(value,max,marks,color)}</div>`;
+}
+function profitBars(d){
+  const marks=[{v:0.08,label:'最低8%'},{v:0.10,label:'推奨10%'}];
+  return d.scen.map((s,i)=>{ const r=rate(d,i); const c=r>=0.10?COLR.ok:r>=0.08?COLR.warn:COLR.ng;
+    return `<div class="barrow"><div class="bt">${s.t}</div><div>${meter(r,0.25,i===1?marks:[],c)}</div><div class="bv">${fmtY(s.price)}<br><b style="color:${c}">${pct(r)}</b></div></div>`;
+  }).join('');
+}
+const COSTPAL=['#0e7490','#0891b2','#22d3ee','#a5b4fc','#c7d2fe'];
+function stackBar(rows){
+  const tot=rows.reduce((s,r)=>s+r[1],0)||1;
+  return `<div class="stack">${rows.map((r,i)=>r[1]>0?`<span style="width:${r[1]/tot*100}%;background:${COSTPAL[i%COSTPAL.length]}" title="${r[0]} ${fmtY(r[1])}"></span>`:'').join('')}</div>
+    <div class="legend">${rows.map((r,i)=>`<span><i style="background:${COSTPAL[i%COSTPAL.length]}"></i>${r[0].replace(/（.*?）/,'')} ${fmtY(r[1])}</span>`).join('')}</div>`;
+}
+function rangeBar(val,lo,hi,avg,lbl){
+  const max=hi*1.15;
+  return `<div class="rangebar"><div class="band" style="left:${clampW(lo,max)}%;width:${clampW(hi,max)-clampW(lo,max)}%"></div>
+    <div class="avg" style="left:${clampW(avg,max)}%"></div>
+    <div class="marker" style="left:${clampW(val,max)}%"><span>${lbl||('この物件 ¥'+Math.round(val).toLocaleString())}</span></div></div>`;
+}
+function trendBars(data,max){
+  return `<div style="display:flex;align-items:flex-end;gap:7px;height:96px">${data.map(p=>{const h=Math.max(4,Math.round(p[1]/max*78));return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end">
+    <div style="font-size:9px;color:var(--sub)">¥${Math.round(p[1]/1000)}k</div>
+    <div style="width:80%;background:linear-gradient(180deg,#22d3ee,#0e7490);height:${h}px;border-radius:3px 3px 0 0"></div>
+    <div style="font-size:9.5px;color:var(--sub);margin-top:4px">${p[0]}</div></div>`;}).join('')}</div>`;
+}
+function statBox(label,value,sub){
+  return `<div class="kpi"><div class="l">${label}</div><div class="v" style="font-size:20px">${value}</div>${sub?`<div class="muted" style="font-size:10.5px;margin-top:2px">${sub}</div>`:''}</div>`;
+}
+function compareRow(d){
+  const e=rate(d,1), a=d.actual.profit/d.actual.price; const diff=a-e; const up=diff>=0;
+  return `<div style="margin:12px 0;padding-bottom:10px;border-bottom:1px dashed var(--line)">
+    <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px"><b>${d.name}</b><span class="muted">${d.type}・${d.id}・担当 ${d.staff}</span></div>
+    <div class="barrow" style="grid-template-columns:58px 1fr 138px"><div class="bt" style="color:var(--sub)">想定②</div><div>${meter(e,0.25,[],'#94a3b8')}</div><div class="bv">${fmtY(d.scen[1].price)}／${pct(e)}</div></div>
+    <div class="barrow" style="grid-template-columns:58px 1fr 138px"><div class="bt">実績</div><div>${meter(a,0.25,[],up?COLR.ok:COLR.ng)}</div><div class="bv"><b style="color:${up?COLR.ok:COLR.ng}">${fmtY(d.actual.price)}／${pct(a)} ${up?'▲':'▼'}${pct(Math.abs(diff))}</b></div></div>
+    <div class="muted" style="font-size:11.5px;margin-top:4px">所見：${d.actual.note}</div>
+  </div>`;
+}
+function irrBars(d){
+  return [12,18,24].map(m=>{ const v=d.irr[m]; const adopted=(m===d.period); const c=v>=0.10?COLR.ok:COLR.ng;
+    return `<div class="barrow"><div class="bt">事業期間${m}ヶ月${adopted?' ★':''}</div><div>${meter(v,0.25,adopted?[{v:0.10,label:'10%'}]:[],c)}</div><div class="bv"><b style="color:${c}">${pct(v)}</b></div></div>`;
+  }).join('')+`<div class="muted" style="font-size:11px;margin-top:6px">★＝プロジェクト期間（${d.period}ヶ月）の採用IRR。基準は10%以上。</div>`;
+}
+function marketCard(d){
+  const m=d.mkt||{avg:0,lo:0,hi:0,isshu:0};
+  const yk=d.yoseki||1.5;
+  const thisTsubo=d.land_tsubo>0? d.scen[1].price/d.land_tsubo : 0;
+  const cls=thisTsubo<=m.avg?'j-ok':thisTsubo<=m.hi?'j-warn':'j-ng';
+  const word=thisTsubo<=m.avg?'相場並み〜割安':thisTsubo<=m.hi?'やや割高':'割高（要注意）';
+  const isshuThis= yk>0? thisTsubo/yk : 0;
+  const comps=[['◯◯1丁目',Math.round(m.avg*0.96),'2026/04'],['◯◯2丁目',Math.round(m.hi*0.97),'2026/02'],
+    ['△△3丁目',Math.round(m.lo*1.03),'2025/11'],['△△1丁目',Math.round(m.avg*1.05),'2025/08']];
+  return `<div class="card" style="margin-bottom:16px">
+    <h3>相場感（近隣 成約坪単価との比較）</h3>
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--sub)"><span>近隣 成約レンジ ¥${m.lo.toLocaleString()}–¥${m.hi.toLocaleString()} /坪</span><span>平均 ¥${m.avg.toLocaleString()}</span></div>
+    ${rangeBar(thisTsubo,m.lo,m.hi,m.avg)}
+    <div class="judgebox ${cls}" style="padding:10px 14px;margin-top:8px"><div>
+      <div style="font-weight:700;color:var(--ink);font-size:13.5px">想定②の坪単価 ¥${Math.round(thisTsubo).toLocaleString()} → ${word}</div>
+      <div class="muted" style="font-size:11.5px">近隣成約の平均 ¥${m.avg.toLocaleString()} に対する位置${m.isshu?`／一種単価 この物件 ¥${Math.round(isshuThis).toLocaleString()}・近隣 ¥${m.isshu.toLocaleString()}`:''}</div></div></div>
+    <div class="muted" style="font-size:11.5px;margin:12px 0 4px">近隣 成約事例（直近1年・匿名）</div>
+    <table><thead><tr><th>住所</th><th class="num">坪単価</th><th class="num">一種単価</th><th>成約</th></tr></thead><tbody>
+      ${comps.map(c=>`<tr><td>${c[0]}</td><td class="num">¥${c[1].toLocaleString()}</td><td class="num">¥${Math.round(c[1]/yk).toLocaleString()}</td><td>${c[2]}</td></tr>`).join('')}
+    </tbody></table>
+    <div class="muted" style="font-size:11px;margin-top:8px">※ サンプル値。実データ（ポータル売出／成約／レインズ／公示・路線価）の連携は段階導入。</div>
+  </div>`;
+}
+function donut(rows){
+  const tot=rows.reduce((s,r)=>s+r[1],0)||1, R=52, C=2*Math.PI*R; let off=0;
+  const segs=rows.map((r,i)=>{ if(r[1]<=0) return ''; const len=r[1]/tot*C;
+    const s=`<circle r="${R}" cx="70" cy="70" fill="none" stroke="${COSTPAL[i%COSTPAL.length]}" stroke-width="22" stroke-dasharray="${len.toFixed(2)} ${(C-len).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90 70 70)"/>`;
+    off+=len; return s; }).join('');
+  return `<svg width="140" height="140" viewBox="0 0 140 140">${segs}<text x="70" y="66" text-anchor="middle" font-size="9.5" fill="#6b7280">原価合計</text><text x="70" y="83" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1f2937">${fmtY(tot)}</text></svg>`;
+}
+function costPie(d){
+  const rows=d.costRows, tot=rows.reduce((s,r)=>s+r[1],0)||1;
+  return `<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+    <div>${donut(rows)}</div>
+    <div style="flex:1;min-width:190px"><div style="display:flex;flex-direction:column;gap:7px;font-size:12px">
+    ${rows.map((r,i)=>`<div style="display:flex;justify-content:space-between"><span><i style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${COSTPAL[i%COSTPAL.length]};margin-right:6px;vertical-align:-1px"></i>${r[0].replace(/（.*?）/,'')}</span><span style="font-variant-numeric:tabular-nums">${fmtY(r[1])}<span class="muted">（${(r[1]/tot*100).toFixed(0)}%）</span></span></div>`).join('')}
+    </div></div></div>`;
+}
+function costBreakdown(d){
+  if(d.intake&&d.intake.costDetail){
+    return d.intake.costDetail.map(([g,lines])=>{
+      const sub=lines.reduce((s,l)=>s+l[1],0);
+      return `<tr class="grp"><td>${g}</td><td class="num">${fmtY(sub)}</td></tr>`+
+        lines.map(l=>`<tr><td style="padding-left:20px" class="muted">${l[0]}</td><td class="num muted">${fmtY(l[1])}</td></tr>`).join('');
+    }).join('')+`<tr><td><b>原価合計</b></td><td class="num"><b>${fmtY(d.cost)}</b></td></tr>`;
+  }
+  return d.costRows.map(r=>`<tr><td>${r[0]}</td><td class="num">${fmtY(r[1])}</td></tr>`).join('')+`<tr><td><b>原価合計</b></td><td class="num"><b>${fmtY(d.cost)}</b></td></tr>`;
+}
+function kvBlock(rows){ return `<div class="kvcols">${rows.map(r=>`<div class="kvrow"><span class="k">${r[0]}</span><span class="v">${r[1]}</span></div>`).join('')}</div>`; }
+function renderIntake(d){
+  const x=d.intake||{};
+  const borrow = (x.costDetail? x.costDetail[0][1][0][1]*0.9 : null);
+  const basic=[['物件名',d.name],['所在地',d.area],['地番',x.chiban||'—'],['交通',d.station],
+    ['地積',`${d.land_m2} ㎡（${d.land_tsubo} 坪）`],['建物面積',(x.bldgm2!=null?x.bldgm2+' ㎡':'—')],
+    ['容積率',pct(d.yoseki)],['建蔽率',pct(d.kenpei)],['用途地域',x.youto||'—'],['防火指定',x.bouka||'—'],
+    ['高度地区',x.kodo||'—'],['道路',x.road||'—'],['その他',x.etc||'—'],['区画数',(x.kukaku!=null?x.kukaku+' 区画':'—')],['プロジェクト期間',d.period+' ヶ月']];
+  const torihiki=[['売主',x.seller||'—'],['仲介会社（仕入）',x.broker1||'—'],['買主',x.buyer||'—'],['仲介会社（売却）',x.broker2||'—'],
+    ['仕入契約日',x.buyc||'—'],['仕入決済日',x.buys||'—'],['売却契約日',x.sellc||'—'],['売却決済日',x.sells||'—']];
+  const eva=[['路線価',x.rosen!=null?fmtY(x.rosen):'—'],['固定資産税路線価',x.koteiRosen!=null?fmtY(x.koteiRosen):'—'],
+    ['建物評価額',x.beval!=null?fmtY(x.beval):'—'],['借入金（土地仕入原価×0.9）',borrow!=null?fmtY(borrow):'—']];
+  return `<div class="card" style="margin-bottom:16px">
+    <h3>物件概要・起案内容（全項目）</h3>
+    <div class="subhead">① 物件基本情報</div>${kvBlock(basic)}
+    <div class="subhead">② 取引情報（売主・買主・仲介会社・契約／決済日）</div>${kvBlock(torihiki)}
+    <div class="subhead">⑧ 借入金・評価額</div>${kvBlock(eva)}
+    <div class="muted" style="font-size:11px;margin-top:10px">※ 起案で入力された項目をそのまま表示（割愛なし）。仕入れ原価の明細は下の「仕入れ原価の内訳」を参照。</div>
+  </div>`;
+}
+
+/* ---------- 画面遷移・権限 ---------- */
+let ROLE='staff';
+const CURRENT_STAFF='佐藤';   // ログイン中の営業担当（自分の案件だけ見える）
+// 営業担当は自分の案件のみ、上長・社長は全件
+function visibleDeals(){ return ROLE==='staff' ? DEALS.filter(d=>d.staff===CURRENT_STAFF) : DEALS; }
+function setRole(r){ ROLE=r; document.getElementById('role-staff').classList.toggle('on',r==='staff');
+  document.getElementById('role-mgr').classList.toggle('on',r==='mgr');
+  document.getElementById('role-boss').classList.toggle('on',r==='boss');
+  go(CUR.view, CUR.arg); }
+let CUR={view:'dashboard',arg:null};
+const TITLES={dashboard:['ホーム','ダッシュボード'],approve:['承認','承認（あなたの番の承認待ち）'],ops:['仕入・販売','仕入決済・販売中の案件'],list:['物件','物件一覧 / 検索'],detail:['物件 › 収支シート','事業収支シート'],market:['相場','相場調査（追加機能）'],review:['実績分析','実績分析'],new:['物件 › 新規起案','新規物件の起案（事業計画）']};
+function go(view,arg){
+  CUR={view,arg};
+  document.querySelectorAll('.nav button[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===view));
+  const t=TITLES[view]||['',''];
+  document.getElementById('crumb').textContent=t[0];
+  document.getElementById('ptitle').textContent=t[1];
+  ({dashboard:renderDashboard,approve:renderApprove,ops:renderOps,list:renderList,detail:renderDetail,market:renderMarket,review:renderReview,new:renderNew}[view])(arg);
+  updateApprBadge(); updateOpsBadge();
+  window.scrollTo(0,0);
+}
+function updateApprBadge(){
+  const b=document.getElementById('nav-appr-badge'); if(!b) return;
+  let n=0;
+  if(ROLE==='boss') n=DEALS.filter(d=>d.status==='await_pres').length;
+  else if(ROLE==='mgr') n=DEALS.filter(d=>d.status==='await_mgr').length;
+  else n=visibleDeals().filter(d=>d.status==='returned').length;
+  b.textContent=n||''; b.style.display=n?'inline-flex':'none';
+}
+function updateOpsBadge(){
+  const b=document.getElementById('nav-ops-badge'); if(!b) return;
+  const n=visibleDeals().filter(d=>d.status==='approved').length; // 仕入決済待ち＝要対応
+  b.textContent=n||''; b.style.display=n?'inline-flex':'none';
+}
+function renderOps(){
+  const c=document.getElementById('content');
+  const D=visibleDeals();
+  const settle=D.filter(d=>d.status==='approved');
+  const selling=D.filter(d=>d.status==='sell');
+  const scope = ROLE==='staff' ? `自分の案件（${CURRENT_STAFF}）` : '全社';
+  c.innerHTML=`
+    <div class="notebar">🏷️ <b>仕入・販売（進行中）</b>：承認後の案件をここで進めます（${scope}）。<b>仕入決済を登録 → 販売中 → 売却決済</b>へ。行をクリックすると収支シートが開き、最上段のパネルで操作できます。</div>
+    <div class="sectiontitle">¥ 仕入決済待ち（社長承認済み・要対応）</div>
+    ${settle.length?dealTable(settle,false):'<div class="card muted">仕入決済待ちはありません。</div>'}
+    <div class="sectiontitle">◷ 販売中（売却活動）</div>
+    ${selling.length?dealTable(selling,false):'<div class="card muted">販売中の案件はありません。</div>'}`;
+}
+function renderApprove(){
+  const c=document.getElementById('content');
+  if(ROLE==='mgr'||ROLE==='boss'){
+    const list = ROLE==='boss'?DEALS.filter(d=>d.status==='await_pres'):DEALS.filter(d=>d.status==='await_mgr');
+    const roleName = ROLE==='boss'?'社長':'上長';
+    c.innerHTML=`<div class="notebar">👤 <b>${roleName}の承認</b>：あなたの番の承認待ちが <b>${list.length}件</b>。行をクリックすると収支シートが開き、右下の承認パネルで「承認 / 差し戻し / 見送り」ができます。</div>
+      <div class="sectiontitle">⏳ ${roleName} 承認待ち</div>
+      ${list.length?dealTable(list,true):'<div class="card muted">承認待ちはありません。</div>'}`;
+    return;
+  }
+  const mine=visibleDeals();
+  const returned=mine.filter(d=>d.status==='returned');
+  const waiting=mine.filter(d=>d.status==='await_mgr'||d.status==='await_pres');
+  c.innerHTML=`<div class="notebar">💡 <b>あなた（${CURRENT_STAFF}）の承認状況</b>：表示は自分の案件のみ。提出した案件が今どの段階か。差し戻しは修正して再提出します（右上で「上長」「永井社長」に切り替えると承認操作を体験できます）。</div>
+    ${returned.length?`<div class="sectiontitle">↩ 差し戻し（要対応・修正して再提出）</div>${dealTable(returned,false)}`:''}
+    <div class="sectiontitle">⏳ 承認待ち（上長・社長）</div>
+    ${waiting.length?dealTable(waiting,false):'<div class="card muted">承認待ちはありません。</div>'}`;
+}
+
+/* ---------- ダッシュボード ---------- */
+function renderDashboard(){
+  const c=document.getElementById('content');
+  const total=DEALS.length;
+  const awaitMgr=DEALS.filter(d=>d.status==='await_mgr');
+  const awaitPres=DEALS.filter(d=>d.status==='await_pres');
+  const returned=DEALS.filter(d=>d.status==='returned');
+  const selling=DEALS.filter(d=>d.status==='sell').length;
+  const ok=DEALS.filter(d=>judge(d).k==='ok').length;
+
+  if(ROLE==='boss'){
+    c.innerHTML=`
+      <div class="notebar">👤 <b>永井社長ビュー</b>：あなた（社長）の承認待ちが <b>${awaitPres.length}件</b>。上長承認を通った案件が最終判断としてここに集まります（＝必ず目に入る）。</div>
+      <div class="kpis">
+        <div class="kpi"><div class="l">社長 承認待ち</div><div class="v">${awaitPres.length}<small> 件</small></div></div>
+        <div class="kpi"><div class="l">上長 承認待ち</div><div class="v">${awaitMgr.length}<small> 件</small></div></div>
+        <div class="kpi"><div class="l">販売中（仕入済）</div><div class="v">${selling}<small> 件</small></div></div>
+        <div class="kpi"><div class="l">◎推奨 判定</div><div class="v">${ok}<small> 件</small></div></div>
+      </div>
+      <div class="sectiontitle">⏳ あなた（社長）の承認待ち</div>
+      ${awaitPres.length?dealTable(awaitPres,true):'<div class="card muted">社長承認待ちはありません。</div>'}
+    `;
+    return;
+  }
+  if(ROLE==='mgr'){
+    c.innerHTML=`
+      <div class="notebar">👤 <b>上長ビュー</b>：あなた（上長）の承認待ちが <b>${awaitMgr.length}件</b>。担当が起案した案件は、まず上長のあなたが確認し、社長へ上げます。</div>
+      <div class="kpis">
+        <div class="kpi"><div class="l">上長 承認待ち</div><div class="v">${awaitMgr.length}<small> 件</small></div></div>
+        <div class="kpi"><div class="l">社長へ送付済</div><div class="v">${awaitPres.length}<small> 件</small></div></div>
+        <div class="kpi"><div class="l">差し戻し中</div><div class="v">${returned.length}<small> 件</small></div></div>
+        <div class="kpi"><div class="l">◎推奨 判定</div><div class="v">${ok}<small> 件</small></div></div>
+      </div>
+      <div class="sectiontitle">⏳ あなた（上長）の承認待ち</div>
+      ${awaitMgr.length?dealTable(awaitMgr,true):'<div class="card muted">上長承認待ちはありません。</div>'}
+    `;
+    return;
+  }
+  const mine=visibleDeals();
+  const myAwait=mine.filter(d=>d.status==='await_mgr'||d.status==='await_pres');
+  const myReturned=mine.filter(d=>d.status==='returned');
+  const mySelling=mine.filter(d=>d.status==='sell').length;
+  c.innerHTML=`
+    <div class="notebar">💡 <b>営業担当ビュー（${CURRENT_STAFF}）</b>：表示は<b>自分の案件のみ</b>。承認待ち・差し戻し・販売中・未振り返りが一目で分かる＝<b>放置できない</b>仕組み。</div>
+    <div class="kpis">
+      <div class="kpi"><div class="l">自分の検討中</div><div class="v">${mine.length}<small> 件</small></div></div>
+      <div class="kpi"><div class="l">承認待ち（上長＋社長）</div><div class="v">${myAwait.length}<small> 件</small></div></div>
+      <div class="kpi"><div class="l">差し戻し（要対応）</div><div class="v">${myReturned.length}<small> 件</small></div></div>
+      <div class="kpi"><div class="l">販売中</div><div class="v">${mySelling}<small> 件</small></div></div>
+    </div>
+    ${myReturned.length?`<div class="sectiontitle">↩ 差し戻し（修正して再提出）</div>${dealTable(myReturned,false)}`:''}
+    <div class="sectiontitle">📋 自分の案件</div>
+    ${dealTable(mine,false)}
+  `;
+}
+function dealTable(arr,bossMode){
+  return `<div class="card" style="padding:0;overflow:hidden">
+    <table><thead><tr>
+      <th>物件</th><th>業務</th><th class="num">原価合計</th><th class="num">想定②利益率</th><th class="num">採用IRR</th><th>判定</th><th>状態</th><th>担当</th>
+    </tr></thead><tbody>
+    ${arr.map(d=>{const j=judge(d);return `<tr class="clickable" onclick="go('detail','${d.id}')">
+      <td><b>${d.name}</b><br><span class="muted" style="font-size:11px">${d.id}・更新 ${d.updated}</span></td>
+      <td>${d.type}</td>
+      <td class="num">${fmtY(d.cost)}</td>
+      <td class="num">${pct(rate(d,1))}</td>
+      <td class="num">${pct(adoptedIRR(d))}</td>
+      <td><span class="pill ${j.cls}">${j.mark} ${j.label}</span></td>
+      <td>${statusPill(d.status)}</td>
+      <td>${d.staff}</td>
+    </tr>`;}).join('')}
+    </tbody></table></div>`;
+}
+
+/* ---------- 物件一覧 ---------- */
+function renderList(){
+  const c=document.getElementById('content');
+  c.innerHTML=`
+    <div class="card" style="margin-bottom:16px">
+      <h3>条件で絞り込む（相場査定的な入口）</h3>
+      <div class="row">
+        <div><div class="muted" style="font-size:11px">エリア</div><select class="btn" id="f-area" onchange="filterList()"><option value="">すべて</option><option>江戸川区</option><option>杉並区</option><option>北区</option><option>世田谷区</option><option>板橋区</option><option>足立区</option><option>練馬区</option><option>川口市</option></select></div>
+        <div><div class="muted" style="font-size:11px">業務タイプ</div><select class="btn" id="f-type" onchange="filterList()"><option value="">すべて</option><option>土地売り</option><option>戸建建売</option><option>業者売り</option><option>アパート</option></select></div>
+        <div><div class="muted" style="font-size:11px">判定</div><select class="btn" id="f-judge" onchange="filterList()"><option value="">すべて</option><option value="ok">◎ 推奨</option><option value="warn">△ 条件付き可</option><option value="ng">× 見送り</option></select></div>
+        <div><div class="muted" style="font-size:11px">状態</div><select class="btn" id="f-status" onchange="filterList()"><option value="">すべて</option><option value="await">承認待ち</option><option value="approved">承認済み（仕入決済前）</option><option value="sell">販売中</option><option value="done">振り返り済</option><option value="returned">差し戻し</option><option value="rej">見送り</option></select></div>
+      </div>
+    </div>
+    <div id="listbody"></div>`;
+  filterList();
+}
+function filterList(){
+  const t=document.getElementById('f-type').value, jf=document.getElementById('f-judge').value;
+  const ar=document.getElementById('f-area').value, st=document.getElementById('f-status').value;
+  let arr=visibleDeals().filter(d=>
+    (!t||d.type===t) && (!jf||judge(d).k===jf) && (!ar||(d.area||'').includes(ar)) &&
+    (!st || (st==='await' ? (d.status==='await_mgr'||d.status==='await_pres') : d.status===st)) );
+  const scope = ROLE==='staff' ? `自分の案件 ${arr.length}件` : `${arr.length}件（過去事例は会社の資産として蓄積されます）`;
+  document.getElementById('listbody').innerHTML=`<div class="muted" style="margin-bottom:8px;font-size:12px">${scope}</div>`+dealTable(arr,false);
+}
+
+/* ---------- 収支シート（詳細・主役） ---------- */
+function renderDetail(id){
+  const d=dealById(id)||DEALS[0];
+  const j=judge(d), r2=rate(d,1), irr=adoptedIRR(d);
+  const steps=[['物件入手',1],['事業計画',2],['上長承認',3],['社長承認',4],['仕入決済',5],['販売中',6],['売却決済',7],['実績/振返り',8]];
+  const stMap={returned:2, await_mgr:3, await_pres:4, rej:4, approved:5, sell:6, done:8};
+  let curStep = stMap[d.status]||2;
+  const types=['土地売り','戸建建売','アパート','業者売り'];
+  const c=document.getElementById('content');
+  c.innerHTML=`
+    <span class="back" onclick="go('list')">← 物件一覧へ戻る</span>
+    <div id="flash"></div>
+
+    <div style="margin-bottom:16px">${actionPanel(d)}</div>
+
+    <div class="card" style="margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px">
+        <div>
+          <div class="muted" style="font-size:12px">${d.id}・担当 ${d.staff}・更新 ${d.updated}</div>
+          <div style="font-size:18px;font-weight:700;color:var(--ink)">${d.name}</div>
+        </div>
+        <div>${statusPill(d.status)}</div>
+      </div>
+      <div class="stepper" style="margin-top:14px">
+        ${steps.map((s,i)=>`${i>0?'<span class="bar"></span>':''}<div class="step ${s[1]<curStep?'done':s[1]===curStep?'cur':''}"><span class="dot">${s[1]<curStep?'✓':s[1]}</span><span class="lab">${s[0]}</span></div>`).join('')}
+      </div>
+      <div class="typeselect">
+        ${types.map(t=>`<span class="${t===d.type?'on':''}">${t}</span>`).join('')}
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px">
+      <h3>仕入れ判定サマリー（承認の判断材料）</h3>
+      <div class="row" style="align-items:center;gap:18px">
+        <div class="judgebox ${j.cls}" style="flex:0 0 auto;min-width:210px">
+          <div class="big">${j.mark}</div>
+          <div><div style="font-weight:700;color:var(--ink);font-size:16px">${j.label}</div>
+          <div class="muted" style="font-size:11.5px">基準：利益率10%以上＋IRR10%以上で推奨</div></div>
+        </div>
+        <div style="flex:1;min-width:300px">
+          <div class="gaugewrap">
+            ${gauge('想定②利益率（最低8%／推奨10%）',r2,0.25,[{v:0.08,label:'8%'},{v:0.10,label:'10%'}], r2>=0.10?COLR.ok:r2>=0.08?COLR.warn:COLR.ng)}
+            ${gauge('採用IRR（基準10%・'+d.period+'ヶ月）',irr,0.25,[{v:0.10,label:'10%'}], irr>=0.10?COLR.ok:COLR.ng)}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    ${renderIntake(d)}
+
+    <div class="twocol">
+      <div>
+        <div class="card" style="margin-bottom:16px">
+          <h3>販売想定①②③（利益率）</h3>
+          <div class="muted" style="font-size:11.5px;margin-bottom:10px">②着地前後価格で判定。目盛りの線は最低8%・推奨10%ライン。</div>
+          ${profitBars(d)}
+        </div>
+        <div class="card">
+          <h3>仕入れ原価の内訳（円グラフ）</h3>
+          ${costPie(d)}
+          <div style="height:6px"></div>
+          <table><tbody>
+            ${costBreakdown(d)}
+          </tbody></table>
+        </div>
+      </div>
+
+      <div>
+        ${marketCard(d)}
+        <div class="card" style="margin-bottom:16px">
+          <h3>採用IRR（事業期間別）</h3>
+          ${irrBars(d)}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* ---------- 承認パネル（決裁導線） ---------- */
+function soCell(role,name,state,date){
+  const map={ok:['✓ 承認','ok'],wait:['承認待ち','wait'],ret:['↩ 差し戻し','ret'],rej:['× 見送り','rej'],none:['—','none']};
+  const [badge,cls]=map[state]||map.none;
+  return `<div class="signoff ${cls}"><div class="so-role">${role}</div><div class="so-name">${name||'—'}</div>
+    <div class="so-state">${badge}${date?`<span class="so-date">${date}</span>`:''}</div></div>`;
+}
+function signoffRow(d){
+  const a=d.appr||{}, s=d.status;
+  let mgrState,presState;
+  if(s==='await_mgr'){ mgrState='wait'; presState='none'; }
+  else if(s==='returned'){ mgrState='ret'; presState='none'; }
+  else if(s==='await_pres'){ mgrState='ok'; presState='wait'; }
+  else if(s==='rej'){ mgrState='ok'; presState='rej'; }
+  else { mgrState='ok'; presState='ok'; } // sell / done
+  return `<div class="signoffrow">
+    ${soCell('担当（起案）',d.staff,'ok',d.updated)}
+    ${soCell('上長',a.mgr,mgrState,a.mgrDate)}
+    ${soCell('社長',a.pres,presState,a.presDate)}
+  </div>`;
+}
+function approvalPanel(d){
+  const s=d.status;
+  const ta=ph=>`<div style="margin-top:10px"><textarea placeholder="${ph}" style="width:100%;min-height:50px;border:1px solid var(--line);border-radius:8px;padding:8px;font-family:inherit"></textarea></div>`;
+  let action='';
+  if(s==='await_mgr'){
+    if(ROLE==='mgr') action=`<div class="muted" style="font-size:12.5px;margin-bottom:8px">担当 ${d.staff} から提出。上長のあなたの承認待ちです。</div>
+      <div class="row"><button class="btn ok" onclick="act('mgr_approve','${d.id}')">✓ 承認して社長へ</button>
+      <button class="btn ng" onclick="act('mgr_return','${d.id}')">↩ 差し戻し</button></div>${ta('コメント / 差し戻し理由')}`;
+    else action=`<div class="muted" style="font-size:12.5px">上長（${(d.appr||{}).mgr||'上長'}）の承認待ちです。<br>右上で「上長」に切り替えると承認操作を体験できます。</div>`;
+  } else if(s==='returned'){
+    if(ROLE==='staff') action=`<div class="muted" style="font-size:12.5px;margin-bottom:8px">上長から差し戻されました。事業計画を修正して再提出してください。</div>
+      <button class="btn primary" onclick="act('resubmit','${d.id}')">修正して再提出（上長承認へ）</button>`;
+    else action=`<div class="muted" style="font-size:12.5px">担当 ${d.staff} が修正中（差し戻し）。</div>`;
+  } else if(s==='await_pres'){
+    if(ROLE==='boss') action=`<div class="muted" style="font-size:12.5px;margin-bottom:8px">上長（${(d.appr||{}).mgr||'上長'}）承認済み。社長のあなたの最終判断待ちです。</div>
+      <div class="row"><button class="btn ok" onclick="act('pres_approve','${d.id}')">✓ 承認して仕入れGO</button>
+      <button class="btn ng" onclick="act('pres_reject','${d.id}')">× 見送り</button></div>${ta('コメント / 見送り理由')}`;
+    else action=`<div class="muted" style="font-size:12.5px">社長（${(d.appr||{}).pres||'永井 社長'}）の最終承認待ちです。<br>右上で「永井社長」に切り替えると承認操作を体験できます。</div>`;
+  } else if(s==='rej'){
+    action=`<div class="muted" style="font-size:12.5px"><b style="color:var(--ng-fg)">見送り（社長判断）</b>：${d.rejReason||''}</div>
+      <div class="muted" style="font-size:11.5px;margin-top:8px">この理由は「実績分析」に蓄積され、次の判断に活きます。</div>`;
+  } else {
+    action=`<div class="muted" style="font-size:12.5px"><b style="color:var(--ok-fg)">上長・社長とも承認済み（仕入れGO）。</b><br>販売状況・実績は「振り返り」へ進みます。</div>`;
+  }
+  const j=judge(d);
+  const pending=(s==='await_mgr'||s==='await_pres'||s==='returned');
+  const tag = pending ? '<span class="tag todo">要対応</span>' : '<span class="tag">決裁記録</span>';
+  return `<div class="card action-card phase-approve">
+    <div class="apptitle"><span class="lead"><span class="ic">✓</span>承認（上長 → 社長）</span>${tag}</div>
+    <div class="appbody">
+      <div class="apptarget">対象：<b>${d.name}</b>（${d.id}・担当 ${d.staff}・更新 ${d.updated}）　判定 <b style="color:var(--ink)">${j.mark} ${j.label}</b></div>
+      ${signoffRow(d)}
+      <div style="margin-top:8px">${action}</div>
+    </div></div>`;
+}
+function act(kind,id){
+  const d=dealById(id); if(!d) return; const a=d.appr||(d.appr={}); const today='06/29';
+  if(kind==='mgr_approve'){ d.status='await_pres'; a.mgrDate=today; }
+  else if(kind==='mgr_return'){ d.status='returned'; }
+  else if(kind==='resubmit'){ d.status='await_mgr'; }
+  else if(kind==='pres_approve'){ d.status='approved'; a.presDate=today; }
+  else if(kind==='pres_reject'){ d.status='rej'; a.presDate=today; d.rejReason=d.rejReason||'社長判断により見送り（モック）。'; }
+  else if(kind==='settle_buy'){ d.status='sell'; d.settle=Object.assign({buySettle:today},d.settle); }
+  else if(kind==='settle_sell'){ const amt=gv('op_sell_amount')||d.scen[1].price; d.status='done'; d.actual={price:amt, profit:amt-d.cost, note:(amt>=d.scen[1].price?'販売活動の結果、着地見込み以上で成約':'着地見込みを下回って成約')+'（モック）'}; }
+  go('detail',id);
+  const msg={mgr_approve:'✓ 上長が承認しました。案件は「社長承認待ち」へ進みます。',
+    mgr_return:'↩ 担当へ差し戻しました。担当が修正して再提出します。',
+    resubmit:'✓ 再提出しました。「上長承認待ち」に戻ります。',
+    pres_approve:'✓ 社長が承認しました（仕入れGO）。次は「仕入決済」です。',
+    pres_reject:'× 見送りにしました。見送り理由は実績分析に蓄積されます。',
+    settle_buy:'✓ 仕入決済を登録しました。案件は「販売中」へ進みます。',
+    price_update:'✓ 売出価格・販売状況を更新しました。',
+    settle_sell:'✓ 売却決済を登録しました。実績を確定し「実績分析」に蓄積されました。'}[kind];
+  const neg=(kind==='mgr_return'||kind==='pres_reject');
+  const f=document.getElementById('flash');
+  if(f) f.innerHTML=`<div class="flash"${neg?' style="background:#fef2f2;border-color:#fecaca;color:#991b1b"':''}>${msg}（モック表示）</div>`;
+  window.scrollTo(0,0);
+}
+function pf(label,type,val){ return `<div class="field"><label>${label}</label><input type="${type||'text'}" value="${val!=null&&val!==''?val:''}" placeholder="${type==='date'?'':'入力（モック）'}"></div>`; }
+function actionPanel(d){
+  const s=d.status;
+  if(s==='approved') return settlementPanel(d);
+  if(s==='sell') return sellingPanel(d);
+  if(s==='done') return donePanel(d);
+  return approvalPanel(d);
+}
+function settlementPanel(d){
+  const a=d.appr||{};
+  const tochi = d.intake&&d.intake.costDetail ? d.intake.costDetail[0][1][0][1] : Math.round(d.cost*0.78);
+  return `<div class="card action-card phase-buy">
+    <div class="apptitle"><span class="lead"><span class="ic">¥</span>仕入決済（承認済み → 仕入実行）</span><span class="tag todo">要対応</span></div>
+    <div class="appbody">
+      <div class="apptarget">対象：<b>${d.name}</b>（${d.id}・担当 ${d.staff}）　社長承認済み ${a.presDate||''}　想定原価 <b>${fmtY(d.cost)}</b></div>
+      <div class="muted" style="font-size:12.5px;margin-bottom:10px">社長承認（仕入れGO）済み。仕入の契約・決済を登録すると「販売中」へ進みます。</div>
+      <div class="grid2">
+        ${pf('仕入契約日','date',(d.intake||{}).buyc&&/\d{4}\//.test((d.intake||{}).buyc)?(d.intake||{}).buyc.replace(/\//g,'-'):'')}
+        ${pf('仕入決済日','date','')}
+        ${pf('実際の土地仕入額','number',tochi)}
+        ${pf('借入実行額','number',Math.round(tochi*0.9))}
+      </div>
+      <button class="btn ok" style="margin-top:12px" onclick="act('settle_buy','${d.id}')">✓ 仕入決済を登録 → 販売中へ</button>
+    </div></div>`;
+}
+function sellingPanel(d){
+  const st=d.settle||{};
+  return `<div class="card action-card phase-sell">
+    <div class="apptitle"><span class="lead"><span class="ic">◷</span>販売中（売却活動）</span><span class="tag">進行中</span></div>
+    <div class="appbody">
+      <div class="apptarget">対象：<b>${d.name}</b>（${d.id}・担当 ${d.staff}）　仕入決済 ${st.buySettle||'登録済'}　原価 <b>${fmtY(d.cost)}</b>　判定 ${judge(d).mark} ${judge(d).label}</div>
+      <div class="muted" style="font-size:12.5px;margin-bottom:10px">仕入決済済み。販売活動の状況を記録します。売却が決まったら「売却決済」へ。</div>
+      <div class="grid2">
+        ${pf('現在の売出価格','number',d.scen[0].price)}
+        ${pf('内見数','number','')}
+        ${pf('反響メモ','text','')}
+        ${pf('値下げ予定','text','')}
+      </div>
+      <div style="margin-top:10px"><button class="btn" onclick="act('price_update','${d.id}')">売出価格・状況を更新</button></div>
+      <div style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)">
+        <div style="font-weight:700;color:var(--ink);font-size:13px;margin-bottom:8px">売却が決まったら：売却決済を登録</div>
+        <div class="grid2">
+          ${pf('売却契約日','date','')}
+          ${pf('売却決済日','date','')}
+          <div class="field"><label>実際の売却額</label><input type="number" id="op_sell_amount" value="${d.scen[1].price}"></div>
+          <div class="field"><label>（参考）想定② 着地前後価格</label><input type="number" value="${d.scen[1].price}" disabled style="background:#f3f4f6;color:var(--sub)"></div>
+        </div>
+        <button class="btn ok" style="margin-top:12px" onclick="act('settle_sell','${d.id}')">✓ 売却決済を登録 → 実績/振り返りへ</button>
+      </div>
+    </div></div>`;
+}
+function donePanel(d){
+  const a=d.actual||{}; const expRate=rate(d,1); const actRate=a.price?a.profit/a.price:0; const diff=actRate-expRate; const up=diff>=0;
+  return `<div class="card action-card phase-done">
+    <div class="apptitle"><span class="lead"><span class="ic">✓</span>実績・分析（答え合わせ）</span><span class="tag">完了</span></div>
+    <div class="appbody">
+      <div class="apptarget">対象：<b>${d.name}</b>（${d.id}・担当 ${d.staff}）　売却決済済み</div>
+      <div class="muted" style="font-size:12.5px;margin-bottom:10px">売却決済・実績を登録済み。想定と実績の答え合わせが会社の判断材料として蓄積されました。</div>
+      ${a.price?`<table style="margin-bottom:10px"><thead><tr><th></th><th class="num">売上高</th><th class="num">総利益</th><th class="num">利益率</th></tr></thead><tbody>
+        <tr><td>想定②（着地前後価格）</td><td class="num">${fmtY(d.scen[1].price)}</td><td class="num">${fmtY(d.scen[1].profit)}</td><td class="num">${pct(expRate)}</td></tr>
+        <tr><td><b>実績</b></td><td class="num"><b>${fmtY(a.price)}</b></td><td class="num"><b>${fmtY(a.profit)}</b></td><td class="num"><b>${pct(actRate)}</b></td></tr>
+        <tr><td>差分（実績−想定②）</td><td class="num">—</td><td class="num">—</td><td class="num ${up?'delta-dn':'delta-up'}"><b>${up?'▲':'▼'} ${pct(Math.abs(diff))}</b></td></tr>
+      </tbody></table>
+      <div class="muted" style="font-size:12px;margin-bottom:10px">所見：${a.note||''}</div>`:''}
+      <button class="btn" onclick="go('review')">実績分析を見る</button>
+    </div></div>`;
+}
+
+/* ---------- 相場参照 ---------- */
+const AREA_MKT={
+  '世田谷区':{tsubo:412000,rent:11500,kouji:62000},
+  '杉並区':{tsubo:158000,rent:9800,kouji:48000},
+  '江戸川区':{tsubo:238000,rent:8200,kouji:39000},
+  '練馬区':{tsubo:178000,rent:8500,kouji:34000},
+  '板橋区':{tsubo:196000,rent:8800,kouji:35000},
+  '北区':{tsubo:215000,rent:9000,kouji:37000},
+  '足立区':{tsubo:165000,rent:7800,kouji:31000}
+};
+function renderMarket(){
+  document.getElementById('content').innerHTML=`
+    <div class="notebar" style="font-weight:600;font-size:13.5px"><span style="color:#b45309;font-weight:800">⚠ ※ サンプル値です。</span> 住所ピンポイントの実データ（路線価・成約・ポータル）連携は <b style="color:#b45309">将来的ビジョン（別途費用）</b>。</div>
+    <div class="card" style="margin-bottom:16px">
+      <h3>相場を査定する（住所・条件を入力）</h3>
+      <div class="grid2">
+        ${fldS('所在地（住所）','mk_addr','杉並区◯◯3丁目','text')}
+        ${fldS('最寄駅・徒歩','mk_station','荻窪 11分','text')}
+        <div class="field"><label>業務タイプ</label><select id="mk_type"><option>土地売り</option><option>戸建建売</option><option>アパート</option></select></div>
+        <div class="field"><label>駅距離</label><select id="mk_dist"><option value="1.05">徒歩10分以内</option><option value="1" selected>徒歩11〜15分</option><option value="0.92">徒歩15分超</option></select></div>
+        ${fldS('土地面積（㎡）','mk_m2',180,'number')}
+        ${fldS('容積率（%）','mk_yoseki',150,'number')}
+      </div>
+      <button class="btn primary" style="margin-top:12px" onclick="assessMarket()">この条件で相場を査定する</button>
+    </div>
+    <div id="market-result"></div>
+    <div class="future" style="margin-top:16px">
+      <span class="tag">将来ビジョン</span>
+      <h3 style="margin:10px 0 6px">住所ピンポイント相場の自動化</h3>
+      <div style="font-size:13px">ゆくゆくは住所（地番）から、下記の実データを自動で引いて相場を返します：</div>
+      <ul style="margin:10px 0 0;padding-left:18px;color:var(--ink)">
+        <li><b>路線価・公示地価</b>（その地点の公的価格）</li>
+        <li>近隣の<b>成約事例</b>（実際にいくらで売れたか）／<b>レインズ</b>成約</li>
+        <li>不動産ポータルの<b>売出価格</b>（今いくらで出ているか）</li>
+        <li>自社の過去案件（取り込めば導入初日から埋まる）</li>
+      </ul>
+      <div class="muted" style="font-size:11.5px;margin-top:10px">※ 現状は選んだ区・駅距離に応じてサンプル相場を返す“体験版”。実データ連携は利用規約・費用を調査のうえ段階導入。</div>
+    </div>`;
+  assessMarket();
+}
+function fldS(label,id,v,t){ return `<div class="field"><label>${label}</label><input type="${t||'text'}" id="${id}" value="${v}"></div>`; }
+function assessMarket(){
+  const addrEl=document.getElementById('mk_addr'); if(!addrEl) return;
+  const addr=addrEl.value||'';
+  const key=Object.keys(AREA_MKT).find(k=>addr.includes(k));
+  const prof=key?AREA_MKT[key]:{tsubo:185000,rent:8800,kouji:40000};
+  const areaName=key||'該当エリア（サンプル）';
+  const dist=parseFloat((document.getElementById('mk_dist')||{}).value)||1;
+  const type=(document.getElementById('mk_type')||{}).value||'土地売り';
+  const yoseki=gv('mk_yoseki')||150;
+  const m2=gv('mk_m2');
+  const station=(document.getElementById('mk_station')||{}).value||'';
+  const tsubo=Math.round(prof.tsubo*dist/1000)*1000;
+  const lo=Math.round(tsubo*0.9/1000)*1000, hi=Math.round(tsubo*1.12/1000)*1000;
+  const isshu=Math.round(tsubo/(yoseki/100)/100)*100;
+  const tsuboArea=m2*0.3025, total=m2>0?Math.round(tsubo*tsuboArea):0;
+  const comps=[['◯◯1丁目',Math.round(tsubo*0.96/1000)*1000,'2026/04'],['◯◯2丁目',Math.round(hi*0.98/1000)*1000,'2026/02'],
+    ['△△3丁目',Math.round(lo*1.03/1000)*1000,'2025/11'],['△△1丁目',Math.round(tsubo*1.05/1000)*1000,'2025/08']];
+  const base=tsubo, tr=[0.92,0.94,0.96,0.95,0.99,1.02,1.04,1.0];
+  const trend=['11月','12月','1月','2月','3月','4月','5月','6月'].map((mo,i)=>[mo,Math.round(base*tr[i]/1000)*1000]);
+  document.getElementById('market-result').innerHTML=`
+    <div class="card" style="margin-bottom:16px">
+      <h3>査定結果：${areaName}${station?'（'+station+'）':''}・${type}</h3>
+      <div class="kpis" style="grid-template-columns:repeat(4,1fr)">
+        ${statBox('想定 坪単価','¥'+tsubo.toLocaleString(),'レンジ ¥'+lo.toLocaleString()+'〜¥'+hi.toLocaleString())}
+        ${statBox('一種単価','¥'+isshu.toLocaleString(),'坪単価÷容積率')}
+        ${statBox('近隣 賃料相場','¥'+prof.rent.toLocaleString(),'/坪・月')}
+        ${statBox('公示価格','¥'+prof.kouji.toLocaleString(),'/㎡')}
+      </div>
+      ${m2>0?`<div class="judgebox j-ok" style="margin:4px 0 12px;padding:10px 14px"><div><div style="font-weight:700;color:var(--ink);font-size:14px">この面積（${m2}㎡＝${tsuboArea.toFixed(1)}坪）での想定総額 ¥${total.toLocaleString()}</div><div class="muted" style="font-size:11.5px">想定坪単価 × 土地坪数（査定の目安）</div></div></div>`:''}
+      <div class="twocol">
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--sub)"><span>下限 ¥${lo.toLocaleString()}</span><span>上限 ¥${hi.toLocaleString()}</span></div>
+          ${rangeBar(tsubo,lo,hi,tsubo,'査定 ¥'+tsubo.toLocaleString())}
+          <div class="muted" style="font-size:11.5px;margin:4px 0 14px">物件の坪単価がこの帯のどこに入るかで割安／割高を判断。</div>
+          <div class="subhead">近隣 成約事例（直近1年・匿名）</div>
+          <table><thead><tr><th>住所</th><th class="num">坪単価</th><th class="num">一種単価</th><th>成約</th></tr></thead><tbody>
+            ${comps.map(c=>`<tr><td>${c[0]}</td><td class="num">¥${c[1].toLocaleString()}</td><td class="num">¥${Math.round(c[1]/(yoseki/100)).toLocaleString()}</td><td>${c[2]}</td></tr>`).join('')}
+          </tbody></table>
+        </div>
+        <div>
+          <div class="subhead">成約坪単価の推移（直近8ヶ月）</div>
+          ${trendBars(trend,Math.round(hi*1.05))}
+          <div class="muted" style="font-size:11.5px;margin-top:8px">この立地の相場の動き。仕入れ・売却タイミングの材料に。</div>
+          <button class="btn primary" style="margin-top:14px;width:100%" onclick="go('new')">この相場をもとに新規起案する</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ---------- 振り返り ---------- */
+function renderReview(){
+  const done=DEALS.filter(d=>d.actual);
+  const rej=DEALS.filter(d=>d.status==='rej');
+  const diffs=done.map(d=>(d.actual.profit/d.actual.price)-rate(d,1));
+  const hits=diffs.filter(x=>x>=0).length;
+  const avgDiff=diffs.length?diffs.reduce((a,b)=>a+b,0)/diffs.length:0;
+  const dc=avgDiff>=0?COLR.ok:COLR.ng;
+  const sub='color:var(--sub);font-size:11px';
+  const row=d=>{
+    const e=rate(d,1), a=d.actual.profit/d.actual.price, diff=a-e, up=diff>=0; const j=judge(d), c=up?COLR.ok:COLR.ng;
+    return `<tr>
+      <td><b>${d.name}</b><br><span style="${sub}">${d.type}・担当 ${d.staff}・売却 ${d.updated}</span></td>
+      <td>${j.mark} ${j.label}</td>
+      <td class="num">${fmtY(d.scen[1].price)}<br><span style="${sub}">利益率 ${pct(e)}</span></td>
+      <td class="num">${fmtY(d.actual.price)}<br><span style="${sub}">利益率 ${pct(a)}</span></td>
+      <td class="num"><b style="color:${c}">${up?'+':'−'}${pct(Math.abs(diff))}</b></td>
+      <td><b style="color:${c}">${up?'計画以上 ▲':'計画割れ ▼'}</b></td>
+      <td style="font-size:11px;color:var(--sub)">${d.actual.note}</td>
+    </tr>`;
+  };
+  document.getElementById('content').innerHTML=`
+    <div class="notebar">仕入れ時に立てた<b>「計画（着地見込み）」</b>と売却後の<b>「実績」</b>を突き合わせ、<b>判断が正しかったかを検証</b>。会社として想定のクセ（甘い／堅い）を学び、次の判断精度を上げる画面です。</div>
+    <div class="insight">
+      <div class="muted" style="font-size:12px;margin-bottom:2px">過去実績の分析</div>
+      <div class="big" style="color:${dc}">実績は、計画（着地見込み）を 平均 ${avgDiff>=0?'+':''}${pct(avgDiff)}</div>
+    </div>
+    <div class="kpis">
+      ${statBox('振り返った案件',done.length+' 件','売却まで完了')}
+      ${statBox('計画どおり以上',hits+' / '+done.length+' 件','実績 ≥ 計画')}
+      ${statBox('実績と計画の差（平均）',(avgDiff>=0?'+':'')+pct(avgDiff),'利益率の差')}
+      ${statBox('見送り（検証材料）',rej.length+' 件','理由を保存')}
+    </div>
+    <div class="xwrap">
+      <table class="xgrid">
+        <tr><td class="sec" colspan="7">案件ごとの答え合わせ（計画 → 実績）</td></tr>
+        <tr><td class="lbl">物件</td><td class="lbl">仕入時の判定</td><td class="lbl num">計画（着地見込み）</td><td class="lbl num">実績（売却）</td><td class="lbl num">利益率の差</td><td class="lbl">結果</td><td class="lbl">所見</td></tr>
+        ${done.map(row).join('')}
+      </table>
+      <table class="xgrid" style="margin-top:14px">
+        <tr><td class="sec" colspan="4">見送った判断の検証（「見送って正解だったか」の材料）</td></tr>
+        <tr><td class="lbl">物件</td><td class="lbl">業務</td><td class="lbl num">着地見込み利益率</td><td class="lbl">見送り理由</td></tr>
+        ${rej.length?rej.map(d=>`<tr><td><b>${d.name}</b><br><span style="${sub}">${d.id}・担当 ${d.staff}</span></td><td>${d.type}</td><td class="num">${pct(rate(d,1))}</td><td style="font-size:11.5px">${d.rejReason||''}</td></tr>`).join(''):'<tr><td colspan="4" style="color:var(--sub)">見送り案件はありません。</td></tr>'}
+      </table>
+      <div class="muted" style="font-size:11px;margin-top:10px">※ 計画（着地見込み）＝仕入れ時に見込んだ着地の売値。緑＝計画以上、橙＝計画割れ。全社の案件が対象（営業担当も閲覧可）。</div>
+    </div>`;
+}
+
+/* ---------- 新規起票（入力＋リアルタイム計算＋相場参照） ---------- */
+const MARKET={soldAvg:158000,soldLo:142000,soldHi:175000,isshuAvg:105000,saleAvg:172000,rent:9800,kouji:48000,
+  comps:[['◯◯1丁目',162000,108000,'2026/04','◯◯駅12分'],['◯◯2丁目',151000,101000,'2026/02','◯◯駅15分'],['△△3丁目',169000,113000,'2025/11','◯◯駅9分'],['△△1丁目',148000,99000,'2025/08','◯◯駅18分']]};
+/* 受領Excel 右側の相場テーブル（住所はマスキング、価格・面積・坪単価は実数） */
+const STOCK_NEW=[
+  [120900000,'26.33',4591720,'88.6㎡（4LDK）','荻窪10分','◯◯2丁目'],
+  [96800000,'18.23',5309928,'102.86㎡（3LDK）','西荻窪14分','◯◯1丁目'],
+  [108000000,'24.47',4413567,'80.33㎡（3LDK）','荻窪14分','◯◯3丁目'],
+  [94990000,'25.46',3730950,'99.26㎡（3LDK）','荻窪13分','◯◯3丁目'],
+  [87800000,'22.14',3965672,'73.19㎡（3LDK）','荻窪11分','◯◯2丁目'],
+  [107800000,'21.25',5072941,'106.28（3LDK）','荻窪14分/阿佐ヶ谷8分','◯◯2丁目']
+];
+const STOCK_LAND=[
+  [59800000,'16.86',3546856,'敷延','荻窪11分','◯◯3丁目'],
+  [143800000,'32.87',4374809,'—','荻窪5分','◯◯2丁目'],
+  [58000000,'15.55',3729903,'近商','荻窪8分','◯◯2丁目'],
+  [128000000,'27.80',4604316,'角地','荻窪9分','◯◯3丁目'],
+  [84800000,'21.72',3904235,'業物・当該物件に近い','阿佐ヶ谷11分','◯◯1丁目']
+];
+function fld(label,id,v,o){
+  o=o||{};
+  const val=nv(id,v);
+  if(o.select){ return `<div class="field"><label>${label}</label><select id="${id}" onchange="recalcNew()">${o.select.map(x=>`<option value="${x}" ${x==val?'selected':''}>${x}ヶ月</option>`).join('')}</select></div>`; }
+  const t=o.date?'date':o.text?'text':'number';
+  return `<div class="field ${o.green?'green-in':''}"><label>${label}</label><input type="${t}" id="${id}" value="${val}" oninput="recalcNew()"></div>`;
+}
+function auto(label,id,hint){
+  return `<div class="field"><label>${label}${hint?` <span style="color:#9ca3af;font-weight:400;font-size:10.5px">${hint}</span>`:''}</label><div id="${id}" style="padding:8px 10px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;color:#4b5563;font-weight:600;text-align:right;font-size:13px">—</div></div>`;
+}
+function setT(id,v){ const e=document.getElementById(id); if(e) e.textContent=fmtY(v); }
+function setP(id,v){ const e=document.getElementById(id); if(e) e.textContent=pct(v); }
+
+/* 表示切替（エクセル風グリッド ⇄ 入力フォーム）＋ 値の保持 */
+let NEW_VALS={};
+let NEW_VIEW='form';
+let NEW_TYPE='土地売り';
+/* 業務タイプ別のサンプル既定値（受領Excelの4業務に対応） */
+const TYPE_SAMPLE={
+  '土地売り':{n_name:'◯◯区△△1丁目 土地',n_m2:214.57,n_land:10000000,n_demo:750000,n_infra:300000,n_kenchiku:0,n_rosen:10000000,n_kotei:10000000,n_beval:500000,n_p1:16800000,n_p2:15000000,n_p3:13800000},
+  '戸建建売':{n_name:'◯◯区△△3丁目 戸建',n_m2:155.4,n_land:41000000,n_demo:500000,n_infra:0,n_kenchiku:24000000,n_rosen:33000000,n_kotei:33000000,n_beval:12000000,n_p1:82800000,n_p2:79800000,n_p3:77800000},
+  '業者売り':{n_name:'杉並区荻窪 土地（業者向け転売）',n_m2:449.79,n_land:497000000,n_demo:0,n_infra:0,n_kenchiku:0,n_inshi:0,n_shihou:0,n_yobi:0,n_rosen:341840400,n_kotei:0,n_beval:0,n_p1:520000000,n_p2:517000000},
+  'アパート':{n_name:'◯◯区△△2丁目 収益レジ',n_m2:90.97,n_period:18,n_land:48000000,n_demo:0,n_infra:0,n_kenchiku:43000000,n_rosen:48000000,n_kotei:48000000,n_beval:29000000,n_rent:6912000,n_yield1:5.5,n_yield2:6.0}
+};
+/* アパートの本来IRR：保有中の年間賃料＋期末の売却額を考慮（月次→年率） */
+function irrApt(cost,rentAnnual,sale,months){
+  if(cost<=0||sale<=0||months<=0) return 0;
+  const cf=[-cost]; for(let m=1;m<=months;m++) cf.push(rentAnnual/12 + (m===months?sale:0));
+  const npv=r=>cf.reduce((s,c,m)=>s+c/Math.pow(1+r,m),0);
+  let lo=-0.9, hi=1.0; for(let k=0;k<100;k++){ const mid=(lo+hi)/2; if(npv(mid)>0) lo=mid; else hi=mid; }
+  return Math.pow(1+(lo+hi)/2,12)-1;
+}
+function nv(id,def){ return (id in NEW_VALS) ? NEW_VALS[id] : def; }
+function syncNewVals(){ document.querySelectorAll('#content input,#content select').forEach(e=>{ if(e.id) NEW_VALS[e.id]=e.value; }); }
+function setNewView(v){ syncNewVals(); NEW_VIEW=v; renderNew(); }
+function setNewType(t){ NEW_VALS=Object.assign({},TYPE_SAMPLE[t]||{}); NEW_TYPE=t; renderNew(); }
+function newScenarios(){
+  if(NEW_TYPE==='アパート'){ const rent=gv('n_rent'),y1=gv('n_yield1')||5.5,y2=gv('n_yield2')||6.0;
+    return {prices:[y1>0?Math.round(rent/(y1/100)):0, y2>0?Math.round(rent/(y2/100)):0], labels:['① 利回'+y1+'%','② 利回'+y2+'%（着地）'], ji:1}; }
+  if(NEW_TYPE==='業者売り'){ return {prices:[gv('n_p1'),gv('n_p2')], labels:['① 出値価格','② 着地前後価格'], ji:1}; }
+  return {prices:[gv('n_p1'),gv('n_p2'),gv('n_p3')], labels:['① 出値価格','② 着地前後価格','③ 下限価格'], ji:1};
+}
+function typeSelector(){ const ts=['土地売り','戸建建売','業者売り','アパート'];
+  return `<div class="viewtoggle" style="margin-bottom:10px"><span class="vt-lab">業務タイプ</span>${ts.map(t=>`<button class="${NEW_TYPE===t?'on':''}" onclick="setNewType('${t}')">${t}</button>`).join('')}</div>`; }
+function newToggle(){
+  return `<div class="viewtoggle"><span class="vt-lab">表示切替</span>
+   <button class="${NEW_VIEW==='grid'?'on':''}" onclick="setNewView('grid')">📊 エクセル風グリッド</button>
+   <button class="${NEW_VIEW==='form'?'on':''}" onclick="setNewView('form')">📝 入力フォーム</button></div>`; }
+function salesFormSection(){
+  const t=NEW_TYPE;
+  if(t==='アパート'){
+    return `<div class="card" style="margin-bottom:16px"><h3>⑨ 販売想定（利回りから売却額を逆算）</h3>
+      <div class="muted" style="font-size:11.5px;margin-bottom:8px">年間賃料収入と目標利回りから売却額を逆算します。判定は②（利回6%・着地）。建物原価（建築費）は④で入力。</div>
+      <div class="grid2">
+        ${fld('年間賃料収入','n_rent',6912000,{green:1})}
+        ${fld('想定利回り①（%）','n_yield1',5.5,{green:1})}
+        ${fld('想定利回り②（%・着地）','n_yield2',6.0,{green:1})}
+      </div>
+      <div id="apt-sale" style="font-size:12.5px;color:var(--ink);margin-top:10px;padding:9px 11px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px">—</div>
+    </div>`;
+  }
+  if(t==='業者売り'){
+    return `<div class="card" style="margin-bottom:16px"><h3>⑨ 販売想定①②（出値・着地）</h3>
+      <div class="muted" style="font-size:11.5px;margin-bottom:8px">業者売りは ①出値・②着地 の2想定（造成費等は買主負担＝建物原価は0）。判定は②着地。</div>
+      <table><thead><tr><th>販売想定</th><th class="num">価格</th></tr></thead><tbody>
+        <tr><td>① 出値価格</td><td><input type="number" id="n_p1" value="${nv('n_p1',505000000)}" oninput="recalcNew()" class="cellin"></td></tr>
+        <tr><td>② 着地前後価格</td><td><input type="number" id="n_p2" value="${nv('n_p2',490000000)}" oninput="recalcNew()" class="cellin"></td></tr>
+      </tbody></table>
+    </div>`;
+  }
+  const note=t==='戸建建売'?'戸建建売：①②③の価格シナリオ。建物原価（建築費ほか）を④で入力。判定は②着地。':'①出値価格・②着地前後価格・③下限価格。間取・延床・車庫は建売向け（土地売りは空欄でOK）。判定は②着地。';
+  return `<div class="card" style="margin-bottom:16px"><h3>⑨ 販売想定①②③（出口・販売計画）</h3>
+    <div class="muted" style="font-size:11.5px;margin-bottom:8px">${note}</div>
+    <table><thead><tr><th>販売想定</th><th class="num">価格</th><th>間取</th><th class="num">延床</th><th>車庫</th></tr></thead><tbody>
+      <tr><td>① 出値価格</td><td><input type="number" id="n_p1" value="${nv('n_p1',16800000)}" oninput="recalcNew()" class="cellin"></td><td><input type="text" id="n_madori1" value="${nv('n_madori1','')}" oninput="recalcNew()" class="cellin"></td><td><input type="number" id="n_yuka1" value="${nv('n_yuka1','')}" oninput="recalcNew()" class="cellin"></td><td><input type="text" id="n_garage1" value="${nv('n_garage1','')}" oninput="recalcNew()" class="cellin"></td></tr>
+      <tr><td>② 着地前後価格</td><td><input type="number" id="n_p2" value="${nv('n_p2',15000000)}" oninput="recalcNew()" class="cellin"></td><td><input type="text" id="n_madori2" value="${nv('n_madori2','')}" oninput="recalcNew()" class="cellin"></td><td><input type="number" id="n_yuka2" value="${nv('n_yuka2','')}" oninput="recalcNew()" class="cellin"></td><td><input type="text" id="n_garage2" value="${nv('n_garage2','')}" oninput="recalcNew()" class="cellin"></td></tr>
+      <tr><td>③ 下限価格</td><td><input type="number" id="n_p3" value="${nv('n_p3',13800000)}" oninput="recalcNew()" class="cellin"></td><td><input type="text" id="n_madori3" value="${nv('n_madori3','')}" oninput="recalcNew()" class="cellin"></td><td><input type="number" id="n_yuka3" value="${nv('n_yuka3','')}" oninput="recalcNew()" class="cellin"></td><td><input type="text" id="n_garage3" value="${nv('n_garage3','')}" oninput="recalcNew()" class="cellin"></td></tr>
+    </tbody></table>
+  </div>`;
+}
+function xi(id,def,t){ const ty=t==='date'?'date':t==='text'?'text':'number'; return `<input class="xin" type="${ty}" id="${id}" value="${nv(id,def)}" oninput="recalcNew()">`; }
+function xsel(id,def){ return `<select class="xin" id="${id}" onchange="recalcNew()">${[12,18,24].map(x=>`<option value="${x}" ${x==nv(id,def)?'selected':''}>${x}ヶ月</option>`).join('')}</select>`; }
+function gridSalesSection(){
+  const t=NEW_TYPE;
+  if(t==='アパート'){
+    return `<table class="xgrid" style="margin-top:14px">
+      <tr><td class="sec" colspan="2">販売想定（利回りから売却額を逆算）</td></tr>
+      <tr><td class="lbl">年間賃料収入</td><td class="gin num">${xi('n_rent',6912000)}</td></tr>
+      <tr><td class="lbl">想定利回り①（%）</td><td class="gin num">${xi('n_yield1',5.5)}</td></tr>
+      <tr><td class="lbl">想定利回り②（%・着地）</td><td class="gin num">${xi('n_yield2',6.0)}</td></tr>
+    </table>
+    <table class="xgrid" style="margin-top:14px">
+      <tr><td class="sec">販売想定（逆算）</td><td class="sec num">① 利回5.5%</td><td class="sec num">② 利回6%（着地）</td></tr>
+      <tr><td class="lbl">売上高（売却額）</td><td class="auto num" id="sa_uri1">—</td><td class="auto num" id="sa_uri2">—</td></tr>
+      <tr><td class="lbl">原価合計</td><td class="auto num" id="sa_gen1">—</td><td class="auto num" id="sa_gen2">—</td></tr>
+      <tr><td class="lbl">総利益</td><td class="auto num" id="sa_eki1">—</td><td class="auto num" id="sa_eki2">—</td></tr>
+      <tr><td class="lbl">利益率</td><td class="auto num" id="sa_r1">—</td><td class="auto num" id="sa_r2">—</td></tr>
+      <tr><td class="lbl">坪単価（売上÷坪）</td><td class="auto num" id="sa_t1">—</td><td class="auto num" id="sa_t2">—</td></tr>
+    </table>`;
+  }
+  if(t==='業者売り'){
+    return `<table class="xgrid" style="margin-top:14px">
+      <tr><td class="sec">販売想定①②</td><td class="sec num">① 出値価格</td><td class="sec num">② 着地前後価格</td></tr>
+      <tr><td class="lbl">売上高</td><td class="auto num" id="sa_uri1">—</td><td class="auto num" id="sa_uri2">—</td></tr>
+      <tr><td class="lbl">原価合計</td><td class="auto num" id="sa_gen1">—</td><td class="auto num" id="sa_gen2">—</td></tr>
+      <tr><td class="lbl">総利益</td><td class="auto num" id="sa_eki1">—</td><td class="auto num" id="sa_eki2">—</td></tr>
+      <tr><td class="lbl">利益率</td><td class="auto num" id="sa_r1">—</td><td class="auto num" id="sa_r2">—</td></tr>
+      <tr><td class="lbl">坪単価（売上÷坪）</td><td class="auto num" id="sa_t1">—</td><td class="auto num" id="sa_t2">—</td></tr>
+    </table>
+    <table class="xgrid" style="margin-top:14px">
+      <tr><td class="sec" colspan="2">販売計画（価格）</td></tr>
+      <tr><td class="lbl">① 出値価格</td><td class="gin num">${xi('n_p1',520000000)}</td></tr>
+      <tr><td class="lbl">② 着地前後価格</td><td class="gin num">${xi('n_p2',517000000)}</td></tr>
+    </table>`;
+  }
+  return `<table class="xgrid" style="margin-top:14px">
+    <tr><td class="sec">販売想定①②③</td><td class="sec num">① 出値価格</td><td class="sec num">② 着地前後価格</td><td class="sec num">③ 下限価格</td></tr>
+    <tr><td class="lbl">売上高</td><td class="auto num" id="sa_uri1">—</td><td class="auto num" id="sa_uri2">—</td><td class="auto num" id="sa_uri3">—</td></tr>
+    <tr><td class="lbl">原価合計</td><td class="auto num" id="sa_gen1">—</td><td class="auto num" id="sa_gen2">—</td><td class="auto num" id="sa_gen3">—</td></tr>
+    <tr><td class="lbl">総利益</td><td class="auto num" id="sa_eki1">—</td><td class="auto num" id="sa_eki2">—</td><td class="auto num" id="sa_eki3">—</td></tr>
+    <tr><td class="lbl">利益率</td><td class="auto num" id="sa_r1">—</td><td class="auto num" id="sa_r2">—</td><td class="auto num" id="sa_r3">—</td></tr>
+    <tr><td class="lbl">坪単価（売上÷坪）</td><td class="auto num" id="sa_t1">—</td><td class="auto num" id="sa_t2">—</td><td class="auto num" id="sa_t3">—</td></tr>
+  </table>
+  <table class="xgrid" style="margin-top:14px">
+    <tr><td class="sec" colspan="5">販売計画（価格・間取・延床・車庫）</td></tr>
+    <tr><td class="lbl"></td><td class="lbl num">価格</td><td class="lbl">間取</td><td class="lbl num">延床</td><td class="lbl">車庫</td></tr>
+    <tr><td class="lbl">① 出値価格</td><td class="gin num">${xi('n_p1',16800000)}</td><td class="gin">${xi('n_madori1','','text')}</td><td class="gin num">${xi('n_yuka1','')}</td><td class="gin">${xi('n_garage1','','text')}</td></tr>
+    <tr><td class="lbl">② 着地前後価格</td><td class="gin num">${xi('n_p2',15000000)}</td><td class="gin">${xi('n_madori2','','text')}</td><td class="gin num">${xi('n_yuka2','')}</td><td class="gin">${xi('n_garage2','','text')}</td></tr>
+    <tr><td class="lbl">③ 下限価格</td><td class="gin num">${xi('n_p3',13800000)}</td><td class="gin">${xi('n_madori3','','text')}</td><td class="gin num">${xi('n_yuka3','')}</td><td class="gin">${xi('n_garage3','','text')}</td></tr>
+  </table>`;
+}
+function renderNewGrid(){
+  document.getElementById('content').innerHTML=`
+   <span class="back" onclick="go('dashboard')">← ダッシュボードへ</span>
+   ${typeSelector()}
+   ${newToggle()}
+   <div class="notebar">受領Excel（事業収支 雛型）の収支シートを<b>表のまま再現</b>。<b>緑＝担当が入力</b>、<b>白＝自動計算</b>。業務タイプで販売想定や原価の扱い（業者売りは諸費用＝買主負担など）が切り替わります。</div>
+   <div class="twocol">
+     <div>${newGridLeft()}</div>
+     <div><div class="card calcpanel" id="calc-panel"></div></div>
+   </div>`;
+  recalcNew();
+}
+function newGridLeft(){ const comps=MARKET.comps; return `
+  <div class="xwrap">
+   <table class="xgrid">
+     <tr><td class="sec" colspan="4">物件基本情報</td></tr>
+     <tr><td class="lbl">物件名</td><td class="gin" colspan="3">${xi('n_name','◯◯区△△1丁目 土地','text')}</td></tr>
+     <tr><td class="lbl">所在地</td><td class="gin">${xi('n_area','◯◯区△△1丁目','text')}</td><td class="lbl">区画数</td><td class="gin">${xi('n_kukaku',1)}</td></tr>
+     <tr><td class="lbl">地番</td><td class="gin">${xi('n_chiban','◯◯区△△一丁目825番1','text')}</td><td class="lbl">プロジェクト期間</td><td class="gin">${xsel('n_period',12)}</td></tr>
+     <tr><td class="lbl">交通</td><td class="gin">${xi('n_station','都営新宿線「船堀」駅徒歩16分','text')}</td><td class="lbl">地積(㎡)</td><td class="gin">${xi('n_m2',214.57)}</td></tr>
+     <tr><td class="lbl">用途地域</td><td class="gin">${xi('n_youto','第一種中高層住居専用地域','text')}</td><td class="lbl">建物面積(㎡)</td><td class="gin">${xi('n_bldgm2',122.04)}</td></tr>
+     <tr><td class="lbl">防火指定</td><td class="gin">${xi('n_bouka','準防火地域','text')}</td><td class="lbl">容積率(%)</td><td class="gin">${xi('n_yoseki',150)}</td></tr>
+     <tr><td class="lbl">高度地区</td><td class="gin">${xi('n_kodo','第2種高度地区','text')}</td><td class="lbl">建蔽率(%)</td><td class="gin">${xi('n_kenpei',60)}</td></tr>
+     <tr><td class="lbl">道路</td><td class="gin">${xi('n_road','北西側：7.2ｍ公道','text')}</td><td class="lbl">その他</td><td class="gin">${xi('n_etc','最低敷地70㎡','text')}</td></tr>
+     <tr><td class="sec" colspan="4">取引情報</td></tr>
+     <tr><td class="lbl">売主</td><td class="gin">${xi('n_seller','A社','text')}</td><td class="lbl">仲介会社(仕入)</td><td class="gin">${xi('n_broker1','◯◯不動産','text')}</td></tr>
+     <tr><td class="lbl">買主</td><td class="gin">${xi('n_buyer','','text')}</td><td class="lbl">仲介会社(売却)</td><td class="gin">${xi('n_broker2','','text')}</td></tr>
+     <tr><td class="lbl">仕入契約日</td><td class="gin">${xi('n_buyc','','date')}</td><td class="lbl">仕入決済日</td><td class="gin">${xi('n_buys','','date')}</td></tr>
+     <tr><td class="lbl">売却契約日</td><td class="gin">${xi('n_sellc','','date')}</td><td class="lbl">売却決済日</td><td class="gin">${xi('n_sells','','date')}</td></tr>
+   </table>
+   <table class="xgrid" style="margin-top:14px">
+     <tr><td class="sec">仕入れ原価</td><td class="sec num">金額</td><td class="sec">備考</td></tr>
+     <tr><td class="grp" colspan="3">土地原価</td></tr>
+     <tr><td class="lbl">土地仕入原価</td><td class="gin num">${xi('n_land',10000000)}</td><td class="rmk" id="a_buyunit">坪単価 — ／ 一種単価 —</td></tr>
+     <tr><td class="lbl">仲介手数料</td><td class="gin num">${xi('n_chukai',0)}</td><td></td></tr>
+     <tr><td class="lbl">業務委託手数料</td><td class="gin num">${xi('n_out',0)}</td><td></td></tr>
+     <tr><td class="lbl">解体整地費用</td><td class="gin num">${xi('n_demo',750000)}</td><td class="rmk">０坪</td></tr>
+     <tr><td class="lbl">ライフライン引き込み</td><td class="gin num">${xi('n_lifeline',0)}</td><td></td></tr>
+     <tr><td class="lbl">譲渡承諾料</td><td class="gin num">${xi('n_assign',0)}</td><td></td></tr>
+     <tr><td class="lbl">測量費用</td><td class="gin num">${xi('n_survey',0)}</td><td></td></tr>
+     <tr><td class="lbl">立退き費用</td><td class="gin num">${xi('n_evict',0)}</td><td class="rmk">2年分</td></tr>
+     <tr><td class="lbl">その他</td><td class="gin num">${xi('n_other',0)}</td><td class="rmk">あれば項目変更する</td></tr>
+     <tr><td class="grp" colspan="3">建物原価</td></tr>
+     <tr><td class="lbl">建築費</td><td class="gin num">${xi('n_kenchiku',0)}</td><td></td></tr>
+     <tr><td class="lbl">設計費用</td><td class="gin num">${xi('n_sekkei',0)}</td><td></td></tr>
+     <tr><td class="lbl">地盤改良</td><td class="gin num">${xi('n_jiban',0)}</td><td></td></tr>
+     <tr><td class="lbl">インフラ費用（改修）</td><td class="gin num">${xi('n_infra',300000)}</td><td></td></tr>
+     <tr><td class="lbl">外構費用</td><td class="gin num">${xi('n_gaikou',0)}</td><td></td></tr>
+     <tr><td class="lbl">瑕疵担保保険</td><td class="gin num">${xi('n_kasi',0)}</td><td></td></tr>
+     <tr><td class="grp" colspan="3">租税公課</td></tr>
+     <tr><td class="lbl">取得税(土地)</td><td class="auto num" id="a_shutoku_t">—</td><td class="rmk">評価額×1.5%</td></tr>
+     <tr><td class="lbl">取得税(建物)</td><td class="auto num" id="a_shutoku_b">—</td><td class="rmk">×3%</td></tr>
+     <tr><td class="lbl">固定資産税</td><td class="auto num" id="a_kotei">—</td><td class="rmk">×1.4%</td></tr>
+     <tr><td class="lbl">都市計画税</td><td class="auto num" id="a_toshi">—</td><td class="rmk">×0.3%</td></tr>
+     <tr><td class="lbl">登録免許税(土地)</td><td class="auto num" id="a_touroku_t">—</td><td class="rmk">×2%</td></tr>
+     <tr><td class="lbl">登録免許税（建物）</td><td class="auto num" id="a_touroku_b">—</td><td class="rmk">×2%</td></tr>
+     <tr><td class="lbl">抵当権</td><td class="auto num" id="a_teitou">—</td><td class="rmk">借入×0.4%</td></tr>
+     <tr><td class="lbl">印紙税</td><td class="gin num">${xi('n_inshi',30000)}</td><td></td></tr>
+     <tr><td class="grp" colspan="3">販売管理費</td></tr>
+     <tr><td class="lbl">司法書士報酬</td><td class="gin num">${xi('n_shihou',50000)}</td><td></td></tr>
+     <tr><td class="lbl">予備費</td><td class="gin num">${xi('n_yobi',100000)}</td><td class="rmk">50万以下は無し</td></tr>
+     <tr><td class="lbl">その他</td><td class="gin num">${xi('n_kanriOther',0)}</td><td></td></tr>
+     <tr><td class="lbl">販売手数料</td><td class="auto num" id="a_hanbai">—</td><td class="rmk">(出値①×3%+6万)×1.1</td></tr>
+     <tr><td class="grp" colspan="3">営業外費用</td></tr>
+     <tr><td class="lbl">借入金利</td><td class="auto num" id="a_kinri">—</td><td class="rmk">借入×3.5%/12×期間</td></tr>
+     <tr><td class="lbl">事務手数料</td><td class="auto num" id="a_jimu">—</td><td class="rmk">借入×1%</td></tr>
+     <tr><td class="lbl">その他</td><td class="gin num">${xi('n_eigyoOther',0)}</td><td></td></tr>
+     <tr><td class="tot">合　計</td><td class="tot num" id="a_total">—</td><td class="rmk">原価合計（自動集計）</td></tr>
+   </table>
+   <div class="xcols">
+     <table class="xgrid">
+       <tr><td class="sec" colspan="2">借入金・評価額</td></tr>
+       <tr><td class="lbl">借入金</td><td class="auto num" id="a_borrow">—</td></tr>
+       <tr><td class="lbl">路線価</td><td class="gin num">${xi('n_rosen',10000000)}</td></tr>
+       <tr><td class="lbl">固定資産税路線価</td><td class="gin num">${xi('n_kotei',10000000)}</td></tr>
+       <tr><td class="lbl">建物評価額</td><td class="gin num">${xi('n_beval',500000)}</td></tr>
+     </table>
+     <table class="xgrid">
+       <tr><td class="sec">事業期間別IRR</td><td class="sec num">IRR</td><td class="sec">備考</td></tr>
+       <tr><td class="lbl">事業期間12ヶ月</td><td class="auto num" id="a_irr12">—</td><td class="rmk">目標10%以上</td></tr>
+       <tr><td class="lbl">事業期間18ヶ月</td><td class="auto num" id="a_irr18">—</td><td class="rmk">月次→年率換算</td></tr>
+       <tr><td class="lbl">事業期間24ヶ月</td><td class="auto num" id="a_irr24">—</td><td class="rmk"></td></tr>
+       <tr><td class="tot">採用IRR</td><td class="tot num" id="a_irradopt">—</td><td class="rmk" id="a_irrnote">プロジェクト期間</td></tr>
+     </table>
+   </div>
+   ${gridSalesSection()}
+   <table class="xgrid" style="margin-top:14px">
+     <tr><td class="sec" colspan="6">新築　販売在庫（近隣）</td></tr>
+     <tr><td class="lbl num">価格</td><td class="lbl num">土地面積</td><td class="lbl num">坪単価</td><td class="lbl">延床面積（間取）</td><td class="lbl">駅距離</td><td class="lbl">住所</td></tr>
+     ${STOCK_NEW.map(r=>`<tr><td class="num">¥${r[0].toLocaleString()}</td><td class="num">${r[1]}坪</td><td class="num">¥${r[2].toLocaleString()}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td></tr>`).join('')}
+   </table>
+   <table class="xgrid" style="margin-top:14px">
+     <tr><td class="sec" colspan="6">土地　販売在庫（近隣）</td></tr>
+     <tr><td class="lbl num">価格</td><td class="lbl num">土地面積</td><td class="lbl num">坪単価</td><td class="lbl">特徴</td><td class="lbl">駅距離</td><td class="lbl">住所</td></tr>
+     ${STOCK_LAND.map(r=>`<tr><td class="num">¥${r[0].toLocaleString()}</td><td class="num">${r[1]}坪</td><td class="num">¥${r[2].toLocaleString()}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td></tr>`).join('')}
+   </table>
+   <div id="market-live" style="margin-top:10px"></div>
+  </div>`; }
+function renderNew(){
+  if(NEW_VIEW==='grid'){ return renderNewGrid(); }
+  document.getElementById('content').innerHTML=`
+   <span class="back" onclick="go('dashboard')">← ダッシュボードへ</span>
+   ${typeSelector()}
+   ${newToggle()}
+   <div class="notebar">受領Excel（事業収支 雛型）を<b>項目名・並びそのまま</b>に再現。<b>緑＝担当が入力</b>、<b>グレー＝自動計算</b>（エクセルの計算式と同じ）。業務タイプを変えると、その業務のサンプルに切り替わります（モック）。</div>
+   <div class="twocol">
+     <div>
+       <div class="card" style="margin-bottom:16px"><h3>① 物件基本情報</h3><div class="grid2">
+         ${fld('物件名','n_name','◯◯区△△1丁目 土地',{text:1,green:1})}
+         ${fld('所在地','n_area','◯◯区△△1丁目',{text:1,green:1})}
+         ${fld('地番','n_chiban','◯◯区△△一丁目825番1',{text:1,green:1})}
+         ${fld('交通','n_station','都営新宿線「船堀」駅徒歩16分',{text:1,green:1})}
+         ${fld('地積（㎡）','n_m2',214.57,{green:1})}
+         ${fld('建物面積（㎡）','n_bldgm2',122.04,{green:1})}
+         ${fld('容積率（%）','n_yoseki',150,{green:1})}
+         ${fld('建蔽率（%）','n_kenpei',60,{green:1})}
+         ${fld('用途地域','n_youto','第一種中高層住居専用地域',{text:1,green:1})}
+         ${fld('防火指定','n_bouka','準防火地域',{text:1,green:1})}
+         ${fld('高度地区','n_kodo','第2種高度地区',{text:1,green:1})}
+         ${fld('道路','n_road','北西側：7.2ｍ公道',{text:1,green:1})}
+         ${fld('その他','n_etc','最低敷地70㎡',{text:1,green:1})}
+         ${fld('区画数','n_kukaku',1,{green:1})}
+         ${fld('プロジェクト期間','n_period',12,{select:[12,18,24]})}
+       </div></div>
+       <div class="card" style="margin-bottom:16px"><h3>② 取引情報（売主・買主・仲介会社・契約／決済日）</h3>
+         <div class="muted" style="font-size:11.5px;margin-bottom:8px">日付は未定なら空欄でOK（決済後に追記）。</div>
+         <div class="grid2">
+         ${fld('売主','n_seller','A社',{text:1,green:1})}
+         ${fld('仲介会社（仕入）','n_broker1','◯◯不動産',{text:1,green:1})}
+         ${fld('買主','n_buyer','',{text:1,green:1})}
+         ${fld('仲介会社（売却）','n_broker2','',{text:1,green:1})}
+         ${fld('仕入契約日','n_buyc','',{date:1,green:1})}
+         ${fld('仕入決済日','n_buys','',{date:1,green:1})}
+         ${fld('売却契約日','n_sellc','',{date:1,green:1})}
+         ${fld('売却決済日','n_sells','',{date:1,green:1})}
+       </div></div>
+       <div class="card" style="margin-bottom:16px"><h3>③ 仕入れ原価 ─ 土地原価</h3><div class="grid2">
+         ${fld('土地仕入原価','n_land',10000000,{green:1})}
+         ${fld('仲介手数料','n_chukai',0,{green:1})}
+         ${fld('業務委託手数料','n_out',0,{green:1})}
+         ${fld('解体整地費用','n_demo',750000,{green:1})}
+         ${fld('ライフライン引き込み','n_lifeline',0,{green:1})}
+         ${fld('譲渡承諾料','n_assign',0,{green:1})}
+         ${fld('測量費用','n_survey',0,{green:1})}
+         ${fld('立退き費用','n_evict',0,{green:1})}
+         ${fld('その他','n_other',0,{green:1})}
+       </div></div>
+       <div class="card" style="margin-bottom:16px"><h3>④ 仕入れ原価 ─ 建物原価</h3>
+         <div class="muted" style="font-size:11.5px;margin-bottom:8px">土地売りは建物原価なし（0でOK）。建売・アパート時に入力。</div>
+         <div class="grid2">
+         ${fld('建築費','n_kenchiku',0,{green:1})}
+         ${fld('設計費用','n_sekkei',0,{green:1})}
+         ${fld('地盤改良','n_jiban',0,{green:1})}
+         ${fld('インフラ費用（改修）','n_infra',300000,{green:1})}
+         ${fld('外構費用','n_gaikou',0,{green:1})}
+         ${fld('瑕疵担保保険','n_kasi',0,{green:1})}
+       </div></div>
+       <div class="card" style="margin-bottom:16px"><h3>⑤ 仕入れ原価 ─ 租税公課</h3>
+         <div class="muted" style="font-size:11.5px;margin-bottom:8px">評価額・借入金から自動計算（印紙税のみ手入力）。</div>
+         <div class="grid2">
+         ${auto('取得税(土地)','a_shutoku_t','×1.5%')}
+         ${auto('取得税(建物)','a_shutoku_b','×3%')}
+         ${auto('固定資産税','a_kotei','×1.4%')}
+         ${auto('都市計画税','a_toshi','×0.3%')}
+         ${auto('登録免許税(土地)','a_touroku_t','×2%')}
+         ${auto('登録免許税（建物）','a_touroku_b','×2%')}
+         ${auto('抵当権','a_teitou','借入×0.4%')}
+         ${fld('印紙税','n_inshi',30000,{green:1})}
+       </div></div>
+       <div class="card" style="margin-bottom:16px"><h3>⑥ 仕入れ原価 ─ 販売管理費</h3><div class="grid2">
+         ${fld('司法書士報酬','n_shihou',50000,{green:1})}
+         ${fld('予備費','n_yobi',100000,{green:1})}
+         ${fld('その他','n_kanriOther',0,{green:1})}
+         ${auto('販売手数料','a_hanbai','(出値①×3%+6万)×1.1')}
+       </div></div>
+       <div class="card" style="margin-bottom:16px"><h3>⑦ 仕入れ原価 ─ 営業外費用</h3><div class="grid2">
+         ${auto('借入金利','a_kinri','借入×3.5%/12×期間')}
+         ${auto('事務手数料','a_jimu','借入×1%')}
+         ${fld('その他','n_eigyoOther',0,{green:1})}
+       </div>
+       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:12px;border-top:2px solid var(--line)">
+         <div style="font-weight:700;color:var(--ink)">合　計（原価合計）</div>
+         <div id="a_total" style="font-weight:800;font-size:18px;color:var(--ink)">—</div></div>
+       <div class="muted" style="font-size:11px;margin-top:4px">※「原価合計は必ず手計算すること」（エクセル注記）に対応し、ここで自動集計します。</div>
+       </div>
+       <div class="card" style="margin-bottom:16px"><h3>⑧ 借入金・評価額</h3><div class="grid2">
+         ${auto('借入金','a_borrow','土地仕入原価×0.9')}
+         ${fld('路線価','n_rosen',10000000,{green:1})}
+         ${fld('固定資産税路線価','n_kotei',10000000,{green:1})}
+         ${fld('建物評価額','n_beval',500000,{green:1})}
+       </div></div>
+       ${salesFormSection()}
+       <div class="card"><h3>⑩ 相場の目安（この条件で自動取得）</h3>
+         <div id="market-live"></div>
+         <div class="row" style="gap:10px;margin:6px 0 12px">
+           <div style="flex:1;min-width:160px"><div class="muted" style="font-size:11px">成約 坪単価（直近1年）<span class="srctag">成約</span></div><div style="font-size:16px;font-weight:700;color:var(--ink)">¥${MARKET.soldAvg.toLocaleString()}<span class="muted" style="font-size:11px;font-weight:400"> /坪（¥${MARKET.soldLo.toLocaleString()}〜¥${MARKET.soldHi.toLocaleString()}）</span></div></div>
+           <div style="flex:1;min-width:140px"><div class="muted" style="font-size:11px">成約 一種単価<span class="srctag">成約</span></div><div style="font-size:16px;font-weight:700;color:var(--ink)">¥${MARKET.isshuAvg.toLocaleString()}<span class="muted" style="font-size:11px;font-weight:400"> /坪・種</span></div></div>
+         </div>
+         <div class="row" style="gap:10px;margin-bottom:12px">
+           <div style="flex:1;min-width:140px"><div class="muted" style="font-size:11px">販売中 坪単価<span class="srctag sale">売出</span></div><div style="font-weight:700;color:var(--ink)">¥${MARKET.saleAvg.toLocaleString()} /坪</div></div>
+           <div style="flex:1;min-width:140px"><div class="muted" style="font-size:11px">近隣 賃料相場<span class="srctag rent">賃料</span></div><div style="font-weight:700;color:var(--ink)">¥${MARKET.rent.toLocaleString()} /坪・月</div></div>
+         </div>
+         <div class="row" style="gap:10px;margin-bottom:14px">
+           <div style="flex:1;min-width:140px"><div class="muted" style="font-size:11px">公示価格<span class="srctag pub">公的</span></div><div style="font-weight:700;color:var(--ink)">¥${MARKET.kouji.toLocaleString()} /㎡</div></div>
+           <div style="flex:1;min-width:160px"><div class="muted" style="font-size:11px">積算価格（路線価＋建物評価）<span class="srctag pub">公的</span></div><div style="font-weight:700;color:var(--ink)" id="m_sekisan">—</div></div>
+         </div>
+         <div class="muted" style="font-size:11.5px;margin-bottom:6px">成約事例（直近1年）</div>
+         <table><thead><tr><th>住所</th><th class="num">坪単価</th><th class="num">一種単価</th><th>成約</th><th>駅距離</th></tr></thead><tbody>
+           ${MARKET.comps.map(c=>`<tr><td>${c[0]}</td><td class="num">¥${c[1].toLocaleString()}</td><td class="num">¥${c[2].toLocaleString()}</td><td>${c[3]}</td><td>${c[4]}</td></tr>`).join('')}
+         </tbody></table>
+         <div class="muted" style="font-size:11px;margin-top:8px">※ サンプル値。実データ（ポータル売出／成約／レインズ／公示・路線価）の連携は段階導入（論点6の将来ビジョン）。</div>
+       </div>
+     </div>
+     <div><div class="card calcpanel" id="calc-panel"></div></div>
+   </div>`;
+  recalcNew();
+}
+function gv(id){ const e=document.getElementById(id); return e?(parseFloat(e.value)||0):0; }
+function recalcNew(){
+  const land=gv('n_land'),chukai=gv('n_chukai'),out=gv('n_out'),demo=gv('n_demo'),lifeline=gv('n_lifeline'),assign=gv('n_assign'),survey=gv('n_survey'),evict=gv('n_evict'),other=gv('n_other');
+  const kenchiku=gv('n_kenchiku'),sekkei=gv('n_sekkei'),jiban=gv('n_jiban'),infra=gv('n_infra'),gaikou=gv('n_gaikou'),kasi=gv('n_kasi');
+  const inshi=gv('n_inshi'),shihou=gv('n_shihou'),yobi=gv('n_yobi'),kanriOther=gv('n_kanriOther'),eigyoOther=gv('n_eigyoOther');
+  const kotei=gv('n_kotei'),beval=gv('n_beval'),period=gv('n_period')||12;
+  const SCN=newScenarios(); const prices=SCN.prices;
+  const p1=prices[0]||0, p2=prices[SCN.ji]||0;
+  const borrow=land*0.9, interest=borrow*0.035/12*period, jimu=borrow*0.01;
+  const autoTax=kotei*0.015 + beval*0.03 + kotei*0.014 + beval*0.003 + kotei*0.02 + beval*0.02 + borrow*0.004;
+  const taxes=autoTax + inshi;
+  const salesFee=(p1*0.03+60000)*1.1;
+  const landBlock=land+chukai+out+demo+lifeline+assign+survey+evict+other;
+  const bldgBlock=kenchiku+sekkei+jiban+infra+gaikou+kasi;
+  const broker=(NEW_TYPE==='業者売り');   // 業者売り＝諸費用はすべて買主負担（原価は土地仕入原価のみ）
+  const taxesC=broker?0:taxes, admin=broker?0:(shihou+yobi+kanriOther+salesFee), nonop=broker?0:(interest+jimu+eigyoOther);
+  const cost=landBlock+bldgBlock+taxesC+admin+nonop;
+  // 自動計算欄をフォーム内に反映（業者売りは諸費用＝買主負担と表示）
+  if(broker){ ['a_shutoku_t','a_shutoku_b','a_kotei','a_toshi','a_touroku_t','a_touroku_b','a_teitou','a_hanbai','a_kinri','a_jimu'].forEach(id=>{const e=document.getElementById(id); if(e) e.textContent='買主負担';}); }
+  else { setT('a_shutoku_t',kotei*0.015); setT('a_shutoku_b',beval*0.03); setT('a_kotei',kotei*0.014); setT('a_toshi',beval*0.003);
+    setT('a_touroku_t',kotei*0.02); setT('a_touroku_b',beval*0.02); setT('a_teitou',borrow*0.004);
+    setT('a_hanbai',salesFee); setT('a_kinri',interest); setT('a_jimu',jimu); }
+  setT('a_borrow',borrow); setT('a_total',cost);
+  const sc=prices.map(p=>({price:p,rate:p?(p-cost)/p:0}));
+  const irr=(NEW_TYPE==='アパート') ? irrApt(cost,gv('n_rent'),p2,period) : ((cost>0&&p2>0)?Math.pow(p2/cost,12/period)-1:0);
+  const r2=sc[SCN.ji].rate;
+  const aptEl=document.getElementById('apt-sale'); if(aptEl) aptEl.innerHTML='逆算した売却額 → '+sc.map((s,i)=>`${SCN.labels[i]}：<b>${fmtY(s.price)}</b>`).join('　／　');
+  let j; if(r2>=0.10&&irr>=0.10)j={m:'◎',l:'推奨',c:'j-ok'}; else if(r2>=0.08&&irr>=0.10)j={m:'△',l:'条件付き可',c:'j-warn'}; else j={m:'×',l:'見送り',c:'j-ng'};
+  // 仕入れ最低ライン：最低ライン（利益率8%＋IRR10%）を保てる原価合計の上限を逆算
+  const MIN_RATE=0.08, REC_RATE=0.10, MIN_IRR=0.10;
+  const costMaxRate=p2*(1-MIN_RATE);                          // 利益率8%を保てる原価上限
+  const costMaxIRR=p2>0?p2/Math.pow(1+MIN_IRR,period/12):0;   // IRR10%を保てる原価上限
+  const costMax=Math.min(costMaxRate,costMaxIRR);
+  const slack=costMax-cost;
+  const minClear=(r2>=MIN_RATE && irr>=MIN_IRR);
+  syncNewVals();
+  const cp=document.getElementById('calc-panel'); if(!cp) return;
+  cp.innerHTML=`
+    <h3>リアルタイム判定</h3>
+    <div class="judgebox ${j.c}" style="margin-bottom:14px"><div class="big">${j.m}</div>
+      <div><div style="font-weight:700;color:var(--ink);font-size:15px">${j.l}</div>
+      <div class="muted" style="font-size:12px">想定②利益率 <b>${pct(r2)}</b>・採用IRR <b>${pct(irr)}</b></div></div></div>
+    <table><tbody>
+      <tr><td><b>原価合計</b></td><td class="num"><b>${fmtY(cost)}</b></td></tr>
+      <tr><td class="muted" style="font-size:12px">　土地原価</td><td class="num muted">${fmtY(landBlock)}</td></tr>
+      <tr><td class="muted" style="font-size:12px">　建物原価</td><td class="num muted">${fmtY(bldgBlock)}</td></tr>
+      <tr><td class="muted" style="font-size:12px">　租税公課</td><td class="num muted">${broker?'買主負担':fmtY(taxesC)}</td></tr>
+      <tr><td class="muted" style="font-size:12px">　販売管理費</td><td class="num muted">${broker?'買主負担':fmtY(admin)}</td></tr>
+      <tr><td class="muted" style="font-size:12px">　営業外（借入金利ほか）</td><td class="num muted">${broker?'買主負担':fmtY(nonop)}</td></tr>
+    </tbody></table>
+    <div style="height:10px"></div>
+    <table><thead><tr><th>想定</th><th class="num">売価</th><th class="num">利益率</th></tr></thead><tbody>
+      ${sc.map((s,i)=>`<tr><td>${SCN.labels[i]}${i===SCN.ji?' ★':''}</td><td class="num">${fmtY(s.price)}</td><td class="num">${pct(s.rate)}</td></tr>`).join('')}
+    </tbody></table>
+    <div class="muted" style="font-size:11px;margin:8px 0 12px">採用IRR（${period}ヶ月）= ${pct(irr)}／借入金 ${fmtY(borrow)}（土地原価×0.9）</div>
+    <div style="border-top:1px solid var(--line);margin:4px 0 12px;padding-top:10px">
+      <div style="font-weight:700;color:var(--ink);font-size:12.5px;margin-bottom:6px">仕入れ最低ライン</div>
+      <table><tbody>
+        <tr><td class="muted" style="font-size:12px">推奨ライン</td><td class="num" style="font-size:12px">利益率 10% 以上 ＋ IRR 10% 以上</td></tr>
+        <tr><td class="muted" style="font-size:12px">最低ライン</td><td class="num" style="font-size:12px">利益率 8% 以上 ＋ IRR 10% 以上</td></tr>
+        <tr><td class="muted" style="font-size:12px">現在</td><td class="num" style="font-size:12px">${pct(r2)} / ${pct(irr)} <b style="color:${minClear?'var(--ok-fg)':'var(--ng-fg)'}">→ ${minClear?'クリア':'未達'}</b></td></tr>
+      </tbody></table>
+      <div style="margin-top:8px;padding:9px 11px;background:#f8fafc;border:1px solid var(--line);border-radius:8px">
+        <div class="muted" style="font-size:11px">最低ラインを保てる原価合計の上限</div>
+        <div style="font-weight:800;color:var(--ink);font-size:16px">${fmtY(costMax)}</div>
+        <div class="muted" style="font-size:11.5px;line-height:1.5">${slack>=0?`原価合計をあと <b style="color:var(--ok-fg)">${fmtY(slack)}</b> 増やせる余地（仕入れ値・諸費用の上振れ分）`:`現状が上限を <b style="color:var(--ng-fg)">${fmtY(-slack)}</b> 超過 ＝ 最低ライン未達`}</div>
+        <div class="muted" style="font-size:11px;margin-top:2px">現在の原価合計 ${fmtY(cost)}</div>
+      </div>
+    </div>
+    <button class="btn primary" style="width:100%;margin-bottom:8px" onclick="submitNew()">保存して提出（社長承認へ）</button>
+    <button class="btn" style="width:100%" onclick="go('dashboard')">下書き保存して戻る</button>`;
+  // 相場比較（仕入坪単価 vs 成約相場）
+  const m2=gv('n_m2'), yo=gv('n_yoseki'), tsubo=m2*0.3025;
+  const buyTsubo=tsubo>0?land/tsubo:0, buyIsshu=yo>0?buyTsubo/(yo/100):0;
+  // グリッド：仕入れ原価から見る坪単価・一種単価
+  const bu=document.getElementById('a_buyunit'); if(bu) bu.textContent=`坪単価 ${fmtY(buyTsubo)} ／ 一種単価 ${fmtY(buyIsshu)}`;
+  // グリッド：販売想定①②③（売上高・原価合計・総利益・利益率・坪単価）
+  [0,1,2].forEach(i=>{ if(!sc[i])return; const p=sc[i].price; const n=i+1;
+    setT('sa_uri'+n,p); setT('sa_gen'+n,cost); setT('sa_eki'+n,p-cost); setP('sa_r'+n,sc[i].rate); setT('sa_t'+n, tsubo>0?p/tsubo:0); });
+  // グリッド：事業期間別IRR（着地②を売却額として試算）
+  const ratio=(cost>0&&p2>0)?p2/cost:0;
+  setP('a_irr12', ratio>0?Math.pow(ratio,12/12)-1:0);
+  setP('a_irr18', ratio>0?Math.pow(ratio,12/18)-1:0);
+  setP('a_irr24', ratio>0?Math.pow(ratio,12/24)-1:0);
+  setP('a_irradopt', irr);
+  const inote=document.getElementById('a_irrnote'); if(inote) inote.textContent=`プロジェクト期間${period}ヶ月`;
+  const sekisan=gv('n_rosen')+beval;
+  const ml=document.getElementById('market-live');
+  if(ml){
+    if(NEW_TYPE==='土地売り'||NEW_TYPE==='戸建建売'){
+      const diff=MARKET.soldAvg>0?(buyTsubo-MARKET.soldAvg)/MARKET.soldAvg:0;
+      const cls=diff<=0.03?'j-ok':diff<=0.10?'j-warn':'j-ng';
+      const word=diff<=0.03?'相場並み〜割安':diff<=0.10?'やや割高':'割高';
+      ml.innerHTML=`<div class="judgebox ${cls}" style="margin-bottom:12px;padding:12px 16px">
+        <div><div style="font-weight:700;color:var(--ink);font-size:13.5px">あなたの仕入坪単価 ¥${Math.round(buyTsubo).toLocaleString()} /坪</div>
+        <div class="muted" style="font-size:12px">成約相場 ¥${MARKET.soldAvg.toLocaleString()} に対し <b>${diff>=0?'+':''}${(diff*100).toFixed(1)}%</b>（${word}）／ 仕入 一種単価 ¥${Math.round(buyIsshu).toLocaleString()}</div></div></div>`;
+    } else {
+      ml.innerHTML=`<div class="muted" style="font-size:12px;margin-bottom:12px;padding:10px 14px;background:#f8fafc;border:1px solid var(--line);border-radius:8px">※ ${NEW_TYPE}は、坪単価の相場比較より ${NEW_TYPE==='アパート'?'<b>利回り・賃料相場</b>':'<b>総額・規模・出口の業者ニーズ</b>'} で判断します。</div>`;
+    }
+  }
+  const ms=document.getElementById('m_sekisan'); if(ms) ms.textContent='¥'+Math.round(sekisan).toLocaleString();
+}
+function submitNew(){
+  document.getElementById('calc-panel').insertAdjacentHTML('afterbegin','<div class="flash">✓ 提出しました（モック表示）。案件は「上長承認待ち」としてダッシュボードに追加され、上長 → 社長の順に承認へ回ります。</div>');
+  window.scrollTo(0,0);
+}
+
+/* 初期表示 */
+go('dashboard');
+</script>
+</body>
+</html>
