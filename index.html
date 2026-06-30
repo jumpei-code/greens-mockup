@@ -66,11 +66,12 @@
   .sectiontitle{font-size:13px;font-weight:700;color:var(--ink);margin:24px 0 10px;display:flex;align-items:center;gap:8px;}
   .pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:700;line-height:1.7;}
   .j-ok{background:var(--ok-bg);color:var(--ok-fg);} .j-warn{background:var(--warn-bg);color:var(--warn-fg);} .j-ng{background:var(--ng-bg);color:var(--ng-fg);}
+  .j-muted{background:#f1f5f9;color:#64748b;} /* 進行中以外（実績分析済・見送り）の判定はグレー表示 */
   .st{display:inline-block;padding:2px 9px;border-radius:6px;font-size:11px;font-weight:600;background:#eef2f7;color:#475569;border:1px solid #e2e8f0;}
   .st.await{background:#fff7ed;color:#c2410c;border-color:#fed7aa;}
   .st.sell{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe;}
-  .st.done{background:#f0fdf4;color:#15803d;border-color:#bbf7d0;}
-  .st.rej{background:#f8fafc;color:#64748b;border-color:#e2e8f0;}
+  .st.done{background:#f1f5f9;color:#64748b;border-color:#e2e8f0;} /* 進行中以外＝グレー */
+  .st.rej{background:#f1f5f9;color:#64748b;border-color:#e2e8f0;} /* 進行中以外＝グレー */
   .st.returned{background:#fef2f2;color:#b91c1c;border-color:#fecaca;}
   /* 承認サインオフ（担当／上長／社長） */
   .signoffrow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:2px 0 6px;}
@@ -129,7 +130,7 @@
   .phase-sell{border-color:#0e7490;} .phase-sell .apptitle{background:linear-gradient(90deg,#0e7490,#0891b2);}
   .phase-done{border-color:#15803d;} .phase-done .apptitle{background:linear-gradient(90deg,#166534,#16a34a);}
   .st.approved{background:#eef2ff;color:#4338ca;border-color:#c7d2fe;}
-  /* 振り返り：計画→実績の答え合わせ */
+  /* 実績分析：計画→実績の答え合わせ */
   .insight{border:2px solid #1f8a70;background:linear-gradient(180deg,#effdf8,#ffffff);border-radius:12px;padding:16px 18px;margin-bottom:16px;}
   .insight .big{font-size:22px;font-weight:800;line-height:1.3;}
   .rvtable td{vertical-align:top;}
@@ -438,7 +439,7 @@ function judge(d){
   if(r2>=0.08 && irr>=0.10) return {k:'warn',mark:'△',label:'条件付き可',cls:'j-warn'};
   return {k:'ng',mark:'×',label:'見送り',cls:'j-ng'};
 }
-const STATUS={await_mgr:['await','上長承認待ち'],await_pres:['await','社長承認待ち'],returned:['returned','差し戻し'],approved:['approved','承認済み（仕入決済前）'],sell:['sell','販売中'],done:['done','振り返り済'],rej:['rej','見送り']};
+const STATUS={await_mgr:['await','上長承認待ち'],await_pres:['await','社長承認待ち'],returned:['returned','差し戻し'],approved:['approved','承認済み（仕入決済前）'],sell:['sell','販売中'],done:['done','実績分析済'],rej:['rej','見送り']};
 function statusPill(s){ const x=STATUS[s]; return `<span class="st ${x[0]}">${x[1]}</span>`; }
 function dealById(id){ return DEALS.find(d=>d.id===id); }
 
@@ -671,7 +672,7 @@ function renderDashboard(){
   const myReturned=mine.filter(d=>d.status==='returned');
   const mySelling=mine.filter(d=>d.status==='sell').length;
   c.innerHTML=`
-    <div class="bubble">💡 <b>営業担当ビュー（${CURRENT_STAFF}）</b>：表示は<b>自分の案件のみ</b>。承認待ち・差し戻し・販売中・未振り返りが一目で分かる＝<b>放置できない</b>仕組み。</div>
+    <div class="bubble">💡 <b>営業担当ビュー（${CURRENT_STAFF}）</b>：表示は<b>自分の案件のみ</b>。承認待ち・差し戻し・販売中・未分析が一目で分かる＝<b>放置できない</b>仕組み。</div>
     <div class="sectiontitle">🔄 案件の流れ（自分の検討中 → 承認待ち → 販売中）</div>
     <div class="flow">
       <div class="stage st1">
@@ -702,13 +703,13 @@ function dealTable(arr,bossMode){
     <table><thead><tr>
       <th>物件</th><th>業務</th><th class="num">原価合計</th><th class="num">想定②利益率</th><th class="num">採用IRR</th><th>判定</th><th>状態</th><th>担当</th>
     </tr></thead><tbody>
-    ${arr.map(d=>{const j=judge(d);return `<tr class="clickable" onclick="go('detail','${d.id}')">
+    ${arr.map(d=>{const j=judge(d);const closed=(d.status==='done'||d.status==='rej');return `<tr class="clickable" onclick="go('detail','${d.id}')">
       <td><b>${d.name}</b><br><span class="muted" style="font-size:11px">${d.id}・更新 ${d.updated}</span></td>
       <td>${d.type}</td>
       <td class="num">${fmtY(d.cost)}</td>
       <td class="num">${pct(rate(d,1))}</td>
       <td class="num">${pct(adoptedIRR(d))}</td>
-      <td><span class="pill ${j.cls}">${j.mark} ${j.label}</span></td>
+      <td><span class="pill ${closed?'j-muted':j.cls}">${j.mark} ${j.label}</span></td>
       <td>${statusPill(d.status)}</td>
       <td>${d.staff}</td>
     </tr>`;}).join('')}
@@ -725,7 +726,7 @@ function renderList(){
         <div><div class="muted" style="font-size:11px">エリア</div><select class="btn" id="f-area" onchange="filterList()"><option value="">すべて</option><option>江戸川区</option><option>杉並区</option><option>北区</option><option>世田谷区</option><option>板橋区</option><option>足立区</option><option>練馬区</option><option>川口市</option></select></div>
         <div><div class="muted" style="font-size:11px">業務タイプ</div><select class="btn" id="f-type" onchange="filterList()"><option value="">すべて</option><option>土地売り</option><option>戸建建売</option><option>業者売り</option><option>アパート</option></select></div>
         <div><div class="muted" style="font-size:11px">判定</div><select class="btn" id="f-judge" onchange="filterList()"><option value="">すべて</option><option value="ok">◎ 推奨</option><option value="warn">△ 条件付き可</option><option value="ng">× 見送り</option></select></div>
-        <div><div class="muted" style="font-size:11px">状態</div><select class="btn" id="f-status" onchange="filterList()"><option value="">すべて</option><option value="await">承認待ち</option><option value="approved">承認済み（仕入決済前）</option><option value="sell">販売中</option><option value="done">振り返り済</option><option value="returned">差し戻し</option><option value="rej">見送り</option></select></div>
+        <div><div class="muted" style="font-size:11px">状態</div><select class="btn" id="f-status" onchange="filterList()"><option value="">すべて</option><option value="await">承認待ち</option><option value="approved">承認済み（仕入決済前）</option><option value="sell">販売中</option><option value="done">実績分析済</option><option value="returned">差し戻し</option><option value="rej">見送り</option></select></div>
       </div>
     </div>
     <div id="listbody"></div>`;
@@ -745,7 +746,7 @@ function filterList(){
 function renderDetail(id){
   const d=dealById(id)||DEALS[0];
   const j=judge(d), r2=rate(d,1), irr=adoptedIRR(d);
-  const steps=[['物件入手',1],['事業計画',2],['上長承認',3],['社長承認',4],['仕入決済',5],['販売中',6],['売却決済',7],['実績/振返り',8]];
+  const steps=[['物件入手',1],['事業計画',2],['上長承認',3],['社長承認',4],['仕入決済',5],['販売中',6],['売却決済',7],['実績分析',8]];
   const stMap={returned:2, await_mgr:3, await_pres:4, rej:4, approved:5, sell:6, done:8};
   let curStep = stMap[d.status]||2;
   const types=['土地売り','戸建建売','アパート','業者売り'];
@@ -862,7 +863,7 @@ function approvalPanel(d){
     action=`<div class="muted" style="font-size:12.5px"><b style="color:var(--ng-fg)">見送り（社長判断）</b>：${d.rejReason||''}</div>
       <div class="muted" style="font-size:11.5px;margin-top:8px">この理由は「実績分析」に蓄積され、次の判断に活きます。</div>`;
   } else {
-    action=`<div class="muted" style="font-size:12.5px"><b style="color:var(--ok-fg)">上長・社長とも承認済み（仕入れGO）。</b><br>販売状況・実績は「振り返り」へ進みます。</div>`;
+    action=`<div class="muted" style="font-size:12.5px"><b style="color:var(--ok-fg)">上長・社長とも承認済み（仕入れGO）。</b><br>販売状況・実績は「実績分析」へ進みます。</div>`;
   }
   const j=judge(d);
   const pending=(s==='await_mgr'||s==='await_pres'||s==='returned');
@@ -945,14 +946,14 @@ function sellingPanel(d){
           <div class="field"><label>実際の売却額</label><input type="number" id="op_sell_amount" value="${d.scen[1].price}"></div>
           <div class="field"><label>（参考）想定② 着地前後価格</label><input type="number" value="${d.scen[1].price}" disabled style="background:#f3f4f6;color:var(--sub)"></div>
         </div>
-        <button class="btn ok" style="margin-top:12px" onclick="act('settle_sell','${d.id}')">✓ 売却決済を登録 → 実績/振り返りへ</button>
+        <button class="btn ok" style="margin-top:12px" onclick="act('settle_sell','${d.id}')">✓ 売却決済を登録 → 実績分析へ</button>
       </div>
     </div></div>`;
 }
 function donePanel(d){
   const a=d.actual||{}; const expRate=rate(d,1); const actRate=a.price?a.profit/a.price:0; const diff=actRate-expRate; const up=diff>=0;
   return `<div class="card action-card phase-done">
-    <div class="apptitle"><span class="lead"><span class="ic">✓</span>実績・分析（答え合わせ）</span><span class="tag">完了</span></div>
+    <div class="apptitle"><span class="lead"><span class="ic">✓</span>実績分析（答え合わせ）</span><span class="tag">完了</span></div>
     <div class="appbody">
       <div class="apptarget">対象：<b>${d.name}</b>（${d.id}・担当 ${d.staff}）　売却決済済み</div>
       <div class="muted" style="font-size:12.5px;margin-bottom:10px">売却決済・実績を登録済み。想定と実績の答え合わせが会社の判断材料として蓄積されました。</div>
@@ -1056,7 +1057,7 @@ function assessMarket(){
     </div>`;
 }
 
-/* ---------- 振り返り ---------- */
+/* ---------- 実績分析 ---------- */
 function renderReview(){
   const done=DEALS.filter(d=>d.actual);
   const rej=DEALS.filter(d=>d.status==='rej');
