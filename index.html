@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Greens 仕入れ収支システム（モックアップ v1）</title>
+<title>GREENS 収支ナビ（モックアップ v1）</title>
 <style>
   :root{
     --navy:#173a5e; --navy-2:#1e4d7b; --ink:#1f2937; --body:#374151; --sub:#6b7280;
@@ -220,6 +220,30 @@
   .xgrid input.xin:focus,.xgrid select.xin:focus{outline:2px solid #86efac;background:#fff;}
   .xcols{display:grid;grid-template-columns:1fr 1.4fr;gap:14px;margin-top:14px;}
   @media(max-width:860px){ .kpis{grid-template-columns:repeat(2,1fr);} .scen{grid-template-columns:1fr;} .twocol{grid-template-columns:1fr;} .side{display:none;} .xcols{grid-template-columns:1fr;} }
+  /* ダッシュボード：案件フロー（検討中 → 承認待ち → 販売中） */
+  .flow{display:flex;align-items:stretch;gap:0;margin:4px 0 22px;flex-wrap:wrap;}
+  .flow .stage{flex:1 1 160px;background:#fff;border:1px solid var(--line);padding:13px 16px;}
+  .flow .stage.st1{border-top:3px solid #64748b;}
+  .flow .stage.st2{border-top:3px solid #d97706;}
+  .flow .stage.st3{border-top:3px solid #0891b2;}
+  .flow .stage .sl{font-size:12px;color:var(--sub);font-weight:700;}
+  .flow .stage .sv{font-size:26px;font-weight:800;color:var(--ink);margin-top:3px;line-height:1.05;}
+  .flow .stage .sv small{font-size:13px;font-weight:600;color:var(--sub);}
+  .flow .stage .sc{font-size:11px;color:var(--sub);margin-top:5px;line-height:1.5;}
+  .flow .stage .branch{color:var(--ng-fg);font-weight:700;}
+  .flow .arrow{display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:18px;padding:0 7px;flex:0 0 auto;}
+  /* 注釈：吹き出し（スピーチバブル） */
+  .bubble{position:relative;background:#fffbeb;border:1px solid #fcd34d;color:#92400e;padding:11px 15px;font-size:12.5px;line-height:1.65;margin:8px 0 22px;box-shadow:0 1px 2px rgba(0,0,0,.05);}
+  .bubble::before{content:"";position:absolute;top:-10px;left:26px;border-left:10px solid transparent;border-right:10px solid transparent;border-bottom:10px solid #fcd34d;}
+  .bubble::after{content:"";position:absolute;top:-8px;left:27px;border-left:9px solid transparent;border-right:9px solid transparent;border-bottom:9px solid #fffbeb;}
+  @media(max-width:860px){ .flow{flex-direction:column;} .flow .arrow{transform:rotate(90deg);padding:5px 0;} }
+  /* 採用デザインA：本文の枠は四角（角丸を排除）。サイドバー・小チップは現状維持 */
+  #content .card, #content .kpi, #content .notebar, #content .judgebox, #content .insight,
+  #content .action-card, #content .future, #content .xwrap, #content .signoff,
+  #content input, #content select, #content textarea,
+  #content .btn, #content .viewtoggle button, #content table,
+  #content .meter, #content .meter-fill, #content .rangebar, #content .rangebar .band,
+  #content .rangebar .marker, #content .stack, #content .cellin{ border-radius:0 !important; }
 </style>
 </head>
 <body>
@@ -227,7 +251,7 @@
   <!-- Sidebar -->
   <aside class="side">
     <div class="brand">
-      <div class="logo">Greens <span>仕入れ収支</span></div>
+      <div class="logo">GREENS <span>収支ナビ</span></div>
       <div class="sub">物件仕入れ判断システム</div>
     </div>
     <nav class="nav">
@@ -590,7 +614,7 @@ function renderApprove(){
   if(ROLE==='mgr'||ROLE==='boss'){
     const list = ROLE==='boss'?DEALS.filter(d=>d.status==='await_pres'):DEALS.filter(d=>d.status==='await_mgr');
     const roleName = ROLE==='boss'?'社長':'上長';
-    c.innerHTML=`<div class="notebar">👤 <b>${roleName}の承認</b>：あなたの番の承認待ちが <b>${list.length}件</b>。行をクリックすると収支シートが開き、右下の承認パネルで「承認 / 差し戻し / 見送り」ができます。</div>
+    c.innerHTML=`<div class="bubble">👤 <b>${roleName}の承認</b>：あなたの番の承認待ちが <b>${list.length}件</b>。行をクリックすると収支シートが開き、右下の承認パネルで「承認 / 差し戻し / 見送り」ができます。</div>
       <div class="sectiontitle">⏳ ${roleName} 承認待ち</div>
       ${list.length?dealTable(list,true):'<div class="card muted">承認待ちはありません。</div>'}`;
     return;
@@ -598,7 +622,7 @@ function renderApprove(){
   const mine=visibleDeals();
   const returned=mine.filter(d=>d.status==='returned');
   const waiting=mine.filter(d=>d.status==='await_mgr'||d.status==='await_pres');
-  c.innerHTML=`<div class="notebar">💡 <b>あなた（${CURRENT_STAFF}）の承認状況</b>：表示は自分の案件のみ。提出した案件が今どの段階か。差し戻しは修正して再提出します（右上で「上長」「永井社長」に切り替えると承認操作を体験できます）。</div>
+  c.innerHTML=`<div class="bubble">💡 <b>あなた（${CURRENT_STAFF}）の承認状況</b>：表示は自分の案件のみ。提出した案件が今どの段階か。差し戻しは修正して再提出します（右上で「上長」「永井社長」に切り替えると承認操作を体験できます）。</div>
     ${returned.length?`<div class="sectiontitle">↩ 差し戻し（要対応・修正して再提出）</div>${dealTable(returned,false)}`:''}
     <div class="sectiontitle">⏳ 承認待ち（上長・社長）</div>
     ${waiting.length?dealTable(waiting,false):'<div class="card muted">承認待ちはありません。</div>'}`;
@@ -616,7 +640,7 @@ function renderDashboard(){
 
   if(ROLE==='boss'){
     c.innerHTML=`
-      <div class="notebar">👤 <b>永井社長ビュー</b>：あなた（社長）の承認待ちが <b>${awaitPres.length}件</b>。上長承認を通った案件が最終判断としてここに集まります（＝必ず目に入る）。</div>
+      <div class="bubble">👤 <b>永井社長ビュー</b>：あなた（社長）の承認待ちが <b>${awaitPres.length}件</b>。上長承認を通った案件が最終判断としてここに集まります（＝必ず目に入る）。</div>
       <div class="kpis">
         <div class="kpi"><div class="l">社長 承認待ち</div><div class="v">${awaitPres.length}<small> 件</small></div></div>
         <div class="kpi"><div class="l">上長 承認待ち</div><div class="v">${awaitMgr.length}<small> 件</small></div></div>
@@ -630,7 +654,7 @@ function renderDashboard(){
   }
   if(ROLE==='mgr'){
     c.innerHTML=`
-      <div class="notebar">👤 <b>上長ビュー</b>：あなた（上長）の承認待ちが <b>${awaitMgr.length}件</b>。担当が起案した案件は、まず上長のあなたが確認し、社長へ上げます。</div>
+      <div class="bubble">👤 <b>上長ビュー</b>：あなた（上長）の承認待ちが <b>${awaitMgr.length}件</b>。担当が起案した案件は、まず上長のあなたが確認し、社長へ上げます。</div>
       <div class="kpis">
         <div class="kpi"><div class="l">上長 承認待ち</div><div class="v">${awaitMgr.length}<small> 件</small></div></div>
         <div class="kpi"><div class="l">社長へ送付済</div><div class="v">${awaitPres.length}<small> 件</small></div></div>
@@ -647,12 +671,26 @@ function renderDashboard(){
   const myReturned=mine.filter(d=>d.status==='returned');
   const mySelling=mine.filter(d=>d.status==='sell').length;
   c.innerHTML=`
-    <div class="notebar">💡 <b>営業担当ビュー（${CURRENT_STAFF}）</b>：表示は<b>自分の案件のみ</b>。承認待ち・差し戻し・販売中・未振り返りが一目で分かる＝<b>放置できない</b>仕組み。</div>
-    <div class="kpis">
-      <div class="kpi"><div class="l">自分の検討中</div><div class="v">${mine.length}<small> 件</small></div></div>
-      <div class="kpi"><div class="l">承認待ち（上長＋社長）</div><div class="v">${myAwait.length}<small> 件</small></div></div>
-      <div class="kpi"><div class="l">差し戻し（要対応）</div><div class="v">${myReturned.length}<small> 件</small></div></div>
-      <div class="kpi"><div class="l">販売中</div><div class="v">${mySelling}<small> 件</small></div></div>
+    <div class="bubble">💡 <b>営業担当ビュー（${CURRENT_STAFF}）</b>：表示は<b>自分の案件のみ</b>。承認待ち・差し戻し・販売中・未振り返りが一目で分かる＝<b>放置できない</b>仕組み。</div>
+    <div class="sectiontitle">🔄 案件の流れ（自分の検討中 → 承認待ち → 販売中）</div>
+    <div class="flow">
+      <div class="stage st1">
+        <div class="sl">① 自分の検討中</div>
+        <div class="sv">${mine.length}<small> 件</small></div>
+        <div class="sc">起案・収支シート作成中</div>
+      </div>
+      <div class="arrow">▶</div>
+      <div class="stage st2">
+        <div class="sl">② 承認待ち（上長＋社長）</div>
+        <div class="sv">${myAwait.length}<small> 件</small></div>
+        <div class="sc">上長 → 社長 の順に承認${myReturned.length?`<br><span class="branch">↩ 差し戻し ${myReturned.length}件（要対応）</span>`:''}</div>
+      </div>
+      <div class="arrow">▶</div>
+      <div class="stage st3">
+        <div class="sl">③ 販売中</div>
+        <div class="sv">${mySelling}<small> 件</small></div>
+        <div class="sc">仕入決済済・売出し中</div>
+      </div>
     </div>
     ${myReturned.length?`<div class="sectiontitle">↩ 差し戻し（修正して再提出）</div>${dealTable(myReturned,false)}`:''}
     <div class="sectiontitle">📋 自分の案件</div>
