@@ -1235,6 +1235,26 @@ function toggleBizMetric(m){ if(BIZ_METRICS.includes(m)){ if(BIZ_METRICS.length>
 function setBizType(t){BIZ_TYPE=t;drawBizChart();}
 function toggleBizCmp(){BIZ_CMP=!BIZ_CMP;drawBizChart();}
 function niceMaxOf(vals){ const raw=Math.max(...vals.filter(v=>v!=null),1); const mag=Math.pow(10,Math.floor(Math.log10(raw))); return Math.ceil(raw/(mag/2))*(mag/2)||raw; }
+let BIZCTX=null;
+function bizHover(i){
+  const ctx=BIZCTX; if(!ctx) return;
+  const svg=document.getElementById('bizsvg'), tp=document.getElementById('biztip'), g=document.getElementById('bizguide');
+  if(!svg||!tp||!g) return;
+  const r=svg.getBoundingClientRect();
+  const px=r.width*((ctx.pl+i*(ctx.pw/(ctx.N-1)))/ctx.W);
+  g.style.left=px.toFixed(1)+'px'; g.style.display='block';
+  const rows=ctx.series.map(s=>{ const v=s.cur[i], pv=s.prev[i], parts=[];
+    if(v!=null) parts.push(`今年 <b>${fmtYm(v)}</b>`);
+    if(ctx.compare && pv!=null) parts.push(`<span style="color:#94a3b8">前年 ${fmtYm(pv)}</span>`);
+    if(!parts.length) return '';
+    return `<div style="display:flex;justify-content:space-between;gap:16px;font-size:11.5px;margin-top:3px"><span style="white-space:nowrap"><span style="display:inline-block;width:8px;height:8px;background:${s.color};border-radius:2px;margin-right:5px"></span>${s.label}</span><span style="white-space:nowrap">${parts.join(' ／ ')}</span></div>`;
+  }).filter(Boolean).join('');
+  tp.innerHTML=`<div style="font-weight:800;font-size:11px;color:var(--sub);margin-bottom:2px">${i+1}月</div>${rows||'<div style="font-size:11px;color:#94a3b8">データなし</div>'}`;
+  tp.style.display='block';
+  const tpW=tp.offsetWidth; let left=px+14; if(left+tpW>r.width) left=px-tpW-14; if(left<0) left=0;
+  tp.style.left=left.toFixed(1)+'px';
+}
+function bizHoverOut(){ const tp=document.getElementById('biztip'), g=document.getElementById('bizguide'); if(tp)tp.style.display='none'; if(g)g.style.display='none'; }
 function bizMultiSVG(keys,compare,type){
   const W=920,H=340,pl=20,pr=18,pt=18,pb=34, pw=W-pl-pr, ph=H-pt-pb, N=12;
   const x=i=>pl+i*(pw/(N-1));
@@ -1257,7 +1277,9 @@ function bizMultiSVG(keys,compare,type){
       m.cur.forEach((v,i)=>{ if(v==null)return; series+=mk(m.shape,x(i),yv(m,v),m.color); });
     });
   }
-  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block">${bg}${grid}${series}${xl}</svg>`;
+  let hover=''; const band=pw/(N-1);
+  for(let i=0;i<N;i++) hover+=`<rect x="${(x(i)-band/2).toFixed(1)}" y="${pt}" width="${band.toFixed(1)}" height="${ph}" fill="transparent" pointer-events="all" onmouseenter="bizHover(${i})"/>`;
+  return `<svg id="bizsvg" viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block">${bg}${grid}${series}${xl}${hover}</svg>`;
 }
 function sparkSVG(key){
   const M=MET_DEF[key], cur=SERIES[key][2026], n=cur.length, W=160,H=42,pw=W-4,ph=H-8, nm=niceMaxOf(cur);
@@ -1285,6 +1307,7 @@ function kpiCard(key){
 function drawBizChart(){
   const wrap=document.getElementById('biz-chart'); if(!wrap) return;
   const keys=MET_ORDER.filter(k=>BIZ_METRICS.includes(k));
+  BIZCTX={W:920,pl:20,pw:920-20-18,N:12,compare:BIZ_CMP,series:keys.map(k=>{const cur=SERIES[k][2026].slice();while(cur.length<12)cur.push(null);return {label:MET_DEF[k].label,color:MET_DEF[k].color,cur,prev:SERIES[k][2025]};})};
   const idle='border:1px solid var(--line);background:#fff;color:var(--sub);padding:6px 13px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit';
   const on='border:1px solid var(--navy);background:var(--navy);color:#fff;padding:6px 13px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit';
   const mb=(k,l)=>`<button style="${BIZ_METRICS.includes(k)?on:idle}" onclick="toggleBizMetric('${k}')">${BIZ_METRICS.includes(k)?'✓ ':''}${l}</button>`;
@@ -1306,8 +1329,12 @@ function drawBizChart(){
       <div style="font-weight:700;color:var(--ink);font-size:13.5px">月次の重ね推移 <span style="font-size:11px;color:var(--sub);font-weight:400">（横軸：月${BIZ_CMP?' ／ 実線＝今年・点線＝前年':''}）</span></div>
       <div style="display:flex;gap:18px;flex-wrap:wrap">${legend}</div>
     </div>
-    ${bizMultiSVG(keys,BIZ_CMP,BIZ_TYPE)}
-    <div class="muted" style="font-size:11px;margin-top:8px">※ 上のカードが各指標の実額と前年比、下のグラフは伸び方を重ねて比較（各指標を最大＝100に正規化）。数値はサンプル（マスキング）。</div>`;
+    <div id="bizplot" style="position:relative" onmouseleave="bizHoverOut()">
+      ${bizMultiSVG(keys,BIZ_CMP,BIZ_TYPE)}
+      <div id="bizguide" style="position:absolute;top:5.3%;height:84.7%;width:1px;background:#64748b;opacity:.4;pointer-events:none;display:none"></div>
+      <div id="biztip" style="position:absolute;top:8px;background:#fff;border:1px solid var(--line);box-shadow:0 6px 18px rgba(15,23,42,.14);padding:8px 11px;pointer-events:none;display:none;z-index:6"></div>
+    </div>
+    <div class="muted" style="font-size:11px;margin-top:8px">※ 上のカードが各指標の実額と前年比、下のグラフは伸び方を重ねて比較（各指標を最大＝100に正規化）。<b>グラフにカーソルを合わせると各月の実額が出ます。</b>数値はサンプル（マスキング）。</div>`;
 }
 function renderBizdash(){
   const c=document.getElementById('content');
