@@ -1242,19 +1242,23 @@ const ANALYTICS=[
   {t:'仲介',a:'足立区', bm:5,st:'broker',rev:2.0},
   {t:'仲介',a:'練馬区', bm:6,st:'broker',rev:1.6}
 ];
-function analyticsSectionsHTML(){
+/* 円グラフ（ドーナツ） */
+function donutSVG(segs,size){const r=size/2-14,cx=size/2,cy=size/2,C=2*Math.PI*r,total=segs.reduce((a,s)=>a+s.value,0)||1;let off=0,arcs='';
+  segs.forEach(s=>{const len=s.value/total*C;arcs+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${s.color}" stroke-width="20" stroke-dasharray="${len.toFixed(2)} ${(C-len).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90 ${cx} ${cy})"/>`;off+=len;});
+  return `<svg viewBox="0 0 ${size} ${size}" style="width:${size}px;height:${size}px;display:block">${arcs}</svg>`;}
+/* 構成比バー（単色・控えめ） */
+function shareBar(label,cnt,val,total){const p=total?val/total*100:0;return `<div style="margin:9px 0">
+  <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:3px"><span><b>${label}</b>${cnt!=null?` <span style="color:var(--sub);font-size:11px">${cnt}件</span>`:''}</span><span><b>${fmtYm(val)}</b> <span style="color:var(--sub)">${p.toFixed(0)}%</span></span></div>
+  <div style="height:8px;background:#eef2f6"><div style="height:8px;width:${p.toFixed(1)}%;background:var(--accent)"></div></div></div>`;}
+/* 月別ミニ棒（単色） */
+function monthBarsHTML(A){const mc=Array.from({length:12},(_,i)=>A.filter(r=>r.bm===i+1).length),mx=Math.max(...mc,1);
+  return `<div style="display:flex;align-items:flex-end;gap:5px;margin-top:8px">${mc.map((v,i)=>`<div style="flex:1;text-align:center"><div style="height:62px;display:flex;align-items:flex-end"><div style="width:56%;margin:0 auto;background:var(--navy);height:${(v/mx*100).toFixed(0)}%;opacity:${v?0.85:0.12};min-height:2px"></div></div><div style="font-size:11px;font-weight:700;color:var(--ink)">${v||''}</div><div style="font-size:9.5px;color:var(--sub)">${i+1}月</div></div>`).join('')}</div>`;}
+/* 課題・改善の自動診断（控えめカード） */
+function diagnosisHTML(){
   const A=ANALYTICS, totalRev=A.reduce((s,r)=>s+r.rev,0), share=v=>totalRev?v/totalRev*100:0;
-  const bar=(label,cnt,rev,color)=>{const p=share(rev);return `<div style="margin:9px 0">
-    <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:3px"><span><span style="display:inline-block;width:10px;height:10px;background:${color};border-radius:2px;margin-right:6px;vertical-align:middle"></span><b>${label}</b> <span style="color:var(--sub);font-size:11px">${cnt}件</span></span><span><b>${fmtYm(rev)}</b> <span style="color:var(--sub)">(${p.toFixed(0)}%)</span></span></div>
-    <div style="height:9px;background:#eef1f4"><div style="height:9px;width:${p.toFixed(1)}%;background:${color}"></div></div></div>`;};
-  const byType=TYPES5.map(t=>({t,cnt:A.filter(r=>r.t===t).length,rev:A.filter(r=>r.t===t).reduce((s,r)=>s+r.rev,0)})).filter(x=>x.cnt).sort((a,b)=>b.rev-a.rev);
-  const areas=[...new Set(A.map(r=>r.a))];
-  const byArea=areas.map(a=>({a,cnt:A.filter(r=>r.a===a).length,rev:A.filter(r=>r.a===a).reduce((s,r)=>s+r.rev,0)})).sort((x,y)=>y.rev-x.rev);
-  const monthCnt=Array.from({length:12},(_,i)=>A.filter(r=>r.bm===i+1).length), maxMonth=Math.max(...monthCnt,1);
-  const monthBars=monthCnt.map((v,i)=>`<div style="flex:1;text-align:center"><div style="height:70px;display:flex;align-items:flex-end"><div style="width:60%;margin:0 auto;background:#4f46e5;height:${(v/maxMonth*100).toFixed(0)}%;opacity:${v?1:0.12};min-height:2px"></div></div><div style="font-size:11px;font-weight:700;color:var(--ink)">${v||''}</div><div style="font-size:9.5px;color:var(--sub)">${i+1}月</div></div>`).join('');
-  const cnt=st=>A.filter(r=>r.st===st).length, rev=st=>A.filter(r=>r.st===st).reduce((s,r)=>s+r.rev,0);
   const sold=A.filter(r=>r.st==='sold'), brk=A.filter(r=>r.st==='broker'), brkRev=brk.reduce((s,r)=>s+r.rev,0), holdSell=A.filter(r=>r.st==='hold'||r.st==='sell');
-  // 自動診断
+  const areas=[...new Set(A.map(r=>r.a))];
+  const byType=TYPES5.map(t=>({t,rev:A.filter(r=>r.t===t).reduce((s,r)=>s+r.rev,0)})).filter(x=>x.rev).sort((a,b)=>b.rev-a.rev);
   const ins=[];
   const stagn=holdSell.filter(r=>r.days>90);
   if(stagn.length){const g=stagn.reduce((s,r)=>s+r.rev,0);ins.push({lv:'high',t:'在庫の長期滞留',b:`保有90日超が <b>${stagn.length}件</b>（見込み粗利 合計 ${fmtYm(g)}）。資金が寝て金利が利益を削ります。`,a:'値下げ余地の再計算・販促強化・卸（業者売り）への切替を検討。'});}
@@ -1267,40 +1271,47 @@ function analyticsSectionsHTML(){
   ins.push({lv:'info',t:'仲介（在庫を持たない収益）の比率',b:`収益に占める仲介手数料は <b>${(brkShare*100).toFixed(0)}%</b>（${brk.length}件・${fmtYm(brkRev)}）。在庫リスクの低い安定収益源です。`,a:brkShare<0.2?'比率は低め。相場高騰の局面では仲介比率を上げ、在庫リスクを抑える選択肢も。':'一定比率を確保できています。'});
   const topType=byType[0];
   if(topType && topType.rev/totalRev>0.4){ins.push({lv:'info',t:'収益の偏り',b:`「${topType.t}」が収益の <b>${(topType.rev/totalRev*100).toFixed(0)}%</b> を占めます。`,a:'一つの類型・エリアへの依存はリスク。ポートフォリオ分散も意識。'});}
-  const lv={high:{bg:'#fef2f2',bd:'#fecaca',ic:'⚠',c:'#b91c1c'},good:{bg:'#f0fdf4',bd:'#bbf7d0',ic:'✅',c:'#15803d'},info:{bg:'#eff6ff',bd:'#bfdbfe',ic:'💡',c:'#1e40af'}};
-  const insHTML=ins.map(x=>{const s=lv[x.lv];return `<div style="border:1px solid ${s.bd};background:${s.bg};padding:12px 14px;margin-bottom:10px">
-    <div style="font-weight:800;color:${s.c};font-size:13px">${s.ic} ${x.t}</div>
-    <div style="font-size:12.5px;margin-top:4px;line-height:1.6">${x.b}</div>
-    <div style="font-size:12px;margin-top:6px"><b>→ 推奨：</b>${x.a}</div></div>`;}).join('');
+  const col={high:'#b91c1c',good:'#15803d',info:'#334155'}, icn={high:'⚠',good:'✅',info:'💡'};
+  const insHTML=ins.map(x=>`<div style="border:1px solid var(--line);border-left:3px solid ${col[x.lv]};padding:11px 14px;margin-bottom:9px">
+    <div style="font-weight:800;font-size:13px;color:var(--ink)">${icn[x.lv]} ${x.t}</div>
+    <div style="font-size:12.5px;margin-top:3px;line-height:1.6">${x.b}</div>
+    <div style="font-size:12px;margin-top:5px;color:var(--sub)"><b style="color:var(--ink)">→ 推奨：</b>${x.a}</div></div>`).join('');
+  return `<div class="card" style="padding:18px 20px"><div class="sectiontitle" style="margin-top:0">🔎 課題・改善の自動診断</div>${insHTML}<div class="muted" style="font-size:11px;margin-top:2px">※ サンプルデータに基づく自動生成の示唆（参考）。</div></div>`;
+}
+/* 買取再販タブ */
+function resaleSectionsHTML(){
+  const A=ANALYTICS.filter(r=>r.t!=='仲介'), total=A.reduce((s,r)=>s+r.rev,0);
+  const RTYPES=['土地売り','戸建建売','業者売り','アパート'];
+  const byType=RTYPES.map(t=>({t,cnt:A.filter(r=>r.t===t).length,rev:A.filter(r=>r.t===t).reduce((s,r)=>s+r.rev,0)})).filter(x=>x.cnt).sort((a,b)=>b.rev-a.rev);
+  const areas=[...new Set(A.map(r=>r.a))];
+  const byArea=areas.map(a=>({a,cnt:A.filter(r=>r.a===a).length,rev:A.filter(r=>r.a===a).reduce((s,r)=>s+r.rev,0)})).sort((x,y)=>y.rev-x.rev);
+  const sold=A.filter(r=>r.st==='sold'), holdSell=A.filter(r=>r.st==='hold'||r.st==='sell');
   return `
-    <div class="sectiontitle">📊 経営分析（内訳・課題の示唆）</div>
-    <div class="card" style="padding:18px 20px;margin-bottom:16px">
-      <div class="sectiontitle" style="margin-top:0">🥧 収益構成（業務タイプ別・仲介含む）</div>
-      ${byType.map(x=>bar(x.t,x.cnt,x.rev,TCOL[x.t]||'#64748b')).join('')}
-      <div class="muted" style="font-size:11px;margin-top:8px">※ 収益＝売却済みの実現粗利＋在庫の見込み粗利＋仲介手数料（サンプル）。</div>
+    <div class="kpis">
+      ${statBox('売却済み',sold.length+' 件',fmtYm(sold.reduce((s,r)=>s+r.rev,0))+'（実現粗利）')}
+      ${statBox('在庫・販売中',holdSell.length+' 件',fmtYm(holdSell.reduce((s,r)=>s+r.rev,0))+'（見込み粗利）')}
+      ${statBox('買取再販 収益',fmtYm(total),'再販合計（サンプル）')}
+      ${statBox('取り扱いエリア',areas.length+' エリア','分散状況')}
     </div>
-    <div class="card" style="padding:18px 20px;margin-bottom:16px">
-      <div class="sectiontitle" style="margin-top:0">📍 エリア別の内訳</div>
-      ${byArea.map(x=>bar(x.a,x.cnt,x.rev,'#0891b2')).join('')}
+    <div class="card" style="padding:18px 20px;margin-bottom:16px"><div class="sectiontitle" style="margin-top:0">業務タイプ別の収益構成</div>${byType.map(x=>shareBar(x.t,x.cnt,x.rev,total)).join('')}</div>
+    <div class="card" style="padding:18px 20px;margin-bottom:16px"><div class="sectiontitle" style="margin-top:0">エリア別の内訳</div>${byArea.map(x=>shareBar(x.a,x.cnt,x.rev,total)).join('')}</div>
+    <div class="card" style="padding:18px 20px"><div class="sectiontitle" style="margin-top:0">仕入れ時期（月別の仕入れ件数）</div>${monthBarsHTML(A)}</div>`;
+}
+/* 仲介タブ */
+function brokerSectionsHTML(){
+  const A=ANALYTICS.filter(r=>r.t==='仲介'), total=A.reduce((s,r)=>s+r.rev,0);
+  const areas=[...new Set(A.map(r=>r.a))];
+  const byArea=areas.map(a=>({a,cnt:A.filter(r=>r.a===a).length,rev:A.filter(r=>r.a===a).reduce((s,r)=>s+r.rev,0)})).sort((x,y)=>y.rev-x.rev);
+  return `
+    <div class="bubble">🤝 <b>仲介事業</b>：在庫を持たず手数料で稼ぐ事業。相場が高い局面でも回せる、リスクの低い収益源です。</div>
+    <div class="kpis">
+      ${statBox('仲介 成約',A.length+' 件','手数料ベース')}
+      ${statBox('手数料 収入',fmtYm(total),'合計（サンプル）')}
+      ${statBox('平均手数料',fmtYm(A.length?total/A.length:0),'1件あたり')}
+      ${statBox('取り扱いエリア',areas.length+' エリア','分散状況')}
     </div>
-    <div class="card" style="padding:18px 20px;margin-bottom:16px">
-      <div class="sectiontitle" style="margin-top:0">🗓 仕入れ時期（月別の仕入れ件数）</div>
-      <div style="display:flex;align-items:flex-end;gap:5px;margin-top:8px">${monthBars}</div>
-    </div>
-    <div class="card" style="padding:18px 20px;margin-bottom:16px">
-      <div class="sectiontitle" style="margin-top:0">📦 ステータス別・仲介実績</div>
-      <div class="kpis">
-        ${statBox('売却済み',cnt('sold')+' 件',fmtYm(rev('sold'))+'（実現粗利）')}
-        ${statBox('在庫・販売中',holdSell.length+' 件',fmtYm(holdSell.reduce((s,r)=>s+r.rev,0))+'（見込み粗利）')}
-        ${statBox('仲介 成約',brk.length+' 件',fmtYm(brkRev)+'（手数料収入）')}
-        ${statBox('仲介 平均手数料',fmtYm(brk.length?brkRev/brk.length:0),'1件あたり')}
-      </div>
-    </div>
-    <div class="card" style="padding:18px 20px">
-      <div class="sectiontitle" style="margin-top:0">🔎 自動診断（課題・改善の示唆）</div>
-      ${insHTML}
-      <div class="muted" style="font-size:11px;margin-top:2px">※ サンプルデータに基づく自動生成の示唆（参考）。実データ連携で精度が上がります。</div>
-    </div>`;
+    <div class="card" style="padding:18px 20px;margin-bottom:16px"><div class="sectiontitle" style="margin-top:0">エリア別の仲介手数料</div>${byArea.map(x=>shareBar(x.a,x.cnt,x.rev,total)).join('')}</div>
+    <div class="card" style="padding:18px 20px"><div class="sectiontitle" style="margin-top:0">仲介の成約時期（月別）</div>${monthBarsHTML(A)}</div>`;
 }
 function accessDenied(name){
   return `<div class="bubble">🔒 <b>${name}</b> は <b>上長・代表のみ</b> が閲覧できる画面です（営業担当には表示されません＝表示範囲の設計どおり）。<br>上部のプレビュー切替で「上長」または「代表」に切り替えると確認できます。</div>
@@ -1313,6 +1324,8 @@ const SERIES={
   inv:  {2025:[268,295,250,312,288,305,322,298,340,315,358,372], 2026:[355,330,388,362,371,367]}
 };
 let BIZ_METRICS=['sales','gp','inv'], BIZ_TYPE='line', BIZ_CMP=true;
+let BIZ_TAB='all';
+function setBizTab(t){BIZ_TAB=t;renderBizdash();window.scrollTo(0,0);}
 const MET_ORDER=['sales','gp','inv'];
 const MET_DEF={sales:{label:'売上高',color:'#4f46e5',shape:'c',cum:true},gp:{label:'粗利',color:'#db2777',shape:'s',cum:true},inv:{label:'在庫額',color:'#f59e0b',shape:'t',cum:false}};
 function fmtYm(n){ return n>=100 ? '¥'+(n/100).toFixed(1)+'億' : '¥'+Math.round(n)+'百万'; }
@@ -1435,8 +1448,12 @@ function renderBizdash(){
   const diffs=done.map(d=>(d.actual.profit/d.actual.price)-rate(d,1));
   const avgDiff=diffs.reduce((a,b)=>a+b,0)/diffs.length;
   const dc=avgDiff>=0?COLR.ok:COLR.ng;
-  c.innerHTML=`
-    <div class="bubble">👔 <b>経営ビュー（全社）</b>：仕入れ〜販売〜実績の数字をひと目で。資金がどこに寝ていて、いくら回収予定か、想定はどれだけ当たっているかを俯瞰します。</div>
+  const tabs=[['all','全社サマリー'],['resale','買取再販'],['broker','仲介']];
+  const tabBar=`<div style="display:flex;gap:2px;border-bottom:2px solid var(--line);margin-bottom:18px">${tabs.map(([k,l])=>`<button onclick="setBizTab('${k}')" style="border:0;background:none;padding:9px 18px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit;color:${BIZ_TAB===k?'var(--navy)':'var(--sub)'};border-bottom:3px solid ${BIZ_TAB===k?'var(--navy)':'transparent'};margin-bottom:-2px">${l}</button>`).join('')}</div>`;
+  let body;
+  if(BIZ_TAB==='resale'){ body=resaleSectionsHTML(); }
+  else if(BIZ_TAB==='broker'){ body=brokerSectionsHTML(); }
+  else { body=`
     <div class="kpis">
       ${statBox('今期の実現利益（累計）',fmtY(realized),done.length+'件 売却済み')}
       ${statBox('進行中の見込み粗利',fmtY(invGross),'在庫の売出−仕入')}
@@ -1444,24 +1461,28 @@ function renderBizdash(){
       ${statBox('承認待ち（意思決定）',awaitD.length+' 件',fmtY(awaitAmt)+' 相当')}
     </div>
     <div class="card" style="padding:18px 20px">
-      <div class="sectiontitle" style="margin-top:0">📈 事業の推移（売上・粗利・在庫の分析）</div>
+      <div class="sectiontitle" style="margin-top:0">📈 事業の推移（売上・粗利・在庫）</div>
       <div id="biz-chart"></div>
     </div>
     <div class="sectiontitle">🔄 案件パイプライン（全社）</div>
     <div class="flow">
-      <div class="stage st2"><div class="sl">① 承認待ち</div><div class="sv">${awaitD.length}<small> 件</small></div><div class="sc">上長・代表の意思決定待ち<br>${fmtY(awaitAmt)} 相当</div></div>
+      <div class="stage"><div class="sl">① 承認待ち</div><div class="sv">${awaitD.length}<small> 件</small></div><div class="sc">意思決定待ち<br>${fmtY(awaitAmt)} 相当</div></div>
       <div class="arrow">▶</div>
-      <div class="stage st3"><div class="sl">② 販売中の在庫</div><div class="sv">${INVENTORY.length}<small> 件</small></div><div class="sc">全営業で販売中<br>${fmtY(invTotal)}（売出）</div></div>
+      <div class="stage"><div class="sl">② 販売中の在庫</div><div class="sv">${INVENTORY.length}<small> 件</small></div><div class="sc">全営業で販売中<br>${fmtY(invTotal)}（売出）</div></div>
       <div class="arrow">▶</div>
-      <div class="stage st1"><div class="sl">③ 売却済み・実績（今期）</div><div class="sv">${done.length}<small> 件</small></div><div class="sc">実現利益 ${fmtY(realized)}</div></div>
+      <div class="stage"><div class="sl">③ 売却済み・実績</div><div class="sv">${done.length}<small> 件</small></div><div class="sc">実現利益 ${fmtY(realized)}</div></div>
     </div>
     <div class="insight" style="margin-top:6px">
       <div class="muted" style="font-size:12px;margin-bottom:2px">会社全体の想定精度（実績 − 計画）</div>
       <div class="big" style="color:${dc}">実績は、計画（着地見込み）を 平均 ${avgDiff>=0?'+':''}${pct(avgDiff)}</div>
     </div>
-    ${analyticsSectionsHTML()}
-    <div class="muted" style="font-size:11px;margin-top:6px">※ サンプル値（マスキング）。実運用では各案件・在庫・仲介の登録から自動集計されます。この画面は<b>上長・代表のみ</b>閲覧できます。</div>`;
-  drawBizChart();
+    ${diagnosisHTML()}`;
+  }
+  c.innerHTML=`
+    <div class="bubble">👔 <b>経営ビュー（上長・代表）</b>：会社全体と、事業ごと（買取再販／仲介）をタブで切り替えて把握できます。</div>
+    ${tabBar}${body}
+    <div class="muted" style="font-size:11px;margin-top:10px">※ サンプル値（マスキング）。この画面は<b>上長・代表のみ</b>閲覧できます。</div>`;
+  if(BIZ_TAB==='all') drawBizChart();
 }
 function renderPerf(){
   const c=document.getElementById('content');
@@ -1479,14 +1500,17 @@ function renderPerf(){
     const bias=done.length?done.reduce((a,d)=>a+((d.actual.profit/d.actual.price)-rate(d,1)),0)/done.length:null;
     const tm={}; ds.forEach(d=>{tm[d.type]=(tm[d.type]||0)+(d.actual?d.actual.profit:0.001);});
     const topType=Object.keys(tm).sort((a,b)=>tm[b]-tm[a])[0]||null;
-    return {s,total:ds.length,active,doneCnt:done.length,realized,marg,hit,rej,passRate:decided?passed/decided:null,bias,topType};
+    return {s,total:ds.length,active,doneCnt:done.length,realized,salesRev:rev,marg,hit,rej,passRate:decided?passed/decided:null,bias,topType};
   }).sort((a,b)=>b.realized-a.realized);
   const maxR=Math.max(...rows.map(r=>r.realized),1);
   const totDone=rows.reduce((a,r)=>a+r.doneCnt,0), totHit=rows.reduce((a,r)=>a+r.hit,0), totRej=rows.reduce((a,r)=>a+r.rej,0), totReal=rows.reduce((a,r)=>a+r.realized,0), totTotal=rows.reduce((a,r)=>a+r.total,0), totActive=rows.reduce((a,r)=>a+r.active,0);
-  const top=rows[0], BARC=['#4f46e5','#0891b2','#db2777','#f59e0b'];
+  const top=rows[0];
+  const SEGC=['#173a5e','#0e7490','#94a3b8','#b45309'];
+  const salesTotal=rows.reduce((a,r)=>a+r.salesRev,0)||1;
+  const salesSegs=[...rows].filter(r=>r.salesRev>0).sort((a,b)=>b.salesRev-a.salesRev).map((r,i)=>({label:r.s,value:r.salesRev,color:SEGC[i%4]}));
   const rankBars=rows.map((r,i)=>`<div style="margin:8px 0">
-    <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:3px"><span><b>${i+1}. ${r.s}</b> <span style="color:var(--sub);font-size:11px">${r.topType||'—'}</span></span><span><b>${fmtY(r.realized)}</b></span></div>
-    <div style="height:10px;background:#eef1f4"><div style="height:10px;width:${Math.round(r.realized/maxR*100)}%;background:${BARC[i%4]}"></div></div></div>`).join('');
+    <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:3px"><span><b>${i+1}. ${r.s}</b> <span style="color:var(--sub);font-size:11px">得意：${r.topType||'—'}</span></span><span><b>${fmtY(r.realized)}</b></span></div>
+    <div style="height:10px;background:#eef2f6"><div style="height:10px;width:${Math.round(r.realized/maxR*100)}%;background:var(--navy)"></div></div></div>`).join('');
   const comments=rows.map((r,i)=>{const st=[],wt=[];
     if(i===0 && r.realized>0) st.push('実現利益トップ');
     if(r.doneCnt>0 && r.hit===r.doneCnt) st.push(`想定精度が高い（的中 ${r.hit}/${r.doneCnt}）`);
@@ -1510,6 +1534,14 @@ function renderPerf(){
     <div class="card" style="padding:16px 18px;margin-bottom:16px">
       <div class="sectiontitle" style="margin-top:0">🏆 実現利益ランキング</div>
       ${rankBars}
+    </div>
+    <div class="card" style="padding:16px 18px;margin-bottom:16px">
+      <div class="sectiontitle" style="margin-top:0">🥧 売上シェア（担当者別）</div>
+      <div style="display:flex;align-items:center;gap:26px;flex-wrap:wrap">
+        ${donutSVG(salesSegs,150)}
+        <div>${salesSegs.map(s=>`<div style="font-size:12.5px;margin:6px 0"><span style="display:inline-block;width:11px;height:11px;background:${s.color};border-radius:2px;margin-right:8px;vertical-align:middle"></span><b>${s.label}</b>　${fmtY(s.value)} <span style="color:var(--sub)">(${(s.value/salesTotal*100).toFixed(0)}%)</span></div>`).join('')}
+        <div style="font-size:11px;color:var(--sub);margin-top:6px">※ 売上＝売却済みの成約価格の合計。</div></div>
+      </div>
     </div>
     <div class="xwrap">
       <table class="xgrid">
