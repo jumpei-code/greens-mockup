@@ -1226,7 +1226,9 @@ const SERIES={
   gp:   {2025:[7,11,6,15,8,11,9,13,8,14,10,12],          2026:[9,7,18,10,13,12]},
   inv:  {2025:[268,295,250,312,288,305,322,298,340,315,358,372], 2026:[355,330,388,362,371,367]}
 };
-let BIZ_METRIC='sales', BIZ_TYPE='line', BIZ_CMP=true;
+let BIZ_METRICS=['sales','gp','inv'], BIZ_TYPE='line', BIZ_CMP=true;
+const MET_ORDER=['sales','gp','inv'];
+const MET_DEF={sales:{label:'売上高',color:'#0e7490',cum:true},gp:{label:'粗利',color:'#15803d',cum:true},inv:{label:'在庫額',color:'#b45309',cum:false}};
 function fmtYm(n){ return n>=100 ? '¥'+(n/100).toFixed(1)+'億' : '¥'+Math.round(n)+'百万'; }
 function bizChartSVG(cur,prev,color,compare,type){
   const W=900,H=320,pl=58,pr=18,pt=18,pb=34, pw=W-pl-pr, ph=H-pt-pb, N=12;
@@ -1253,47 +1255,56 @@ function bizChartSVG(cur,prev,color,compare,type){
   }
   return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block">${grid}${series}${xl}</svg>`;
 }
-function setBizMetric(m){BIZ_METRIC=m;drawBizChart();}
+function toggleBizMetric(m){ if(BIZ_METRICS.includes(m)){ if(BIZ_METRICS.length>1) BIZ_METRICS=BIZ_METRICS.filter(x=>x!==m); } else { BIZ_METRICS=MET_ORDER.filter(x=>BIZ_METRICS.includes(x)||x===m); } drawBizChart(); }
 function setBizType(t){BIZ_TYPE=t;drawBizChart();}
 function toggleBizCmp(){BIZ_CMP=!BIZ_CMP;drawBizChart();}
-function drawBizChart(){
-  const wrap=document.getElementById('biz-chart'); if(!wrap) return;
-  const M={sales:{label:'売上高',color:'#0e7490',cum:true},gp:{label:'粗利',color:'#15803d',cum:true},inv:{label:'在庫額',color:'#b45309',cum:false}}[BIZ_METRIC];
-  const cur=SERIES[BIZ_METRIC][2026].slice(); while(cur.length<12) cur.push(null);
-  const prev=SERIES[BIZ_METRIC][2025];
+function chartBlock(key){
+  const M=MET_DEF[key];
+  const cur=SERIES[key][2026].slice(); while(cur.length<12) cur.push(null);
+  const prev=SERIES[key][2025];
   const curVals=cur.filter(v=>v!=null), nCur=curVals.length;
-  let cards;
+  const c1='color:var(--sub);font-weight:700';
+  let stats;
   if(M.cum){
     const curSum=curVals.reduce((a,b)=>a+b,0), prevSame=prev.slice(0,nCur).reduce((a,b)=>a+b,0);
-    const yoy=prevSame?(curSum-prevSame)/prevSame:0;
-    cards=[['今年累計（〜'+nCur+'月）',fmtYm(curSum),null],['前年同期',fmtYm(prevSame),null],['前年同期比',(yoy>=0?'+':'')+pct(yoy),yoy>=0?COLR.ok:COLR.ng],['月平均',fmtYm(curSum/nCur),null]];
+    const yoy=prevSame?(curSum-prevSame)/prevSame:0, yc=yoy>=0?COLR.ok:COLR.ng;
+    stats=`<span><span style="${c1}">今年累計（〜${nCur}月）</span> <b>${fmtYm(curSum)}</b></span>
+      <span><span style="${c1}">前年同期</span> ${fmtYm(prevSame)}</span>
+      <span><span style="${c1}">前年同期比</span> <b style="color:${yc}">${yoy>=0?'+':''}${pct(yoy)}</b></span>
+      <span><span style="${c1}">月平均</span> ${fmtYm(curSum/nCur)}</span>`;
   } else {
     const latest=curVals[nCur-1], prevM=prev[nCur-1], yoy=prevM?(latest-prevM)/prevM:0;
-    cards=[['最新月末（'+nCur+'月）',fmtYm(latest),null],['前年同月',fmtYm(prevM),null],['前年同月比',(yoy>=0?'+':'')+pct(yoy),'#64748b'],['今年の月平均',fmtYm(curVals.reduce((a,b)=>a+b,0)/nCur),null]];
+    stats=`<span><span style="${c1}">最新月末（${nCur}月）</span> <b>${fmtYm(latest)}</b></span>
+      <span><span style="${c1}">前年同月</span> ${fmtYm(prevM)}</span>
+      <span><span style="${c1}">前年同月比</span> <b style="color:#64748b">${yoy>=0?'+':''}${pct(yoy)}</b></span>
+      <span><span style="${c1}">今年の月平均</span> ${fmtYm(curVals.reduce((a,b)=>a+b,0)/nCur)}</span>`;
   }
+  return `<div style="border:1px solid var(--line);padding:12px 14px 8px;margin-bottom:12px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px;margin-bottom:4px">
+      <div style="font-weight:700;color:var(--ink)"><span style="display:inline-block;width:11px;height:11px;background:${M.color};margin-right:6px;vertical-align:middle"></span>${M.label}の月次推移 <span style="font-size:11px;color:var(--sub);font-weight:400">（百万円／横軸：月）</span></div>
+      <div style="font-size:11px;color:var(--sub)"><span style="display:inline-block;width:14px;height:3px;background:${M.color};vertical-align:middle"></span> 今年(2026)${BIZ_CMP?`　<span style="display:inline-block;width:14px;border-top:2px dashed #94a3b8;vertical-align:middle"></span> 前年(2025)`:''}</div>
+    </div>
+    ${bizChartSVG(cur,prev,M.color,BIZ_CMP,BIZ_TYPE)}
+    <div style="display:flex;flex-wrap:wrap;gap:18px;margin-top:8px;font-size:12px">${stats}</div>
+  </div>`;
+}
+function drawBizChart(){
+  const wrap=document.getElementById('biz-chart'); if(!wrap) return;
   const idle='border:1px solid var(--line);background:#fff;color:var(--sub);padding:6px 13px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit';
   const on='border:1px solid var(--navy);background:var(--navy);color:#fff;padding:6px 13px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit';
-  const mb=(k,l)=>`<button style="${BIZ_METRIC===k?on:idle}" onclick="setBizMetric('${k}')">${l}</button>`;
+  const mb=(k,l)=>`<button style="${BIZ_METRICS.includes(k)?on:idle}" onclick="toggleBizMetric('${k}')">${BIZ_METRICS.includes(k)?'✓ ':''}${l}</button>`;
   const tb=(k,l)=>`<button style="${BIZ_TYPE===k?on:idle}" onclick="setBizType('${k}')">${l}</button>`;
   const cb=`<button style="${BIZ_CMP?on:idle}" onclick="toggleBizCmp()">前年比較 ${BIZ_CMP?'ON':'OFF'}</button>`;
   const sep='<span style="width:1px;height:20px;background:var(--line);margin:0 3px"></span>';
+  const charts=MET_ORDER.filter(k=>BIZ_METRICS.includes(k)).map(chartBlock).join('');
   wrap.innerHTML=`
-    <div style="display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-bottom:10px">
-      <span style="font-size:11.5px;color:var(--sub);font-weight:700">指標</span>${mb('sales','売上高')}${mb('gp','粗利')}${mb('inv','在庫額')}
+    <div style="display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-bottom:12px">
+      <span style="font-size:11.5px;color:var(--sub);font-weight:700">指標（複数選択可）</span>${mb('sales','売上高')}${mb('gp','粗利')}${mb('inv','在庫額')}
       ${sep}<span style="font-size:11.5px;color:var(--sub);font-weight:700">表示</span>${tb('line','折れ線')}${tb('bar','棒')}
       ${sep}${cb}
     </div>
-    <div style="border:1px solid var(--line);padding:12px 14px 4px">
-      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px;margin-bottom:4px">
-        <div style="font-weight:700;color:var(--ink)">${M.label}の月次推移 <span style="font-size:11px;color:var(--sub);font-weight:400">（単位：百万円／横軸：月）</span></div>
-        <div style="font-size:11px;color:var(--sub)"><span style="display:inline-block;width:14px;height:3px;background:${M.color};vertical-align:middle"></span> 今年(2026)${BIZ_CMP?`　<span style="display:inline-block;width:14px;border-top:2px dashed #94a3b8;vertical-align:middle"></span> 前年(2025)`:''}</div>
-      </div>
-      ${bizChartSVG(cur,prev,M.color,BIZ_CMP,BIZ_TYPE)}
-    </div>
-    <div class="kpis" style="margin-top:12px">
-      ${cards.map(c=>statBox(c[0], c[2]?`<span style="color:${c[2]}">${c[1]}</span>`:c[1], '')).join('')}
-    </div>
-    <div class="muted" style="font-size:11px;margin-top:8px">※ 売上・粗利は「累計と前年同期比」、在庫額は「月末残高と前年同月比」で表示。数値はサンプル（マスキング）。実運用では売却・在庫の登録から自動集計されます。</div>`;
+    ${charts}
+    <div class="muted" style="font-size:11px;margin-top:2px">※ 指標ボタンで複数のグラフを同時表示できます。売上・粗利は「累計と前年同期比」、在庫額は「月末残高と前年同月比」。数値はサンプル（マスキング）。</div>`;
 }
 function renderBizdash(){
   const c=document.getElementById('content');
