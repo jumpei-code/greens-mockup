@@ -1246,6 +1246,38 @@ const LEAD={'GR-2026-0009':95,'GR-2026-0003':70,'GR-2025-0044':240,'GR-2025-0031
 function fmtLead(d){ return `${Math.round(d)}日（約${(d/30).toFixed(1)}ヶ月）`; }
 function partnerRank(records,key){const m={};records.forEach(r=>{const k=r[key];if(!k||k.startsWith('（'))return;if(!m[k])m[k]={cnt:0,rev:0};m[k].cnt++;m[k].rev+=r.rev;});return Object.keys(m).map(k=>({name:k,cnt:m[k].cnt,rev:m[k].rev})).sort((a,b)=>b.cnt-a.cnt||b.rev-a.rev);}
 function partnerBars(list){const mx=Math.max(...list.map(p=>p.cnt),1);return list.length?list.map(p=>`<div style="margin:8px 0"><div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:3px"><span><b>${p.name}</b></span><span><b>${p.cnt}件</b> <span style="color:var(--sub)">${fmtYm(p.rev)}</span></span></div><div style="height:8px;background:#eef2f6"><div style="height:8px;width:${Math.round(p.cnt/mx*100)}%;background:var(--accent)"></div></div></div>`).join(''):'<div class="muted" style="font-size:12px">データなし</div>';}
+/* 業務タイプの控えめカラー（ドーナツ用） */
+const TCOL2={'土地売り':'#173a5e','戸建建売':'#0e7490','業者売り':'#64748b','アパート':'#b45309'};
+/* 縦棒グラフ（ランキング用） */
+function vBarChart(items,color){
+  if(!items.length) return '<div class="muted" style="font-size:12px">データなし</div>';
+  const mx=Math.max(...items.map(i=>i.value),1);
+  return `<div style="display:flex;align-items:flex-end;gap:10px;height:150px;padding-top:6px">${items.map(it=>`
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end">
+      <div style="font-size:12px;font-weight:800;color:var(--ink)">${it.value}</div>
+      <div style="width:66%;max-width:44px;background:${color||'var(--accent)'};height:${Math.round(it.value/mx*100)}%;min-height:3px;border-radius:3px 3px 0 0"></div>
+      <div style="font-size:10.5px;color:var(--sub);margin-top:6px;text-align:center;line-height:1.2">${it.label}${it.sub?`<br><span style="font-size:9.5px">${it.sub}</span>`:''}</div>
+    </div>`).join('')}</div>`;
+}
+/* リードタイム・タイムライン（横方向の期間バー＋月軸） */
+function leadTimeline(items){
+  if(!items.length) return '';
+  const maxD=Math.max(...items.map(i=>i.days),1), axisMax=Math.max(Math.ceil(maxD/90)*90,90), ticks=[];
+  for(let d=0;d<=axisMax;d+=90) ticks.push(d);
+  return `<div>
+    ${items.map(it=>`<div style="display:flex;align-items:center;gap:10px;margin:9px 0">
+      <div style="width:74px;font-size:12px;font-weight:700;color:var(--ink);text-align:right">${it.label}</div>
+      <div style="flex:1;position:relative;height:16px;background:#f1f5f9;border-radius:8px">
+        ${ticks.map(t=>`<div style="position:absolute;left:${(t/axisMax*100).toFixed(1)}%;top:0;bottom:0;width:1px;background:#e2e8f0"></div>`).join('')}
+        <div style="position:absolute;left:0;top:0;height:16px;width:${(it.days/axisMax*100).toFixed(1)}%;background:${it.days>180?'#b45309':'var(--accent)'};border-radius:8px"></div>
+      </div>
+      <div style="width:104px;font-size:11.5px;color:var(--ink);font-weight:700">${it.days}日 <span style="color:var(--sub);font-weight:400">約${(it.days/30).toFixed(1)}ヶ月</span></div>
+    </div>`).join('')}
+    <div style="position:relative;height:14px;margin:2px 114px 0 84px">
+      ${ticks.map((t,i)=>{const tx=i===0?'0':i===ticks.length-1?'-100%':'-50%';return `<div style="position:absolute;left:${(t/axisMax*100).toFixed(1)}%;font-size:9.5px;color:var(--sub);white-space:nowrap;transform:translateX(${tx})">${t===0?'0':(t/30)+'ヶ月'}</div>`;}).join('')}
+    </div>
+  </div>`;
+}
 /* 円グラフ（ドーナツ） */
 function donutSVG(segs,size){const r=size/2-14,cx=size/2,cy=size/2,C=2*Math.PI*r,total=segs.reduce((a,s)=>a+s.value,0)||1;let off=0,arcs='';
   segs.forEach(s=>{const len=s.value/total*C;arcs+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${s.color}" stroke-width="20" stroke-dasharray="${len.toFixed(2)} ${(C-len).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90 ${cx} ${cy})"/>`;off+=len;});
@@ -1311,14 +1343,20 @@ function resaleSectionsHTML(){
     </div>
     <div class="card" style="padding:18px 20px;margin-bottom:16px">
       <div class="sectiontitle" style="margin-top:0">⏱ リードタイム（仕入決済〜売却決済＝資金が寝ている期間）</div>
-      <div style="font-size:12.5px;color:var(--sub);margin-bottom:10px">短いほど資金回転が良く、仕入れの質が高い目安。現在の在庫は平均 <b style="color:var(--ink)">${Math.round(avgHold)}日</b> 経過中。</div>
-      ${leadByType.map(x=>`<div style="margin:8px 0"><div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:3px"><span><b>${x.t}</b> <span style="color:var(--sub);font-size:11px">${x.cnt}件</span></span><span><b>${Math.round(x.l)}日</b> <span style="color:var(--sub)">約${(x.l/30).toFixed(1)}ヶ月</span></span></div><div style="height:8px;background:#eef2f6"><div style="height:8px;width:${Math.round(x.l/maxL*100)}%;background:${x.l>180?'#b45309':'var(--accent)'}"></div></div></div>`).join('')}
+      <div style="font-size:12.5px;color:var(--sub);margin-bottom:12px">短いほど資金回転が良く、仕入れの質が高い目安。現在の在庫は平均 <b style="color:var(--ink)">${Math.round(avgHold)}日</b> 経過中。</div>
+      ${leadTimeline(leadByType.map(x=>({label:x.t,days:Math.round(x.l)})))}
     </div>
     <div class="xcols" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
-      <div class="card" style="padding:18px 20px;margin:0"><div class="sectiontitle" style="margin-top:0">🏭 仕入れ先ランキング（よく持ち込む業者）</div>${partnerBars(fromRank)}</div>
-      <div class="card" style="padding:18px 20px;margin:0"><div class="sectiontitle" style="margin-top:0">🤝 売却先ランキング（よく買う業者）</div>${partnerBars(toRank)}</div>
+      <div class="card" style="padding:18px 20px;margin:0"><div class="sectiontitle" style="margin-top:0">🏭 仕入れ先ランキング</div>${vBarChart(fromRank.map(p=>({label:p.name,value:p.cnt,sub:fmtYm(p.rev)})),'var(--navy)')}</div>
+      <div class="card" style="padding:18px 20px;margin:0"><div class="sectiontitle" style="margin-top:0">🤝 売却先ランキング</div>${vBarChart(toRank.map(p=>({label:p.name,value:p.cnt,sub:fmtYm(p.rev)})),'var(--accent)')}</div>
     </div>
-    <div class="card" style="padding:18px 20px;margin-bottom:16px"><div class="sectiontitle" style="margin-top:0">業務タイプ別の収益構成</div>${byType.map(x=>shareBar(x.t,x.cnt,x.rev,total)).join('')}</div>
+    <div class="card" style="padding:18px 20px;margin-bottom:16px">
+      <div class="sectiontitle" style="margin-top:0">業務タイプ別の収益構成</div>
+      <div style="display:flex;align-items:center;gap:26px;flex-wrap:wrap">
+        ${donutSVG(byType.map(x=>({label:x.t,value:x.rev,color:TCOL2[x.t]||'#94a3b8'})),150)}
+        <div>${byType.map(x=>`<div style="font-size:12.5px;margin:5px 0"><span style="display:inline-block;width:11px;height:11px;background:${TCOL2[x.t]||'#94a3b8'};border-radius:2px;margin-right:8px;vertical-align:middle"></span><b>${x.t}</b> <span style="color:var(--sub);font-size:11px">${x.cnt}件</span>　${fmtYm(x.rev)} <span style="color:var(--sub)">(${(x.rev/total*100).toFixed(0)}%)</span></div>`).join('')}</div>
+      </div>
+    </div>
     <div class="card" style="padding:18px 20px;margin-bottom:16px"><div class="sectiontitle" style="margin-top:0">エリア別の内訳</div>${byArea.map(x=>shareBar(x.a,x.cnt,x.rev,total)).join('')}</div>
     <div class="card" style="padding:18px 20px"><div class="sectiontitle" style="margin-top:0">仕入れ時期（月別の仕入れ件数）</div>${monthBarsHTML(A)}</div>`;
 }
@@ -1336,8 +1374,8 @@ function brokerSectionsHTML(){
       ${statBox('取り扱いエリア',areas.length+' エリア','分散状況')}
     </div>
     <div class="xcols" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
-      <div class="card" style="padding:18px 20px;margin:0"><div class="sectiontitle" style="margin-top:0">🏭 売主側の取引先</div>${partnerBars(partnerRank(A,'from'))}</div>
-      <div class="card" style="padding:18px 20px;margin:0"><div class="sectiontitle" style="margin-top:0">🤝 買主側の取引先</div>${partnerBars(partnerRank(A,'to'))}</div>
+      <div class="card" style="padding:18px 20px;margin:0"><div class="sectiontitle" style="margin-top:0">🏭 売主側の取引先</div>${vBarChart(partnerRank(A,'from').map(p=>({label:p.name,value:p.cnt,sub:fmtYm(p.rev)})),'var(--navy)')}</div>
+      <div class="card" style="padding:18px 20px;margin:0"><div class="sectiontitle" style="margin-top:0">🤝 買主側の取引先</div>${vBarChart(partnerRank(A,'to').map(p=>({label:p.name,value:p.cnt,sub:fmtYm(p.rev)})),'var(--accent)')}</div>
     </div>
     <div class="card" style="padding:18px 20px;margin-bottom:16px"><div class="sectiontitle" style="margin-top:0">エリア別の仲介手数料</div>${byArea.map(x=>shareBar(x.a,x.cnt,x.rev,total)).join('')}</div>
     <div class="card" style="padding:18px 20px"><div class="sectiontitle" style="margin-top:0">仲介の成約時期（月別）</div>${monthBarsHTML(A)}</div>`;
