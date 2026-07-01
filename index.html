@@ -274,6 +274,8 @@
       <button data-nav="review" onclick="go('review')"><span class="ic">↺</span>実績分析</button>
       <button data-nav="access" onclick="go('access')"><span class="ic">▦</span>表示範囲（権限）</button>
       <div class="group" style="margin-top:auto">オプション機能（任意・別途費用）</div>
+      <button id="nav-bizdash" data-nav="bizdash" class="addon" onclick="go('bizdash')" style="display:none"><span class="ic">◆</span><span>経営ダッシュボード<span class="optbadge">オプション</span></span></button>
+      <button id="nav-perf" data-nav="perf" class="addon" onclick="go('perf')" style="display:none"><span class="ic">◉</span><span>担当者別パフォーマンス<span class="optbadge">オプション</span></span></button>
       <button data-nav="market" class="addon" onclick="go('market')"><span class="ic">◎</span><span>相場調査<span class="optbadge">オプション</span></span></button>
     </nav>
     <div class="foot">
@@ -585,16 +587,17 @@ function setRole(r){ ROLE=r; document.getElementById('role-staff').classList.tog
   document.getElementById('role-mgr').classList.toggle('on',r==='mgr');
   document.getElementById('role-boss').classList.toggle('on',r==='boss');
   const ll=document.getElementById('nav-list-label'); if(ll) ll.textContent=(r==='staff')?'担当物件一覧':'全社物件一覧';
+  ['nav-bizdash','nav-perf'].forEach(id=>{const b=document.getElementById(id); if(b) b.style.display=(r==='staff')?'none':'';}); // 経営・成績は上長/代表のみ
   go(CUR.view, CUR.arg); }
 let CUR={view:'dashboard',arg:null};
-const TITLES={dashboard:['ホーム','ダッシュボード'],approve:['承認','承認（あなたの番の承認待ち）'],ops:['仕入・販売','仕入決済・販売中の案件'],inventory:['在庫','社内在庫一覧（全社・リアルタイム）'],list:['物件','担当物件一覧'],detail:['物件 › 収支シート','事業収支シート'],market:['相場','相場調査（オプション機能）'],review:['実績分析','実績分析'],access:['設定','表示範囲（どの立場に何が見えるか）'],new:['物件 › 新規起案','新規物件の起案（事業計画）']};
+const TITLES={dashboard:['ホーム','ダッシュボード'],approve:['承認','承認（あなたの番の承認待ち）'],ops:['仕入・販売','仕入決済・販売中の案件'],inventory:['在庫','社内在庫一覧（全社・リアルタイム）'],list:['物件','担当物件一覧'],detail:['物件 › 収支シート','事業収支シート'],market:['相場','相場調査（オプション機能）'],review:['実績分析','実績分析'],access:['設定','表示範囲（どの立場に何が見えるか）'],bizdash:['経営','経営ダッシュボード（上長・代表）'],perf:['評価','担当者別パフォーマンス（上長・代表）'],new:['物件 › 新規起案','新規物件の起案（事業計画）']};
 function go(view,arg){
   CUR={view,arg};
   document.querySelectorAll('.nav button[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===view));
   const t=TITLES[view]||['',''];
   document.getElementById('crumb').textContent=t[0];
   document.getElementById('ptitle').textContent=t[1];
-  ({dashboard:renderDashboard,approve:renderApprove,ops:renderOps,inventory:renderInventory,list:renderList,detail:renderDetail,market:renderMarket,review:renderReview,access:renderAccess,new:renderNew}[view])(arg);
+  ({dashboard:renderDashboard,approve:renderApprove,ops:renderOps,inventory:renderInventory,list:renderList,detail:renderDetail,market:renderMarket,review:renderReview,access:renderAccess,bizdash:renderBizdash,perf:renderPerf,new:renderNew}[view])(arg);
   updateApprBadge(); updateOpsBadge();
   window.scrollTo(0,0);
 }
@@ -1209,6 +1212,100 @@ function renderInventory(){
         ${inv.map(row).join('')}
       </table>
       <div class="muted" style="font-size:11px;margin-top:10px">※ サンプル値（マスキング）。保有日数の色：90日超＝赤（要対応）／60〜90日＝橙。実運用では仕入決済の登録から自動でカウント・更新されます。</div>
+    </div>`;
+}
+
+/* ---------- オプション：経営ダッシュボード／担当者別パフォーマンス（上長・代表のみ） ---------- */
+function accessDenied(name){
+  return `<div class="bubble">🔒 <b>${name}</b> は <b>上長・代表のみ</b> が閲覧できる画面です（営業担当には表示されません＝表示範囲の設計どおり）。<br>上部のプレビュー切替で「上長」または「代表」に切り替えると確認できます。</div>
+  <div class="card muted" style="text-align:center;padding:34px">この立場では表示できません。</div>`;
+}
+function renderBizdash(){
+  const c=document.getElementById('content');
+  if(ROLE==='staff'){ c.innerHTML=accessDenied('経営ダッシュボード'); return; }
+  const done=DEALS.filter(d=>d.actual);
+  const realized=done.reduce((a,d)=>a+d.actual.profit,0);
+  const awaitD=DEALS.filter(d=>d.status==='await_mgr'||d.status==='await_pres');
+  const awaitAmt=awaitD.reduce((a,d)=>a+d.cost,0);
+  const invTotal=INVENTORY.reduce((a,x)=>a+x.list,0);
+  const invGross=invTotal-INVENTORY.reduce((a,x)=>a+x.cost,0);
+  const invAvg=Math.round(INVENTORY.reduce((a,x)=>a+x.days,0)/INVENTORY.length);
+  const h1=INVENTORY.filter(x=>x.days<=60).length, h2=INVENTORY.filter(x=>x.days>60&&x.days<=90).length, h3=INVENTORY.filter(x=>x.days>90).length;
+  const diffs=done.map(d=>(d.actual.profit/d.actual.price)-rate(d,1));
+  const avgDiff=diffs.reduce((a,b)=>a+b,0)/diffs.length;
+  const dc=avgDiff>=0?COLR.ok:COLR.ng;
+  const types=['土地売り','戸建建売','アパート','業者売り'];
+  const byType=types.map(t=>{const ds=done.filter(d=>d.type===t);const p=ds.reduce((a,d)=>a+d.actual.profit,0);const r=ds.reduce((a,d)=>a+d.actual.price,0);return{t,cnt:ds.length,p,m:r?p/r:0};}).filter(x=>x.cnt>0);
+  const maxP=Math.max(...byType.map(x=>x.p),1);
+  c.innerHTML=`
+    <div class="bubble">👔 <b>経営ビュー（全社）</b>：仕入れ〜販売〜実績の数字をひと目で。資金がどこに寝ていて、いくら回収予定か、想定はどれだけ当たっているかを俯瞰します。</div>
+    <div class="kpis">
+      ${statBox('今期の実現利益（累計）',fmtY(realized),done.length+'件 売却済み')}
+      ${statBox('進行中の見込み粗利',fmtY(invGross),'在庫の売出−仕入')}
+      ${statBox('販売中の在庫（売出）',fmtY(invTotal),INVENTORY.length+'件・平均保有'+invAvg+'日')}
+      ${statBox('承認待ち（意思決定）',awaitD.length+' 件',fmtY(awaitAmt)+' 相当')}
+    </div>
+    <div class="sectiontitle">🔄 案件パイプライン（全社）</div>
+    <div class="flow">
+      <div class="stage st2"><div class="sl">① 承認待ち</div><div class="sv">${awaitD.length}<small> 件</small></div><div class="sc">上長・代表の意思決定待ち<br>${fmtY(awaitAmt)} 相当</div></div>
+      <div class="arrow">▶</div>
+      <div class="stage st3"><div class="sl">② 販売中の在庫</div><div class="sv">${INVENTORY.length}<small> 件</small></div><div class="sc">全営業で販売中<br>${fmtY(invTotal)}（売出）</div></div>
+      <div class="arrow">▶</div>
+      <div class="stage st1"><div class="sl">③ 売却済み・実績（今期）</div><div class="sv">${done.length}<small> 件</small></div><div class="sc">実現利益 ${fmtY(realized)}</div></div>
+    </div>
+    <div class="insight" style="margin-top:6px">
+      <div class="muted" style="font-size:12px;margin-bottom:2px">会社全体の想定精度（実績 − 計画）</div>
+      <div class="big" style="color:${dc}">実績は、計画（着地見込み）を 平均 ${avgDiff>=0?'+':''}${pct(avgDiff)}</div>
+    </div>
+    <div class="xwrap">
+      <table class="xgrid">
+        <tr><td class="sec" colspan="4">業務タイプ別の実績（売却済み）</td></tr>
+        <tr><td class="lbl">業務タイプ</td><td class="lbl num">売却件数</td><td class="lbl num">実現利益</td><td class="lbl num">平均利益率</td></tr>
+        ${byType.map(x=>`<tr><td><b>${x.t}</b></td><td class="num">${x.cnt} 件</td><td class="num"><b>${fmtY(x.p)}</b><div style="height:5px;background:#0e7490;width:${Math.round(x.p/maxP*100)}%;margin-top:3px"></div></td><td class="num">${pct(x.m)}</td></tr>`).join('')}
+      </table>
+      <table class="xgrid" style="margin-top:14px">
+        <tr><td class="sec" colspan="3">在庫の健全性（保有日数の分布）</td></tr>
+        <tr><td class="lbl num">60日以内（健全）</td><td class="lbl num">60〜90日（注意）</td><td class="lbl num">90日超（要対応）</td></tr>
+        <tr><td class="num"><b style="color:${COLR.ok}">${h1} 件</b></td><td class="num"><b style="color:${COLR.warn}">${h2} 件</b></td><td class="num"><b style="color:${COLR.ng}">${h3} 件</b></td></tr>
+      </table>
+      <div class="muted" style="font-size:11px;margin-top:10px">※ サンプル値（マスキング）。実運用では各案件・在庫の登録から自動集計されます。この画面は<b>上長・代表のみ</b>閲覧できます。</div>
+    </div>`;
+}
+function renderPerf(){
+  const c=document.getElementById('content');
+  if(ROLE==='staff'){ c.innerHTML=accessDenied('担当者別パフォーマンス'); return; }
+  const staffs=[...new Set(DEALS.map(d=>d.staff))];
+  const rows=staffs.map(s=>{
+    const ds=DEALS.filter(d=>d.staff===s);
+    const done=ds.filter(d=>d.actual);
+    const rej=ds.filter(d=>d.status==='rej').length;
+    const active=ds.filter(d=>['await_mgr','await_pres','approved','sell','returned'].includes(d.status)).length;
+    const realized=done.reduce((a,d)=>a+d.actual.profit,0);
+    const rev=done.reduce((a,d)=>a+d.actual.price,0);
+    const marg=rev?realized/rev:0;
+    const hit=done.filter(d=>(d.actual.profit/d.actual.price)>=rate(d,1)).length;
+    return {s,total:ds.length,active,doneCnt:done.length,realized,marg,hit,rej};
+  }).sort((a,b)=>b.realized-a.realized);
+  const maxR=Math.max(...rows.map(r=>r.realized),1);
+  const tot={total:rows.reduce((a,r)=>a+r.total,0),active:rows.reduce((a,r)=>a+r.active,0),doneCnt:rows.reduce((a,r)=>a+r.doneCnt,0),realized:rows.reduce((a,r)=>a+r.realized,0),rej:rows.reduce((a,r)=>a+r.rej,0)};
+  c.innerHTML=`
+    <div class="bubble">👔 <b>担当者別パフォーマンス（上長・代表のみ）</b>：起案の量・通過・売却・実現利益・想定の的中を、担当者ごとに公平な軸で。育成と評価の材料です（営業担当には非表示）。</div>
+    <div class="xwrap">
+      <table class="xgrid">
+        <tr><td class="sec">担当者</td><td class="sec num">起案</td><td class="sec num">進行中</td><td class="sec num">売却</td><td class="sec num">実現利益</td><td class="sec num">平均利益率</td><td class="sec num">的中(実績≥計画)</td><td class="sec num">見送り</td></tr>
+        ${rows.map(r=>`<tr>
+          <td><b>${r.s}</b></td>
+          <td class="num">${r.total}</td>
+          <td class="num">${r.active}</td>
+          <td class="num">${r.doneCnt}</td>
+          <td class="num"><b>${fmtY(r.realized)}</b><div style="height:5px;background:#0e7490;width:${Math.round(r.realized/maxR*100)}%;margin-top:3px"></div></td>
+          <td class="num">${r.doneCnt?pct(r.marg):'—'}</td>
+          <td class="num">${r.doneCnt?r.hit+'/'+r.doneCnt:'—'}</td>
+          <td class="num">${r.rej}</td>
+        </tr>`).join('')}
+        <tr><td><b>全社 合計</b></td><td class="num"><b>${tot.total}</b></td><td class="num"><b>${tot.active}</b></td><td class="num"><b>${tot.doneCnt}</b></td><td class="num"><b>${fmtY(tot.realized)}</b></td><td class="num">—</td><td class="num">—</td><td class="num"><b>${tot.rej}</b></td></tr>
+      </table>
+      <div class="muted" style="font-size:11px;margin-top:10px">※ サンプル値（マスキング）。「的中」は売却済みのうち実績が計画（着地見込み）以上だった件数。営業担当には表示しません（社内の成績表化を避けるため）。</div>
     </div>`;
 }
 
