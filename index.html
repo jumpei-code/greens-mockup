@@ -269,7 +269,7 @@
       <button data-nav="dashboard" class="active" onclick="go('dashboard')"><span class="ic">▣</span>ダッシュボード</button>
       <button data-nav="approve" onclick="go('approve')"><span class="ic">✓</span>承認<span id="nav-appr-badge" class="navbadge" style="display:none"></span></button>
       <button data-nav="ops" onclick="go('ops')"><span class="ic">◔</span>仕入・販売<span id="nav-ops-badge" class="navbadge" style="display:none"></span></button>
-      <button data-nav="inventory" onclick="go('inventory')"><span class="ic">▤</span>社内在庫一覧</button>
+      <button data-nav="inventory" onclick="go('inventory')"><span class="ic">▤</span>販売物件一覧</button>
       <button data-nav="list" onclick="go('list')"><span class="ic">≣</span><span id="nav-list-label">担当物件一覧</span></button>
       <button data-nav="review" onclick="go('review')"><span class="ic">↺</span>実績分析</button>
       <button data-nav="access" onclick="go('access')"><span class="ic">▦</span>表示範囲（権限）</button>
@@ -590,7 +590,7 @@ function setRole(r){ ROLE=r; document.getElementById('role-staff').classList.tog
   ['nav-bizdash','nav-perf'].forEach(id=>{const b=document.getElementById(id); if(b) b.style.display=(r==='staff')?'none':'';}); // 経営・成績は上長/代表のみ
   go(CUR.view, CUR.arg); }
 let CUR={view:'dashboard',arg:null};
-const TITLES={dashboard:['ホーム','ダッシュボード'],approve:['承認','承認（あなたの番の承認待ち）'],ops:['仕入・販売','仕入決済・販売中の案件'],inventory:['在庫','社内在庫一覧（全社・リアルタイム）'],list:['物件','担当物件一覧'],detail:['物件 › 収支シート','事業収支シート'],market:['相場','相場調査（オプション機能）'],review:['実績分析','実績分析'],access:['設定','表示範囲（どの立場に何が見えるか）'],bizdash:['経営','経営ダッシュボード（上長・代表）'],perf:['評価','担当者別パフォーマンス（上長・代表）'],new:['物件 › 新規起案','新規物件の起案（事業計画）']};
+const TITLES={dashboard:['ホーム','ダッシュボード'],approve:['承認','承認（あなたの番の承認待ち）'],ops:['仕入・販売','仕入決済・販売中の案件'],inventory:['販売','販売物件一覧（全社・リアルタイム）'],list:['物件','担当物件一覧'],detail:['物件 › 収支シート','事業収支シート'],market:['相場','相場調査（オプション機能）'],review:['実績分析','実績分析'],access:['設定','表示範囲（どの立場に何が見えるか）'],bizdash:['経営','経営ダッシュボード（上長・代表）'],perf:['評価','担当者別パフォーマンス（上長・代表）'],new:['物件 › 新規起案','新規物件の起案（事業計画）']};
 function go(view,arg){
   CUR={view,arg};
   document.querySelectorAll('.nav button[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===view));
@@ -718,7 +718,7 @@ function renderDashboard(){
 function dealTable(arr,bossMode){
   return `<div class="card" style="padding:0;overflow:hidden">
     <table><thead><tr>
-      <th>物件</th><th>業務</th><th class="num">原価合計</th><th class="num">想定②利益率</th><th class="num">採用IRR</th><th>判定</th><th>状態</th><th>担当</th>
+      <th>物件</th><th>種別</th><th class="num">原価合計</th><th class="num">想定②利益率</th><th class="num">採用IRR</th><th>判定</th><th>状態</th><th>担当</th>
     </tr></thead><tbody>
     ${arr.map(d=>{const j=judge(d);const closed=(d.status==='done'||d.status==='rej');return `<tr class="clickable" onclick="go('detail','${d.id}')">
       <td><b>${d.name}</b><br><span class="muted" style="font-size:11px">${d.id}・更新 ${d.updated}</span></td>
@@ -1117,7 +1117,7 @@ function renderReview(){
       </table>
       <table class="xgrid" style="margin-top:14px">
         <tr><td class="sec" colspan="4">見送った判断の検証（「見送って正解だったか」の材料）</td></tr>
-        <tr><td class="lbl">物件</td><td class="lbl">業務</td><td class="lbl num">着地見込み利益率</td><td class="lbl">見送り理由</td></tr>
+        <tr><td class="lbl">物件</td><td class="lbl">種別</td><td class="lbl num">着地見込み利益率</td><td class="lbl">見送り理由</td></tr>
         ${rej.length?rej.map(d=>`<tr><td><b>${d.name}</b><br><span style="${sub}">${d.id}・担当 ${d.staff}</span></td><td>${d.type}</td><td class="num">${pct(rate(d,1))}</td><td style="font-size:11.5px">${d.rejReason||''}</td></tr>`).join(''):'<tr><td colspan="4" style="color:var(--sub)">見送り案件はありません。</td></tr>'}
       </table>
       <div class="muted" style="font-size:11px;margin-top:10px">※ 計画（着地見込み）＝仕入れ時に見込んだ着地の売値。緑＝計画以上、橙＝計画割れ。全社の案件が対象（営業担当も閲覧可）。</div>
@@ -1135,7 +1135,7 @@ function renderAccess(){
     ['新規物件の起案', Y('起案（主担当）'), Y(''), Y('')],
     ['承認', P('自分の申請状況'), Y('1次承認'), Y('最終承認')],
     ['仕入・販売', Y('自分の案件'), Y('全社'), Y('全社')],
-    ['社内在庫一覧（販売用）', Y('全社'), Y('全社'), Y('全社')],
+    ['販売物件一覧（全社共有）', Y('全社'), Y('全社'), Y('全社')],
     ['担当物件一覧 ／ 全社物件一覧', Y('担当のみ'), Y('全社'), Y('全社')],
     ['実績分析（過去の答え合わせ）', Y('全社・閲覧'), Y('全社'), Y('全社')],
     ['　└ 担当者別の成績比較', N, Y(''), Y('')],
@@ -1168,12 +1168,12 @@ function renderAccess(){
 
 /* ---------- 社内在庫一覧（全社・リアルタイム） ---------- */
 const INVENTORY=[
-  {name:'江戸川区△△2丁目 戸建', type:'戸建建売', area:'江戸川区', cost:38000000, list:46800000, inDate:'04/18', days:74, views:9, inq:14, staff:'佐藤', state:'価格交渉中'},
-  {name:'北区◯◯3丁目 アパート', type:'アパート', area:'北区', cost:98000000, list:112000000, inDate:'05/30', days:32, views:5, inq:7, staff:'田中', state:'掲載中'},
-  {name:'足立区□□1丁目 土地', type:'土地売り', area:'足立区', cost:21500000, list:27800000, inDate:'02/10', days:141, views:12, inq:6, staff:'渡辺', state:'値下げ検討'},
-  {name:'杉並区◇◇5丁目 戸建', type:'戸建建売', area:'杉並区', cost:52000000, list:63500000, inDate:'06/12', days:19, views:3, inq:4, staff:'佐藤', state:'掲載中'},
-  {name:'板橋区◯◯2丁目 土地', type:'土地売り', area:'板橋区', cost:16800000, list:21200000, inDate:'05/05', days:57, views:8, inq:9, staff:'高橋', state:'申込あり'},
-  {name:'川口市◯◯4丁目 アパート', type:'アパート', area:'川口市', cost:84000000, list:95800000, inDate:'03/22', days:101, views:6, inq:5, staff:'田中', state:'掲載中'},
+  {name:'江戸川区△△2丁目 戸建', type:'戸建建売', area:'江戸川区', cost:38000000, list:46800000, inDate:'04/18', days:74, inq:14, ca:4, staff:'佐藤', state:'価格交渉中'},
+  {name:'北区◯◯3丁目 アパート', type:'アパート', area:'北区', cost:98000000, list:112000000, inDate:'05/30', days:32, inq:7, ca:2, staff:'田中', state:'掲載中'},
+  {name:'足立区□□1丁目 土地', type:'土地売り', area:'足立区', cost:21500000, list:27800000, inDate:'02/10', days:141, inq:6, ca:1, staff:'渡辺', state:'値下げ検討'},
+  {name:'杉並区◇◇5丁目 戸建', type:'戸建建売', area:'杉並区', cost:52000000, list:63500000, inDate:'06/12', days:19, inq:4, ca:1, staff:'佐藤', state:'掲載中'},
+  {name:'板橋区◯◯2丁目 土地', type:'土地売り', area:'板橋区', cost:16800000, list:21200000, inDate:'05/05', days:57, inq:9, ca:3, staff:'高橋', state:'買付あり'},
+  {name:'川口市◯◯4丁目 アパート', type:'アパート', area:'川口市', cost:84000000, list:95800000, inDate:'03/22', days:101, inq:5, ca:2, staff:'田中', state:'掲載中'},
 ];
 function renderInventory(){
   const inv=INVENTORY;
@@ -1182,36 +1182,37 @@ function renderInventory(){
   const longCnt=inv.filter(x=>x.days>90).length;
   const dcol=d=> d>90?'#b91c1c': d>60?'#b45309':'#15803d';
   const dlbl=d=> d>90?'長期・要対応': d>60?'やや長期':'';
-  const stbg={'申込あり':'#dcfce7','価格交渉中':'#fef3c7','値下げ検討':'#fee2e2','掲載中':'#e0f2fe'};
-  const stfg={'申込あり':'#15803d','価格交渉中':'#b45309','値下げ検討':'#b91c1c','掲載中':'#0369a1'};
+  const stbg={'買付あり':'#dcfce7','価格交渉中':'#fef3c7','値下げ検討':'#fee2e2','掲載中':'#e0f2fe'};
+  const stfg={'買付あり':'#15803d','価格交渉中':'#b45309','値下げ検討':'#b91c1c','掲載中':'#0369a1'};
   const row=x=>`<tr>
     <td><b>${x.name}</b><br><span style="color:var(--sub);font-size:10.5px">${x.area}・取得担当 ${x.staff}・仕入 ${x.inDate}</span></td>
     <td>${x.type}</td>
     <td class="num">${fmtY(x.cost)}</td>
     <td class="num">${fmtY(x.list)}</td>
     <td class="num"><b style="color:${dcol(x.days)}">${x.days}日</b>${dlbl(x.days)?`<br><span style="color:${dcol(x.days)};font-size:10px">${dlbl(x.days)}</span>`:''}</td>
-    <td class="num">内見 ${x.views}<br><span style="color:var(--sub);font-size:10.5px">問合 ${x.inq}</span></td>
+    <td class="num">${x.inq}</td>
+    <td class="num"><b>${x.ca}</b></td>
     <td><span style="display:inline-block;background:${stbg[x.state]||'#eef2f7'};color:${stfg[x.state]||'#475569'};font-size:11px;font-weight:700;padding:2px 9px">${x.state}</span></td>
   </tr>`;
   document.getElementById('content').innerHTML=`
-    <div class="bubble">👥 <b>全営業で販売</b>：仕入れた物件は<b>全社の在庫</b>として全営業が販売します。だからこの在庫一覧は<b>立場に関わらず全員が全社分を閲覧</b>でき、誰でも反響対応・販売活動ができます。</div>
+    <div class="bubble">👥 <b>全営業で販売</b>：仕入れた物件は<b>全社の販売物件</b>として全営業が販売します。だからこの一覧は<b>立場に関わらず全員が全社分を閲覧</b>でき、誰でも反響対応・販売活動ができます。</div>
     <div style="display:flex;align-items:center;gap:9px;margin:2px 0 12px">
       <span style="display:inline-flex;align-items:center;gap:6px;background:#fee2e2;color:#b91c1c;font-size:11px;font-weight:800;padding:3px 11px;border-radius:999px"><span style="width:7px;height:7px;background:#ef4444;border-radius:50%;display:inline-block"></span>LIVE</span>
-      <span style="color:var(--sub);font-size:11.5px">リアルタイムの社内在庫（売出中・保有中）。最終更新：たった今</span>
+      <span style="color:var(--sub);font-size:11.5px">リアルタイムの販売物件（売出中・保有中）。最終更新：たった今</span>
     </div>
     <div class="kpis">
-      ${statBox('在庫件数',inv.length+' 件','売出中・保有中')}
+      ${statBox('販売物件数',inv.length+' 件','売出中・保有中')}
       ${statBox('在庫総額（売出ベース）',fmtY(total),'回収予定の上限目安')}
       ${statBox('平均保有日数',avgDays+' 日','短いほど資金回転◎')}
       ${statBox('長期滞留（90日超）',longCnt+' 件','要・値下げ／販促')}
     </div>
     <div class="xwrap">
       <table class="xgrid">
-        <tr><td class="sec" colspan="7">社内在庫一覧（全社・全営業が販売対応）</td></tr>
-        <tr><td class="lbl">物件</td><td class="lbl">業務</td><td class="lbl num">仕入原価</td><td class="lbl num">売出価格</td><td class="lbl num">保有日数</td><td class="lbl num">反響</td><td class="lbl">状態</td></tr>
+        <tr><td class="sec" colspan="8">販売物件一覧（全社・全営業が販売対応）</td></tr>
+        <tr><td class="lbl">物件</td><td class="lbl">種別</td><td class="lbl num">仕入原価</td><td class="lbl num">売出価格</td><td class="lbl num">保有日数</td><td class="lbl num">問い合わせ</td><td class="lbl num">CA</td><td class="lbl">状態</td></tr>
         ${inv.map(row).join('')}
       </table>
-      <div class="muted" style="font-size:11px;margin-top:10px">※ サンプル値（マスキング）。保有日数の色：90日超＝赤（要対応）／60〜90日＝橙。実運用では仕入決済の登録から自動でカウント・更新されます。</div>
+      <div class="muted" style="font-size:11px;margin-top:10px">※ サンプル値（マスキング）。保有日数の色：90日超＝赤（要対応）／60〜90日＝橙。<b>CA＝守秘義務契約（購入検討の本気度）</b>。実運用では仕入決済の登録から自動でカウント・更新されます。</div>
     </div>`;
 }
 
@@ -1817,6 +1818,7 @@ function gridSalesSection(){
 function renderNewGrid(){
   document.getElementById('content').innerHTML=`
    <span class="back" onclick="go('dashboard')">← ダッシュボードへ</span>
+   ${uploadCardHTML()}
    ${typeSelector()}
    ${newToggle()}
    <div class="notebar">受領Excel（事業収支 雛型）の収支シートを<b>表のまま再現</b>。<b>緑＝担当が入力</b>、<b>白＝自動計算</b>。業務タイプで販売想定や原価の扱い（業者売りは諸費用＝買主負担など）が切り替わります。</div>
@@ -1912,10 +1914,24 @@ function newGridLeft(){ const comps=MARKET.comps; return `
    </table>
    <div id="market-live" style="margin-top:10px"></div>
   </div>`; }
+function fakeUpload(){ const n=document.getElementById('upload-note'); if(n) n.innerHTML='<span style="color:#15803d;font-weight:700">✓ 「事業収支_雛型.xlsx」を読み込みました（デモ）。物件名・地積・容積率・原価などが自動で入力されます。</span>'; }
+function uploadCardHTML(){ return `
+   <div class="card" style="margin-bottom:16px;border:1.5px dashed var(--accent);background:#f2fbfd">
+     <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+       <div style="font-size:30px">📄</div>
+       <div style="flex:1;min-width:220px">
+         <div style="font-weight:800;color:var(--ink);font-size:14px">エクセルから自動入力（アップロード）</div>
+         <div style="font-size:12px;color:var(--sub);margin-top:2px">今回のシステムの基盤にした<b>事業収支エクセル（雛型）</b>をそのままアップロードすると、下の概要・原価などが<b>自動で入力</b>されます。</div>
+       </div>
+       <button class="btn primary" style="width:auto;padding:9px 18px" onclick="fakeUpload()">📎 エクセルを選択</button>
+     </div>
+     <div id="upload-note" style="font-size:11px;color:var(--sub);margin-top:8px">※ 対応：.xlsx（事業収支 雛型）。これは<b>デザインイメージ</b>です（実際の読み込みは開発フェーズで実装）。</div>
+   </div>`; }
 function renderNew(){
   if(NEW_VIEW==='grid'){ return renderNewGrid(); }
   document.getElementById('content').innerHTML=`
    <span class="back" onclick="go('dashboard')">← ダッシュボードへ</span>
+   ${uploadCardHTML()}
    ${typeSelector()}
    ${newToggle()}
    <div class="notebar">受領Excel（事業収支 雛型）を<b>項目名・並びそのまま</b>に再現。<b>緑＝担当が入力</b>、<b>グレー＝自動計算</b>（エクセルの計算式と同じ）。業務タイプを変えると、その業務のサンプルに切り替わります（モック）。</div>
