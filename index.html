@@ -1228,7 +1228,7 @@ const SERIES={
 };
 let BIZ_METRICS=['sales','gp','inv'], BIZ_TYPE='line', BIZ_CMP=true;
 const MET_ORDER=['sales','gp','inv'];
-const MET_DEF={sales:{label:'売上高',color:'#0e7490',cum:true},gp:{label:'粗利',color:'#15803d',cum:true},inv:{label:'在庫額',color:'#b45309',cum:false}};
+const MET_DEF={sales:{label:'売上高',color:'#2563eb',shape:'c',cum:true},gp:{label:'粗利',color:'#db2777',shape:'s',cum:true},inv:{label:'在庫額',color:'#ea580c',shape:'t',cum:false}};
 function fmtYm(n){ return n>=100 ? '¥'+(n/100).toFixed(1)+'億' : '¥'+Math.round(n)+'百万'; }
 /* （旧・単一指標の折れ線SVGは bizMultiSVG に統合したため削除） */
 function toggleBizMetric(m){ if(BIZ_METRICS.includes(m)){ if(BIZ_METRICS.length>1) BIZ_METRICS=BIZ_METRICS.filter(x=>x!==m); } else { BIZ_METRICS=MET_ORDER.filter(x=>BIZ_METRICS.includes(x)||x===m); } drawBizChart(); }
@@ -1238,24 +1238,26 @@ function niceMaxOf(vals){ const raw=Math.max(...vals.filter(v=>v!=null),1); cons
 function bizMultiSVG(keys,compare,type){
   const W=920,H=340,pl=20,pr=18,pt=18,pb=34, pw=W-pl-pr, ph=H-pt-pb, N=12;
   const x=i=>pl+i*(pw/(N-1));
-  const M=keys.map(k=>{ const cur=SERIES[k][2026].slice(); while(cur.length<12) cur.push(null); const prev=SERIES[k][2025]; return {color:MET_DEF[k].color,cur,prev,nm:niceMaxOf([...cur,...(compare?prev:[])])}; });
+  const M=keys.map(k=>{ const cur=SERIES[k][2026].slice(); while(cur.length<12) cur.push(null); const prev=SERIES[k][2025]; return {color:MET_DEF[k].color,shape:MET_DEF[k].shape,cur,prev,nm:niceMaxOf([...cur,...(compare?prev:[])])}; });
   const yv=(m,v)=>pt+ph-(v/m.nm)*ph;
-  let grid=''; for(let s=0;s<=4;s++){ const gy=pt+ph-(s/4)*ph; grid+=`<line x1="${pl}" y1="${gy}" x2="${W-pr}" y2="${gy}" stroke="#eef1f4"/>`; }
+  const mk=(sh,cx,cy,c)=>{ cx=+cx.toFixed(1); cy=+cy.toFixed(1); if(sh==='s') return `<rect x="${cx-3.2}" y="${cy-3.2}" width="6.4" height="6.4" fill="#fff" stroke="${c}" stroke-width="1.8"/>`; if(sh==='t') return `<polygon points="${cx},${(cy-4).toFixed(1)} ${(cx-3.8).toFixed(1)},${(cy+3.2).toFixed(1)} ${(cx+3.8).toFixed(1)},${(cy+3.2).toFixed(1)}" fill="#fff" stroke="${c}" stroke-width="1.8"/>`; return `<circle cx="${cx}" cy="${cy}" r="3.4" fill="#fff" stroke="${c}" stroke-width="1.8"/>`; };
+  const bg=`<rect x="${pl}" y="${pt}" width="${pw}" height="${ph}" fill="#f8fafc"/>`;
+  let grid=''; for(let s=0;s<=4;s++){ const gy=pt+ph-(s/4)*ph; grid+=`<line x1="${pl}" y1="${gy}" x2="${W-pr}" y2="${gy}" stroke="${s===0?'#cbd5e1':'#e9edf2'}"/>`; }
   let xl=''; for(let i=0;i<N;i++) xl+=`<text x="${x(i)}" y="${H-12}" text-anchor="middle" font-size="10" fill="#94a3b8">${i+1}月</text>`;
   const pathOf=(m,arr)=>{ let d=''; arr.forEach((v,i)=>{ if(v==null)return; d+=(d?' L':'M')+x(i).toFixed(1)+' '+yv(m,v).toFixed(1); }); return d; };
   let series='';
   if(type==='bar'){
     const slot=pw/N*0.72, bw=slot/Math.max(keys.length,1);
-    M.forEach((m,gi)=>{ m.cur.forEach((v,i)=>{ if(v==null)return; const bh=(v/m.nm)*ph, bx=x(i)-slot/2+gi*bw; series+=`<rect x="${bx.toFixed(1)}" y="${(pt+ph-bh).toFixed(1)}" width="${(bw*0.86).toFixed(1)}" height="${bh.toFixed(1)}" fill="${m.color}" opacity="0.85"/>`; }); });
-    if(compare) M.forEach(m=>{ series+=`<path d="${pathOf(m,m.prev)}" fill="none" stroke="${m.color}" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.5"/>`; });
+    M.forEach((m,gi)=>{ m.cur.forEach((v,i)=>{ if(v==null)return; const bh=(v/m.nm)*ph, bx=x(i)-slot/2+gi*bw; series+=`<rect x="${bx.toFixed(1)}" y="${(pt+ph-bh).toFixed(1)}" width="${(bw*0.86).toFixed(1)}" height="${bh.toFixed(1)}" fill="${m.color}"/>`; }); });
+    if(compare) M.forEach(m=>{ series+=`<path d="${pathOf(m,m.prev)}" fill="none" stroke="${m.color}" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.55"/>`; });
   } else {
     M.forEach(m=>{
-      if(compare) series+=`<path d="${pathOf(m,m.prev)}" fill="none" stroke="${m.color}" stroke-width="2" stroke-dasharray="5 4" opacity="0.5"/>`;
-      series+=`<path d="${pathOf(m,m.cur)}" fill="none" stroke="${m.color}" stroke-width="2.5"/>`;
-      m.cur.forEach((v,i)=>{ if(v==null)return; series+=`<circle cx="${x(i).toFixed(1)}" cy="${yv(m,v).toFixed(1)}" r="2.6" fill="${m.color}"/>`; });
+      if(compare) series+=`<path d="${pathOf(m,m.prev)}" fill="none" stroke="${m.color}" stroke-width="2" stroke-dasharray="6 4" opacity="0.55"/>`;
+      series+=`<path d="${pathOf(m,m.cur)}" fill="none" stroke="${m.color}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`;
+      m.cur.forEach((v,i)=>{ if(v==null)return; series+=mk(m.shape,x(i),yv(m,v),m.color); });
     });
   }
-  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block">${grid}${series}${xl}</svg>`;
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block">${bg}${grid}${series}${xl}</svg>`;
 }
 function summaryRow(key){
   const M=MET_DEF[key], cur=SERIES[key][2026], prev=SERIES[key][2025], nCur=cur.length;
@@ -1276,22 +1278,22 @@ function drawBizChart(){
   const tb=(k,l)=>`<button style="${BIZ_TYPE===k?on:idle}" onclick="setBizType('${k}')">${l}</button>`;
   const cb=`<button style="${BIZ_CMP?on:idle}" onclick="toggleBizCmp()">前年比較 ${BIZ_CMP?'ON':'OFF'}</button>`;
   const sep='<span style="width:1px;height:20px;background:var(--line);margin:0 3px"></span>';
-  const legend=keys.map(k=>`<span style="font-size:11.5px;color:var(--ink);white-space:nowrap"><span style="display:inline-block;width:12px;height:12px;background:${MET_DEF[k].color};vertical-align:middle;margin-right:4px"></span>${MET_DEF[k].label}</span>`).join('　');
+  const shp=k=>MET_DEF[k].shape==='s'?'■':MET_DEF[k].shape==='t'?'▲':'●';
+  const legend=keys.map(k=>`<span style="font-size:12px;color:var(--ink);white-space:nowrap;font-weight:600"><span style="display:inline-block;width:18px;height:3px;background:${MET_DEF[k].color};vertical-align:middle;margin-right:3px"></span><span style="color:${MET_DEF[k].color}">${shp(k)}</span> ${MET_DEF[k].label}</span>`).join('');
   wrap.innerHTML=`
-    <div style="display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-bottom:12px">
+    <div style="display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-bottom:14px">
       <span style="font-size:11.5px;color:var(--sub);font-weight:700">指標（複数選択可）</span>${mb('sales','売上高')}${mb('gp','粗利')}${mb('inv','在庫額')}
       ${sep}<span style="font-size:11.5px;color:var(--sub);font-weight:700">表示</span>${tb('line','折れ線')}${tb('bar','棒')}
       ${sep}${cb}
     </div>
-    <div style="border:1px solid var(--line);padding:12px 14px 6px">
-      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;margin-bottom:6px">
-        <div style="font-weight:700;color:var(--ink)">事業指標の月次推移 <span style="font-size:11px;color:var(--sub);font-weight:400">（横軸：月${BIZ_CMP?' ／ 実線＝今年・点線＝前年':''}）</span></div>
-        <div style="display:flex;gap:12px;flex-wrap:wrap">${legend}</div>
-      </div>
-      ${bizMultiSVG(keys,BIZ_CMP,BIZ_TYPE)}
-      <div style="font-size:10.5px;color:var(--sub);margin-top:4px">※ 各指標は金額の大きさが違うため、それぞれの最大を100として重ねています（＝伸び方・形の比較用）。実額は下の表をご覧ください。</div>
+    <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:12px;margin-bottom:8px">
+      <div style="font-weight:700;color:var(--ink);font-size:13.5px">事業指標の月次推移 <span style="font-size:11px;color:var(--sub);font-weight:400">（横軸：月${BIZ_CMP?' ／ 実線＝今年・点線＝前年':''}）</span></div>
+      <div style="display:flex;gap:18px;flex-wrap:wrap">${legend}</div>
     </div>
-    <div class="xwrap" style="margin-top:12px"><table class="xgrid">
+    ${bizMultiSVG(keys,BIZ_CMP,BIZ_TYPE)}
+    <div style="font-size:10.5px;color:var(--sub);margin-top:6px;padding-bottom:14px;border-bottom:1px solid var(--line)">※ 各指標は金額の大きさが違うため、それぞれの最大を100として重ねています（＝伸び方・形の比較用）。実額は下の表をご覧ください。</div>
+    <div style="font-size:12.5px;font-weight:700;color:var(--ink);margin:14px 0 8px">実額（今年・前年・前年比）</div>
+    <div class="xwrap"><table class="xgrid">
       <tr><td class="sec">指標</td><td class="sec num">今年</td><td class="sec num">前年同期</td><td class="sec num">前年比</td><td class="sec num">月平均</td></tr>
       ${keys.map(summaryRow).join('')}
     </table></div>
@@ -1322,8 +1324,10 @@ function renderBizdash(){
       ${statBox('販売中の在庫（売出）',fmtY(invTotal),INVENTORY.length+'件・平均保有'+invAvg+'日')}
       ${statBox('承認待ち（意思決定）',awaitD.length+' 件',fmtY(awaitAmt)+' 相当')}
     </div>
-    <div class="sectiontitle">📈 事業の推移（売上・粗利・在庫の分析）</div>
-    <div id="biz-chart"></div>
+    <div class="card" style="padding:18px 20px">
+      <div class="sectiontitle" style="margin-top:0">📈 事業の推移（売上・粗利・在庫の分析）</div>
+      <div id="biz-chart"></div>
+    </div>
     <div class="sectiontitle">🔄 案件パイプライン（全社）</div>
     <div class="flow">
       <div class="stage st2"><div class="sl">① 承認待ち</div><div class="sv">${awaitD.length}<small> 件</small></div><div class="sc">上長・代表の意思決定待ち<br>${fmtY(awaitAmt)} 相当</div></div>
