@@ -276,6 +276,7 @@
       <div class="group" style="margin-top:auto">オプション機能（任意・別途費用）</div>
       <button id="nav-bizdash" data-nav="bizdash" class="addon" onclick="go('bizdash')" style="display:none"><span class="ic">◆</span><span>経営ダッシュボード<span class="optbadge">オプション</span></span></button>
       <button id="nav-perf" data-nav="perf" class="addon" onclick="go('perf')" style="display:none"><span class="ic">◉</span><span>担当者別パフォーマンス<span class="optbadge">オプション</span></span></button>
+      <button id="nav-analytics" data-nav="analytics" class="addon" onclick="go('analytics')" style="display:none"><span class="ic">▩</span><span>経営分析<span class="optbadge">オプション</span></span></button>
       <button data-nav="market" class="addon" onclick="go('market')"><span class="ic">◎</span><span>相場調査<span class="optbadge">オプション</span></span></button>
     </nav>
     <div class="foot">
@@ -587,17 +588,17 @@ function setRole(r){ ROLE=r; document.getElementById('role-staff').classList.tog
   document.getElementById('role-mgr').classList.toggle('on',r==='mgr');
   document.getElementById('role-boss').classList.toggle('on',r==='boss');
   const ll=document.getElementById('nav-list-label'); if(ll) ll.textContent=(r==='staff')?'担当物件一覧':'全社物件一覧';
-  ['nav-bizdash','nav-perf'].forEach(id=>{const b=document.getElementById(id); if(b) b.style.display=(r==='staff')?'none':'';}); // 経営・成績は上長/代表のみ
+  ['nav-bizdash','nav-perf','nav-analytics'].forEach(id=>{const b=document.getElementById(id); if(b) b.style.display=(r==='staff')?'none':'';}); // 経営・成績・分析は上長/代表のみ
   go(CUR.view, CUR.arg); }
 let CUR={view:'dashboard',arg:null};
-const TITLES={dashboard:['ホーム','ダッシュボード'],approve:['承認','承認（あなたの番の承認待ち）'],ops:['仕入・販売','仕入決済・販売中の案件'],inventory:['在庫','社内在庫一覧（全社・リアルタイム）'],list:['物件','担当物件一覧'],detail:['物件 › 収支シート','事業収支シート'],market:['相場','相場調査（オプション機能）'],review:['実績分析','実績分析'],access:['設定','表示範囲（どの立場に何が見えるか）'],bizdash:['経営','経営ダッシュボード（上長・代表）'],perf:['評価','担当者別パフォーマンス（上長・代表）'],new:['物件 › 新規起案','新規物件の起案（事業計画）']};
+const TITLES={dashboard:['ホーム','ダッシュボード'],approve:['承認','承認（あなたの番の承認待ち）'],ops:['仕入・販売','仕入決済・販売中の案件'],inventory:['在庫','社内在庫一覧（全社・リアルタイム）'],list:['物件','担当物件一覧'],detail:['物件 › 収支シート','事業収支シート'],market:['相場','相場調査（オプション機能）'],review:['実績分析','実績分析'],access:['設定','表示範囲（どの立場に何が見えるか）'],bizdash:['経営','経営ダッシュボード（上長・代表）'],perf:['評価','担当者別パフォーマンス（上長・代表）'],analytics:['分析','経営分析（内訳・示唆／上長・代表）'],new:['物件 › 新規起案','新規物件の起案（事業計画）']};
 function go(view,arg){
   CUR={view,arg};
   document.querySelectorAll('.nav button[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===view));
   const t=TITLES[view]||['',''];
   document.getElementById('crumb').textContent=t[0];
   document.getElementById('ptitle').textContent=t[1];
-  ({dashboard:renderDashboard,approve:renderApprove,ops:renderOps,inventory:renderInventory,list:renderList,detail:renderDetail,market:renderMarket,review:renderReview,access:renderAccess,bizdash:renderBizdash,perf:renderPerf,new:renderNew}[view])(arg);
+  ({dashboard:renderDashboard,approve:renderApprove,ops:renderOps,inventory:renderInventory,list:renderList,detail:renderDetail,market:renderMarket,review:renderReview,access:renderAccess,bizdash:renderBizdash,perf:renderPerf,analytics:renderAnalytics,new:renderNew}[view])(arg);
   updateApprBadge(); updateOpsBadge();
   window.scrollTo(0,0);
 }
@@ -1216,6 +1217,94 @@ function renderInventory(){
 }
 
 /* ---------- オプション：経営ダッシュボード／担当者別パフォーマンス（上長・代表のみ） ---------- */
+/* ---------- 経営分析（内訳・示唆／上長・代表のみ） ---------- */
+const TYPES5=['土地売り','戸建建売','業者売り','アパート','仲介'];
+const TCOL={'土地売り':'#4f46e5','戸建建売':'#0891b2','業者売り':'#16a34a','アパート':'#db2777','仲介':'#f59e0b'};
+/* st: sold=売却済み / hold=保有中 / sell=販売中 / broker=仲介成約　rev=粗利(仲介は手数料,百万)　bm=仕入月　pm/am=計画/実績利益率(売却済み)　days=保有日数 */
+const ANALYTICS=[
+  {t:'土地売り',a:'江戸川区',bm:2,st:'sold',rev:3.6,pm:0.123,am:0.149},
+  {t:'土地売り',a:'足立区', bm:1,st:'sold',rev:2.1,pm:0.100,am:0.062},
+  {t:'土地売り',a:'世田谷区',bm:5,st:'sold',rev:2.9,pm:0.123,am:0.153},
+  {t:'戸建建売',a:'杉並区', bm:3,st:'sold',rev:5.6,pm:0.088,am:0.069},
+  {t:'戸建建売',a:'板橋区', bm:1,st:'sold',rev:4.3,pm:0.088,am:0.069},
+  {t:'アパート',a:'北区',   bm:2,st:'sold',rev:13.0,pm:0.093,am:0.110},
+  {t:'アパート',a:'川口市', bm:4,st:'sold',rev:14.0,pm:0.107,am:0.132},
+  {t:'業者売り',a:'練馬区', bm:3,st:'sold',rev:2.0,pm:0.039,am:0.041},
+  {t:'戸建建売',a:'江戸川区',bm:4,st:'sell',rev:8.8,days:74},
+  {t:'アパート',a:'北区',   bm:5,st:'sell',rev:14.0,days:32},
+  {t:'土地売り',a:'足立区', bm:2,st:'hold',rev:6.3,days:141},
+  {t:'戸建建売',a:'杉並区', bm:6,st:'sell',rev:11.5,days:19},
+  {t:'土地売り',a:'板橋区', bm:5,st:'sell',rev:4.4,days:57},
+  {t:'アパート',a:'川口市', bm:3,st:'hold',rev:11.8,days:101},
+  {t:'仲介',a:'江戸川区',bm:1,st:'broker',rev:1.8},
+  {t:'仲介',a:'北区',   bm:2,st:'broker',rev:2.4},
+  {t:'仲介',a:'世田谷区',bm:3,st:'broker',rev:3.2},
+  {t:'仲介',a:'杉並区', bm:4,st:'broker',rev:1.5},
+  {t:'仲介',a:'足立区', bm:5,st:'broker',rev:2.0},
+  {t:'仲介',a:'練馬区', bm:6,st:'broker',rev:1.6}
+];
+function renderAnalytics(){
+  const c=document.getElementById('content');
+  if(ROLE==='staff'){ c.innerHTML=accessDenied('経営分析'); return; }
+  const A=ANALYTICS, totalRev=A.reduce((s,r)=>s+r.rev,0), share=v=>totalRev?v/totalRev*100:0;
+  const bar=(label,cnt,rev,color)=>{const p=share(rev);return `<div style="margin:9px 0">
+    <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:3px"><span><span style="display:inline-block;width:10px;height:10px;background:${color};border-radius:2px;margin-right:6px;vertical-align:middle"></span><b>${label}</b> <span style="color:var(--sub);font-size:11px">${cnt}件</span></span><span><b>${fmtYm(rev)}</b> <span style="color:var(--sub)">(${p.toFixed(0)}%)</span></span></div>
+    <div style="height:9px;background:#eef1f4"><div style="height:9px;width:${p.toFixed(1)}%;background:${color}"></div></div></div>`;};
+  const byType=TYPES5.map(t=>({t,cnt:A.filter(r=>r.t===t).length,rev:A.filter(r=>r.t===t).reduce((s,r)=>s+r.rev,0)})).filter(x=>x.cnt).sort((a,b)=>b.rev-a.rev);
+  const areas=[...new Set(A.map(r=>r.a))];
+  const byArea=areas.map(a=>({a,cnt:A.filter(r=>r.a===a).length,rev:A.filter(r=>r.a===a).reduce((s,r)=>s+r.rev,0)})).sort((x,y)=>y.rev-x.rev);
+  const monthCnt=Array.from({length:12},(_,i)=>A.filter(r=>r.bm===i+1).length), maxMonth=Math.max(...monthCnt,1);
+  const monthBars=monthCnt.map((v,i)=>`<div style="flex:1;text-align:center"><div style="height:70px;display:flex;align-items:flex-end"><div style="width:60%;margin:0 auto;background:#4f46e5;height:${(v/maxMonth*100).toFixed(0)}%;opacity:${v?1:0.12};min-height:2px"></div></div><div style="font-size:11px;font-weight:700;color:var(--ink)">${v||''}</div><div style="font-size:9.5px;color:var(--sub)">${i+1}月</div></div>`).join('');
+  const cnt=st=>A.filter(r=>r.st===st).length, rev=st=>A.filter(r=>r.st===st).reduce((s,r)=>s+r.rev,0);
+  const sold=A.filter(r=>r.st==='sold'), brk=A.filter(r=>r.st==='broker'), brkRev=brk.reduce((s,r)=>s+r.rev,0), holdSell=A.filter(r=>r.st==='hold'||r.st==='sell');
+  // 自動診断
+  const ins=[];
+  const stagn=holdSell.filter(r=>r.days>90);
+  if(stagn.length){const g=stagn.reduce((s,r)=>s+r.rev,0);ins.push({lv:'high',t:'在庫の長期滞留',b:`保有90日超が <b>${stagn.length}件</b>（見込み粗利 合計 ${fmtYm(g)}）。資金が寝て金利が利益を削ります。`,a:'値下げ余地の再計算・販促強化・卸（業者売り）への切替を検討。'});}
+  const typeAcc=TYPES5.map(t=>{const rs=sold.filter(r=>r.t===t);return rs.length?{t,d:rs.reduce((s,r)=>s+(r.am-r.pm),0)/rs.length,cnt:rs.length}:null;}).filter(Boolean);
+  const weak=typeAcc.filter(x=>x.d<0).sort((a,b)=>a.d-b.d);
+  if(weak.length){const w=weak[0];ins.push({lv:'high',t:`「${w.t}」は想定が甘い傾向`,b:`売却済みで実績が計画を平均 <b>${(w.d*100).toFixed(1)}%</b> 下回り（${w.cnt}件）。原価（建築費・諸費用）の見積りが楽観的な可能性。`,a:'この類型の仕入れ基準・原価テンプレを引き締め、着地見込みを保守化。'});}
+  const areaMargin=areas.map(a=>{const rs=sold.filter(r=>r.a===a);return rs.length?{a,m:rs.reduce((s,r)=>s+r.am,0)/rs.length,cnt:rs.length}:null;}).filter(Boolean).sort((x,y)=>y.m-x.m);
+  if(areaMargin.length){const top=areaMargin[0];ins.push({lv:'good',t:`「${top.a}」が高採算`,b:`売却済みの平均利益率が <b>${(top.m*100).toFixed(1)}%</b> と突出（${top.cnt}件）。`,a:'同エリアの仕入れソーシングを強化し、投下資本を寄せる余地。'});}
+  const brkShare=share(brkRev)/100;
+  ins.push({lv:'info',t:'仲介（在庫を持たない収益）の比率',b:`収益に占める仲介手数料は <b>${(brkShare*100).toFixed(0)}%</b>（${brk.length}件・${fmtYm(brkRev)}）。在庫リスクの低い安定収益源です。`,a:brkShare<0.2?'比率は低め。相場高騰の局面では仲介比率を上げ、在庫リスクを抑える選択肢も。':'一定比率を確保できています。'});
+  const topType=byType[0];
+  if(topType && topType.rev/totalRev>0.4){ins.push({lv:'info',t:'収益の偏り',b:`「${topType.t}」が収益の <b>${(topType.rev/totalRev*100).toFixed(0)}%</b> を占めます。`,a:'一つの類型・エリアへの依存はリスク。ポートフォリオ分散も意識。'});}
+  const lv={high:{bg:'#fef2f2',bd:'#fecaca',ic:'⚠',c:'#b91c1c'},good:{bg:'#f0fdf4',bd:'#bbf7d0',ic:'✅',c:'#15803d'},info:{bg:'#eff6ff',bd:'#bfdbfe',ic:'💡',c:'#1e40af'}};
+  const insHTML=ins.map(x=>{const s=lv[x.lv];return `<div style="border:1px solid ${s.bd};background:${s.bg};padding:12px 14px;margin-bottom:10px">
+    <div style="font-weight:800;color:${s.c};font-size:13px">${s.ic} ${x.t}</div>
+    <div style="font-size:12.5px;margin-top:4px;line-height:1.6">${x.b}</div>
+    <div style="font-size:12px;margin-top:6px"><b>→ 推奨：</b>${x.a}</div></div>`;}).join('');
+  c.innerHTML=`
+    <div class="bubble">📊 <b>経営分析（上長・代表のみ）</b>：業務タイプ（仲介含む）・エリア・仕入れ時期・在庫/売却・仲介を横断で俯瞰し、<b>課題と改善のヒント</b>まで自動で示します。仕入れ再販の全体最適の入口です。</div>
+    <div class="card" style="padding:18px 20px;margin-bottom:16px">
+      <div class="sectiontitle" style="margin-top:0">🥧 収益構成（業務タイプ別・仲介含む）</div>
+      ${byType.map(x=>bar(x.t,x.cnt,x.rev,TCOL[x.t]||'#64748b')).join('')}
+      <div class="muted" style="font-size:11px;margin-top:8px">※ 収益＝売却済みの実現粗利＋在庫の見込み粗利＋仲介手数料（サンプル）。</div>
+    </div>
+    <div class="card" style="padding:18px 20px;margin-bottom:16px">
+      <div class="sectiontitle" style="margin-top:0">📍 エリア別の内訳</div>
+      ${byArea.map(x=>bar(x.a,x.cnt,x.rev,'#0891b2')).join('')}
+    </div>
+    <div class="card" style="padding:18px 20px;margin-bottom:16px">
+      <div class="sectiontitle" style="margin-top:0">🗓 仕入れ時期（月別の仕入れ件数）</div>
+      <div style="display:flex;align-items:flex-end;gap:5px;margin-top:8px">${monthBars}</div>
+    </div>
+    <div class="card" style="padding:18px 20px;margin-bottom:16px">
+      <div class="sectiontitle" style="margin-top:0">📦 ステータス別・仲介実績</div>
+      <div class="kpis">
+        ${statBox('売却済み',cnt('sold')+' 件',fmtYm(rev('sold'))+'（実現粗利）')}
+        ${statBox('在庫・販売中',holdSell.length+' 件',fmtYm(holdSell.reduce((s,r)=>s+r.rev,0))+'（見込み粗利）')}
+        ${statBox('仲介 成約',brk.length+' 件',fmtYm(brkRev)+'（手数料収入）')}
+        ${statBox('仲介 平均手数料',fmtYm(brk.length?brkRev/brk.length:0),'1件あたり')}
+      </div>
+    </div>
+    <div class="card" style="padding:18px 20px">
+      <div class="sectiontitle" style="margin-top:0">🔎 自動診断（課題・改善の示唆）</div>
+      ${insHTML}
+      <div class="muted" style="font-size:11px;margin-top:2px">※ サンプルデータに基づく自動生成の示唆（参考）。実データ連携で精度が上がります。</div>
+    </div>`;
+}
 function accessDenied(name){
   return `<div class="bubble">🔒 <b>${name}</b> は <b>上長・代表のみ</b> が閲覧できる画面です（営業担当には表示されません＝表示範囲の設計どおり）。<br>上部のプレビュー切替で「上長」または「代表」に切り替えると確認できます。</div>
   <div class="card muted" style="text-align:center;padding:34px">この立場では表示できません。</div>`;
