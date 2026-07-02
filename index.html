@@ -47,6 +47,11 @@
   .topbar{background:#fff;border-bottom:1px solid var(--line);padding:12px 26px;display:flex;align-items:center;justify-content:space-between;}
   .topbar h1{font-size:17px;margin:0;color:var(--ink);font-weight:700;}
   .topbar .crumb{font-size:11px;color:var(--sub);margin-bottom:2px;}
+  .searchwrap{display:flex;align-items:center;gap:6px;background:#f1f5f9;border:1px solid var(--line);border-radius:999px;padding:6px 14px;min-width:250px;}
+  .searchwrap .sicon{font-size:13px;color:var(--sub);}
+  .searchwrap input{border:0;background:transparent;outline:none;font-size:13px;font-family:inherit;color:var(--ink);width:100%;}
+  .searchwrap #search-msg{font-size:11px;color:var(--ng-fg);white-space:nowrap;}
+  @media(max-width:860px){ .searchwrap{display:none;} }
   /* トップ常設のプレビュー切替バー（提案デモ用：立場を切り替えて見せる） */
   .previewbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--navy);color:#dbe7f1;padding:9px 26px;position:sticky;top:0;z-index:6;border-bottom:1px solid rgba(255,255,255,.10);}
   .previewbar .pvlabel{font-size:12px;font-weight:700;color:#fff;display:flex;align-items:center;gap:7px;}
@@ -301,6 +306,12 @@
       <div>
         <div class="crumb" id="crumb">ホーム</div>
         <h1 id="ptitle">ダッシュボード</h1>
+      </div>
+      <div class="searchwrap">
+        <span class="sicon">🔍</span>
+        <input id="global-search" list="search-list" placeholder="物件名・IDで検索…" autocomplete="off" onchange="doSearch()" onkeydown="if(event.key==='Enter')doSearch()">
+        <datalist id="search-list"></datalist>
+        <span id="search-msg"></span>
       </div>
     </div>
     <div class="content" id="content"><!-- rendered by JS --></div>
@@ -1257,12 +1268,15 @@ const TCOL2={'戸建建売':'#0e7490','一棟収益':'#db2777','区分収益':'#
 function vBarChart(items,color){
   if(!items.length) return '<div class="muted" style="font-size:12px">データなし</div>';
   const mx=Math.max(...items.map(i=>i.value),1);
-  return `<div style="display:flex;align-items:flex-end;gap:10px;height:150px;padding-top:6px">${items.map(it=>`
-    <div style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end">
+  const bars=items.map(it=>`<div style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">
       <div style="font-size:12px;font-weight:800;color:var(--ink)">${it.value}</div>
-      <div style="width:66%;max-width:44px;background:${color||'var(--accent)'};height:${Math.round(it.value/mx*100)}%;min-height:3px;border-radius:3px 3px 0 0"></div>
-      <div style="font-size:10.5px;color:var(--sub);margin-top:6px;text-align:center;line-height:1.2">${it.label}${it.sub?`<br><span style="font-size:9.5px">${it.sub}</span>`:''}</div>
-    </div>`).join('')}</div>`;
+      <div style="width:64%;max-width:40px;background:${color||'var(--accent)'};height:${Math.round(it.value/mx*85)}%;min-height:3px;border-radius:3px 3px 0 0"></div>
+    </div>`).join('');
+  const labels=items.map(it=>`<div style="flex:1;min-width:0;text-align:center;line-height:1.25">
+      <div title="${it.label}" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:10.5px;font-weight:600;color:var(--ink)">${it.label}</div>
+      ${it.sub?`<div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:9.5px;color:var(--sub)">${it.sub}</div>`:''}
+    </div>`).join('');
+  return `<div style="display:flex;align-items:flex-end;gap:8px;height:120px">${bars}</div><div style="display:flex;gap:8px;margin-top:6px">${labels}</div>`;
 }
 /* リードタイム・タイムライン（横方向の期間バー＋月軸） */
 function leadTimeline(items){
@@ -1283,19 +1297,35 @@ function leadTimeline(items){
     </div>
   </div>`;
 }
-/* 事業別ミックス（売上・粗利／百万円・サンプル） */
-const BIZ_MIX=[
-  {name:'開発事業',color:'#173a5e',sales:1050,gp:137},
-  {name:'仲介事業',color:'#0e7490',sales:45,gp:43},
-  {name:'コンサルティング事業',color:'#b45309',sales:62,gp:44}
-];
+/* 事業別ミックス（売上・粗利／百万円・サンプル・決算期別） */
+const BIZ_MIX_FY={
+  this:[{name:'開発事業',color:'#173a5e',sales:620,gp:82},{name:'仲介事業',color:'#0e7490',sales:24,gp:23},{name:'コンサルティング事業',color:'#b45309',sales:33,gp:24}],
+  last:[{name:'開発事業',color:'#173a5e',sales:1050,gp:137},{name:'仲介事業',color:'#0e7490',sales:45,gp:43},{name:'コンサルティング事業',color:'#b45309',sales:62,gp:44}]
+};
+function bizMix(){ const t=BIZ_MIX_FY.this,l=BIZ_MIX_FY.last;
+  if(BIZ_FY==='this')return t; if(BIZ_FY==='last')return l;
+  return t.map((b,i)=>({name:b.name,color:b.color,sales:b.sales+l[i].sales,gp:b.gp+l[i].gp})); }
+function mixVal(b,key){ return key==='cost'?(b.sales-b.gp):b[key]; }
 function mixDonut(title,key){
-  const total=BIZ_MIX.reduce((s,b)=>s+b[key],0)||1;
+  const arr=bizMix(), total=arr.reduce((s,b)=>s+mixVal(b,key),0)||1;
   return `<div>
     <div style="font-weight:700;font-size:12.5px;margin-bottom:8px;text-align:center;color:var(--ink)">${title}</div>
-    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center">
-      ${donutSVG(BIZ_MIX.map(b=>({label:b.name,value:b[key],color:b.color})),138)}
-      <div>${BIZ_MIX.map(b=>`<div style="font-size:11.5px;margin:5px 0;white-space:nowrap"><span style="display:inline-block;width:10px;height:10px;background:${b.color};border-radius:2px;margin-right:6px;vertical-align:middle"></span>${b.name}<br><span style="color:var(--sub);margin-left:16px">${fmtYm(b[key])}（${(b[key]/total*100).toFixed(0)}%）</span></div>`).join('')}</div>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center">
+      ${donutSVG(arr.map(b=>({label:b.name,value:mixVal(b,key),color:b.color})),128)}
+      <div>${arr.map(b=>`<div style="font-size:11px;margin:4px 0;white-space:nowrap"><span style="display:inline-block;width:9px;height:9px;background:${b.color};border-radius:2px;margin-right:5px;vertical-align:middle"></span>${b.name}<br><span style="color:var(--sub);margin-left:14px">${fmtYm(mixVal(b,key))}（${(mixVal(b,key)/total*100).toFixed(0)}%）</span></div>`).join('')}</div>
+    </div>
+  </div>`;
+}
+/* 種別ごとの構成ドーナツ（売上=price / 粗利=rev / 原価=price-rev） */
+function typeDonut(A,key,title){
+  const RT=['戸建建売','一棟収益','区分収益','店舗','土地'];
+  const rows=RT.map(t=>{const rs=A.filter(r=>r.t===t); const gp=rs.reduce((s,r)=>s+r.rev,0), sales=rs.reduce((s,r)=>s+(r.price||0),0); return {t,cnt:rs.length,sales,gp,cost:Math.max(sales-gp,0)};}).filter(x=>x.cnt);
+  const total=rows.reduce((s,r)=>s+r[key],0)||1;
+  return `<div>
+    <div style="font-weight:700;font-size:12.5px;margin-bottom:8px;text-align:center;color:var(--ink)">${title}</div>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center">
+      ${donutSVG(rows.map(x=>({label:x.t,value:x[key],color:TCOL2[x.t]||'#94a3b8'})),128)}
+      <div>${rows.map(x=>`<div style="font-size:11px;margin:4px 0;white-space:nowrap"><span style="display:inline-block;width:9px;height:9px;background:${TCOL2[x.t]||'#94a3b8'};border-radius:2px;margin-right:5px;vertical-align:middle"></span>${x.t}<br><span style="color:var(--sub);margin-left:14px">${fmtYm(x[key])}（${(x[key]/total*100).toFixed(0)}%）</span></div>`).join('')}</div>
     </div>
   </div>`;
 }
@@ -1358,7 +1388,6 @@ function resaleSectionsHTML(){
   const PL={this:'今期',last:'前期',all:'通期'}[BIZ_FY];
   const bon='border:1px solid var(--navy);background:var(--navy);color:#fff;padding:5px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit';
   const bidle='border:1px solid var(--line);background:#fff;color:var(--sub);padding:5px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit';
-  const pbtn=(k,l)=>`<button style="${BIZ_FY===k?bon:bidle}" onclick="setBizFY('${k}')">${l}</button>`;
   const dbtn=(k,l)=>`<button style="${BIZ_BREAKDOWN===k?bon:bidle}" onclick="setBizBreakdown('${k}')">${l}</button>`;
   let groups;
   if(BIZ_BREAKDOWN==='price'){ const bands=['〜3,000万','3,000〜6,000万','6,000万〜1億','1億〜']; groups=bands.map(b=>({name:b,cnt:A.filter(r=>priceBand(r.price)===b).length,rev:A.filter(r=>priceBand(r.price)===b).reduce((s,r)=>s+r.rev,0)})).filter(x=>x.cnt); }
@@ -1366,10 +1395,6 @@ function resaleSectionsHTML(){
   else { const areas=[...new Set(A.map(r=>r.a))]; groups=areas.map(a=>({name:a,cnt:A.filter(r=>r.a===a).length,rev:A.filter(r=>r.a===a).reduce((s,r)=>s+r.rev,0)})); }
   groups.sort((x,y)=>y.rev-x.rev);
   return `
-    <div style="display:flex;align-items:center;gap:6px;margin-bottom:14px;flex-wrap:wrap">
-      <span style="font-size:12px;font-weight:700;color:var(--sub)">決算期</span>${pbtn('this','今期')}${pbtn('last','前期')}${pbtn('all','通期')}
-      <span style="font-size:11px;color:var(--sub);margin-left:6px">※「売却済み」等は決算期ベース（今期＝当期決算年度）。決算月は貴社に合わせて設定。在庫は常に現在。</span>
-    </div>
     <div class="kpis">
       ${statBox('売却済み（'+PL+'）',sold.length+' 件',fmtYm(sold.reduce((s,r)=>s+r.rev,0))+'（実現粗利）')}
       ${statBox('在庫・販売中（現在）',holdSell.length+' 件',fmtYm(holdSell.reduce((s,r)=>s+r.rev,0))+'（見込み粗利）')}
@@ -1387,10 +1412,11 @@ function resaleSectionsHTML(){
       <div class="card" style="padding:16px 18px;margin:0"><div class="sectiontitle" style="margin-top:0">🏢 仲介業者ランキング</div>${vBarChart(brokerRank.map(p=>({label:p.name,value:p.cnt,sub:fmtYm(p.rev)})),'#0891b2')}</div>
     </div>
     <div class="card" style="padding:18px 20px;margin-bottom:16px">
-      <div class="sectiontitle" style="margin-top:0">種別ごとの収益構成</div>
-      <div style="display:flex;align-items:center;gap:26px;flex-wrap:wrap">
-        ${donutSVG(byType.map(x=>({label:x.t,value:x.rev,color:TCOL2[x.t]||'#94a3b8'})),150)}
-        <div>${byType.map(x=>`<div style="font-size:12.5px;margin:5px 0"><span style="display:inline-block;width:11px;height:11px;background:${TCOL2[x.t]||'#94a3b8'};border-radius:2px;margin-right:8px;vertical-align:middle"></span><b>${x.t}</b> <span style="color:var(--sub);font-size:11px">${x.cnt}件</span>　${fmtYm(x.rev)} <span style="color:var(--sub)">(${total?(x.rev/total*100).toFixed(0):0}%)</span></div>`).join('')}</div>
+      <div class="sectiontitle" style="margin-top:0">種別ごとの構成（売上・粗利・原価）</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px">
+        ${typeDonut(A,'sales','売上 構成')}
+        ${typeDonut(A,'gp','粗利 構成')}
+        ${typeDonut(A,'cost','原価 構成')}
       </div>
     </div>
     <div class="card" style="padding:18px 20px;margin-bottom:16px">
@@ -1404,14 +1430,16 @@ function resaleSectionsHTML(){
 }
 /* 仲介タブ */
 function brokerSectionsHTML(){
-  const A=ANALYTICS.filter(r=>r.t==='仲介'), total=A.reduce((s,r)=>s+r.rev,0);
+  let A=ANALYTICS.filter(r=>r.t==='仲介');
+  if(BIZ_FY!=='all') A=A.filter(r=>r.fy===BIZ_FY);
+  const total=A.reduce((s,r)=>s+r.rev,0), PL={this:'今期',last:'前期',all:'通期'}[BIZ_FY];
   const areas=[...new Set(A.map(r=>r.a))];
   const byArea=areas.map(a=>({a,cnt:A.filter(r=>r.a===a).length,rev:A.filter(r=>r.a===a).reduce((s,r)=>s+r.rev,0)})).sort((x,y)=>y.rev-x.rev);
   return `
     <div class="bubble">🤝 <b>仲介事業</b>：在庫を持たず手数料で稼ぐ事業。相場が高い局面でも回せる、リスクの低い収益源です。</div>
     <div class="kpis">
-      ${statBox('仲介 成約',A.length+' 件','手数料ベース')}
-      ${statBox('手数料 収入',fmtYm(total),'合計（サンプル）')}
+      ${statBox('仲介 成約（'+PL+'）',A.length+' 件','手数料ベース')}
+      ${statBox('手数料 収入（'+PL+'）',fmtYm(total),'合計（サンプル）')}
       ${statBox('平均手数料',fmtYm(A.length?total/A.length:0),'1件あたり')}
       ${statBox('取り扱いエリア',areas.length+' エリア','分散状況')}
     </div>
@@ -1562,7 +1590,10 @@ function renderBizdash(){
   const avgDiff=diffs.reduce((a,b)=>a+b,0)/diffs.length;
   const dc=avgDiff>=0?COLR.ok:COLR.ng;
   const tabs=[['all','全社サマリー'],['resale','開発事業'],['broker','仲介事業']];
-  const tabBar=`<div style="display:flex;gap:2px;border-bottom:2px solid var(--line);margin-bottom:18px">${tabs.map(([k,l])=>`<button onclick="setBizTab('${k}')" style="border:0;background:none;padding:9px 18px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit;color:${BIZ_TAB===k?'var(--navy)':'var(--sub)'};border-bottom:3px solid ${BIZ_TAB===k?'var(--navy)':'transparent'};margin-bottom:-2px">${l}</button>`).join('')}</div>`;
+  const tabBar=`<div style="display:flex;gap:2px;border-bottom:2px solid var(--line);margin-bottom:14px">${tabs.map(([k,l])=>`<button onclick="setBizTab('${k}')" style="border:0;background:none;padding:9px 18px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit;color:${BIZ_TAB===k?'var(--navy)':'var(--sub)'};border-bottom:3px solid ${BIZ_TAB===k?'var(--navy)':'transparent'};margin-bottom:-2px">${l}</button>`).join('')}</div>`;
+  const bon='border:1px solid var(--navy);background:var(--navy);color:#fff;padding:5px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit';
+  const bidle='border:1px solid var(--line);background:#fff;color:var(--sub);padding:5px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit';
+  const fyBar=`<div style="display:flex;align-items:center;gap:6px;margin-bottom:16px;flex-wrap:wrap"><span style="font-size:12px;font-weight:700;color:var(--sub)">決算期</span>${[['this','今期'],['last','前期'],['all','通期']].map(([k,l])=>`<button style="${BIZ_FY===k?bon:bidle}" onclick="setBizFY('${k}')">${l}</button>`).join('')}<span style="font-size:11px;color:var(--sub);margin-left:6px">※ 今期＝当期決算年度。決算月は貴社に合わせて設定。在庫・承認待ちは常に現在。</span></div>`;
   let body;
   if(BIZ_TAB==='resale'){ body=resaleSectionsHTML(); }
   else if(BIZ_TAB==='broker'){ body=brokerSectionsHTML(); }
@@ -1575,11 +1606,12 @@ function renderBizdash(){
     </div>
     <div class="card" style="padding:18px 20px;margin-bottom:16px">
       <div class="sectiontitle" style="margin-top:0">🏢 事業別の構成（開発・仲介・コンサルティング）</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px">
         ${mixDonut('売上 構成','sales')}
         ${mixDonut('粗利 構成','gp')}
+        ${mixDonut('コスト 構成','cost')}
       </div>
-      <div class="muted" style="font-size:11px;margin-top:8px">※ 売上は開発事業が大半でも、粗利では在庫リスクの低い仲介・コンサルの比率が高い＝収益源の分散状況が見えます（サンプル）。</div>
+      <div class="muted" style="font-size:11px;margin-top:8px">※ 売上・コストは開発事業が大半でも、粗利では在庫リスクの低い仲介・コンサルの比率が高い＝収益源の分散状況が見えます（サンプル・決算期で切替）。</div>
     </div>
     <div class="card" style="padding:18px 20px">
       <div class="sectiontitle" style="margin-top:0">📈 事業の推移（売上・粗利・在庫）</div>
@@ -1601,7 +1633,7 @@ function renderBizdash(){
   }
   c.innerHTML=`
     <div class="bubble">👔 <b>経営ビュー（上長・代表）</b>：会社全体と、事業ごと（開発事業／仲介事業）をタブで切り替えて把握できます。</div>
-    ${tabBar}${body}
+    ${tabBar}${fyBar}${body}
     <div class="muted" style="font-size:11px;margin-top:10px">※ サンプル値（マスキング）。この画面は<b>上長・代表のみ</b>閲覧できます。</div>`;
   if(BIZ_TAB==='all') drawBizChart();
 }
@@ -2159,7 +2191,25 @@ function submitNew(){
   window.scrollTo(0,0);
 }
 
+/* ヘッダー全体検索：物件名・IDで該当ページへ */
+function doSearch(){
+  const el=document.getElementById('global-search'); if(!el) return;
+  const q=(el.value||'').trim(); const msg=document.getElementById('search-msg'); if(msg)msg.textContent='';
+  if(!q) return;
+  const d=DEALS.find(x=>x.name===q||x.id===q) || DEALS.find(x=>x.name.includes(q)||x.id.includes(q));
+  if(d){ el.value=''; go('detail',d.id); return; }
+  const inv=INVENTORY.find(x=>x.name===q) || INVENTORY.find(x=>x.name.includes(q));
+  if(inv){ el.value=''; setRole(ROLE); go('inventory'); return; }
+  if(msg) msg.textContent='該当なし';
+}
+function initSearch(){
+  const dl=document.getElementById('search-list'); if(!dl) return;
+  const names=[...DEALS.map(d=>`${d.name}｜${d.id}`.replace(/｜.*/,'')), ...INVENTORY.map(i=>i.name)];
+  const uniq=[...new Set([...DEALS.map(d=>d.name), ...DEALS.map(d=>d.id), ...INVENTORY.map(i=>i.name)])];
+  dl.innerHTML=uniq.map(n=>`<option value="${n}"></option>`).join('');
+}
 /* 初期表示 */
+initSearch();
 go('dashboard');
 </script>
 </body>
