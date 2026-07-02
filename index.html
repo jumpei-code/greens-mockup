@@ -2069,7 +2069,7 @@ function recalcNew(){
   const broker=false;   // （旧・業者売りの諸費用買主負担ケースは廃止。種別は資産区分に統一）
   const taxesC=broker?0:taxes, admin=broker?0:(shihou+yobi+kanriOther+salesFee), nonop=broker?0:(interest+jimu+eigyoOther);
   const cost=landBlock+bldgBlock+taxesC+admin+nonop;
-  // 自動計算欄をフォーム内に反映（業者売りは諸費用＝買主負担と表示）
+  // 自動計算欄をフォーム内に反映
   if(broker){ ['a_shutoku_t','a_shutoku_b','a_kotei','a_toshi','a_touroku_t','a_touroku_b','a_teitou','a_hanbai','a_kinri','a_jimu'].forEach(id=>{const e=document.getElementById(id); if(e) e.textContent='買主負担';}); }
   else { setT('a_shutoku_t',kotei*0.015); setT('a_shutoku_b',beval*0.03); setT('a_kotei',kotei*0.014); setT('a_toshi',beval*0.003);
     setT('a_touroku_t',kotei*0.02); setT('a_touroku_b',beval*0.02); setT('a_teitou',borrow*0.004);
