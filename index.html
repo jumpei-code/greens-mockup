@@ -280,6 +280,7 @@
       <div class="group" style="margin-top:auto">オプション機能（任意・別途費用）</div>
       <button id="nav-bizdash" data-nav="bizdash" class="addon" onclick="go('bizdash')" style="display:none"><span class="ic">◆</span><span>経営ダッシュボード<span class="optbadge">オプション</span></span></button>
       <button id="nav-perf" data-nav="perf" class="addon" onclick="go('perf')" style="display:none"><span class="ic">◉</span><span>担当者別パフォーマンス<span class="optbadge">オプション</span></span></button>
+      <button id="nav-cash" data-nav="cash" class="addon" onclick="go('cash')" style="display:none"><span class="ic">￥</span><span>資金繰り・与信枠<span class="optbadge">オプション</span></span></button>
       <button data-nav="compare" class="addon" onclick="go('compare')"><span class="ic">⚖</span><span>物件比較・感応度<span class="optbadge">オプション</span></span></button>
       <button data-nav="market" class="addon" onclick="go('market')"><span class="ic">◎</span><span>相場調査<span class="optbadge">オプション</span></span></button>
     </nav>
@@ -603,17 +604,17 @@ function setRole(r){ ROLE=r; document.getElementById('role-staff').classList.tog
   document.getElementById('role-mgr').classList.toggle('on',r==='mgr');
   document.getElementById('role-boss').classList.toggle('on',r==='boss');
   const ll=document.getElementById('nav-list-label'); if(ll) ll.textContent=(r==='staff')?'担当物件一覧':'過去実績';
-  ['nav-bizdash','nav-perf'].forEach(id=>{const b=document.getElementById(id); if(b) b.style.display=(r==='staff')?'none':'';}); // 経営・成績は上長/代表のみ
+  ['nav-bizdash','nav-perf','nav-cash'].forEach(id=>{const b=document.getElementById(id); if(b) b.style.display=(r==='staff')?'none':'';}); // 経営・成績・資金繰りは上長/代表のみ
   go(CUR.view, CUR.arg); }
 let CUR={view:'dashboard',arg:null};
-const TITLES={dashboard:['ホーム','ダッシュボード'],approve:['承認','承認（あなたの番の承認待ち）'],ops:['販売物件一覧','販売物件一覧（全社・全営業が販売対応）'],list:['物件','担当物件一覧'],detail:['物件 › 収支シート','事業収支シート'],market:['相場','相場調査（オプション機能）'],compare:['物件','物件比較・感応度（オプション）'],review:['実績分析','実績分析'],access:['設定','表示範囲（どの立場に何が見えるか）'],bizdash:['経営','経営ダッシュボード（上長・代表）'],perf:['評価','担当者別パフォーマンス（上長・代表）'],new:['物件 › 新規起案','新規物件の起案（事業計画）']};
+const TITLES={dashboard:['ホーム','ダッシュボード'],approve:['承認','承認（あなたの番の承認待ち）'],ops:['販売物件一覧','販売物件一覧（全社・全営業が販売対応）'],list:['物件','担当物件一覧'],detail:['物件 › 収支シート','事業収支シート'],market:['相場','相場調査（オプション機能）'],compare:['物件','物件比較・感応度（オプション）'],review:['実績分析','実績分析'],access:['設定','表示範囲（どの立場に何が見えるか）'],bizdash:['経営','経営ダッシュボード（上長・代表）'],perf:['評価','担当者別パフォーマンス（上長・代表）'],cash:['経営','資金繰り・与信枠（上長・代表）'],new:['物件 › 新規起案','新規物件の起案（事業計画）']};
 function go(view,arg){
   CUR={view,arg};
   document.querySelectorAll('.nav button[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===view));
   const t=TITLES[view]||['',''];
   document.getElementById('crumb').textContent=t[0];
   document.getElementById('ptitle').textContent=t[1];
-  const _r=({dashboard:renderDashboard,approve:renderApprove,ops:renderOps,list:renderList,detail:renderDetail,market:renderMarket,compare:renderCompare,review:renderReview,access:renderAccess,bizdash:renderBizdash,perf:renderPerf,new:renderNew}[view]); if(_r) _r(arg); else return;
+  const _r=({dashboard:renderDashboard,approve:renderApprove,ops:renderOps,list:renderList,detail:renderDetail,market:renderMarket,compare:renderCompare,review:renderReview,access:renderAccess,bizdash:renderBizdash,perf:renderPerf,cash:renderCash,new:renderNew}[view]); if(_r) _r(arg); else return;
   updateApprBadge(); updateListBadge(); refreshNotif();
   const _np=document.getElementById('notif-panel'); if(_np) _np.style.display='none';
   window.scrollTo(0,0);
@@ -1826,6 +1827,96 @@ function renderPerf(){
     </div>
     <div class="sectiontitle">🗒 担当者ごとの所見（自動コメント）</div>
     ${comments}`;
+}
+
+/* ---------- 資金繰り・与信枠（オプション・上長/代表のみ）：サンプル値（百万円・マスキング） ---------- */
+const CREDIT={limit:800, used:610};  // 与信枠と使用中残高（百万円）
+const CASH_EVENTS=[  // m:月, kind:'out'(仕入決済=出金)/'in'(売却決済=入金), amt:百万円
+  {m:'7月', d:'07/10', kind:'out', name:'江戸川区◯◯1丁目 土地（仕入決済）',            amt:12.8, staff:'佐藤', id:'GR-2026-0012'},
+  {m:'7月', d:'07/17', kind:'in',  name:'板橋区◯◯2丁目 土地（売却決済・買付あり）',     amt:15.2, staff:'高橋'},
+  {m:'7月', d:'07/22', kind:'out', name:'練馬区◯◯2丁目 土地（仕入決済・承認後見込み）', amt:12.7, staff:'高橋', id:'GR-2026-0013'},
+  {m:'7月', d:'07/28', kind:'out', name:'足立区◯◯3丁目 アパート用地（仕入決済）',       amt:24.5, staff:'田中'},
+  {m:'8月', d:'08/07', kind:'out', name:'葛飾区◯◯1丁目 土地（仕入決済）',              amt:18.2, staff:'渡辺'},
+  {m:'8月', d:'08/20', kind:'in',  name:'世田谷区◯◯5丁目 戸建（売却決済）',            amt:21.2, staff:'佐藤'},
+  {m:'8月', d:'08/28', kind:'in',  name:'江東区◯◯2丁目 土地（売却決済）',              amt:16.8, staff:'田中'},
+  {m:'9月', d:'09/05', kind:'out', name:'荒川区◯◯1丁目 土地（仕入決済）',              amt:14.5, staff:'佐藤'},
+  {m:'9月', d:'09/19', kind:'out', name:'江戸川区◯◯4丁目 アパート用地（仕入決済）',     amt:32.0, staff:'田中'},
+  {m:'9月', d:'09/25', kind:'in',  name:'練馬区◯◯3丁目 土地（売却決済）',              amt:14.0, staff:'高橋'},
+  {m:'10月',d:'10/08', kind:'out', name:'北区◯◯2丁目 土地（仕入決済）',                amt:11.8, staff:'渡辺'},
+  {m:'10月',d:'10/16', kind:'in',  name:'足立区◯◯1丁目 戸建（売却決済）',              amt:13.8, staff:'佐藤'},
+  {m:'10月',d:'10/30', kind:'in',  name:'江戸川区◯◯2丁目 アパート（売却決済）',        amt:26.4, staff:'田中'},
+  {m:'11月',d:'11/06', kind:'out', name:'葛飾区◯◯3丁目 土地（仕入決済）',              amt:16.5, staff:'高橋'},
+  {m:'11月',d:'11/13', kind:'out', name:'板橋区◯◯1丁目 土地（仕入決済）',              amt:12.2, staff:'佐藤'},
+  {m:'11月',d:'11/27', kind:'in',  name:'荒川区◯◯2丁目 土地（売却決済）',              amt:15.0, staff:'渡辺'},
+  {m:'12月',d:'12/04', kind:'out', name:'練馬区◯◯1丁目 土地（仕入決済）',              amt:13.4, staff:'高橋'},
+  {m:'12月',d:'12/18', kind:'in',  name:'足立区◯◯3丁目 アパート（売却決済）',          amt:24.8, staff:'田中'},
+  {m:'12月',d:'12/25', kind:'in',  name:'北区◯◯1丁目 土地（売却決済）',                amt:12.9, staff:'渡辺'},
+];
+function renderCash(){
+  const c=document.getElementById('content');
+  if(ROLE==='staff'){ c.innerHTML=accessDenied('資金繰り・与信枠'); return; }
+  const fm=n=>'¥'+(Math.round(n*10)/10).toLocaleString('ja-JP')+'百万';
+  const months=['7月','8月','9月','10月','11月','12月'];
+  const agg=months.map(m=>{const ev=CASH_EVENTS.filter(e=>e.m===m);
+    const out=ev.filter(e=>e.kind==='out').reduce((a,e)=>a+e.amt,0);
+    const inn=ev.filter(e=>e.kind==='in').reduce((a,e)=>a+e.amt,0);
+    return {m,out,inn,net:inn-out,outCnt:ev.filter(e=>e.kind==='out').length};});
+  const cur=agg[0];
+  const mx=Math.max(...agg.map(a=>Math.max(a.out,a.inn)),1);
+  // 与信枠：今月の仕入決済に伴う借入実行（仕入の9割）を上乗せした見込みを表示
+  const plan=Math.round(cur.out*0.9*10)/10;
+  const usedPct=CREDIT.used/CREDIT.limit*100, planPct=plan/CREDIT.limit*100, afterPct=usedPct+planPct;
+  const big=[...CASH_EVENTS].filter(e=>e.m===cur.m||e.m===agg[1].m).sort((a,b)=>b.amt-a.amt)[0];
+  const bars=agg.map(a=>`<div style="flex:1;text-align:center">
+      <div style="height:110px;display:flex;align-items:flex-end;justify-content:center;gap:4px">
+        <div title="出金 ${fm(a.out)}" style="width:26%;background:#dc2626;opacity:.85;height:${Math.round(a.out/mx*100)}%;min-height:2px"></div>
+        <div title="入金 ${fm(a.inn)}" style="width:26%;background:#16a34a;opacity:.85;height:${Math.round(a.inn/mx*100)}%;min-height:2px"></div>
+      </div>
+      <div style="font-size:11.5px;font-weight:700;margin-top:4px">${a.m}${a.outCnt>=3?'<div style="color:#b91c1c;font-size:10px">⚠ 決済集中</div>':''}</div>
+      <div style="font-size:10.5px;color:${a.net>=0?'#15803d':'#b91c1c'};font-weight:700">${a.net>=0?'+':'−'}${fm(Math.abs(a.net)).slice(1)}</div>
+    </div>`).join('');
+  const near=CASH_EVENTS.filter(e=>e.m===cur.m||e.m===agg[1].m);
+  const rows=near.map(e=>`<tr ${e.id?`style="cursor:pointer" onclick="go('detail','${e.id}')"`:''}>
+      <td class="num">${e.d}</td>
+      <td style="text-align:center"><span style="font-size:10.5px;font-weight:700;padding:2px 8px;background:${e.kind==='out'?'#fee2e2':'#dcfce7'};color:${e.kind==='out'?'#b91c1c':'#15803d'}">${e.kind==='out'?'出金（仕入）':'入金（売却）'}</span></td>
+      <td>${e.name}${e.id?' <span style="font-size:10px;color:var(--sub)">▶ 収支シート</span>':''}</td>
+      <td class="num"><b style="color:${e.kind==='out'?'#b91c1c':'#15803d'}">${e.kind==='out'?'−':'+'}${fm(e.amt).slice(1)}</b></td>
+      <td>${e.staff}</td>
+    </tr>`).join('');
+  c.innerHTML=`
+    <div class="bubble">💰 <b>資金繰り・与信枠（上長・代表のみ・オプション）</b>：仕入決済（出金）と売却決済（入金）を月別に並べ、<b>決済が重なる月</b>と<b>与信枠の残り</b>を事前に把握する画面です。「あと何件仕入れられるか」の判断材料になります（サンプル値）。</div>
+    <div class="kpis">
+      ${statBox('今月の出金予定（仕入決済）',fm(cur.out),cur.outCnt+'件の決済')}
+      ${statBox('今月の入金予定（売却決済）',fm(cur.inn),'純収支 '+(cur.net>=0?'+':'−')+fm(Math.abs(cur.net)).slice(1))}
+      ${statBox('与信枠 使用率',Math.round(usedPct)+'%','残り枠 '+fm(CREDIT.limit-CREDIT.used))}
+      ${statBox('直近の大型決済',big.d,big.name.split('（')[0]+'・'+fm(big.amt))}
+    </div>
+    <div class="card" style="padding:18px 20px;margin-bottom:16px">
+      <div class="sectiontitle" style="margin-top:0">🏦 与信枠メーター（借入枠に対する使用状況）</div>
+      <div style="height:22px;background:#eef2f6;position:relative;margin:12px 0 6px">
+        <div style="position:absolute;left:0;top:0;height:100%;width:${usedPct.toFixed(1)}%;background:var(--navy)"></div>
+        <div style="position:absolute;left:${usedPct.toFixed(1)}%;top:0;height:100%;width:${planPct.toFixed(1)}%;background:#d97706"></div>
+        <div style="position:absolute;left:80%;top:-4px;bottom:-4px;width:2px;background:#b91c1c"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:12px">
+        <span><span style="display:inline-block;width:10px;height:10px;background:var(--navy);margin-right:5px;vertical-align:middle"></span>使用中 <b>${fm(CREDIT.used)}</b>（${Math.round(usedPct)}%）　<span style="display:inline-block;width:10px;height:10px;background:#d97706;margin-right:5px;vertical-align:middle"></span>今月の借入実行予定 <b>+${fm(plan).slice(1)}</b> → 見込み <b style="color:${afterPct>80?'#b91c1c':'var(--ink)'}">${Math.round(afterPct)}%</b></span>
+        <span style="color:var(--sub)">借入枠 <b>${fm(CREDIT.limit)}</b>／<span style="color:#b91c1c">赤線＝警戒ライン 80%</span></span>
+      </div>
+      ${afterPct>80?'<div style="margin-top:10px;font-size:12px;background:#fef2f2;border:1px solid #fecaca;padding:9px 12px;color:#b91c1c"><b>⚠ 今月の仕入決済をすべて実行すると警戒ライン（80%）を超える見込み</b>：仕入の優先順位づけ、または売却決済の前倒しをご検討ください。</div>':''}
+    </div>
+    <div class="card" style="padding:18px 20px;margin-bottom:16px">
+      <div class="sectiontitle" style="margin-top:0">📅 月別 資金繰りカレンダー（今後6ヶ月）</div>
+      <div style="display:flex;align-items:flex-end;gap:10px;margin-top:10px">${bars}</div>
+      <div style="font-size:11px;color:var(--sub);margin-top:10px"><span style="display:inline-block;width:10px;height:10px;background:#dc2626;opacity:.85;margin-right:5px;vertical-align:middle"></span>出金（仕入決済）　<span style="display:inline-block;width:10px;height:10px;background:#16a34a;opacity:.85;margin-right:5px;vertical-align:middle"></span>入金（売却決済）　下段の数字＝月の純収支。<b>⚠ 決済集中</b>＝仕入決済が3件以上重なる月。</div>
+    </div>
+    <div class="xwrap">
+      <div class="sectiontitle" style="margin-top:0">🗓 直近2ヶ月の決済予定</div>
+      <table class="xgrid">
+        <tr><td class="sec num">予定日</td><td class="sec" style="text-align:center">区分</td><td class="sec">物件・内容</td><td class="sec num">金額</td><td class="sec">担当</td></tr>
+        ${rows}
+      </table>
+      <div class="muted" style="font-size:11px;margin-top:10px">※ 起案・承認された案件の「仕入決済日／売却決済日」から自動で作られる想定です。金額・日付はサンプル（マスキング）。行クリックで収支シートへ移動できます（▶ 印の行）。</div>
+    </div>`;
 }
 
 /* ---------- 新規起票（入力＋リアルタイム計算＋相場参照） ---------- */
