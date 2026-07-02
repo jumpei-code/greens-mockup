@@ -273,8 +273,8 @@
       <div class="group">メニュー</div>
       <button data-nav="dashboard" class="active" onclick="go('dashboard')"><span class="ic">▣</span>ダッシュボード</button>
       <button data-nav="approve" onclick="go('approve')"><span class="ic">✓</span>承認<span id="nav-appr-badge" class="navbadge" style="display:none"></span></button>
-      <button data-nav="ops" onclick="go('ops')"><span class="ic">◔</span>仕入・販売<span id="nav-ops-badge" class="navbadge" style="display:none"></span></button>
-      <button data-nav="list" onclick="go('list')"><span class="ic">≣</span><span id="nav-list-label">担当物件一覧</span></button>
+      <button data-nav="list" onclick="go('list')"><span class="ic">≣</span><span id="nav-list-label">担当物件一覧</span><span id="nav-list-badge" class="navbadge" style="display:none"></span></button>
+      <button data-nav="ops" onclick="go('ops')"><span class="ic">◔</span>販売物件一覧</button>
       <button data-nav="review" onclick="go('review')"><span class="ic">↺</span>実績分析</button>
       <button data-nav="access" onclick="go('access')"><span class="ic">▦</span>表示範囲（権限）</button>
       <div class="group" style="margin-top:auto">オプション機能（任意・別途費用）</div>
@@ -601,7 +601,7 @@ function setRole(r){ ROLE=r; document.getElementById('role-staff').classList.tog
   ['nav-bizdash','nav-perf'].forEach(id=>{const b=document.getElementById(id); if(b) b.style.display=(r==='staff')?'none':'';}); // 経営・成績は上長/代表のみ
   go(CUR.view, CUR.arg); }
 let CUR={view:'dashboard',arg:null};
-const TITLES={dashboard:['ホーム','ダッシュボード'],approve:['承認','承認（あなたの番の承認待ち）'],ops:['仕入・販売','仕入・販売（自分の担当／全社の販売物件）'],list:['物件','担当物件一覧'],detail:['物件 › 収支シート','事業収支シート'],market:['相場','相場調査（オプション機能）'],review:['実績分析','実績分析'],access:['設定','表示範囲（どの立場に何が見えるか）'],bizdash:['経営','経営ダッシュボード（上長・代表）'],perf:['評価','担当者別パフォーマンス（上長・代表）'],new:['物件 › 新規起案','新規物件の起案（事業計画）']};
+const TITLES={dashboard:['ホーム','ダッシュボード'],approve:['承認','承認（あなたの番の承認待ち）'],ops:['販売物件一覧','販売物件一覧（全社・全営業が販売対応）'],list:['物件','担当物件一覧'],detail:['物件 › 収支シート','事業収支シート'],market:['相場','相場調査（オプション機能）'],review:['実績分析','実績分析'],access:['設定','表示範囲（どの立場に何が見えるか）'],bizdash:['経営','経営ダッシュボード（上長・代表）'],perf:['評価','担当者別パフォーマンス（上長・代表）'],new:['物件 › 新規起案','新規物件の起案（事業計画）']};
 function go(view,arg){
   CUR={view,arg};
   document.querySelectorAll('.nav button[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===view));
@@ -609,7 +609,7 @@ function go(view,arg){
   document.getElementById('crumb').textContent=t[0];
   document.getElementById('ptitle').textContent=t[1];
   const _r=({dashboard:renderDashboard,approve:renderApprove,ops:renderOps,list:renderList,detail:renderDetail,market:renderMarket,review:renderReview,access:renderAccess,bizdash:renderBizdash,perf:renderPerf,new:renderNew}[view]); if(_r) _r(arg); else return;
-  updateApprBadge(); updateOpsBadge();
+  updateApprBadge(); updateListBadge();
   window.scrollTo(0,0);
 }
 function updateApprBadge(){
@@ -620,32 +620,13 @@ function updateApprBadge(){
   else n=visibleDeals().filter(d=>d.status==='returned').length;
   b.textContent=n||''; b.style.display=n?'inline-flex':'none';
 }
-function updateOpsBadge(){
-  const b=document.getElementById('nav-ops-badge'); if(!b) return;
-  const n=visibleDeals().filter(d=>d.status==='approved').length; // 仕入決済待ち＝要対応
+function updateListBadge(){
+  const b=document.getElementById('nav-list-badge'); if(!b) return;
+  const n=(ROLE==='staff')?visibleDeals().filter(d=>d.status==='approved').length:0; // 仕入決済待ち＝要対応（自分の担当）
   b.textContent=n||''; b.style.display=n?'inline-flex':'none';
 }
-let OPS_TAB='own';
-function setOpsTab(t){OPS_TAB=t;renderOps();window.scrollTo(0,0);}
 function renderOps(){
-  const c=document.getElementById('content');
-  const tabs=[['own','自分の担当（仕入決済・販売）'],['all','全社の販売物件']];
-  const tabBar=`<div style="display:flex;gap:2px;border-bottom:2px solid var(--line);margin-bottom:16px">${tabs.map(([k,l])=>`<button onclick="setOpsTab('${k}')" style="border:0;background:none;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;color:${OPS_TAB===k?'var(--navy)':'var(--sub)'};border-bottom:3px solid ${OPS_TAB===k?'var(--navy)':'transparent'};margin-bottom:-2px">${l}</button>`).join('')}</div>`;
-  let body;
-  if(OPS_TAB==='all'){ body=inventoryHTML(); }
-  else {
-    const D=visibleDeals();
-    const settle=D.filter(d=>d.status==='approved');
-    const selling=D.filter(d=>d.status==='sell');
-    const scope = ROLE==='staff' ? `自分の案件（${CURRENT_STAFF}）` : '全社';
-    body=`
-      <div class="notebar">🏷️ <b>進行中の担当案件</b>：承認後の案件をここで進めます（${scope}）。<b>仕入決済を登録 → 販売中 → 売却決済</b>へ。行をクリックすると収支シートが開き、最上段のパネルで操作できます。</div>
-      <div class="sectiontitle">¥ 仕入決済待ち（代表承認済み・要対応）</div>
-      ${settle.length?dealTable(settle,false):'<div class="card muted">仕入決済待ちはありません。</div>'}
-      <div class="sectiontitle">◷ 販売中（売却活動）</div>
-      ${selling.length?dealTable(selling,false):'<div class="card muted">販売中の案件はありません。</div>'}`;
-  }
-  c.innerHTML=`<div class="bubble">🏷️ <b>仕入・販売</b>：〔自分の担当〕で自分の案件の<b>仕入決済〜販売</b>を進め、〔全社の販売物件〕で会社の在庫を<b>全営業で共有して販売</b>します。</div>${tabBar}${body}`;
+  document.getElementById('content').innerHTML=inventoryHTML();
 }
 function renderApprove(){
   const c=document.getElementById('content');
@@ -757,7 +738,10 @@ function dealTable(arr,bossMode){
 function renderList(){
   const c=document.getElementById('content');
   document.getElementById('ptitle').textContent=(ROLE==='staff')?'担当物件一覧':'過去実績';
-  c.innerHTML=`
+  const bubble=(ROLE==='staff')
+    ? `<div class="bubble">≣ <b>担当物件一覧</b>：あなた（${CURRENT_STAFF}）が担当する物件をまとめて確認。状態で絞り込め、行をクリックすると収支シートが開き、<b>仕入決済の登録・販売活動</b>もここから進められます。</div>`
+    : `<div class="bubble">≣ <b>過去実績</b>：全社・全員の物件を横断で確認。エリア・種別・判定・状態で絞り込み、<b>類似案件の相場感</b>や過去の答え合わせに使えます。</div>`;
+  c.innerHTML=bubble+`
     <div class="card" style="margin-bottom:16px">
       <h3>条件で絞り込む（相場査定的な入口）</h3>
       <div class="row">
@@ -1154,9 +1138,8 @@ function renderAccess(){
     ['ダッシュボード', Y('自分の案件'), Y('全社'), Y('全社')],
     ['新規物件の起案', Y('起案（主担当）'), Y(''), Y('')],
     ['承認', P('自分の申請状況'), Y('1次承認'), Y('最終承認')],
-    ['仕入・販売', Y('自分の案件'), Y('全社'), Y('全社')],
-    ['販売物件一覧（全社共有）', Y('全社'), Y('全社'), Y('全社')],
     ['担当物件一覧 ／ 過去実績', Y('担当のみ'), Y('全社'), Y('全社')],
+    ['販売物件一覧（全社共有）', Y('全社'), Y('全社'), Y('全社')],
     ['実績分析（過去の答え合わせ）', Y('全社・閲覧'), Y('全社'), Y('全社')],
     ['　└ 担当者別の成績比較', N, Y(''), Y('')],
   ];
@@ -2208,7 +2191,7 @@ function doSearch(){
   const d=DEALS.find(x=>x.name===q||x.id===q) || DEALS.find(x=>x.name.includes(q)||x.id.includes(q));
   if(d){ el.value=''; go('detail',d.id); return; }
   const inv=INVENTORY.find(x=>x.name===q) || INVENTORY.find(x=>x.name.includes(q));
-  if(inv){ el.value=''; OPS_TAB='all'; go('ops'); return; }
+  if(inv){ el.value=''; go('ops'); return; }
   if(msg) msg.textContent='該当なし';
 }
 function initSearch(){
