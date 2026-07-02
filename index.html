@@ -306,11 +306,15 @@
         <div class="crumb" id="crumb">ホーム</div>
         <h1 id="ptitle">ダッシュボード</h1>
       </div>
-      <div class="searchwrap">
-        <span class="sicon">🔍</span>
-        <input id="global-search" list="search-list" placeholder="物件名・IDで検索…" autocomplete="off" onchange="doSearch()" onkeydown="if(event.key==='Enter')doSearch()">
-        <datalist id="search-list"></datalist>
-        <span id="search-msg"></span>
+      <div style="display:flex;align-items:center;gap:12px;position:relative">
+        <div class="searchwrap">
+          <span class="sicon">🔍</span>
+          <input id="global-search" list="search-list" placeholder="物件名・IDで検索…" autocomplete="off" onchange="doSearch()" onkeydown="if(event.key==='Enter')doSearch()">
+          <datalist id="search-list"></datalist>
+          <span id="search-msg"></span>
+        </div>
+        <button id="notif-bell" onclick="toggleNotif()" title="通知" style="position:relative;border:1px solid var(--line);background:#fff;width:38px;height:38px;border-radius:10px;cursor:pointer;font-size:17px;line-height:1">🔔<span id="notif-badge" style="position:absolute;top:-6px;right:-6px;min-width:17px;height:17px;background:#ef4444;color:#fff;font-size:10px;font-weight:800;border-radius:9px;display:none;align-items:center;justify-content:center;padding:0 4px">&nbsp;</span></button>
+        <div id="notif-panel" style="display:none;position:absolute;top:48px;right:0;width:330px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 32px rgba(15,23,42,.16);z-index:60;overflow:hidden"></div>
       </div>
     </div>
     <div class="content" id="content"><!-- rendered by JS --></div>
@@ -365,7 +369,7 @@ const DEALS = [
       ]}
   },
   {
-    id:'GR-2026-0011', type:'戸建建売', name:'杉並区◯◯3丁目 戸建',
+    id:'GR-2026-0011', type:'戸建', name:'杉並区◯◯3丁目 戸建',
     area:'杉並区◯◯3丁目', station:'JR中央線「◯◯」駅 徒歩9分',
     land_m2:155.4, land_tsubo:47.0, yoseki:2.0, kenpei:0.6, period:12,
     owner:'B社（売主）', staff:'田中', status:'sell', updated:'06/24',
@@ -380,7 +384,7 @@ const DEALS = [
       rosen:38000000, koteiRosen:38000000, beval:18000000}
   },
   {
-    id:'GR-2026-0009', type:'一棟収益', name:'北区◯◯2丁目 収益レジ',
+    id:'GR-2026-0009', type:'アパート', name:'北区◯◯2丁目 収益レジ',
     area:'北区◯◯2丁目', station:'JR京浜東北線「◯◯」駅 徒歩10分',
     land_m2:90.97, land_tsubo:27.5, yoseki:0.8, kenpei:1.5, period:18,
     owner:'C社（売主）', staff:'佐藤', status:'done', updated:'06/12',
@@ -425,7 +429,7 @@ const DEALS = [
     actual:{price:24200000,profit:3600000,note:'着地見込みを上回り好条件で成約。エリア相場の上昇も追い風。'}
   },
   {
-    id:'GR-2025-0044', type:'戸建建売', name:'板橋区◯◯1丁目 戸建',
+    id:'GR-2025-0044', type:'戸建', name:'板橋区◯◯1丁目 戸建',
     area:'板橋区◯◯1丁目', station:'都営三田線「◯◯」駅 徒歩8分',
     land_m2:120.0, land_tsubo:36.3, yoseki:2.0, kenpei:0.6, period:12,
     owner:'G社（売主）', staff:'田中', status:'done', updated:'12/15',
@@ -438,7 +442,7 @@ const DEALS = [
     actual:{price:62500000,profit:4300000,note:'着地見込みをやや下回ったが利益確保。建築費の上振れが要因。'}
   },
   {
-    id:'GR-2025-0031', type:'一棟収益', name:'川口市◯◯2丁目 収益レジ',
+    id:'GR-2025-0031', type:'アパート', name:'川口市◯◯2丁目 収益レジ',
     area:'川口市◯◯2丁目', station:'JR京浜東北線「◯◯」駅 徒歩9分',
     land_m2:110.0, land_tsubo:33.3, yoseki:2.0, kenpei:0.6, period:12,
     owner:'H社（売主）', staff:'佐藤', status:'done', updated:'10/30',
@@ -609,7 +613,8 @@ function go(view,arg){
   document.getElementById('crumb').textContent=t[0];
   document.getElementById('ptitle').textContent=t[1];
   const _r=({dashboard:renderDashboard,approve:renderApprove,ops:renderOps,list:renderList,detail:renderDetail,market:renderMarket,review:renderReview,access:renderAccess,bizdash:renderBizdash,perf:renderPerf,new:renderNew}[view]); if(_r) _r(arg); else return;
-  updateApprBadge(); updateListBadge();
+  updateApprBadge(); updateListBadge(); refreshNotif();
+  const _np=document.getElementById('notif-panel'); if(_np) _np.style.display='none';
   window.scrollTo(0,0);
 }
 function updateApprBadge(){
@@ -648,6 +653,55 @@ function renderApprove(){
 }
 
 /* ---------- ダッシュボード ---------- */
+/* ---------- 定着の要（要対応カード・通知） ---------- */
+function todoCardHTML(){
+  const mine=visibleDeals();
+  const invA=INVENTORY.filter(x=>x.days>90||x.state==='値下げ検討').length;
+  let items;
+  if(ROLE==='boss') items=[
+    {n:DEALS.filter(d=>d.status==='await_pres').length,lab:'代表 承認待ち',ic:'✍',go:"go('approve')",u:true},
+    {n:DEALS.filter(d=>d.status==='await_mgr').length,lab:'上長が確認中',ic:'⏳',go:"go('approve')",u:false},
+    {n:invA,lab:'在庫の販促・値下げ検討',ic:'▽',go:"go('ops')",u:false},
+  ];
+  else if(ROLE==='mgr') items=[
+    {n:DEALS.filter(d=>d.status==='await_mgr').length,lab:'上長 承認待ち',ic:'✍',go:"go('approve')",u:true},
+    {n:DEALS.filter(d=>d.status==='await_pres').length,lab:'代表へ送付済',ic:'⏩',go:"go('approve')",u:false},
+    {n:invA,lab:'在庫の販促・値下げ検討',ic:'▽',go:"go('ops')",u:false},
+  ];
+  else items=[
+    {n:mine.filter(d=>d.status==='returned').length,lab:'差し戻し（要修正）',ic:'↩',go:"go('approve')",u:true},
+    {n:mine.filter(d=>d.status==='approved').length,lab:'仕入決済待ち',ic:'¥',go:"go('list')",u:true},
+    {n:mine.filter(d=>d.status==='sell').length,lab:'販売中（フォロー）',ic:'◷',go:"go('list')",u:false},
+  ];
+  const chip=it=>{ const done=it.n===0; const col=done?'#15803d':it.u?'#ef4444':'#173a5e';
+   return `<a onclick="${done?'':it.go}" style="flex:1;min-width:150px;display:flex;align-items:center;gap:11px;padding:12px 14px;background:#fff;border:1px solid var(--line);border-left:4px solid ${col};border-radius:10px;text-decoration:none;color:inherit;${done?'opacity:.7':'cursor:pointer'}">
+     <span style="font-size:16px;width:20px;text-align:center;color:${col}">${done?'✓':it.ic}</span>
+     <span><span style="font-size:22px;font-weight:800;color:${done?'#15803d':'var(--ink)'}">${it.n}</span><span style="font-size:12px;color:var(--sub)"> 件</span><br><span style="font-size:11.5px;color:var(--sub)">${it.lab}</span></span>
+   </a>`; };
+  return `<div style="background:#fff;border:1px solid #dbe3ec;border-top:3px solid var(--navy);border-radius:12px;padding:14px 16px;margin-bottom:16px;box-shadow:0 2px 8px rgba(15,23,42,.05)">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:11px">
+      <div style="font-weight:800;font-size:14px;color:var(--ink)">🎯 あなたの要対応（ログインしたら最初にここ）</div>
+      <div style="font-size:11px;color:var(--sub)">未対応はヘッダーの🔔とメール/LINEにも自動通知（オプション）</div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">${items.map(chip).join('')}</div>
+    <div style="font-size:11px;color:var(--sub);margin-top:10px">※ 承認・仕入決済・売却の記録は<b>このシステムでのみ</b>進みます＝嫌でも見に来る導線。</div>
+  </div>`;
+}
+function toggleNotif(){ const p=document.getElementById('notif-panel'); if(!p) return; p.style.display = (p.style.display==='none'||!p.style.display)?'block':'none'; }
+function refreshNotif(){
+  const b=document.getElementById('notif-badge'), p=document.getElementById('notif-panel'); if(!b||!p) return;
+  const items=[];
+  const apprN = ROLE==='boss'?DEALS.filter(d=>d.status==='await_pres').length : ROLE==='mgr'?DEALS.filter(d=>d.status==='await_mgr').length : visibleDeals().filter(d=>d.status==='returned'||d.status==='approved').length;
+  if(apprN) items.push({ic:'✍',t:ROLE==='staff'?'あなたの対応が必要な案件があります':'あなたの番の承認待ちがあります',s:apprN+'件',go:ROLE==='staff'?"go('list')":"go('approve')",red:true});
+  const invA=INVENTORY.filter(x=>x.days>90);
+  if(invA.length) items.push({ic:'▽',t:'在庫が90日超（要販促・値下げ検討）',s:invA[0].name+(invA.length>1?' ほか'+(invA.length-1)+'件':''),go:"go('ops')",red:true});
+  items.push({ic:'📊',t:'今週の全社サマリーが届きました',s:'売上・在庫・粗利（週次・自動配信）',go:(ROLE==='staff'?"go('review')":"go('bizdash')"),red:false});
+  const unread=items.filter(i=>i.red).length;
+  b.textContent=unread||''; b.style.display=unread?'inline-flex':'none';
+  p.innerHTML = `<div style="padding:11px 14px;border-bottom:1px solid var(--line);font-weight:700;font-size:13px;display:flex;justify-content:space-between;align-items:center">通知 <span style="font-size:11px;color:var(--sub);font-weight:600">未読 ${unread}件</span></div>`
+   + items.map(i=>`<a onclick="document.getElementById('notif-panel').style.display='none';${i.go}" style="display:flex;gap:10px;padding:11px 14px;border-bottom:1px solid #f1f5f9;cursor:pointer;text-decoration:none;color:inherit"><span style="font-size:15px;width:18px;text-align:center">${i.ic}</span><span style="flex:1"><span style="font-weight:700;font-size:12.5px;color:var(--ink)">${i.t}</span><br><span style="font-size:11px;color:var(--sub)">${i.s}</span></span>${i.red?'<span style="width:8px;height:8px;background:#ef4444;border-radius:50%;margin-top:5px;flex:none"></span>':''}</a>`).join('')
+   + `<div style="padding:9px 14px;background:#f8fafc;font-size:11px;color:var(--sub)">📩 これらは<b>メール／LINE／Slack</b>にも自動配信できます（オプション）。取りに行かなくても届く＝見落とさない。</div>`;
+}
 function renderDashboard(){
   const c=document.getElementById('content');
   const total=DEALS.length;
@@ -658,7 +712,7 @@ function renderDashboard(){
   const ok=DEALS.filter(d=>judge(d).k==='ok').length;
 
   if(ROLE==='boss'){
-    c.innerHTML=`
+    c.innerHTML=`${todoCardHTML()}
       <div class="bubble">👤 <b>代表ビュー</b>：あなた（代表）の承認待ちが <b>${awaitPres.length}件</b>。上長承認を通った案件が最終判断としてここに集まります（＝必ず目に入る）。</div>
       <div class="kpis">
         <div class="kpi"><div class="l">代表 承認待ち</div><div class="v">${awaitPres.length}<small> 件</small></div></div>
@@ -672,7 +726,7 @@ function renderDashboard(){
     return;
   }
   if(ROLE==='mgr'){
-    c.innerHTML=`
+    c.innerHTML=`${todoCardHTML()}
       <div class="bubble">👤 <b>上長ビュー</b>：あなた（上長）の承認待ちが <b>${awaitMgr.length}件</b>。担当が起案した案件は、まず上長のあなたが確認し、代表へ上げます。</div>
       <div class="kpis">
         <div class="kpi"><div class="l">上長 承認待ち</div><div class="v">${awaitMgr.length}<small> 件</small></div></div>
@@ -689,7 +743,7 @@ function renderDashboard(){
   const myAwait=mine.filter(d=>d.status==='await_mgr'||d.status==='await_pres');
   const myReturned=mine.filter(d=>d.status==='returned');
   const mySelling=mine.filter(d=>d.status==='sell').length;
-  c.innerHTML=`
+  c.innerHTML=`${todoCardHTML()}
     <div class="bubble">💡 <b>営業担当ビュー（${CURRENT_STAFF}）</b>：表示は<b>自分の案件のみ</b>。承認待ち・差し戻し・販売中・未分析が一目で分かる＝<b>放置できない</b>仕組み。</div>
     <div class="sectiontitle">🔄 案件の流れ（自分の検討中 → 承認待ち → 販売中）</div>
     <div class="flow">
@@ -746,7 +800,7 @@ function renderList(){
       <h3>条件で絞り込む（相場査定的な入口）</h3>
       <div class="row">
         <div><div class="muted" style="font-size:11px">エリア</div><select class="btn" id="f-area" onchange="filterList()"><option value="">すべて</option><option>江戸川区</option><option>杉並区</option><option>北区</option><option>世田谷区</option><option>板橋区</option><option>足立区</option><option>練馬区</option><option>川口市</option></select></div>
-        <div><div class="muted" style="font-size:11px">種別</div><select class="btn" id="f-type" onchange="filterList()"><option value="">すべて</option><option>戸建建売</option><option>一棟収益</option><option>区分収益</option><option>店舗</option><option>土地</option></select></div>
+        <div><div class="muted" style="font-size:11px">種別</div><select class="btn" id="f-type" onchange="filterList()"><option value="">すべて</option><option>土地</option><option>戸建</option><option>アパート</option></select></div>
         <div><div class="muted" style="font-size:11px">判定</div><select class="btn" id="f-judge" onchange="filterList()"><option value="">すべて</option><option value="ok">◎ 推奨</option><option value="warn">△ 条件付き可</option><option value="ng">× 見送り</option></select></div>
         <div><div class="muted" style="font-size:11px">状態</div><select class="btn" id="f-status" onchange="filterList()"><option value="">すべて</option><option value="await">承認待ち</option><option value="approved">承認済み（仕入決済前）</option><option value="sell">販売中</option><option value="done">実績分析済</option><option value="returned">差し戻し</option><option value="rej">見送り</option></select></div>
       </div>
@@ -771,7 +825,7 @@ function renderDetail(id){
   const steps=[['物件入手',1],['事業計画',2],['上長承認',3],['代表承認',4],['仕入決済',5],['販売中',6],['売却決済',7],['実績分析',8]];
   const stMap={returned:2, await_mgr:3, await_pres:4, rej:4, approved:5, sell:6, done:8};
   let curStep = stMap[d.status]||2;
-  const types=['戸建建売','一棟収益','区分収益','店舗','土地'];
+  const types=['土地','戸建','アパート'];
   const c=document.getElementById('content');
   c.innerHTML=`
     <span class="back" onclick="go('list')">← 一覧へ戻る</span>
@@ -1007,7 +1061,7 @@ function renderMarket(){
       <div class="grid2">
         ${fldS('所在地（住所）','mk_addr','杉並区◯◯3丁目','text')}
         ${fldS('最寄駅・徒歩','mk_station','荻窪 11分','text')}
-        <div class="field"><label>種別</label><select id="mk_type"><option>戸建建売</option><option>一棟収益</option><option>区分収益</option><option>店舗</option><option>土地</option></select></div>
+        <div class="field"><label>種別</label><select id="mk_type"><option>土地</option><option>戸建</option><option>アパート</option></select></div>
         <div class="field"><label>駅距離</label><select id="mk_dist"><option value="1.05">徒歩10分以内</option><option value="1" selected>徒歩11〜15分</option><option value="0.92">徒歩15分超</option></select></div>
         ${fldS('土地面積（㎡）','mk_m2',180,'number')}
         ${fldS('容積率（%）','mk_yoseki',150,'number')}
@@ -1037,7 +1091,7 @@ function assessMarket(){
   const prof=key?AREA_MKT[key]:{tsubo:185000,rent:8800,kouji:40000};
   const areaName=key||'該当エリア（サンプル）';
   const dist=parseFloat((document.getElementById('mk_dist')||{}).value)||1;
-  const type=(document.getElementById('mk_type')||{}).value||'戸建建売';
+  const type=(document.getElementById('mk_type')||{}).value||'土地';
   const yoseki=gv('mk_yoseki')||150;
   const m2=gv('mk_m2');
   const station=(document.getElementById('mk_station')||{}).value||'';
@@ -1171,12 +1225,12 @@ function renderAccess(){
 
 /* ---------- 社内在庫一覧（全社・リアルタイム） ---------- */
 const INVENTORY=[
-  {name:'江戸川区△△2丁目 戸建', type:'戸建建売', area:'江戸川区', cost:38000000, list:46800000, inDate:'04/18', days:74, inq:14, ca:4, staff:'佐藤', state:'価格交渉中'},
-  {name:'北区◯◯3丁目 アパート', type:'一棟収益', area:'北区', cost:98000000, list:112000000, inDate:'05/30', days:32, inq:7, ca:2, staff:'田中', state:'掲載中'},
+  {name:'江戸川区△△2丁目 戸建', type:'戸建', area:'江戸川区', cost:38000000, list:46800000, inDate:'04/18', days:74, inq:14, ca:4, staff:'佐藤', state:'価格交渉中'},
+  {name:'北区◯◯3丁目 アパート', type:'アパート', area:'北区', cost:98000000, list:112000000, inDate:'05/30', days:32, inq:7, ca:2, staff:'田中', state:'掲載中'},
   {name:'足立区□□1丁目 土地', type:'土地', area:'足立区', cost:21500000, list:27800000, inDate:'02/10', days:141, inq:6, ca:1, staff:'渡辺', state:'値下げ検討'},
-  {name:'杉並区◇◇5丁目 戸建', type:'戸建建売', area:'杉並区', cost:52000000, list:63500000, inDate:'06/12', days:19, inq:4, ca:1, staff:'佐藤', state:'掲載中'},
+  {name:'杉並区◇◇5丁目 戸建', type:'戸建', area:'杉並区', cost:52000000, list:63500000, inDate:'06/12', days:19, inq:4, ca:1, staff:'佐藤', state:'掲載中'},
   {name:'板橋区◯◯2丁目 土地', type:'土地', area:'板橋区', cost:16800000, list:21200000, inDate:'05/05', days:57, inq:9, ca:3, staff:'高橋', state:'買付あり'},
-  {name:'川口市◯◯4丁目 アパート', type:'一棟収益', area:'川口市', cost:84000000, list:95800000, inDate:'03/22', days:101, inq:5, ca:2, staff:'田中', state:'掲載中'},
+  {name:'川口市◯◯4丁目 アパート', type:'アパート', area:'川口市', cost:84000000, list:95800000, inDate:'03/22', days:101, inq:5, ca:2, staff:'田中', state:'掲載中'},
 ];
 function inventoryHTML(){
   const inv=INVENTORY;
@@ -1221,28 +1275,24 @@ function inventoryHTML(){
 
 /* ---------- オプション：経営ダッシュボード／担当者別パフォーマンス（上長・代表のみ） ---------- */
 /* ---------- 経営分析（内訳・示唆／上長・代表のみ） ---------- */
-const TYPES5=['戸建建売','一棟収益','区分収益','店舗','土地','仲介'];
-const TCOL={'戸建建売':'#0891b2','一棟収益':'#db2777','区分収益':'#4f46e5','店舗':'#16a34a','土地':'#173a5e','仲介':'#f59e0b'};
+const TYPES5=['土地','戸建','アパート','仲介'];
+const TCOL={'土地':'#173a5e','戸建':'#0891b2','アパート':'#db2777','仲介':'#f59e0b'};
 /* st: sold=売却済み / hold=保有中 / sell=販売中 / broker=仲介成約　rev=粗利(仲介は手数料,百万)　bm=仕入月　pm/am=計画/実績利益率(売却済み)　days=保有日数 */
 const ANALYTICS=[
   {t:'土地',a:'江戸川区',bm:2,st:'sold',rev:3.6,pm:0.123,am:0.149,lead:72, from:'A建設',   to:'X興産',  broker:'スター不動産',  fy:'this',price:15},
   {t:'土地',a:'足立区', bm:1,st:'sold',rev:2.1,pm:0.100,am:0.062,lead:130,from:'B地所',   to:'Y不動産',broker:'みらい住販',  fy:'last',price:11},
   {t:'土地',a:'世田谷区',bm:5,st:'sold',rev:2.9,pm:0.123,am:0.153,lead:58, from:'A建設',   to:'エンド顧客',broker:'さくら不動産',fy:'this',price:24},
-  {t:'戸建建売',a:'杉並区', bm:3,st:'sold',rev:5.6,pm:0.088,am:0.069,lead:245,from:'C住宅販売',to:'エンド顧客',broker:'東央エステート',fy:'last',price:80},
-  {t:'戸建建売',a:'板橋区', bm:1,st:'sold',rev:4.3,pm:0.088,am:0.069,lead:210,from:'A建設',   to:'エンド顧客',broker:'スター不動産',fy:'last',price:62},
-  {t:'一棟収益',a:'北区',   bm:2,st:'sold',rev:13.0,pm:0.093,am:0.110,lead:155,from:'D不動産', to:'X興産',  broker:'大和リアルティ',fy:'this',price:118},
-  {t:'一棟収益',a:'川口市', bm:4,st:'sold',rev:14.0,pm:0.107,am:0.132,lead:140,from:'D不動産', to:'Z住販',  broker:'大和リアルティ',fy:'last',price:106},
+  {t:'戸建',a:'杉並区', bm:3,st:'sold',rev:5.6,pm:0.088,am:0.069,lead:245,from:'C住宅販売',to:'エンド顧客',broker:'東央エステート',fy:'last',price:80},
+  {t:'戸建',a:'板橋区', bm:1,st:'sold',rev:4.3,pm:0.088,am:0.069,lead:210,from:'A建設',   to:'エンド顧客',broker:'スター不動産',fy:'last',price:62},
+  {t:'アパート',a:'北区',   bm:2,st:'sold',rev:13.0,pm:0.093,am:0.110,lead:155,from:'D不動産', to:'X興産',  broker:'大和リアルティ',fy:'this',price:118},
+  {t:'アパート',a:'川口市', bm:4,st:'sold',rev:14.0,pm:0.107,am:0.132,lead:140,from:'D不動産', to:'Z住販',  broker:'大和リアルティ',fy:'last',price:106},
   {t:'土地',a:'練馬区', bm:3,st:'sold',rev:2.0,pm:0.039,am:0.041,lead:42, from:'E開発',   to:'X興産',  broker:'みらい住販',  fy:'this',price:52},
-  {t:'戸建建売',a:'江戸川区',bm:4,st:'sell',rev:8.8,days:74, from:'C住宅販売',to:'（販売中）',broker:'東央エステート',fy:'this',price:46},
-  {t:'一棟収益',a:'北区',   bm:5,st:'sell',rev:14.0,days:32, from:'D不動産', to:'（販売中）',broker:'大和リアルティ',fy:'this',price:112},
+  {t:'戸建',a:'江戸川区',bm:4,st:'sell',rev:8.8,days:74, from:'C住宅販売',to:'（販売中）',broker:'東央エステート',fy:'this',price:46},
+  {t:'アパート',a:'北区',   bm:5,st:'sell',rev:14.0,days:32, from:'D不動産', to:'（販売中）',broker:'大和リアルティ',fy:'this',price:112},
   {t:'土地',a:'足立区', bm:2,st:'hold',rev:6.3,days:141,from:'B地所',   to:'（保有中）',broker:'さくら不動産',fy:'this',price:27},
-  {t:'戸建建売',a:'杉並区', bm:6,st:'sell',rev:11.5,days:19, from:'F工務店', to:'（販売中）',broker:'スター不動産',fy:'this',price:63},
+  {t:'戸建',a:'杉並区', bm:6,st:'sell',rev:11.5,days:19, from:'F工務店', to:'（販売中）',broker:'スター不動産',fy:'this',price:63},
   {t:'土地',a:'板橋区', bm:5,st:'sell',rev:4.4,days:57, from:'A建設',   to:'（販売中）',broker:'みらい住販',  fy:'this',price:21},
-  {t:'一棟収益',a:'川口市', bm:3,st:'hold',rev:11.8,days:101,from:'D不動産', to:'（保有中）',broker:'大和リアルティ',fy:'this',price:95},
-  {t:'区分収益',a:'北区',   bm:3,st:'sold',rev:4.2,pm:0.100,am:0.108,lead:88, from:'D不動産', to:'X興産',  broker:'大和リアルティ',fy:'this',price:38},
-  {t:'区分収益',a:'江戸川区',bm:2,st:'sell',rev:3.8,days:44, from:'D不動産', to:'（販売中）',broker:'スター不動産',fy:'this',price:34},
-  {t:'店舗',  a:'世田谷区',bm:4,st:'sold',rev:6.1,pm:0.090,am:0.096,lead:120,from:'C住宅販売',to:'Z住販',  broker:'東央エステート',fy:'last',price:72},
-  {t:'店舗',  a:'杉並区', bm:5,st:'hold',rev:5.5,days:66, from:'F工務店', to:'（保有中）',broker:'さくら不動産',fy:'this',price:58},
+  {t:'アパート',a:'川口市', bm:3,st:'hold',rev:11.8,days:101,from:'D不動産', to:'（保有中）',broker:'大和リアルティ',fy:'this',price:95},
   {t:'仲介',a:'江戸川区',bm:1,st:'broker',rev:1.8,from:'G商事', to:'Y不動産',fy:'this'},
   {t:'仲介',a:'北区',   bm:2,st:'broker',rev:2.4,from:'B地所', to:'X興産',fy:'this'},
   {t:'仲介',a:'世田谷区',bm:3,st:'broker',rev:3.2,from:'A建設', to:'エンド顧客',fy:'last'},
@@ -1255,7 +1305,7 @@ function fmtLead(d){ return `${Math.round(d)}日（約${(d/30).toFixed(1)}ヶ月
 function partnerRank(records,key){const m={};records.forEach(r=>{const k=r[key];if(!k||k.startsWith('（'))return;if(!m[k])m[k]={cnt:0,rev:0};m[k].cnt++;m[k].rev+=r.rev;});return Object.keys(m).map(k=>({name:k,cnt:m[k].cnt,rev:m[k].rev})).sort((a,b)=>b.cnt-a.cnt||b.rev-a.rev);}
 function partnerBars(list){const mx=Math.max(...list.map(p=>p.cnt),1);return list.length?list.map(p=>`<div style="margin:8px 0"><div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:3px"><span><b>${p.name}</b></span><span><b>${p.cnt}件</b> <span style="color:var(--sub)">${fmtYm(p.rev)}</span></span></div><div style="height:8px;background:#eef2f6"><div style="height:8px;width:${Math.round(p.cnt/mx*100)}%;background:var(--accent)"></div></div></div>`).join(''):'<div class="muted" style="font-size:12px">データなし</div>';}
 /* 業務タイプの控えめカラー（ドーナツ用） */
-const TCOL2={'戸建建売':'#0e7490','一棟収益':'#db2777','区分収益':'#4f46e5','店舗':'#64748b','土地':'#173a5e'};
+const TCOL2={'土地':'#173a5e','戸建':'#0e7490','アパート':'#db2777'};
 /* 縦棒グラフ（ランキング用） */
 function vBarChart(items,color){
   if(!items.length) return '<div class="muted" style="font-size:12px">データなし</div>';
@@ -1310,7 +1360,7 @@ function mixDonut(title,key){
 }
 /* 種別ごとの構成ドーナツ（売上=price / 粗利=rev / 原価=price-rev） */
 function typeDonut(A,key,title){
-  const RT=['戸建建売','一棟収益','区分収益','店舗','土地'];
+  const RT=['土地','戸建','アパート'];
   const rows=RT.map(t=>{const rs=A.filter(r=>r.t===t); const gp=rs.reduce((s,r)=>s+r.rev,0), sales=rs.reduce((s,r)=>s+(r.price||0),0); return {t,cnt:rs.length,sales,gp,cost:Math.max(sales-gp,0)};}).filter(x=>x.cnt);
   const total=rows.reduce((s,r)=>s+r[key],0)||1;
   return `<div>
@@ -1369,7 +1419,7 @@ function resaleSectionsHTML(){
   const allResale=ANALYTICS.filter(r=>r.t!=='仲介');
   const A = BIZ_FY==='all' ? allResale.slice() : allResale.filter(r=>r.fy===BIZ_FY);
   const total=A.reduce((s,r)=>s+r.rev,0);
-  const RTYPES=['戸建建売','一棟収益','区分収益','店舗','土地'];
+  const RTYPES=['土地','戸建','アパート'];
   const byType=RTYPES.map(t=>({t,cnt:A.filter(r=>r.t===t).length,rev:A.filter(r=>r.t===t).reduce((s,r)=>s+r.rev,0)})).filter(x=>x.cnt).sort((a,b)=>b.rev-a.rev);
   const sold=A.filter(r=>r.st==='sold');
   const holdSell=allResale.filter(r=>r.st==='hold'||r.st==='sell'); // 在庫は常に現在
@@ -1383,7 +1433,7 @@ function resaleSectionsHTML(){
   const dbtn=(k,l)=>`<button style="${BIZ_BREAKDOWN===k?bon:bidle}" onclick="setBizBreakdown('${k}')">${l}</button>`;
   let groups;
   if(BIZ_BREAKDOWN==='price'){ const bands=['〜3,000万','3,000〜6,000万','6,000万〜1億','1億〜']; groups=bands.map(b=>({name:b,cnt:A.filter(r=>priceBand(r.price)===b).length,rev:A.filter(r=>priceBand(r.price)===b).reduce((s,r)=>s+r.rev,0)})).filter(x=>x.cnt); }
-  else if(BIZ_BREAKDOWN==='asset'){ const as=['土地','戸建（実需）','収益（一棟・区分）','店舗']; groups=as.map(k=>({name:k,cnt:A.filter(r=>assetOf(r.t)===k).length,rev:A.filter(r=>assetOf(r.t)===k).reduce((s,r)=>s+r.rev,0)})).filter(x=>x.cnt); }
+  else if(BIZ_BREAKDOWN==='asset'){ const as=['土地','戸建','アパート']; groups=as.map(k=>({name:k,cnt:A.filter(r=>assetOf(r.t)===k).length,rev:A.filter(r=>assetOf(r.t)===k).reduce((s,r)=>s+r.rev,0)})).filter(x=>x.cnt); }
   else { const areas=[...new Set(A.map(r=>r.a))]; groups=areas.map(a=>({name:a,cnt:A.filter(r=>r.a===a).length,rev:A.filter(r=>r.a===a).reduce((s,r)=>s+r.rev,0)})); }
   groups.sort((x,y)=>y.rev-x.rev);
   return `
@@ -1457,7 +1507,7 @@ let BIZ_TAB='all', BIZ_FY='this', BIZ_BREAKDOWN='area';
 function setBizTab(t){BIZ_TAB=t;renderBizdash();window.scrollTo(0,0);}
 function setBizFY(k){BIZ_FY=k;renderBizdash();}
 function setBizBreakdown(k){BIZ_BREAKDOWN=k;renderBizdash();}
-function assetOf(t){return t==='土地'?'土地':t==='戸建建売'?'戸建（実需）':t==='店舗'?'店舗':'収益（一棟・区分）';}
+function assetOf(t){return t;}
 function priceBand(p){return p<30?'〜3,000万':p<60?'3,000〜6,000万':p<100?'6,000万〜1億':'1億〜';}
 const MET_ORDER=['sales','gp','inv'];
 const MET_DEF={sales:{label:'売上高',color:'#4f46e5',shape:'c',cum:true},gp:{label:'粗利',color:'#db2777',shape:'s',cum:true},inv:{label:'在庫額',color:'#f59e0b',shape:'t',cum:false}};
@@ -1756,10 +1806,8 @@ let NEW_TYPE='土地';
 /* 種別別のサンプル既定値 */
 const TYPE_SAMPLE={
   '土地':{n_name:'◯◯区△△1丁目 土地',n_m2:214.57,n_land:10000000,n_demo:750000,n_infra:300000,n_kenchiku:0,n_rosen:10000000,n_kotei:10000000,n_beval:500000,n_p1:16800000,n_p2:15000000,n_p3:13800000},
-  '戸建建売':{n_name:'◯◯区△△3丁目 戸建',n_m2:155.4,n_land:41000000,n_demo:500000,n_infra:0,n_kenchiku:24000000,n_rosen:33000000,n_kotei:33000000,n_beval:12000000,n_p1:82800000,n_p2:79800000,n_p3:77800000},
-  '一棟収益':{n_name:'◯◯区△△2丁目 一棟収益レジ',n_m2:90.97,n_period:18,n_land:48000000,n_demo:0,n_infra:0,n_kenchiku:43000000,n_rosen:48000000,n_kotei:48000000,n_beval:29000000,n_rent:6912000,n_yield1:5.5,n_yield2:6.0},
-  '区分収益':{n_name:'◯◯区△△ 区分マンション（収益）',n_m2:0,n_period:12,n_land:26000000,n_demo:0,n_infra:0,n_kenchiku:0,n_rosen:26000000,n_kotei:26000000,n_beval:0,n_rent:1650000,n_yield1:5.0,n_yield2:5.6},
-  '店舗':{n_name:'◯◯区△△ 店舗（1階路面）',n_m2:120.0,n_period:12,n_land:52000000,n_demo:0,n_infra:0,n_kenchiku:0,n_rosen:52000000,n_kotei:52000000,n_beval:35000000,n_rent:4200000,n_yield1:6.0,n_yield2:6.5}
+  '戸建':{n_name:'◯◯区△△3丁目 戸建',n_m2:155.4,n_land:41000000,n_demo:500000,n_infra:0,n_kenchiku:24000000,n_rosen:33000000,n_kotei:33000000,n_beval:12000000,n_p1:82800000,n_p2:79800000,n_p3:77800000},
+  'アパート':{n_name:'◯◯区△△2丁目 アパート（新築）',n_m2:90.97,n_period:18,n_land:48000000,n_demo:0,n_infra:0,n_kenchiku:43000000,n_rosen:48000000,n_kotei:48000000,n_beval:29000000,n_rent:6912000,n_yield1:5.5,n_yield2:6.0}
 };
 /* アパートの本来IRR：保有中の年間賃料＋期末の売却額を考慮（月次→年率） */
 function irrApt(cost,rentAnnual,sale,months){
@@ -1773,13 +1821,13 @@ function nv(id,def){ return (id in NEW_VALS) ? NEW_VALS[id] : def; }
 function syncNewVals(){ document.querySelectorAll('#content input,#content select').forEach(e=>{ if(e.id) NEW_VALS[e.id]=e.value; }); }
 function setNewView(v){ syncNewVals(); NEW_VIEW=v; renderNew(); }
 function setNewType(t){ NEW_VALS=Object.assign({},TYPE_SAMPLE[t]||{}); NEW_TYPE=t; renderNew(); }
-const INCOME_TYPES=['一棟収益','区分収益','店舗'];
+const INCOME_TYPES=['アパート'];
 function newScenarios(){
   if(INCOME_TYPES.includes(NEW_TYPE)){ const rent=gv('n_rent'),y1=gv('n_yield1')||5.5,y2=gv('n_yield2')||6.0;
     return {prices:[y1>0?Math.round(rent/(y1/100)):0, y2>0?Math.round(rent/(y2/100)):0], labels:['① 利回'+y1+'%','② 利回'+y2+'%（着地）'], ji:1}; }
   return {prices:[gv('n_p1'),gv('n_p2'),gv('n_p3')], labels:['① 出値価格','② 着地前後価格','③ 下限価格'], ji:1};
 }
-function typeSelector(){ const ts=['戸建建売','一棟収益','区分収益','店舗','土地'];
+function typeSelector(){ const ts=['土地','戸建','アパート'];
   return `<div class="viewtoggle" style="margin-bottom:10px"><span class="vt-lab">種別</span>${ts.map(t=>`<button class="${NEW_TYPE===t?'on':''}" onclick="setNewType('${t}')">${t}</button>`).join('')}</div>`; }
 function newToggle(){
   return `<div class="viewtoggle"><span class="vt-lab">表示切替</span>
@@ -1798,7 +1846,7 @@ function salesFormSection(){
       <div id="apt-sale" style="font-size:12.5px;color:var(--ink);margin-top:10px;padding:9px 11px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px">—</div>
     </div>`;
   }
-  const note=t==='戸建建売'?'戸建建売：①②③の価格シナリオ。建物原価（建築費ほか）を④で入力。判定は②着地。':'土地：①出値価格・②着地前後価格・③下限価格。間取・延床・車庫は空欄でOK。判定は②着地。';
+  const note=t==='戸建'?'戸建：①②③の価格シナリオ。建物原価（建築費ほか）を④で入力。判定は②着地。':'土地：①出値価格・②着地前後価格・③下限価格。間取・延床・車庫は空欄でOK。判定は②着地。';
   return `<div class="card" style="margin-bottom:16px"><h3>⑨ 販売想定①②③（出口・販売計画）</h3>
     <div class="muted" style="font-size:11.5px;margin-bottom:8px">${note}</div>
     <table><thead><tr><th>販売想定</th><th class="num">価格</th><th>間取</th><th class="num">延床</th><th>車庫</th></tr></thead><tbody>
@@ -1850,7 +1898,7 @@ function renderNewGrid(){
    ${uploadCardHTML()}
    ${typeSelector()}
    ${newToggle()}
-   <div class="notebar">受領Excel（事業収支 雛型）の収支シートを<b>表のまま再現</b>。<b>緑＝担当が入力</b>、<b>白＝自動計算</b>。種別で販売想定や原価の扱い（収益系は利回りから逆算など）が切り替わります。</div>
+   <div class="notebar">受領Excel（事業収支 雛型）の収支シートを<b>表のまま再現</b>。<b>緑＝担当が入力</b>、<b>白＝自動計算</b>。種別で販売想定や原価の扱い（アパートは利回りから売却額を逆算など）が切り替わります。</div>
    <div class="twocol">
      <div>${newGridLeft()}</div>
      <div><div class="card calcpanel" id="calc-panel"></div></div>
@@ -2007,7 +2055,7 @@ function renderNew(){
          ${fld('その他','n_other',0,{green:1})}
        </div></div>
        <div class="card" style="margin-bottom:16px"><h3>④ 仕入れ原価 ─ 建物原価</h3>
-         <div class="muted" style="font-size:11.5px;margin-bottom:8px">土地は建物原価なし（0でOK）。戸建建売・収益物件時に入力。</div>
+         <div class="muted" style="font-size:11.5px;margin-bottom:8px">土地は建物原価なし（0でOK）。戸建・収益物件時に入力。</div>
          <div class="grid2">
          ${fld('建築費','n_kenchiku',0,{green:1})}
          ${fld('設計費用','n_sekkei',0,{green:1})}
@@ -2165,7 +2213,7 @@ function recalcNew(){
   const sekisan=gv('n_rosen')+beval;
   const ml=document.getElementById('market-live');
   if(ml){
-    if(NEW_TYPE==='土地'||NEW_TYPE==='戸建建売'){
+    if(NEW_TYPE==='土地'||NEW_TYPE==='戸建'){
       const diff=MARKET.soldAvg>0?(buyTsubo-MARKET.soldAvg)/MARKET.soldAvg:0;
       const cls=diff<=0.03?'j-ok':diff<=0.10?'j-warn':'j-ng';
       const word=diff<=0.03?'相場並み〜割安':diff<=0.10?'やや割高':'割高';
