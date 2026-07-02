@@ -280,7 +280,6 @@
       <div class="group" style="margin-top:auto">オプション機能（任意・別途費用）</div>
       <button id="nav-bizdash" data-nav="bizdash" class="addon" onclick="go('bizdash')" style="display:none"><span class="ic">◆</span><span>経営ダッシュボード<span class="optbadge">オプション</span></span></button>
       <button id="nav-perf" data-nav="perf" class="addon" onclick="go('perf')" style="display:none"><span class="ic">◉</span><span>担当者別パフォーマンス<span class="optbadge">オプション</span></span></button>
-      <button id="nav-cash" data-nav="cash" class="addon" onclick="go('cash')" style="display:none"><span class="ic">￥</span><span>資金繰り・与信枠<span class="optbadge">オプション</span></span></button>
       <button data-nav="compare" class="addon" onclick="go('compare')"><span class="ic">⚖</span><span>物件比較・感応度<span class="optbadge">オプション</span></span></button>
       <button data-nav="market" class="addon" onclick="go('market')"><span class="ic">◎</span><span>相場調査<span class="optbadge">オプション</span></span></button>
     </nav>
@@ -604,17 +603,17 @@ function setRole(r){ ROLE=r; document.getElementById('role-staff').classList.tog
   document.getElementById('role-mgr').classList.toggle('on',r==='mgr');
   document.getElementById('role-boss').classList.toggle('on',r==='boss');
   const ll=document.getElementById('nav-list-label'); if(ll) ll.textContent=(r==='staff')?'担当物件一覧':'過去実績';
-  ['nav-bizdash','nav-perf','nav-cash'].forEach(id=>{const b=document.getElementById(id); if(b) b.style.display=(r==='staff')?'none':'';}); // 経営・成績・資金繰りは上長/代表のみ
+  ['nav-bizdash','nav-perf'].forEach(id=>{const b=document.getElementById(id); if(b) b.style.display=(r==='staff')?'none':'';}); // 経営・成績は上長/代表のみ
   go(CUR.view, CUR.arg); }
 let CUR={view:'dashboard',arg:null};
-const TITLES={dashboard:['ホーム','ダッシュボード'],approve:['承認','承認（あなたの番の承認待ち）'],ops:['販売物件一覧','販売物件一覧（全社・全営業が販売対応）'],list:['物件','担当物件一覧'],detail:['物件 › 収支シート','事業収支シート'],market:['相場','相場調査（オプション機能）'],compare:['物件','物件比較・感応度（オプション）'],review:['実績分析','実績分析'],access:['設定','表示範囲（どの立場に何が見えるか）'],bizdash:['経営','経営ダッシュボード（上長・代表）'],perf:['評価','担当者別パフォーマンス（上長・代表）'],cash:['経営','資金繰り・与信枠（上長・代表）'],new:['物件 › 新規起案','新規物件の起案（事業計画）']};
+const TITLES={dashboard:['ホーム','ダッシュボード'],approve:['承認','承認（あなたの番の承認待ち）'],ops:['販売物件一覧','販売物件一覧（全社・全営業が販売対応）'],list:['物件','担当物件一覧'],detail:['物件 › 収支シート','事業収支シート'],market:['相場','相場調査（オプション機能）'],compare:['物件','物件比較・感応度（オプション）'],review:['実績分析','実績分析'],access:['設定','表示範囲（どの立場に何が見えるか）'],bizdash:['経営','経営ダッシュボード（上長・代表）'],perf:['評価','担当者別パフォーマンス（上長・代表）'],new:['物件 › 新規起案','新規物件の起案（事業計画）']};
 function go(view,arg){
   CUR={view,arg};
   document.querySelectorAll('.nav button[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===view));
   const t=TITLES[view]||['',''];
   document.getElementById('crumb').textContent=t[0];
   document.getElementById('ptitle').textContent=t[1];
-  const _r=({dashboard:renderDashboard,approve:renderApprove,ops:renderOps,list:renderList,detail:renderDetail,market:renderMarket,compare:renderCompare,review:renderReview,access:renderAccess,bizdash:renderBizdash,perf:renderPerf,cash:renderCash,new:renderNew}[view]); if(_r) _r(arg); else return;
+  const _r=({dashboard:renderDashboard,approve:renderApprove,ops:renderOps,list:renderList,detail:renderDetail,market:renderMarket,compare:renderCompare,review:renderReview,access:renderAccess,bizdash:renderBizdash,perf:renderPerf,new:renderNew}[view]); if(_r) _r(arg); else return;
   updateApprBadge(); updateListBadge(); refreshNotif();
   const _np=document.getElementById('notif-panel'); if(_np) _np.style.display='none';
   window.scrollTo(0,0);
@@ -1262,7 +1261,7 @@ function renderAccess(){
   const opt=[
     ['相場調査', Y(''), Y(''), Y('')],
     ['経営ダッシュボード', N, Y('全社'), Y('全社')],
-    ['資金繰り・与信枠', N, Y('全社'), Y('全社')],
+    ['　└ 資金繰り・与信枠（経営DBのタブ）', N, Y('全社'), Y('全社')],
     ['在庫滞留アラート', Y('自分の在庫'), Y('全社'), Y('全社')],
     ['通知・タスク', Y('自分宛'), Y(''), Y('')],
     ['取引先台帳', Y('閲覧'), Y(''), Y('')],
@@ -1693,7 +1692,7 @@ function renderBizdash(){
   const diffs=done.map(d=>(d.actual.profit/d.actual.price)-rate(d,1));
   const avgDiff=diffs.reduce((a,b)=>a+b,0)/diffs.length;
   const dc=avgDiff>=0?COLR.ok:COLR.ng;
-  const tabs=[['all','全社サマリー'],['resale','開発事業'],['broker','仲介事業']];
+  const tabs=[['all','全社サマリー'],['resale','開発事業'],['broker','仲介事業'],['cash','資金繰り・与信枠']];
   const tabBar=`<div style="display:flex;gap:2px;border-bottom:2px solid var(--line);margin-bottom:14px">${tabs.map(([k,l])=>`<button onclick="setBizTab('${k}')" style="border:0;background:none;padding:9px 18px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit;color:${BIZ_TAB===k?'var(--navy)':'var(--sub)'};border-bottom:3px solid ${BIZ_TAB===k?'var(--navy)':'transparent'};margin-bottom:-2px">${l}</button>`).join('')}</div>`;
   const bon='border:1px solid var(--navy);background:var(--navy);color:#fff;padding:5px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit';
   const bidle='border:1px solid var(--line);background:#fff;color:var(--sub);padding:5px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit';
@@ -1701,6 +1700,7 @@ function renderBizdash(){
   let body;
   if(BIZ_TAB==='resale'){ body=resaleSectionsHTML(); }
   else if(BIZ_TAB==='broker'){ body=brokerSectionsHTML(); }
+  else if(BIZ_TAB==='cash'){ body=cashSectionsHTML(); }
   else { body=`
     <div class="kpis">
       ${statBox('今期の実現利益（累計）',fmtYm(realized/1e6),done.length+'件 売却済み')}
@@ -1736,8 +1736,8 @@ function renderBizdash(){
     ${diagnosisHTML()}`;
   }
   c.innerHTML=`
-    <div class="bubble">👔 <b>経営ビュー（上長・代表）</b>：会社全体と、事業ごと（開発事業／仲介事業）をタブで切り替えて把握できます。</div>
-    ${tabBar}${fyBar}${body}
+    <div class="bubble">👔 <b>経営ビュー（上長・代表）</b>：会社全体・事業ごと（開発事業／仲介事業）・資金繰りをタブで切り替えて把握できます。</div>
+    ${tabBar}${BIZ_TAB==='cash'?'':fyBar}${body}
     <div class="muted" style="font-size:11px;margin-top:10px">※ サンプル値（マスキング）。この画面は<b>上長・代表のみ</b>閲覧できます。</div>`;
   if(BIZ_TAB==='all') drawBizChart();
 }
@@ -1852,9 +1852,7 @@ const CASH_EVENTS=[  // m:月, kind:'out'(仕入決済=出金)/'in'(売却決済
   {m:'12月',d:'12/18', kind:'in',  name:'足立区◯◯3丁目 アパート（売却決済）',          amt:24.8, staff:'田中'},
   {m:'12月',d:'12/25', kind:'in',  name:'北区◯◯1丁目 土地（売却決済）',                amt:12.9, staff:'渡辺'},
 ];
-function renderCash(){
-  const c=document.getElementById('content');
-  if(ROLE==='staff'){ c.innerHTML=accessDenied('資金繰り・与信枠'); return; }
+function cashSectionsHTML(){  // 経営ダッシュボードの「資金繰り・与信枠」タブ（上長/代表のみ＝renderBizdash側で遮断）
   const fm=n=>'¥'+(Math.round(n*10)/10).toLocaleString('ja-JP')+'百万';
   const months=['7月','8月','9月','10月','11月','12月'];
   const agg=months.map(m=>{const ev=CASH_EVENTS.filter(e=>e.m===m);
@@ -1883,8 +1881,8 @@ function renderCash(){
       <td class="num"><b style="color:${e.kind==='out'?'#b91c1c':'#15803d'}">${e.kind==='out'?'−':'+'}${fm(e.amt).slice(1)}</b></td>
       <td>${e.staff}</td>
     </tr>`).join('');
-  c.innerHTML=`
-    <div class="bubble">💰 <b>資金繰り・与信枠（上長・代表のみ・オプション）</b>：仕入決済（出金）と売却決済（入金）を月別に並べ、<b>決済が重なる月</b>と<b>与信枠の残り</b>を事前に把握する画面です。「あと何件仕入れられるか」の判断材料になります（サンプル値）。</div>
+  return `
+    <div class="bubble">💰 <b>資金繰り・与信枠</b>：仕入決済（出金）と売却決済（入金）を月別に並べ、<b>決済が重なる月</b>と<b>与信枠の残り</b>を事前に把握するタブです。「あと何件仕入れられるか」の判断材料になります（サンプル値）。</div>
     <div class="kpis">
       ${statBox('今月の出金予定（仕入決済）',fm(cur.out),cur.outCnt+'件の決済')}
       ${statBox('今月の入金予定（売却決済）',fm(cur.inn),'純収支 '+(cur.net>=0?'+':'−')+fm(Math.abs(cur.net)).slice(1))}
@@ -1918,6 +1916,7 @@ function renderCash(){
       <div class="muted" style="font-size:11px;margin-top:10px">※ 起案・承認された案件の「仕入決済日／売却決済日」から自動で作られる想定です。金額・日付はサンプル（マスキング）。行クリックで収支シートへ移動できます（▶ 印の行）。</div>
     </div>`;
 }
+
 
 /* ---------- 新規起票（入力＋リアルタイム計算＋相場参照） ---------- */
 const MARKET={soldAvg:158000,soldLo:142000,soldHi:175000,isshuAvg:105000,saleAvg:172000,rent:9800,kouji:48000,
