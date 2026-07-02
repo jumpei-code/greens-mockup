@@ -455,6 +455,7 @@ const DEALS = [
 
 /* ---------- 計算ロジック（御社Excel準拠） ---------- */
 function fmtY(n){ return '¥'+Math.round(n).toLocaleString('ja-JP'); }
+function fmtYen(n){ return Math.round(n).toLocaleString('ja-JP')+'円'; } // 販売物件一覧＝正規の円表示（例：100,000,000円）
 function pct(n){ return (n*100).toFixed(1)+'%'; }
 function rate(d,i){ return d.scen[i].profit / d.scen[i].price; }       // 利益率 = 総利益 / 売上
 function adoptedIRR(d){ return d.irr[d.period]; }                       // 採用IRR = プロジェクト期間に対応
@@ -597,7 +598,7 @@ function visibleDeals(){ return ROLE==='staff' ? DEALS.filter(d=>d.staff===CURRE
 function setRole(r){ ROLE=r; document.getElementById('role-staff').classList.toggle('on',r==='staff');
   document.getElementById('role-mgr').classList.toggle('on',r==='mgr');
   document.getElementById('role-boss').classList.toggle('on',r==='boss');
-  const ll=document.getElementById('nav-list-label'); if(ll) ll.textContent=(r==='staff')?'担当物件一覧':'全社物件一覧';
+  const ll=document.getElementById('nav-list-label'); if(ll) ll.textContent=(r==='staff')?'担当物件一覧':'過去実績';
   ['nav-bizdash','nav-perf'].forEach(id=>{const b=document.getElementById(id); if(b) b.style.display=(r==='staff')?'none':'';}); // 経営・成績は上長/代表のみ
   go(CUR.view, CUR.arg); }
 let CUR={view:'dashboard',arg:null};
@@ -747,7 +748,7 @@ function dealTable(arr,bossMode){
 /* ---------- 物件一覧 ---------- */
 function renderList(){
   const c=document.getElementById('content');
-  document.getElementById('ptitle').textContent=(ROLE==='staff')?'担当物件一覧':'全社物件一覧';
+  document.getElementById('ptitle').textContent=(ROLE==='staff')?'担当物件一覧':'過去実績';
   c.innerHTML=`
     <div class="card" style="margin-bottom:16px">
       <h3>条件で絞り込む（相場査定的な入口）</h3>
@@ -1147,7 +1148,7 @@ function renderAccess(){
     ['承認', P('自分の申請状況'), Y('1次承認'), Y('最終承認')],
     ['仕入・販売', Y('自分の案件'), Y('全社'), Y('全社')],
     ['販売物件一覧（全社共有）', Y('全社'), Y('全社'), Y('全社')],
-    ['担当物件一覧 ／ 全社物件一覧', Y('担当のみ'), Y('全社'), Y('全社')],
+    ['担当物件一覧 ／ 過去実績', Y('担当のみ'), Y('全社'), Y('全社')],
     ['実績分析（過去の答え合わせ）', Y('全社・閲覧'), Y('全社'), Y('全社')],
     ['　└ 担当者別の成績比較', N, Y(''), Y('')],
   ];
@@ -1198,8 +1199,8 @@ function renderInventory(){
   const row=x=>`<tr>
     <td><b>${x.name}</b><br><span style="color:var(--sub);font-size:10.5px">${x.area}・取得担当 ${x.staff}・仕入 ${x.inDate}</span></td>
     <td>${x.type}</td>
-    <td class="num">${fmtY(x.cost)}</td>
-    <td class="num">${fmtY(x.list)}</td>
+    <td class="num">${fmtYen(x.cost)}</td>
+    <td class="num">${fmtYen(x.list)}</td>
     <td class="num"><b style="color:${dcol(x.days)}">${x.days}日</b>${dlbl(x.days)?`<br><span style="color:${dcol(x.days)};font-size:10px">${dlbl(x.days)}</span>`:''}</td>
     <td class="num">${x.inq}</td>
     <td class="num"><b>${x.ca}</b></td>
@@ -1213,7 +1214,7 @@ function renderInventory(){
     </div>
     <div class="kpis">
       ${statBox('販売物件数',inv.length+' 件','売出中・保有中')}
-      ${statBox('在庫総額（売出ベース）',fmtY(total),'回収予定の上限目安')}
+      ${statBox('在庫総額（売出ベース）',fmtYen(total),'回収予定の上限目安')}
       ${statBox('平均保有日数',avgDays+' 日','短いほど資金回転◎')}
       ${statBox('長期滞留（90日超）',longCnt+' 件','要・値下げ／販促')}
     </div>
@@ -1664,7 +1665,7 @@ function renderPerf(){
   const salesTotal=rows.reduce((a,r)=>a+r.salesRev,0)||1;
   const salesSegs=[...rows].filter(r=>r.salesRev>0).sort((a,b)=>b.salesRev-a.salesRev).map((r,i)=>({label:r.s,value:r.salesRev,color:SEGC[i%4]}));
   const rankBars=rows.map((r,i)=>`<div style="margin:8px 0">
-    <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:3px"><span><b>${i+1}. ${r.s}</b> <span style="color:var(--sub);font-size:11px">得意：${r.topType||'—'}</span></span><span><b>${fmtY(r.realized)}</b></span></div>
+    <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:3px"><span><b>${i+1}. ${r.s}</b> <span style="color:var(--sub);font-size:11px">得意：${r.topType||'—'}</span></span><span><b>${fmtYm(r.realized/1e6)}</b></span></div>
     <div style="height:10px;background:#eef2f6"><div style="height:10px;width:${Math.round(r.realized/maxR*100)}%;background:var(--navy)"></div></div></div>`).join('');
   const comments=rows.map((r,i)=>{const st=[],wt=[];
     if(i===0 && r.realized>0) st.push('実現利益トップ');
@@ -1677,14 +1678,14 @@ function renderPerf(){
     if(r.avgLead!=null && r.avgLead>180) wt.push(`リードタイムが長め（平均 ${Math.round(r.avgLead)}日）→ 資金拘束・回転改善の余地`);
     if(r.doneCnt===0 && r.active>0) wt.push('進行中が中心・実績はこれから');
     return `<div style="border:1px solid var(--line);padding:11px 14px;margin-bottom:9px">
-      <div style="font-weight:800;font-size:13px">${r.s} <span style="font-weight:600;font-size:11px;color:var(--sub)">実現利益 ${fmtY(r.realized)}・売却 ${r.doneCnt}件・起案 ${r.total}件</span></div>
+      <div style="font-weight:800;font-size:13px">${r.s} <span style="font-weight:600;font-size:11px;color:var(--sub)">実現利益 ${fmtYm(r.realized/1e6)}・売却 ${r.doneCnt}件・起案 ${r.total}件</span></div>
       ${st.length?`<div style="font-size:12px;margin-top:4px"><b style="color:#15803d">強み：</b>${st.join(' ／ ')}</div>`:''}
       ${wt.length?`<div style="font-size:12px;margin-top:3px"><b style="color:#b45309">留意：</b>${wt.join(' ／ ')}</div>`:''}</div>`;}).join('');
   c.innerHTML=`
     <div class="bubble">👔 <b>担当者別パフォーマンス（上長・代表のみ）</b>：起案の量・通過・売却・実現利益・想定の的中・クセ・得意分野を横断で。育成と評価の材料です（営業担当には非表示）。</div>
     <div class="kpis">
-      ${statBox('全社 実現利益',fmtY(totReal),totDone+'件 売却')}
-      ${statBox('トップ担当',top?top.s:'—',top?fmtY(top.realized):'')}
+      ${statBox('全社 実現利益',fmtYm(totReal/1e6),totDone+'件 売却')}
+      ${statBox('トップ担当',top?top.s:'—',top?fmtYm(top.realized/1e6):'')}
       ${statBox('全社 的中率',totDone?totHit+'/'+totDone:'—',totDone?pct(totHit/totDone):'')}
       ${statBox('見送り（目利き）',totRej+' 件','無理をしない判断')}
     </div>
@@ -1696,7 +1697,7 @@ function renderPerf(){
       <div class="sectiontitle" style="margin-top:0">🥧 売上シェア（担当者別）</div>
       <div style="display:flex;align-items:center;gap:26px;flex-wrap:wrap">
         ${donutSVG(salesSegs,150)}
-        <div>${salesSegs.map(s=>`<div style="font-size:12.5px;margin:6px 0"><span style="display:inline-block;width:11px;height:11px;background:${s.color};border-radius:2px;margin-right:8px;vertical-align:middle"></span><b>${s.label}</b>　${fmtY(s.value)} <span style="color:var(--sub)">(${(s.value/salesTotal*100).toFixed(0)}%)</span></div>`).join('')}
+        <div>${salesSegs.map(s=>`<div style="font-size:12.5px;margin:6px 0"><span style="display:inline-block;width:11px;height:11px;background:${s.color};border-radius:2px;margin-right:8px;vertical-align:middle"></span><b>${s.label}</b>　${fmtYm(s.value/1e6)} <span style="color:var(--sub)">(${(s.value/salesTotal*100).toFixed(0)}%)</span></div>`).join('')}
         <div style="font-size:11px;color:var(--sub);margin-top:6px">※ 売上＝売却済みの成約価格の合計。</div></div>
       </div>
     </div>
@@ -1709,7 +1710,7 @@ function renderPerf(){
           <td class="num">${r.passRate!=null?pct(r.passRate):'—'}</td>
           <td class="num">${r.active}</td>
           <td class="num">${r.doneCnt}</td>
-          <td class="num"><b>${fmtY(r.realized)}</b></td>
+          <td class="num"><b>${fmtYm(r.realized/1e6)}</b></td>
           <td class="num">${r.doneCnt?pct(r.marg):'—'}</td>
           <td class="num">${r.avgLead!=null?Math.round(r.avgLead)+'日':'—'}</td>
           <td class="num">${r.doneCnt?r.hit+'/'+r.doneCnt:'—'}</td>
@@ -1717,7 +1718,7 @@ function renderPerf(){
           <td class="num">${r.rej}</td>
           <td style="font-size:11.5px">${r.topType||'—'}</td>
         </tr>`).join('')}
-        <tr><td><b>全社 合計</b></td><td class="num"><b>${totTotal}</b></td><td class="num">—</td><td class="num"><b>${totActive}</b></td><td class="num"><b>${totDone}</b></td><td class="num"><b>${fmtY(totReal)}</b></td><td class="num">—</td><td class="num"><b>${totLead!=null?Math.round(totLead)+'日':'—'}</b></td><td class="num"><b>${totDone?totHit+'/'+totDone:'—'}</b></td><td class="num">—</td><td class="num"><b>${totRej}</b></td><td>—</td></tr>
+        <tr><td><b>全社 合計</b></td><td class="num"><b>${totTotal}</b></td><td class="num">—</td><td class="num"><b>${totActive}</b></td><td class="num"><b>${totDone}</b></td><td class="num"><b>${fmtYm(totReal/1e6)}</b></td><td class="num">—</td><td class="num"><b>${totLead!=null?Math.round(totLead)+'日':'—'}</b></td><td class="num"><b>${totDone?totHit+'/'+totDone:'—'}</b></td><td class="num">—</td><td class="num"><b>${totRej}</b></td><td>—</td></tr>
       </table>
       <div class="muted" style="font-size:11px;margin-top:10px">※「通過率」＝判定が出た案件のうち承認を通った割合。「回転日数」＝仕入決済〜売却決済の平均リードタイム（短いほど資金回転◎）。「想定のクセ」＝実績−計画の平均（＋堅実／−強気）。「得意」＝実現利益が大きい種別。サンプル値（マスキング）。</div>
     </div>
