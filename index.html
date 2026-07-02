@@ -1390,18 +1390,18 @@ function diagnosisHTML(){
   const byType=TYPES5.map(t=>({t,rev:A.filter(r=>r.t===t).reduce((s,r)=>s+r.rev,0)})).filter(x=>x.rev).sort((a,b)=>b.rev-a.rev);
   const ins=[];
   const stagn=holdSell.filter(r=>r.days>90);
-  if(stagn.length){const g=stagn.reduce((s,r)=>s+r.rev,0);ins.push({lv:'high',t:'在庫の長期滞留',b:`保有90日超が <b>${stagn.length}件</b>（見込み粗利 合計 ${fmtYm(g)}）。資金が寝て金利が利益を削ります。`,a:'値下げ余地の再計算・販促強化・業者向け一括売却への切替を検討。'});}
+  if(stagn.length){const g=stagn.reduce((s,r)=>s+r.rev,0);ins.push({lv:'high',t:'在庫の長期滞留',b:`保有90日超が <b>${stagn.length}件</b>（見込み粗利 合計 ${fmtYm(g)}）。`,a:'値下げ余地の再計算・販促強化・業者向け一括売却への切替を検討。'});}
   const typeAcc=TYPES5.map(t=>{const rs=sold.filter(r=>r.t===t);return rs.length?{t,d:rs.reduce((s,r)=>s+(r.am-r.pm),0)/rs.length,cnt:rs.length}:null;}).filter(Boolean);
   const weak=typeAcc.filter(x=>x.d<0).sort((a,b)=>a.d-b.d);
   if(weak.length){const w=weak[0];ins.push({lv:'high',t:`「${w.t}」は想定が甘い傾向`,b:`売却済みで実績が計画を平均 <b>${(w.d*100).toFixed(1)}%</b> 下回り（${w.cnt}件）。原価（建築費・諸費用）の見積りが楽観的な可能性。`,a:'この類型の仕入れ基準・原価テンプレを引き締め、着地見込みを保守化。'});}
   const areaMargin=areas.map(a=>{const rs=sold.filter(r=>r.a===a);return rs.length?{a,m:rs.reduce((s,r)=>s+r.am,0)/rs.length,cnt:rs.length}:null;}).filter(Boolean).sort((x,y)=>y.m-x.m);
   if(areaMargin.length){const top=areaMargin[0];ins.push({lv:'good',t:`「${top.a}」が高採算`,b:`売却済みの平均利益率が <b>${(top.m*100).toFixed(1)}%</b> と突出（${top.cnt}件）。`,a:'同エリアの仕入れソーシングを強化し、投下資本を寄せる余地。'});}
   const brkShare=share(brkRev)/100;
-  ins.push({lv:'info',t:'仲介（在庫を持たない収益）の比率',b:`収益に占める仲介手数料は <b>${(brkShare*100).toFixed(0)}%</b>（${brk.length}件・${fmtYm(brkRev)}）。在庫リスクの低い安定収益源です。`,a:brkShare<0.2?'比率は低め。相場高騰の局面では仲介比率を上げ、在庫リスクを抑える選択肢も。':'一定比率を確保できています。'});
+  ins.push({lv:'info',t:'仲介手数料の比率',b:`収益に占める仲介手数料は <b>${(brkShare*100).toFixed(0)}%</b>（${brk.length}件・${fmtYm(brkRev)}）。開発事業（再販）と収益源が分散しています。`,a:'決算期（今期／前期／通期）を切り替えると、比率の推移を確認できます。'});
   // リードタイム（資金拘束）
   const leadByType=TYPES5.map(t=>{const rs=sold.filter(r=>r.t===t&&r.lead);return rs.length?{t,l:rs.reduce((s,r)=>s+r.lead,0)/rs.length,cnt:rs.length}:null;}).filter(Boolean).sort((a,b)=>b.l-a.l);
   if(leadByType.length){const lw=leadByType[0];const allLead=sold.filter(r=>r.lead);const avgAll=allLead.reduce((s,r)=>s+r.lead,0)/allLead.length;
-    if(lw.l>180) ins.push({lv:'high',t:`「${lw.t}」はリードタイムが長い`,b:`仕入決済〜売却決済が平均 <b>${Math.round(lw.l)}日（約${(lw.l/30).toFixed(1)}ヶ月）</b>（全社平均 ${Math.round(avgAll)}日）。資金が長く寝て、金利負担と回転低下につながります。`,a:'着工・販売の前倒し、早期の値付け、または仕入れ値の引き下げで回転を上げる。'});}
+    if(lw.l>180) ins.push({lv:'high',t:`「${lw.t}」はリードタイムが長い`,b:`仕入決済〜売却決済が平均 <b>${Math.round(lw.l)}日（約${(lw.l/30).toFixed(1)}ヶ月）</b>（全社平均 ${Math.round(avgAll)}日）。`,a:'着工・販売の前倒し、早期の値付け、または仕入れ値の引き下げで回転を上げる。'});}
   // 仕入れ先の集中
   const fr=partnerRank(A.filter(r=>r.st!=='broker'),'from');
   if(fr.length && fr[0].cnt/A.filter(r=>r.st!=='broker').length>0.3){ins.push({lv:'info',t:'仕入れ先の集中',b:`開発事業の仕入れの <b>${Math.round(fr[0].cnt/A.filter(r=>r.st!=='broker').length*100)}%</b> が「${fr[0].name}」に集中（${fr[0].cnt}件）。良い関係の裏返しで、依存リスクも。`,a:'主要仕入れ先を維持しつつ、新規ルートの開拓で供給を安定化。'});}
@@ -1478,7 +1478,7 @@ function brokerSectionsHTML(){
   const areas=[...new Set(A.map(r=>r.a))];
   const byArea=areas.map(a=>({a,cnt:A.filter(r=>r.a===a).length,rev:A.filter(r=>r.a===a).reduce((s,r)=>s+r.rev,0)})).sort((x,y)=>y.rev-x.rev);
   return `
-    <div class="bubble">🤝 <b>仲介事業</b>：在庫を持たず手数料で稼ぐ事業。相場が高い局面でも回せる、リスクの低い収益源です。</div>
+    <div class="bubble">🤝 <b>仲介事業</b>：仲介の成約件数・手数料収入・取引先（売主側／買主側）・エリア・成約時期を集計します。</div>
     <div class="kpis">
       ${statBox('仲介 成約（'+PL+'）',A.length+' 件','手数料ベース')}
       ${statBox('手数料 収入（'+PL+'）',fmtYm(total),'合計（サンプル）')}
@@ -1653,7 +1653,7 @@ function renderBizdash(){
         ${mixDonut('粗利 構成','gp')}
         ${mixDonut('コスト 構成','cost')}
       </div>
-      <div class="muted" style="font-size:11px;margin-top:8px">※ 売上・コストは開発事業が大半でも、粗利では在庫リスクの低い仲介・コンサルの比率が高い＝収益源の分散状況が見えます（サンプル・決算期で切替）。</div>
+      <div class="muted" style="font-size:11px;margin-top:8px">※ 売上・コストは開発事業が大半でも、粗利では仲介・コンサルの比率が高い＝収益源の分散が読み取れます（サンプル・決算期で切替）。</div>
     </div>
     <div class="card" style="padding:18px 20px">
       <div class="sectiontitle" style="margin-top:0">📈 事業の推移（売上・粗利・在庫）</div>
