@@ -274,7 +274,6 @@
       <button data-nav="dashboard" class="active" onclick="go('dashboard')"><span class="ic">▣</span>ダッシュボード</button>
       <button data-nav="approve" onclick="go('approve')"><span class="ic">✓</span>承認<span id="nav-appr-badge" class="navbadge" style="display:none"></span></button>
       <button data-nav="ops" onclick="go('ops')"><span class="ic">◔</span>仕入・販売<span id="nav-ops-badge" class="navbadge" style="display:none"></span></button>
-      <button data-nav="inventory" onclick="go('inventory')"><span class="ic">▤</span>販売物件一覧</button>
       <button data-nav="list" onclick="go('list')"><span class="ic">≣</span><span id="nav-list-label">担当物件一覧</span></button>
       <button data-nav="review" onclick="go('review')"><span class="ic">↺</span>実績分析</button>
       <button data-nav="access" onclick="go('access')"><span class="ic">▦</span>表示範囲（権限）</button>
@@ -602,14 +601,14 @@ function setRole(r){ ROLE=r; document.getElementById('role-staff').classList.tog
   ['nav-bizdash','nav-perf'].forEach(id=>{const b=document.getElementById(id); if(b) b.style.display=(r==='staff')?'none':'';}); // 経営・成績は上長/代表のみ
   go(CUR.view, CUR.arg); }
 let CUR={view:'dashboard',arg:null};
-const TITLES={dashboard:['ホーム','ダッシュボード'],approve:['承認','承認（あなたの番の承認待ち）'],ops:['仕入・販売','仕入決済・販売中の案件'],inventory:['販売','販売物件一覧（全社・リアルタイム）'],list:['物件','担当物件一覧'],detail:['物件 › 収支シート','事業収支シート'],market:['相場','相場調査（オプション機能）'],review:['実績分析','実績分析'],access:['設定','表示範囲（どの立場に何が見えるか）'],bizdash:['経営','経営ダッシュボード（上長・代表）'],perf:['評価','担当者別パフォーマンス（上長・代表）'],new:['物件 › 新規起案','新規物件の起案（事業計画）']};
+const TITLES={dashboard:['ホーム','ダッシュボード'],approve:['承認','承認（あなたの番の承認待ち）'],ops:['仕入・販売','仕入・販売（自分の担当／全社の販売物件）'],list:['物件','担当物件一覧'],detail:['物件 › 収支シート','事業収支シート'],market:['相場','相場調査（オプション機能）'],review:['実績分析','実績分析'],access:['設定','表示範囲（どの立場に何が見えるか）'],bizdash:['経営','経営ダッシュボード（上長・代表）'],perf:['評価','担当者別パフォーマンス（上長・代表）'],new:['物件 › 新規起案','新規物件の起案（事業計画）']};
 function go(view,arg){
   CUR={view,arg};
   document.querySelectorAll('.nav button[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===view));
   const t=TITLES[view]||['',''];
   document.getElementById('crumb').textContent=t[0];
   document.getElementById('ptitle').textContent=t[1];
-  const _r=({dashboard:renderDashboard,approve:renderApprove,ops:renderOps,inventory:renderInventory,list:renderList,detail:renderDetail,market:renderMarket,review:renderReview,access:renderAccess,bizdash:renderBizdash,perf:renderPerf,new:renderNew}[view]); if(_r) _r(arg); else return;
+  const _r=({dashboard:renderDashboard,approve:renderApprove,ops:renderOps,list:renderList,detail:renderDetail,market:renderMarket,review:renderReview,access:renderAccess,bizdash:renderBizdash,perf:renderPerf,new:renderNew}[view]); if(_r) _r(arg); else return;
   updateApprBadge(); updateOpsBadge();
   window.scrollTo(0,0);
 }
@@ -626,18 +625,27 @@ function updateOpsBadge(){
   const n=visibleDeals().filter(d=>d.status==='approved').length; // 仕入決済待ち＝要対応
   b.textContent=n||''; b.style.display=n?'inline-flex':'none';
 }
+let OPS_TAB='own';
+function setOpsTab(t){OPS_TAB=t;renderOps();window.scrollTo(0,0);}
 function renderOps(){
   const c=document.getElementById('content');
-  const D=visibleDeals();
-  const settle=D.filter(d=>d.status==='approved');
-  const selling=D.filter(d=>d.status==='sell');
-  const scope = ROLE==='staff' ? `自分の案件（${CURRENT_STAFF}）` : '全社';
-  c.innerHTML=`
-    <div class="notebar">🏷️ <b>仕入・販売（進行中）</b>：承認後の案件をここで進めます（${scope}）。<b>仕入決済を登録 → 販売中 → 売却決済</b>へ。行をクリックすると収支シートが開き、最上段のパネルで操作できます。</div>
-    <div class="sectiontitle">¥ 仕入決済待ち（代表承認済み・要対応）</div>
-    ${settle.length?dealTable(settle,false):'<div class="card muted">仕入決済待ちはありません。</div>'}
-    <div class="sectiontitle">◷ 販売中（売却活動）</div>
-    ${selling.length?dealTable(selling,false):'<div class="card muted">販売中の案件はありません。</div>'}`;
+  const tabs=[['own','自分の担当（仕入決済・販売）'],['all','全社の販売物件']];
+  const tabBar=`<div style="display:flex;gap:2px;border-bottom:2px solid var(--line);margin-bottom:16px">${tabs.map(([k,l])=>`<button onclick="setOpsTab('${k}')" style="border:0;background:none;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;color:${OPS_TAB===k?'var(--navy)':'var(--sub)'};border-bottom:3px solid ${OPS_TAB===k?'var(--navy)':'transparent'};margin-bottom:-2px">${l}</button>`).join('')}</div>`;
+  let body;
+  if(OPS_TAB==='all'){ body=inventoryHTML(); }
+  else {
+    const D=visibleDeals();
+    const settle=D.filter(d=>d.status==='approved');
+    const selling=D.filter(d=>d.status==='sell');
+    const scope = ROLE==='staff' ? `自分の案件（${CURRENT_STAFF}）` : '全社';
+    body=`
+      <div class="notebar">🏷️ <b>進行中の担当案件</b>：承認後の案件をここで進めます（${scope}）。<b>仕入決済を登録 → 販売中 → 売却決済</b>へ。行をクリックすると収支シートが開き、最上段のパネルで操作できます。</div>
+      <div class="sectiontitle">¥ 仕入決済待ち（代表承認済み・要対応）</div>
+      ${settle.length?dealTable(settle,false):'<div class="card muted">仕入決済待ちはありません。</div>'}
+      <div class="sectiontitle">◷ 販売中（売却活動）</div>
+      ${selling.length?dealTable(selling,false):'<div class="card muted">販売中の案件はありません。</div>'}`;
+  }
+  c.innerHTML=`<div class="bubble">🏷️ <b>仕入・販売</b>：〔自分の担当〕で自分の案件の<b>仕入決済〜販売</b>を進め、〔全社の販売物件〕で会社の在庫を<b>全営業で共有して販売</b>します。</div>${tabBar}${body}`;
 }
 function renderApprove(){
   const c=document.getElementById('content');
@@ -1187,7 +1195,7 @@ const INVENTORY=[
   {name:'板橋区◯◯2丁目 土地', type:'土地', area:'板橋区', cost:16800000, list:21200000, inDate:'05/05', days:57, inq:9, ca:3, staff:'高橋', state:'買付あり'},
   {name:'川口市◯◯4丁目 アパート', type:'一棟収益', area:'川口市', cost:84000000, list:95800000, inDate:'03/22', days:101, inq:5, ca:2, staff:'田中', state:'掲載中'},
 ];
-function renderInventory(){
+function inventoryHTML(){
   const inv=INVENTORY;
   const total=inv.reduce((a,b)=>a+b.list,0);
   const avgDays=Math.round(inv.reduce((a,b)=>a+b.days,0)/inv.length);
@@ -1206,8 +1214,8 @@ function renderInventory(){
     <td class="num"><b>${x.ca}</b></td>
     <td><span style="display:inline-block;background:${stbg[x.state]||'#eef2f7'};color:${stfg[x.state]||'#475569'};font-size:11px;font-weight:700;padding:2px 9px">${x.state}</span></td>
   </tr>`;
-  document.getElementById('content').innerHTML=`
-    <div class="bubble">👥 <b>全営業で販売</b>：仕入れた物件は<b>全社の販売物件</b>として全営業が販売します。だからこの一覧は<b>立場に関わらず全員が全社分を閲覧</b>でき、誰でも反響対応・販売活動ができます。</div>
+  return `
+    <div class="notebar">👥 仕入れた物件は<b>全社の販売物件</b>として全営業が販売します。<b>立場に関わらず全員が全社分を閲覧</b>でき、誰でも反響対応・販売活動ができます。</div>
     <div style="display:flex;align-items:center;gap:9px;margin:2px 0 12px">
       <span style="display:inline-flex;align-items:center;gap:6px;background:#fee2e2;color:#b91c1c;font-size:11px;font-weight:800;padding:3px 11px;border-radius:999px"><span style="width:7px;height:7px;background:#ef4444;border-radius:50%;display:inline-block"></span>LIVE</span>
       <span style="color:var(--sub);font-size:11.5px">リアルタイムの販売物件（売出中・保有中）。最終更新：たった今</span>
@@ -2200,7 +2208,7 @@ function doSearch(){
   const d=DEALS.find(x=>x.name===q||x.id===q) || DEALS.find(x=>x.name.includes(q)||x.id.includes(q));
   if(d){ el.value=''; go('detail',d.id); return; }
   const inv=INVENTORY.find(x=>x.name===q) || INVENTORY.find(x=>x.name.includes(q));
-  if(inv){ el.value=''; setRole(ROLE); go('inventory'); return; }
+  if(inv){ el.value=''; OPS_TAB='all'; go('ops'); return; }
   if(msg) msg.textContent='該当なし';
 }
 function initSearch(){
