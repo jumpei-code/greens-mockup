@@ -280,6 +280,7 @@
       <div class="group" style="margin-top:auto">オプション機能（任意・別途費用）</div>
       <button id="nav-bizdash" data-nav="bizdash" class="addon" onclick="go('bizdash')" style="display:none"><span class="ic">◆</span><span>経営ダッシュボード<span class="optbadge">オプション</span></span></button>
       <button id="nav-perf" data-nav="perf" class="addon" onclick="go('perf')" style="display:none"><span class="ic">◉</span><span>担当者別パフォーマンス<span class="optbadge">オプション</span></span></button>
+      <button data-nav="compare" class="addon" onclick="go('compare')"><span class="ic">⚖</span><span>物件比較・感応度<span class="optbadge">オプション</span></span></button>
       <button data-nav="market" class="addon" onclick="go('market')"><span class="ic">◎</span><span>相場調査<span class="optbadge">オプション</span></span></button>
     </nav>
     <div class="foot">
@@ -605,14 +606,14 @@ function setRole(r){ ROLE=r; document.getElementById('role-staff').classList.tog
   ['nav-bizdash','nav-perf'].forEach(id=>{const b=document.getElementById(id); if(b) b.style.display=(r==='staff')?'none':'';}); // 経営・成績は上長/代表のみ
   go(CUR.view, CUR.arg); }
 let CUR={view:'dashboard',arg:null};
-const TITLES={dashboard:['ホーム','ダッシュボード'],approve:['承認','承認（あなたの番の承認待ち）'],ops:['販売物件一覧','販売物件一覧（全社・全営業が販売対応）'],list:['物件','担当物件一覧'],detail:['物件 › 収支シート','事業収支シート'],market:['相場','相場調査（オプション機能）'],review:['実績分析','実績分析'],access:['設定','表示範囲（どの立場に何が見えるか）'],bizdash:['経営','経営ダッシュボード（上長・代表）'],perf:['評価','担当者別パフォーマンス（上長・代表）'],new:['物件 › 新規起案','新規物件の起案（事業計画）']};
+const TITLES={dashboard:['ホーム','ダッシュボード'],approve:['承認','承認（あなたの番の承認待ち）'],ops:['販売物件一覧','販売物件一覧（全社・全営業が販売対応）'],list:['物件','担当物件一覧'],detail:['物件 › 収支シート','事業収支シート'],market:['相場','相場調査（オプション機能）'],compare:['物件','物件比較・感応度（オプション）'],review:['実績分析','実績分析'],access:['設定','表示範囲（どの立場に何が見えるか）'],bizdash:['経営','経営ダッシュボード（上長・代表）'],perf:['評価','担当者別パフォーマンス（上長・代表）'],new:['物件 › 新規起案','新規物件の起案（事業計画）']};
 function go(view,arg){
   CUR={view,arg};
   document.querySelectorAll('.nav button[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===view));
   const t=TITLES[view]||['',''];
   document.getElementById('crumb').textContent=t[0];
   document.getElementById('ptitle').textContent=t[1];
-  const _r=({dashboard:renderDashboard,approve:renderApprove,ops:renderOps,list:renderList,detail:renderDetail,market:renderMarket,review:renderReview,access:renderAccess,bizdash:renderBizdash,perf:renderPerf,new:renderNew}[view]); if(_r) _r(arg); else return;
+  const _r=({dashboard:renderDashboard,approve:renderApprove,ops:renderOps,list:renderList,detail:renderDetail,market:renderMarket,compare:renderCompare,review:renderReview,access:renderAccess,bizdash:renderBizdash,perf:renderPerf,new:renderNew}[view]); if(_r) _r(arg); else return;
   updateApprBadge(); updateListBadge(); refreshNotif();
   const _np=document.getElementById('notif-panel'); if(_np) _np.style.display='none';
   window.scrollTo(0,0);
@@ -653,6 +654,66 @@ function renderApprove(){
 }
 
 /* ---------- ダッシュボード ---------- */
+/* ---------- オプション：物件比較・感応度 ---------- */
+let CMP_DEAL=null, CMP_MONTHS=null;
+function irrAt(d,price,months){ return Math.pow(price/d.cost, 12/months)-1; } // 既存 d.irr と一致するモデル
+function judgeAt(r2,irr){ if(r2>=0.10&&irr>=0.10)return{mark:'◎',label:'推奨',cls:'j-ok'}; if(r2>=0.08&&irr>=0.10)return{mark:'△',label:'条件付き可',cls:'j-warn'}; return{mark:'×',label:'見送り',cls:'j-ng'}; }
+function setCmpDeal(id){ CMP_DEAL=id; const d=dealById(id); CMP_MONTHS=d?d.period:12; renderCompare(); }
+function setCmpMonths(m){ CMP_MONTHS=m; renderCompare(); }
+function renderCompare(){
+  const c=document.getElementById('content');
+  const stages=['await_mgr','await_pres','returned','approved'];
+  let pool=visibleDeals().filter(d=>stages.includes(d.status));
+  if(pool.length<2) pool=visibleDeals().slice(0,3);
+  pool=pool.slice(0,3);
+  if(!CMP_DEAL||!pool.find(d=>d.id===CMP_DEAL)){ CMP_DEAL=pool[0].id; CMP_MONTHS=pool[0].period; }
+  const sd=dealById(CMP_DEAL); const months=CMP_MONTHS||sd.period;
+  const r2=d=>rate(d,1), prof2=d=>d.scen[1].profit, price2=d=>d.scen[1].price, irr=d=>adoptedIRR(d);
+  const loCost=Math.min(...pool.map(d=>d.cost)), hiProf=Math.max(...pool.map(prof2)), hiRate=Math.max(...pool.map(r2)), hiIrr=Math.max(...pool.map(irr));
+  const hl='background:#ecfdf5;font-weight:800;color:#166534';
+  const th=`<tr><td style="min-width:150px"></td>${pool.map(d=>`<td style="text-align:center;padding:10px;border-bottom:2px solid var(--navy)"><div style="font-weight:800;font-size:13px">${d.name}</div><div style="font-size:11px;color:var(--sub)">${d.id}・${d.staff}</div></td>`).join('')}</tr>`;
+  const row=(lab,cells)=>`<tr><td style="color:var(--sub);font-size:12px;padding:8px 10px;border-bottom:1px solid #eef2f6">${lab}</td>${cells.map(x=>`<td style="text-align:center;padding:8px 10px;border-bottom:1px solid #eef2f6;${x.hl?hl:''}">${x.v}</td>`).join('')}</tr>`;
+  const board=`
+    <div class="card" style="margin-bottom:16px;overflow-x:auto">
+      <div class="sectiontitle" style="margin-top:0">📊 候補を横並びで比較（同じ資金枠ならどれを買うべきか）</div>
+      <table style="width:100%;border-collapse:collapse">
+        ${th}
+        ${row('種別', pool.map(d=>({v:d.type})))}
+        ${row('エリア', pool.map(d=>({v:d.area})))}
+        ${row('原価合計', pool.map(d=>({v:fmtYen(d.cost),hl:d.cost===loCost})))}
+        ${row('想定②売値', pool.map(d=>({v:fmtYen(price2(d))})))}
+        ${row('想定②利益額', pool.map(d=>({v:fmtYen(prof2(d)),hl:prof2(d)===hiProf})))}
+        ${row('想定②利益率', pool.map(d=>({v:pct(r2(d)),hl:r2(d)===hiRate})))}
+        ${row('採用IRR', pool.map(d=>({v:pct(irr(d)),hl:irr(d)===hiIrr})))}
+        ${row('プロジェクト期間', pool.map(d=>({v:d.period+'ヶ月'})))}
+        ${row('総合判定', pool.map(d=>{const j=judge(d);return {v:`<span class="pill ${j.cls}">${j.mark} ${j.label}</span>`};}))}
+        ${row('下限8%を保てる売値', pool.map(d=>({v:fmtYen(Math.round(d.cost/0.92))})))}
+      </table>
+      <div class="muted" style="font-size:11px;margin-top:10px">緑＝この項目でいちばん良い候補（利益額・利益率・IRRが高い／原価が低い）。<b>下限8%を保てる売値</b>＝ここまで値下げしても利益率8%を確保できる価格。</div>
+    </div>`;
+  const dealBtns=pool.map(d=>`<button class="${d.id===CMP_DEAL?'on':''}" onclick="setCmpDeal('${d.id}')">${d.name}</button>`).join('');
+  const monBtns=[12,18,24].map(m=>`<button class="${m===months?'on':''}" onclick="setCmpMonths(${m})">${m}ヶ月</button>`).join('');
+  const scens=[{lab:'強気（出値価格）',s:sd.scen[0]},{lab:'中立（着地価格）',s:sd.scen[1]},{lab:'弱気（下限価格）',s:sd.scen[2]}];
+  const srow=x=>{ const price=x.s.price, prof=x.s.profit, rr=prof/price, ir=irrAt(sd,price,months), j=judgeAt(rr,ir);
+    return `<tr><td>${x.lab}</td><td class="num">${fmtYen(price)}</td><td class="num">${fmtYen(prof)}</td><td class="num"><b>${pct(rr)}</b></td><td class="num">${pct(ir)}</td><td style="text-align:center"><span class="pill ${j.cls}">${j.mark} ${j.label}</span></td></tr>`; };
+  const weak=scens[2], wj=judgeAt(weak.s.profit/weak.s.price, irrAt(sd,weak.s.price,months));
+  const be=sd.cost, floor8=Math.round(sd.cost/0.92), floor10=Math.round(sd.cost/0.9);
+  const sens=`
+    <div class="card">
+      <div class="sectiontitle" style="margin-top:0">🎚 3シナリオ感応度（売値・保有期間が動いたら判定はどう変わる？）</div>
+      <div class="viewtoggle" style="margin-bottom:8px"><span class="vt-lab">物件</span>${dealBtns}</div>
+      <div class="viewtoggle" style="margin-bottom:12px"><span class="vt-lab">保有期間</span>${monBtns}</div>
+      <table style="width:100%;border-collapse:collapse">
+        <thead><tr><th style="text-align:left">シナリオ</th><th class="num">売値</th><th class="num">利益額</th><th class="num">利益率</th><th class="num">採用IRR（${months}ヶ月）</th><th style="text-align:center">判定</th></tr></thead>
+        <tbody>${scens.map(srow).join('')}</tbody>
+      </table>
+      <div style="margin-top:12px;padding:11px 13px;background:#f8fafc;border:1px solid var(--line);border-radius:8px;font-size:12.5px">
+        <b>${sd.name}</b>：弱気（下限価格）でも判定は <span class="pill ${wj.cls}">${wj.mark} ${wj.label}</span> ＝ ${wj.mark==='×'?'下振れ時は赤字リスク。仕入れ値の引き下げ交渉が前提。':'下値に強い候補です。'}<br>
+        <span style="color:var(--sub)">損益分岐の売値 <b>${fmtYen(be)}</b>（これを下回ると赤字）／利益率8%ライン <b>${fmtYen(floor8)}</b>／推奨10%ライン <b>${fmtYen(floor10)}</b>。保有期間が延びるほどIRRは下がります。</span>
+      </div>
+    </div>`;
+  c.innerHTML=`<div class="bubble">⚖ <b>物件比較・感応度（オプション）</b>：仕入れ候補を横並びで比べ、売値・保有期間が動いたときに判定（◎△×）がどう変わるかを見ます。「どれを買う？」「読みが外れたら赤字？」の判断材料です。</div>${board}${sens}`;
+}
 /* ---------- 定着の要（要対応カード・通知） ---------- */
 function todoCardHTML(){
   const mine=visibleDeals();
