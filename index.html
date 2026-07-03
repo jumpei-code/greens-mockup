@@ -347,6 +347,12 @@
   .optdrop-note{font-size:10.5px;color:var(--sub);padding:8px 14px 6px;border-bottom:1px solid var(--line);margin-bottom:4px;}
   .optdrop-menu button{display:flex;width:100%;text-align:left;padding:10px 14px;}
   .optdrop-menu button.active{background:var(--ink);color:#fff;}
+  /* 左右バランス（2026-07-03）：サイドバー廃止で右に余っていた分、本文列を中央寄せ。
+     ヘッダー・プレビュー帯・タイトル帯の中身も同じ列位置に揃える（max()で狭い画面は従来余白） */
+  .content{max-width:1240px;margin:0 auto;width:100%;}
+  .side{padding:0 max(28px, calc((100% - 1240px)/2 + 26px));}
+  .previewbar{padding:9px max(26px, calc((100% - 1240px)/2 + 26px));}
+  .topbar{padding:12px max(26px, calc((100% - 1240px)/2 + 26px));}
 </style>
 </head>
 <body>
