@@ -860,6 +860,8 @@ function refreshNotif(){
   if(apprN) items.push({ic:'',t:ROLE==='staff'?'あなたの対応が必要な案件があります':'あなたの番の承認待ちがあります',s:apprN+'件',go:ROLE==='staff'?"go('list')":"go('approve')",red:true});
   const invA=INVENTORY.filter(x=>x.days>90);
   if(invA.length) items.push({ic:'',t:'在庫が90日超（要販促・値下げ検討）',s:invA[0].name+(invA.length>1?' ほか'+(invA.length-1)+'件':''),go:"go('ops')",red:true});
+  items.push({ic:'',t:'仕入決済の期日が近づいています（決済期日リマインド）',s:'江戸川区◯◯1丁目 土地・決済予定 07/10（あと3日）',go:"go('detail','GR-2026-0012')",red:false});
+  items.push({ic:'',t:'買付の回答期限が本日です（買付・商談管理）',s:'川口市◯◯4丁目 アパート・指値89,000,000円',go:"go('ops')",red:true});
   items.push({ic:'',t:'今週の全社サマリーが届きました',s:'売上・在庫・粗利（週次・自動配信）',go:(ROLE==='staff'?"go('review')":"go('bizdash')"),red:false});
   const unread=items.filter(i=>i.red).length;
   b.textContent=unread||''; b.style.display=unread?'inline-flex':'none';
@@ -975,7 +977,8 @@ function renderList(){
         <div><div class="muted" style="font-size:11px">状態</div><select class="btn" id="f-status" onchange="filterList()"><option value="">すべて</option><option value="await">承認待ち</option><option value="approved">承認済み（仕入決済前）</option><option value="sell">販売中</option><option value="done">実績分析済</option><option value="returned">差し戻し</option><option value="rej">見送り</option></select></div>
       </div>
     </div>
-    <div id="listbody"></div>`;
+    <div id="listbody"></div>
+    ${ROLE==='staff'?docCheckHTML():''}`;
   filterList();
 }
 function filterList(){
@@ -988,6 +991,22 @@ function filterList(){
   document.getElementById('listbody').innerHTML=`<div class="muted" style="margin-bottom:8px;font-size:12px">${scope}</div>`+dealTable(arr,false,ROLE==='staff');
 }
 
+/* 物件資料の揃い状況（担当物件・オプション・デザインのみ） */
+function docCheckHTML(){
+  const ok='<span style="color:#4c7c15;font-weight:800">○</span>', ng='<span style="color:#cc3300;font-weight:800">×</span>';
+  return `
+    <div class="sectiontitle" style="margin-top:22px">物件資料の揃い状況（必須資料チェック）<span class="optbadge">オプション</span></div>
+    <div class="xwrap">
+      <table class="xgrid">
+        <tr><td class="lbl">物件</td><td class="lbl" style="text-align:center">概要書</td><td class="lbl" style="text-align:center">図面</td><td class="lbl" style="text-align:center">測量図</td><td class="lbl" style="text-align:center">登記</td><td class="lbl" style="text-align:center">写真</td><td class="lbl">不足</td></tr>
+        <tr><td><b>江戸川区◯◯1丁目 土地</b></td><td style="text-align:center">${ok}</td><td style="text-align:center">${ok}</td><td style="text-align:center">${ng}</td><td style="text-align:center">${ok}</td><td style="text-align:center">${ok}</td><td><b style="color:#cc3300">1件</b>（測量図）</td></tr>
+        <tr><td><b>北区◯◯2丁目 収益レジ</b></td><td style="text-align:center">${ok}</td><td style="text-align:center">${ok}</td><td style="text-align:center">${ok}</td><td style="text-align:center">${ok}</td><td style="text-align:center">${ok}</td><td style="color:#4c7c15;font-weight:700">そろっています</td></tr>
+        <tr><td><b>世田谷区◯◯3丁目 土地</b></td><td style="text-align:center">${ok}</td><td style="text-align:center">${ok}</td><td style="text-align:center">${ok}</td><td style="text-align:center">${ok}</td><td style="text-align:center">${ok}</td><td style="color:#4c7c15;font-weight:700">そろっています</td></tr>
+        <tr><td><b>川口市◯◯2丁目 収益レジ</b></td><td style="text-align:center">${ok}</td><td style="text-align:center">${ng}</td><td style="text-align:center">${ok}</td><td style="text-align:center">${ok}</td><td style="text-align:center">${ng}</td><td><b style="color:#cc3300">2件</b>（図面・写真）</td></tr>
+      </table>
+      <div class="muted" style="font-size:11px;margin-top:8px">※ ［資料をアップ］で追加すると自動で○に。<b>不足資料は担当へ自動リマインド</b>され、古い資料での案内事故を防ぎます（更新日も管理）。</div>
+    </div>`;
+}
 /* ---------- 収支シート（詳細・主役） ---------- */
 function renderDetail(id){
   const d=dealById(id)||DEALS[0];
@@ -1167,6 +1186,14 @@ function settlementPanel(d){
         ${pf('実際の土地仕入額','number',tochi)}
         ${pf('借入実行額','number',Math.round(tochi*0.9))}
       </div>
+      <div style="margin-top:14px;border:1px dashed var(--line);padding:11px 14px">
+        <div style="font-weight:800;font-size:12px;margin-bottom:7px;color:var(--ink)">決済前チェックリスト<span class="optbadge">オプション</span><span style="font-weight:700;color:#c25400;font-size:11px;margin-left:8px">⚠ 決済日まであと3日（メール/LINEに自動リマインド）</span></div>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:4px 18px;font-size:12.5px;color:var(--body)">
+          <span>☑ 融資実行の確認（済 06/30）</span><span>☑ 境界・越境の確認（済 06/25）</span>
+          <span>☐ 残代金の準備</span><span>☐ 司法書士の手配</span>
+          <span>☐ 火災保険・引渡書類の確認</span><span style="color:var(--sub)">未完了 3件＝決済日までに要対応</span>
+        </div>
+      </div>
       <button class="btn ok" style="margin-top:12px" onclick="act('settle_buy','${d.id}')">✓ 仕入決済を登録 → 販売中へ</button>
     </div></div>`;
 }
@@ -1184,6 +1211,14 @@ function sellingPanel(d){
         ${pf('値下げ予定','text','')}
       </div>
       <div style="margin-top:10px"><button class="btn" onclick="act('price_update','${d.id}')">売出価格・状況を更新</button></div>
+      <div style="margin-top:14px;border:1px dashed var(--line);padding:11px 14px">
+        <div style="font-weight:800;font-size:12px;margin-bottom:7px;color:var(--ink)">価格改定履歴<span class="optbadge">オプション</span></div>
+        <table style="font-size:12px"><thead><tr><th>日付</th><th class="num">売出価格</th><th class="num">増減</th><th>理由</th></tr></thead><tbody>
+          <tr><td>売出開始</td><td class="num">${fmtY(Math.round(d.scen[0].price*1.03))}</td><td class="num">—</td><td>出値（想定①ベース）</td></tr>
+          <tr><td>3週間後</td><td class="num"><b>${fmtY(d.scen[0].price)}</b></td><td class="num" style="color:#c25400">−3.0%</td><td>反響が鈍く問い合わせ増を狙い改定</td></tr>
+        </tbody></table>
+        <div class="muted" style="font-size:11px;margin-top:6px">※「いつ・いくら改定したら売れたか」が過去実績に自動で蓄積され、値下げ判断の材料になります。</div>
+      </div>
       <div style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)">
         <div style="font-weight:700;color:var(--ink);font-size:13px;margin-bottom:8px">売却が決まったら：売却決済を登録</div>
         <div class="grid2">
@@ -1391,6 +1426,7 @@ function renderAccess(){
     ['経営ダッシュボード', N, Y('全社'), Y('全社')],
     ['　└ 資金繰り・与信枠（経営DBのタブ）', N, Y('全社'), Y('全社')],
     ['在庫滞留アラート', Y('自分の在庫'), Y('全社'), Y('全社')],
+    ['販売業務パック（買付管理・反響ログ・価格改定履歴・資料チェック・決済期日）', Y('担当分・全社在庫'), Y('全社'), Y('全社')],
     ['通知・タスク', Y('自分宛'), Y(''), Y('')],
     ['取引先台帳', Y('閲覧'), Y(''), Y('')],
     ['稟議書 自動生成', Y('作成'), Y('閲覧'), Y('閲覧')],
@@ -1460,6 +1496,35 @@ function inventoryHTML(){
         ${inv.map(row).join('')}
       </table>
       <div class="muted" style="font-size:11px;margin-top:10px">※ サンプル値（マスキング）。保有日数の色：90日超＝赤（要対応）／60〜90日＝橙。<b>CA＝守秘義務契約（購入検討の本気度）</b>。実運用では仕入決済の登録から自動でカウント・更新されます。</div>
+    </div>
+    <div class="sectiontitle">買付・商談管理<span class="optbadge">オプション</span></div>
+    <div class="xwrap">
+      <table class="xgrid">
+        <tr><td class="sec" colspan="7">受領中の買付（回答期限の近い順）</td></tr>
+        <tr><td class="lbl">物件</td><td class="lbl">受領日</td><td class="lbl num">買付金額</td><td class="lbl num">売出比</td><td class="lbl">条件</td><td class="lbl">回答期限</td><td class="lbl">状態</td></tr>
+        <tr><td><b>川口市◯◯4丁目 アパート</b><br><span style="color:var(--sub);font-size:10.5px">対応 田中</span></td><td>06/20</td><td class="num">89,000,000円</td><td class="num" style="color:#c25400">−7.1%</td><td style="font-size:11.5px">指値・融資特約あり</td><td><b style="color:#cc3300">07/05（本日）</b></td><td><span style="background:#fdeae0;color:#cc3300;font-size:11px;font-weight:700;padding:2px 9px">回答期限</span></td></tr>
+        <tr><td><b>板橋区◯◯2丁目 土地</b><br><span style="color:var(--sub);font-size:10.5px">対応 高橋</span></td><td>07/02</td><td class="num">20,500,000円</td><td class="num" style="color:#c25400">−3.3%</td><td style="font-size:11.5px">現金・7月末決済希望</td><td><b style="color:#c25400">07/06（あと2日）</b></td><td><span style="background:#fff3e6;color:#c25400;font-size:11px;font-weight:700;padding:2px 9px">検討中</span></td></tr>
+        <tr><td><b>江戸川区△△2丁目 戸建</b><br><span style="color:var(--sub);font-size:10.5px">対応 佐藤</span></td><td>06/28</td><td class="num">44,000,000円</td><td class="num" style="color:#c25400">−6.0%</td><td style="font-size:11.5px">住宅ローン特約あり</td><td>07/08</td><td><span style="background:#f1f6e6;color:#4c7c15;font-size:11px;font-weight:700;padding:2px 9px">条件交渉中</span></td></tr>
+      </table>
+      <div class="muted" style="font-size:11px;margin-top:8px">※ 買付（購入申込）を受領日・金額・条件・回答期限つきで管理。<b>複数買付の比較と回答漏れ防止</b>。期限が近い買付は通知にも自動で出ます。</div>
+    </div>
+    <div class="sectiontitle">反響ログ<span class="optbadge">オプション</span></div>
+    <div class="xwrap">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+        <span style="background:#f1f4e8;color:#3f5720;font-size:11.5px;font-weight:700;padding:4px 12px">ポータルA 14件</span>
+        <span style="background:#f1f4e8;color:#3f5720;font-size:11.5px;font-weight:700;padding:4px 12px">ポータルB 9件</span>
+        <span style="background:#eef2e4;color:#3f5720;font-size:11.5px;font-weight:700;padding:4px 12px">業者持込 12件</span>
+        <span style="background:#eef2e4;color:#3f5720;font-size:11.5px;font-weight:700;padding:4px 12px">紹介 4件</span>
+        <span style="color:var(--sub);font-size:11px;align-self:center">今月の問い合わせ経路（全物件計・サンプル）</span>
+      </div>
+      <table class="xgrid">
+        <tr><td class="lbl">日付</td><td class="lbl">物件</td><td class="lbl">経路</td><td class="lbl">内容</td><td class="lbl">次アクション</td></tr>
+        <tr><td>07/03</td><td>板橋区◯◯2丁目 土地</td><td>業者持込</td><td style="font-size:11.5px">買付の意向・資料請求</td><td style="font-size:11.5px">販売資料を送付 → 買付受領</td></tr>
+        <tr><td>07/02</td><td>江戸川区△△2丁目 戸建</td><td>ポータルA</td><td style="font-size:11.5px">内見希望（週末）</td><td style="font-size:11.5px">07/06 内見設定</td></tr>
+        <tr><td>07/01</td><td>足立区□□1丁目 土地</td><td>ポータルB</td><td style="font-size:11.5px">価格の問い合わせ</td><td style="font-size:11.5px">条件ヒアリング中</td></tr>
+        <tr><td>06/30</td><td>杉並区◯◯3丁目 戸建</td><td>紹介</td><td style="font-size:11.5px">住み替え検討・資料請求</td><td style="font-size:11.5px">販売資料を送付済み</td></tr>
+      </table>
+      <div class="muted" style="font-size:11px;margin-top:8px">※ 問い合わせを<b>経路別に記録</b>。どの媒体が反響につながるかが見え、広告費のかけ先を判断できます。</div>
     </div>`;
 }
 
