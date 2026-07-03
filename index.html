@@ -354,6 +354,8 @@
   .side{padding:0 max(28px, calc((100% - 1240px)/2 + 26px));}
   .previewbar{padding:9px max(26px, calc((100% - 1240px)/2 + 26px));}
   .topbar{padding:12px max(26px, calc((100% - 1240px)/2 + 26px));}
+  /* 角丸の完全排除（2026-07-04 自己点検）：インライン指定の角丸（要対応カード等）も四角に統一 */
+  #content [style*="border-radius"]{border-radius:0 !important;}
 </style>
 </head>
 <body>
@@ -742,7 +744,7 @@ function renderApprove(){
     const list = ROLE==='boss'?DEALS.filter(d=>d.status==='await_pres'):DEALS.filter(d=>d.status==='await_mgr');
     const roleName = ROLE==='boss'?'代表':'上長';
     c.innerHTML=`<div class="bubble"><b>${roleName}の承認</b>：あなたの番の承認待ちが <b>${list.length}件</b>。行をクリックすると収支シートが開き、右下の承認パネルで「承認 / 差し戻し / 見送り」ができます。</div>
-      <div class="sectiontitle">⏳ ${roleName} 承認待ち</div>
+      <div class="sectiontitle">${roleName} 承認待ち</div>
       ${list.length?dealTable(list,true):'<div class="card muted">承認待ちはありません。</div>'}`;
     return;
   }
@@ -751,7 +753,7 @@ function renderApprove(){
   const waiting=mine.filter(d=>d.status==='await_mgr'||d.status==='await_pres');
   c.innerHTML=`<div class="bubble"><b>あなた（${CURRENT_STAFF}）の承認状況</b>：表示は自分の案件のみ。提出した案件が今どの段階か。差し戻しは修正して再提出します（上部のプレビュー切替で「上長」「代表」に切り替えると承認操作を体験できます）。</div>
     ${returned.length?`<div class="sectiontitle">↩ 差し戻し（要対応・修正して再提出）</div>${dealTable(returned,false)}`:''}
-    <div class="sectiontitle">⏳ 承認待ち（上長・代表）</div>
+    <div class="sectiontitle">承認待ち（上長・代表）</div>
     ${waiting.length?dealTable(waiting,false):'<div class="card muted">承認待ちはありません。</div>'}`;
 }
 
@@ -823,13 +825,13 @@ function todoCardHTML(){
   let items;
   if(ROLE==='boss') items=[
     {n:DEALS.filter(d=>d.status==='await_pres').length,lab:'代表 承認待ち',ic:'',go:"go('approve')",u:true},
-    {n:DEALS.filter(d=>d.status==='await_mgr').length,lab:'上長が確認中',ic:'⏳',go:"go('approve')",u:false},
-    {n:invA,lab:'在庫の販促・値下げ検討',ic:'▽',go:"go('ops')",u:false},
+    {n:DEALS.filter(d=>d.status==='await_mgr').length,lab:'上長が確認中',ic:'',go:"go('approve')",u:false},
+    {n:invA,lab:'在庫の販促・値下げ検討',ic:'',go:"go('ops')",u:false},
   ];
   else if(ROLE==='mgr') items=[
     {n:DEALS.filter(d=>d.status==='await_mgr').length,lab:'上長 承認待ち',ic:'',go:"go('approve')",u:true},
     {n:DEALS.filter(d=>d.status==='await_pres').length,lab:'代表へ送付済',ic:'⏩',go:"go('approve')",u:false},
-    {n:invA,lab:'在庫の販促・値下げ検討',ic:'▽',go:"go('ops')",u:false},
+    {n:invA,lab:'在庫の販促・値下げ検討',ic:'',go:"go('ops')",u:false},
   ];
   else items=[
     {n:mine.filter(d=>d.status==='returned').length,lab:'差し戻し（要修正）',ic:'↩',go:"go('approve')",u:true},
@@ -857,7 +859,7 @@ function refreshNotif(){
   const apprN = ROLE==='boss'?DEALS.filter(d=>d.status==='await_pres').length : ROLE==='mgr'?DEALS.filter(d=>d.status==='await_mgr').length : visibleDeals().filter(d=>d.status==='returned'||d.status==='approved').length;
   if(apprN) items.push({ic:'',t:ROLE==='staff'?'あなたの対応が必要な案件があります':'あなたの番の承認待ちがあります',s:apprN+'件',go:ROLE==='staff'?"go('list')":"go('approve')",red:true});
   const invA=INVENTORY.filter(x=>x.days>90);
-  if(invA.length) items.push({ic:'▽',t:'在庫が90日超（要販促・値下げ検討）',s:invA[0].name+(invA.length>1?' ほか'+(invA.length-1)+'件':''),go:"go('ops')",red:true});
+  if(invA.length) items.push({ic:'',t:'在庫が90日超（要販促・値下げ検討）',s:invA[0].name+(invA.length>1?' ほか'+(invA.length-1)+'件':''),go:"go('ops')",red:true});
   items.push({ic:'',t:'今週の全社サマリーが届きました',s:'売上・在庫・粗利（週次・自動配信）',go:(ROLE==='staff'?"go('review')":"go('bizdash')"),red:false});
   const unread=items.filter(i=>i.red).length;
   b.textContent=unread||''; b.style.display=unread?'inline-flex':'none';
@@ -883,7 +885,7 @@ function renderDashboard(){
         <div class="kpi"><div class="l">販売中（仕入済）</div><div class="v">${selling}<small> 件</small></div></div>
         <div class="kpi"><div class="l">◎推奨 判定</div><div class="v">${ok}<small> 件</small></div></div>
       </div>
-      <div class="sectiontitle">⏳ あなた（代表）の承認待ち</div>
+      <div class="sectiontitle">あなた（代表）の承認待ち</div>
       ${awaitPres.length?dealTable(awaitPres,true):'<div class="card muted">代表承認待ちはありません。</div>'}
     `;
     return;
@@ -897,7 +899,7 @@ function renderDashboard(){
         <div class="kpi"><div class="l">差し戻し中</div><div class="v">${returned.length}<small> 件</small></div></div>
         <div class="kpi"><div class="l">◎推奨 判定</div><div class="v">${ok}<small> 件</small></div></div>
       </div>
-      <div class="sectiontitle">⏳ あなた（上長）の承認待ち</div>
+      <div class="sectiontitle">あなた（上長）の承認待ち</div>
       ${awaitMgr.length?dealTable(awaitMgr,true):'<div class="card muted">上長承認待ちはありません。</div>'}
     `;
     return;
@@ -1614,7 +1616,7 @@ function resaleSectionsHTML(){
     <div class="xcols" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
       <div class="card" style="padding:16px 18px;margin:0"><div class="sectiontitle" style="margin-top:0">仕入れ先ランキング</div>${vBarChart(fromRank.map(p=>({label:p.name,value:p.cnt,sub:fmtYm(p.rev)})),'var(--navy)')}</div>
       <div class="card" style="padding:16px 18px;margin:0"><div class="sectiontitle" style="margin-top:0">売却先ランキング</div>${vBarChart(toRank.map(p=>({label:p.name,value:p.cnt,sub:fmtYm(p.rev)})),'var(--accent)')}</div>
-      <div class="card" style="padding:16px 18px;margin:0"><div class="sectiontitle" style="margin-top:0">仲介業者ランキング</div>${vBarChart(brokerRank.map(p=>({label:p.name,value:p.cnt,sub:fmtYm(p.rev)})),'#0891b2')}</div>
+      <div class="card" style="padding:16px 18px;margin:0"><div class="sectiontitle" style="margin-top:0">仲介業者ランキング</div>${vBarChart(brokerRank.map(p=>({label:p.name,value:p.cnt,sub:fmtYm(p.rev)})),'#e08a00')}</div>
     </div>
     <div class="card" style="padding:18px 20px;margin-bottom:16px">
       <div class="sectiontitle" style="margin-top:0">種別ごとの構成（売上・粗利・原価）</div>
