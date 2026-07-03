@@ -710,7 +710,7 @@ function setRole(r){ ROLE=r; document.getElementById('role-staff').classList.tog
   ['nav-bizdash','nav-perf'].forEach(id=>{const b=document.getElementById(id); if(b) b.style.display=(r==='staff')?'none':'';}); // 経営・成績は上長/代表のみ
   go(CUR.view, CUR.arg); }
 let CUR={view:'dashboard',arg:null};
-const TITLES={dashboard:['ホーム','ダッシュボード'],approve:['承認','承認（あなたの番の承認待ち）'],ops:['販売中物件','販売中物件（全社・全営業が販売対応）'],list:['物件','担当物件'],detail:['物件 › 収支シート','事業収支シート'],market:['相場','相場調査（オプション機能）'],compare:['物件','物件比較・感応度（オプション）'],review:['過去実績','過去実績（計画→実績の検証・過去の起案参照）'],access:['設定','表示範囲（どの立場に何が見えるか）'],bizdash:['経営','経営ダッシュボード（上長・代表）'],perf:['評価','担当者別パフォーマンス（上長・代表）'],new:['物件 › 新規起案','新規物件の起案（事業計画）']};
+const TITLES={dashboard:['ホーム','ダッシュボード'],approve:['承認','承認（あなたの番の承認待ち）'],ops:['販売中物件','販売中物件（全社・全営業が販売対応）'],list:['物件','担当物件'],detail:['物件 › 収支シート','事業収支シート'],market:['相場','相場調査（オプション機能）'],compare:['物件','物件比較・感応度（オプション）'],review:['過去実績','過去実績（計画→実績の検証・過去の起案参照）'],access:['設定','表示範囲（どの立場に何が見えるか）'],bizdash:['経営','経営ダッシュボード（オプション・上長/代表）'],perf:['評価','担当者別パフォーマンス（オプション・上長/代表）'],new:['物件 › 新規起案','新規物件の起案（事業計画）']};
 function go(view,arg){
   CUR={view,arg};
   document.querySelectorAll('.nav button[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===view));
@@ -862,7 +862,7 @@ function refreshNotif(){
   if(invA.length) items.push({ic:'',t:'在庫が90日超（要販促・値下げ検討）',s:invA[0].name+(invA.length>1?' ほか'+(invA.length-1)+'件':''),go:"go('ops')",red:true});
   items.push({ic:'',t:'仕入決済の期日が近づいています（決済期日リマインド）',s:'江戸川区◯◯1丁目 土地・決済予定 07/10（あと3日）',go:"go('detail','GR-2026-0012')",red:false});
   items.push({ic:'',t:'買付の回答期限が本日です（買付・商談管理）',s:'川口市◯◯4丁目 アパート・指値89,000,000円',go:"go('ops')",red:true});
-  items.push({ic:'',t:'今週の全社サマリーが届きました',s:'売上・在庫・粗利（週次・自動配信）',go:(ROLE==='staff'?"go('review')":"go('bizdash')"),red:false});
+  items.push({ic:'',t:'今週の全社サマリーが届きました',s:'売上・在庫・粗利（週次サマリー自動配信＝オプション）',go:(ROLE==='staff'?"go('review')":"go('bizdash')"),red:false});
   const unread=items.filter(i=>i.red).length;
   b.textContent=unread||''; b.style.display=unread?'inline-flex':'none';
   p.innerHTML = `<div style="padding:11px 14px;border-bottom:1px solid var(--line);font-weight:700;font-size:13px;display:flex;justify-content:space-between;align-items:center">通知 <span style="font-size:11px;color:var(--sub);font-weight:600">未読 ${unread}件</span></div>`
@@ -1187,7 +1187,7 @@ function settlementPanel(d){
         ${pf('借入実行額','number',Math.round(tochi*0.9))}
       </div>
       <div style="margin-top:14px;border:1px dashed var(--line);padding:11px 14px">
-        <div style="font-weight:800;font-size:12px;margin-bottom:7px;color:var(--ink)">決済前チェックリスト<span style="font-weight:700;color:#c25400;font-size:11px;margin-left:8px">⚠ 決済日まであと3日（メール/LINEに自動リマインド）</span></div>
+        <div style="font-weight:800;font-size:12px;margin-bottom:7px;color:var(--ink)">決済前チェックリスト<span style="font-weight:700;color:#c25400;font-size:11px;margin-left:8px">⚠ 決済日まであと3日（メールに自動リマインド／LINE・Slack連携はオプション）</span></div>
         <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:4px 18px;font-size:12.5px;color:var(--body)">
           <span>☑ 融資実行の確認（済 06/30）</span><span>☑ 境界・越境の確認（済 06/25）</span>
           <span>☐ 残代金の準備</span><span>☐ 司法書士の手配</span>
@@ -2342,8 +2342,8 @@ function uploadCardHTML(){ return `
      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
        <div style="font-size:30px"></div>
        <div style="flex:1;min-width:220px">
-         <div style="font-weight:800;color:var(--ink);font-size:14px">エクセルから自動入力（アップロード）</div>
-         <div style="font-size:12px;color:var(--sub);margin-top:2px">今回のシステムの基盤にした<b>事業収支エクセル（雛型）</b>をそのままアップロードすると、下の概要・原価などが<b>自動で入力</b>されます。</div>
+         <div style="font-weight:800;color:var(--ink);font-size:14px">エクセルから自動入力（アップロード）<span class="optbadge">オプション</span></div>
+         <div style="font-size:12px;color:var(--sub);margin-top:2px">今回のシステムの基盤にした<b>事業収支エクセル（雛型）</b>をそのままアップロードすると、下の概要・原価などが<b>自動で入力</b>されます。<b style="color:#ff6600">※ 任意の追加機能（別途費用）です。基盤では下のフォームに手入力いただきます。</b></div>
        </div>
        <button class="btn primary" style="width:auto;padding:9px 18px" onclick="fakeUpload()">エクセルを選択</button>
      </div>
