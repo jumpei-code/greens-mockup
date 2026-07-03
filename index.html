@@ -1320,8 +1320,7 @@ function renderReview(){
     </tr>`;
   };
   document.getElementById('content').innerHTML=`
-    <div style="display:inline-block;background:#f1f6e6;border:1px solid #d6e3b8;color:#4c7c15;font-size:11.5px;font-weight:700;padding:4px 11px;margin-bottom:10px;">全社共有：完了案件の“答え合わせ”は全員が閲覧できます（会社の判断ノウハウとして蓄積）</div>
-    <div class="notebar">仕入れ時に立てた<b>「計画（着地見込み）」</b>と売却後の<b>「実績」</b>を突き合わせ、<b>判断が正しかったかを検証</b>。会社として想定のクセ（甘い／堅い）を学び、次の判断精度を上げる画面です。</div>
+    <div class="notebar"><span style="background:#f1f6e6;border:1px solid #d6e3b8;color:#4c7c15;font-size:10.5px;font-weight:800;padding:2px 9px;margin-right:9px;vertical-align:middle;white-space:nowrap;">全社共有</span>仕入れ時の<b>「計画（着地見込み）」</b>と売却後の<b>「実績」</b>を突き合わせ、<b>判断が正しかったかを検証する画面</b>です。完了案件は全員が閲覧でき、会社の判断ノウハウとして蓄積されます。</div>
     <div class="insight">
       <div class="muted" style="font-size:12px;margin-bottom:2px">過去実績の分析</div>
       <div class="big" style="color:${dc}">実績は、計画（着地見込み）を 平均 ${avgDiff>=0?'+':''}${pct(avgDiff)}</div>
