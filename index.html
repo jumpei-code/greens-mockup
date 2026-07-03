@@ -383,7 +383,7 @@
       <button data-nav="approve" onclick="go('approve')"><span class="ic">✓</span>承認<span id="nav-appr-badge" class="navbadge" style="display:none"></span></button>
       <button data-nav="list" onclick="go('list')"><span class="ic">≣</span><span id="nav-list-label">担当物件一覧</span><span id="nav-list-badge" class="navbadge" style="display:none"></span></button>
       <button data-nav="ops" onclick="go('ops')"><span class="ic">◔</span>販売物件一覧</button>
-      <button data-nav="review" onclick="go('review')"><span class="ic">↺</span>実績分析</button>
+      <button data-nav="review" onclick="go('review')"><span class="ic">↺</span>過去実績</button>
       <button data-nav="access" onclick="go('access')"><span class="ic">▦</span>表示範囲（権限）</button>
       <div class="optdrop">
         <button type="button" class="optdrop-btn">オプション機能 <span class="caret">▽</span></button>
@@ -574,7 +574,7 @@ function judge(d){
   if(r2>=0.08 && irr>=0.10) return {k:'warn',mark:'△',label:'条件付き可',cls:'j-warn'};
   return {k:'ng',mark:'×',label:'見送り',cls:'j-ng'};
 }
-const STATUS={await_mgr:['await','上長承認待ち'],await_pres:['await','代表承認待ち'],returned:['returned','差し戻し'],approved:['approved','承認済み（仕入決済前）'],sell:['sell','販売中'],done:['done','実績分析済'],rej:['rej','見送り']};
+const STATUS={await_mgr:['await','上長承認待ち'],await_pres:['await','代表承認待ち'],returned:['returned','差し戻し'],approved:['approved','承認済み（仕入決済前）'],sell:['sell','販売中'],done:['done','検証済（過去実績）'],rej:['rej','見送り']};
 function statusPill(s){ const x=STATUS[s]; return `<span class="st ${x[0]}">${x[1]}</span>`; }
 function dealById(id){ return DEALS.find(d=>d.id===id); }
 
@@ -706,11 +706,11 @@ function visibleDeals(){ return ROLE==='staff' ? DEALS.filter(d=>d.staff===CURRE
 function setRole(r){ ROLE=r; document.getElementById('role-staff').classList.toggle('on',r==='staff');
   document.getElementById('role-mgr').classList.toggle('on',r==='mgr');
   document.getElementById('role-boss').classList.toggle('on',r==='boss');
-  const ll=document.getElementById('nav-list-label'); if(ll) ll.textContent=(r==='staff')?'担当物件一覧':'過去実績';
+  const ll=document.getElementById('nav-list-label'); if(ll) ll.textContent=(r==='staff')?'担当物件一覧':'全社物件一覧';
   ['nav-bizdash','nav-perf'].forEach(id=>{const b=document.getElementById(id); if(b) b.style.display=(r==='staff')?'none':'';}); // 経営・成績は上長/代表のみ
   go(CUR.view, CUR.arg); }
 let CUR={view:'dashboard',arg:null};
-const TITLES={dashboard:['ホーム','ダッシュボード'],approve:['承認','承認（あなたの番の承認待ち）'],ops:['販売物件一覧','販売物件一覧（全社・全営業が販売対応）'],list:['物件','担当物件一覧'],detail:['物件 › 収支シート','事業収支シート'],market:['相場','相場調査（オプション機能）'],compare:['物件','物件比較・感応度（オプション）'],review:['実績分析','実績分析'],access:['設定','表示範囲（どの立場に何が見えるか）'],bizdash:['経営','経営ダッシュボード（上長・代表）'],perf:['評価','担当者別パフォーマンス（上長・代表）'],new:['物件 › 新規起案','新規物件の起案（事業計画）']};
+const TITLES={dashboard:['ホーム','ダッシュボード'],approve:['承認','承認（あなたの番の承認待ち）'],ops:['販売物件一覧','販売物件一覧（全社・全営業が販売対応）'],list:['物件','担当物件一覧'],detail:['物件 › 収支シート','事業収支シート'],market:['相場','相場調査（オプション機能）'],compare:['物件','物件比較・感応度（オプション）'],review:['過去実績','過去実績（計画→実績の検証・過去の起案参照）'],access:['設定','表示範囲（どの立場に何が見えるか）'],bizdash:['経営','経営ダッシュボード（上長・代表）'],perf:['評価','担当者別パフォーマンス（上長・代表）'],new:['物件 › 新規起案','新規物件の起案（事業計画）']};
 function go(view,arg){
   CUR={view,arg};
   document.querySelectorAll('.nav button[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===view));
@@ -956,10 +956,10 @@ function dealTable(arr,bossMode){
 /* ---------- 物件一覧 ---------- */
 function renderList(){
   const c=document.getElementById('content');
-  document.getElementById('ptitle').textContent=(ROLE==='staff')?'担当物件一覧':'過去実績';
+  document.getElementById('ptitle').textContent=(ROLE==='staff')?'担当物件一覧':'全社物件一覧';
   const bubble=(ROLE==='staff')
     ? `<div class="bubble">≣ <b>担当物件一覧</b>：あなた（${CURRENT_STAFF}）が担当する物件をまとめて確認。状態で絞り込め、行をクリックすると収支シートが開き、<b>仕入決済の登録・販売活動</b>もここから進められます。</div>`
-    : `<div class="bubble">≣ <b>過去実績</b>：全社・全員の物件を横断で確認。エリア・種別・判定・状態で絞り込み、<b>類似案件の相場感</b>や過去の答え合わせに使えます。</div>`;
+    : `<div class="bubble">≣ <b>全社物件一覧</b>：全社・全員の物件を横断で確認。エリア・種別・判定・状態で絞り込み、<b>類似案件の相場感</b>や過去の答え合わせに使えます。</div>`;
   c.innerHTML=bubble+`
     <div class="card" style="margin-bottom:16px">
       <h3>条件で絞り込む（相場査定的な入口）</h3>
@@ -987,7 +987,7 @@ function filterList(){
 function renderDetail(id){
   const d=dealById(id)||DEALS[0];
   const j=judge(d), r2=rate(d,1), irr=adoptedIRR(d);
-  const steps=[['物件入手',1],['事業計画',2],['上長承認',3],['代表承認',4],['仕入決済',5],['販売中',6],['売却決済',7],['実績分析',8]];
+  const steps=[['物件入手',1],['事業計画',2],['上長承認',3],['代表承認',4],['仕入決済',5],['販売中',6],['売却決済',7],['過去実績',8]];
   const stMap={returned:2, await_mgr:3, await_pres:4, rej:4, approved:5, sell:6, done:8};
   let curStep = stMap[d.status]||2;
   const types=['土地','戸建','アパート'];
@@ -1102,7 +1102,7 @@ function approvalPanel(d){
     else action=`<div class="muted" style="font-size:12.5px">代表（${(d.appr||{}).pres||'代表'}）の最終承認待ちです。<br>上部のプレビュー切替で「代表」に切り替えると承認操作を体験できます。</div>`;
   } else if(s==='rej'){
     action=`<div class="muted" style="font-size:12.5px"><b style="color:var(--ng-fg)">見送り（代表判断）</b>：${d.rejReason||''}</div>
-      <div class="muted" style="font-size:11.5px;margin-top:8px">この理由は「実績分析」に蓄積され、次の判断に活きます。</div>`;
+      <div class="muted" style="font-size:11.5px;margin-top:8px">この理由は「過去実績」に蓄積され、次の判断に活きます。</div>`;
   } else {
     action=`<div class="muted" style="font-size:12.5px"><b style="color:var(--ok-fg)">上長・代表とも承認済み（仕入れGO）。</b><br>販売状況・実績は「実績分析」へ進みます。</div>`;
   }
@@ -1131,10 +1131,10 @@ function act(kind,id){
     mgr_return:'↩ 担当へ差し戻しました。担当が修正して再提出します。',
     resubmit:'✓ 再提出しました。「上長承認待ち」に戻ります。',
     pres_approve:'✓ 代表が承認しました（仕入れGO）。次は「仕入決済」です。',
-    pres_reject:'× 見送りにしました。見送り理由は実績分析に蓄積されます。',
+    pres_reject:'× 見送りにしました。見送り理由は過去実績に蓄積されます。',
     settle_buy:'✓ 仕入決済を登録しました。案件は「販売中」へ進みます。',
     price_update:'✓ 売出価格・販売状況を更新しました。',
-    settle_sell:'✓ 売却決済を登録しました。実績を確定し「実績分析」に蓄積されました。'}[kind];
+    settle_sell:'✓ 売却決済を登録しました。実績を確定し「過去実績」に蓄積されました。'}[kind];
   const neg=(kind==='mgr_return'||kind==='pres_reject');
   const f=document.getElementById('flash');
   if(f) f.innerHTML=`<div class="flash"${neg?' style="background:#fef2f2;border-color:#fecaca;color:#991b1b"':''}>${msg}（モック表示）</div>`;
@@ -1194,7 +1194,7 @@ function sellingPanel(d){
 function donePanel(d){
   const a=d.actual||{}; const expRate=rate(d,1); const actRate=a.price?a.profit/a.price:0; const diff=actRate-expRate; const up=diff>=0;
   return `<div class="card action-card phase-done">
-    <div class="apptitle"><span class="lead"><span class="ic">✓</span>実績分析（答え合わせ）</span><span class="tag">完了</span></div>
+    <div class="apptitle"><span class="lead"><span class="ic">✓</span>過去実績（答え合わせ）</span><span class="tag">完了</span></div>
     <div class="appbody">
       <div class="apptarget">対象：<b>${d.name}</b>（${d.id}・担当 ${d.staff}）　売却決済済み</div>
       <div class="muted" style="font-size:12.5px;margin-bottom:10px">売却決済・実績を登録済み。想定と実績の答え合わせが会社の判断材料として蓄積されました。</div>
@@ -1204,7 +1204,7 @@ function donePanel(d){
         <tr><td>差分（実績−想定②）</td><td class="num">—</td><td class="num">—</td><td class="num ${up?'delta-dn':'delta-up'}"><b>${up?'▲':'▼'} ${pct(Math.abs(diff))}</b></td></tr>
       </tbody></table>
       <div class="muted" style="font-size:12px;margin-bottom:10px">所見：${a.note||''}</div>`:''}
-      <button class="btn" onclick="go('review')">実績分析を見る</button>
+      <button class="btn" onclick="go('review')">過去実績を見る</button>
     </div></div>`;
 }
 
@@ -1298,19 +1298,32 @@ function assessMarket(){
     </div>`;
 }
 
-/* ---------- 実績分析 ---------- */
+/* ---------- 過去実績（計画→実績の検証・過去の起案参照） ---------- */
+let REV_F={area:'',staff:'',type:''};
+function setRevF(k,v){REV_F[k]=v;renderReview();window.scrollTo(0,0);}
+function distArea(a){const m=(a||'').match(/^(.+?[区市])/);return m?m[1]:a;}
 function renderReview(){
-  const done=DEALS.filter(d=>d.actual);
-  const rej=DEALS.filter(d=>d.status==='rej');
+  const doneAll=DEALS.filter(d=>d.actual);
+  const rejAll=DEALS.filter(d=>d.status==='rej');
+  const pool=doneAll.concat(rejAll);
+  const areas=[...new Set(pool.map(d=>distArea(d.area)))].sort();
+  const staffs=[...new Set(pool.map(d=>d.staff))].sort();
+  const types=[...new Set(pool.map(d=>d.type))];
+  const hit=d=>(!REV_F.area||distArea(d.area)===REV_F.area)&&(!REV_F.staff||d.staff===REV_F.staff)&&(!REV_F.type||d.type===REV_F.type);
+  const mmdd=u=>{const m=(u||'').match(/(\d+)\/(\d+)/);return m?(+m[1])*100+(+m[2]):0;};
+  const done=doneAll.filter(hit).sort((a,b)=>mmdd(b.updated)-mmdd(a.updated));
+  const rej=rejAll.filter(hit);
   const diffs=done.map(d=>(d.actual.profit/d.actual.price)-rate(d,1));
   const hits=diffs.filter(x=>x>=0).length;
   const avgDiff=diffs.length?diffs.reduce((a,b)=>a+b,0)/diffs.length:0;
   const dc=avgDiff>=0?COLR.ok:COLR.ng;
+  const filtered=REV_F.area||REV_F.staff||REV_F.type;
   const sub='color:var(--sub);font-size:11px';
+  const sel=(k,label,opts)=>`<div><div class="muted" style="font-size:11px">${label}</div><select class="btn" onchange="setRevF('${k}',this.value)"><option value="">すべて</option>${opts.map(o=>`<option ${REV_F[k]===o?'selected':''}>${o}</option>`).join('')}</select></div>`;
   const row=d=>{
     const e=rate(d,1), a=d.actual.profit/d.actual.price, diff=a-e, up=diff>=0; const j=judge(d), c=up?COLR.ok:COLR.ng;
-    return `<tr>
-      <td><b>${d.name}</b><br><span style="${sub}">${d.type}・担当 ${d.staff}・売却 ${d.updated}</span></td>
+    return `<tr class="clickable" onclick="go('detail','${d.id}')">
+      <td><b>${d.name}</b><br><span style="${sub}">${distArea(d.area)}・${d.type}・担当 ${d.staff}・売却 ${d.updated}</span></td>
       <td>${j.mark} ${j.label}</td>
       <td class="num">${fmtY(d.scen[1].price)}<br><span style="${sub}">利益率 ${pct(e)}</span></td>
       <td class="num">${fmtY(d.actual.price)}<br><span style="${sub}">利益率 ${pct(a)}</span></td>
@@ -1320,29 +1333,36 @@ function renderReview(){
     </tr>`;
   };
   document.getElementById('content').innerHTML=`
-    <div class="notebar"><span style="background:#f1f6e6;border:1px solid #d6e3b8;color:#4c7c15;font-size:10.5px;font-weight:800;padding:2px 9px;margin-right:9px;vertical-align:middle;white-space:nowrap;">全社共有</span>仕入れ時の<b>「計画（着地見込み）」</b>と売却後の<b>「実績」</b>を突き合わせ、<b>判断が正しかったかを検証する画面</b>です。完了案件は全員が閲覧でき、会社の判断ノウハウとして蓄積されます。</div>
+    <div class="notebar"><span style="background:#f1f6e6;border:1px solid #d6e3b8;color:#4c7c15;font-size:10.5px;font-weight:800;padding:2px 9px;margin-right:9px;vertical-align:middle;white-space:nowrap;">全社共有</span>仕入れ時の<b>「計画（着地見込み）」</b>と売却後の<b>「実績」</b>の答え合わせ＋見送り判断の検証。<b>行をクリックすると起案時の収支シート</b>（原価内訳・計算）が開き、他担当の過去の判断を仕入れ検討の参考にできます。</div>
+    <div class="card" style="padding:12px 16px;margin-bottom:14px;display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end">
+      ${sel('area','エリア',areas)}
+      ${sel('staff','担当者',staffs)}
+      ${sel('type','種別',types)}
+      <button class="btn" onclick="REV_F={area:'',staff:'',type:''};renderReview()">リセット</button>
+      <span class="muted" style="font-size:11px">仕入れ検討中の物件と<b>同エリアの直近事例</b>（新しい順）を確認できます${filtered?`／<b style="color:var(--accent)">絞り込み中：${[REV_F.area,REV_F.staff,REV_F.type].filter(Boolean).join('・')}</b>`:''}</span>
+    </div>
     <div class="insight">
-      <div class="muted" style="font-size:12px;margin-bottom:2px">過去実績の分析</div>
-      <div class="big" style="color:${dc}">実績は、計画（着地見込み）を 平均 ${avgDiff>=0?'+':''}${pct(avgDiff)}</div>
+      <div class="muted" style="font-size:12px;margin-bottom:2px">過去実績の分析${filtered?'（絞り込み結果）':''}</div>
+      <div class="big" style="color:${dc}">${done.length?`実績は、計画（着地見込み）を 平均 ${avgDiff>=0?'+':''}${pct(avgDiff)}`:'該当する完了案件がありません（条件を変えてください）'}</div>
     </div>
     <div class="kpis">
       ${statBox('振り返った案件',done.length+' 件','売却まで完了')}
-      ${statBox('計画どおり以上',hits+' / '+done.length+' 件','実績 ≥ 計画')}
-      ${statBox('実績と計画の差（平均）',(avgDiff>=0?'+':'')+pct(avgDiff),'利益率の差')}
+      ${statBox('計画どおり以上',done.length?hits+' / '+done.length+' 件':'—','実績 ≥ 計画')}
+      ${statBox('実績と計画の差（平均）',done.length?(avgDiff>=0?'+':'')+pct(avgDiff):'—','利益率の差')}
       ${statBox('見送り（検証材料）',rej.length+' 件','理由を保存')}
     </div>
     <div class="xwrap">
       <table class="xgrid">
-        <tr><td class="sec" colspan="7">案件ごとの答え合わせ（計画 → 実績）</td></tr>
+        <tr><td class="sec" colspan="7">案件ごとの答え合わせ（計画 → 実績）｜行クリックで起案時の収支シートへ</td></tr>
         <tr><td class="lbl">物件</td><td class="lbl">仕入時の判定</td><td class="lbl num">計画（着地見込み）</td><td class="lbl num">実績（売却）</td><td class="lbl num">利益率の差</td><td class="lbl">結果</td><td class="lbl">所見</td></tr>
-        ${done.map(row).join('')}
+        ${done.length?done.map(row).join(''):'<tr><td colspan="7" style="color:var(--sub)">条件に合う完了案件はありません。</td></tr>'}
       </table>
       <table class="xgrid" style="margin-top:14px">
-        <tr><td class="sec" colspan="4">見送った判断の検証（「見送って正解だったか」の材料）</td></tr>
+        <tr><td class="sec" colspan="4">見送った判断の検証（「見送って正解だったか」の材料）｜行クリックで起案内容へ</td></tr>
         <tr><td class="lbl">物件</td><td class="lbl">種別</td><td class="lbl num">着地見込み利益率</td><td class="lbl">見送り理由</td></tr>
-        ${rej.length?rej.map(d=>`<tr><td><b>${d.name}</b><br><span style="${sub}">${d.id}・担当 ${d.staff}</span></td><td>${d.type}</td><td class="num">${pct(rate(d,1))}</td><td style="font-size:11.5px">${d.rejReason||''}</td></tr>`).join(''):'<tr><td colspan="4" style="color:var(--sub)">見送り案件はありません。</td></tr>'}
+        ${rej.length?rej.map(d=>`<tr class="clickable" onclick="go('detail','${d.id}')"><td><b>${d.name}</b><br><span style="${sub}">${distArea(d.area)}・${d.id}・担当 ${d.staff}</span></td><td>${d.type}</td><td class="num">${pct(rate(d,1))}</td><td style="font-size:11.5px">${d.rejReason||''}</td></tr>`).join(''):'<tr><td colspan="4" style="color:var(--sub)">条件に合う見送り案件はありません。</td></tr>'}
       </table>
-      <div class="muted" style="font-size:11px;margin-top:10px">※ 計画（着地見込み）＝仕入れ時に見込んだ着地の売値。緑＝計画以上、橙＝計画割れ。全社の案件が対象（営業担当も閲覧可）。</div>
+      <div class="muted" style="font-size:11px;margin-top:10px">※ 計画（着地見込み）＝仕入れ時に見込んだ着地の売値。緑＝計画以上、橙＝計画割れ。全社の案件が対象（営業担当も閲覧可）。行をクリックすると起案時の収支シート（原価内訳・販売想定・IRR）が開きます。</div>
     </div>`;
 }
 
@@ -1356,9 +1376,9 @@ function renderAccess(){
     ['ダッシュボード', Y('自分の案件'), Y('全社'), Y('全社')],
     ['新規物件の起案', Y('起案（主担当）'), Y(''), Y('')],
     ['承認', P('自分の申請状況'), Y('1次承認'), Y('最終承認')],
-    ['担当物件一覧 ／ 過去実績', Y('担当のみ'), Y('全社'), Y('全社')],
+    ['担当物件一覧 ／ 全社物件一覧', Y('担当のみ'), Y('全社'), Y('全社')],
     ['販売物件一覧（全社共有）', Y('全社'), Y('全社'), Y('全社')],
-    ['実績分析（過去の答え合わせ）', Y('全社・閲覧'), Y('全社'), Y('全社')],
+    ['過去実績（計画→実績の答え合わせ・起案の参照）', Y('全社・閲覧'), Y('全社'), Y('全社')],
     ['　└ 担当者別の成績比較', N, Y(''), Y('')],
   ];
   const opt=[
