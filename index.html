@@ -2444,7 +2444,7 @@ function renderNew(){
          ${fld('建物評価額','n_beval',500000,{green:1})}
        </div></div>
        ${salesFormSection()}
-       <div class="card"><h3>⑩ 相場の目安（サンプル表示）</h3>
+       <div class="card"><h3>⑩ 相場の目安（サンプル表示）<span class="optbadge">オプション</span></h3>
          <div id="market-live"></div>
          <div class="row" style="gap:10px;margin:6px 0 12px">
            <div style="flex:1;min-width:160px"><div class="muted" style="font-size:11px">成約 坪単価（直近1年）<span class="srctag">成約</span></div><div style="font-size:16px;font-weight:700;color:var(--ink)">¥${MARKET.soldAvg.toLocaleString()}<span class="muted" style="font-size:11px;font-weight:400"> /坪（¥${MARKET.soldLo.toLocaleString()}〜¥${MARKET.soldHi.toLocaleString()}）</span></div></div>
@@ -2462,7 +2462,7 @@ function renderNew(){
          <table><thead><tr><th>住所</th><th class="num">坪単価</th><th class="num">一種単価</th><th>成約</th><th>駅距離</th></tr></thead><tbody>
            ${MARKET.comps.map(c=>`<tr><td>${c[0]}</td><td class="num">¥${c[1].toLocaleString()}</td><td class="num">¥${c[2].toLocaleString()}</td><td>${c[3]}</td><td>${c[4]}</td></tr>`).join('')}
          </tbody></table>
-         <div class="muted" style="font-size:11px;margin-top:8px">※ サンプル値。<b>基盤で自動表示できるのは公的データのレンジ</b>（成約レンジ・公示価格・積算価格＝町丁目単位の目安）。<b style="color:#c25400">売出価格・賃料・住所つき成約事例はポータル／レインズ由来のため自動取得できません</b>（手入力、または有料データ連携＝オプション）。どの範囲を自動化するかは面談でご相談のうえ確定します。</div>
+         <div class="muted" style="font-size:11px;margin-top:8px">※ サンプル値。この画面のようなフル表示（売出・賃料・成約事例つき）は<b>オプション（相場データ連携）</b>です。<b>基盤に含まれるのは公的データのレンジ表示のみ</b>（成約レンジ・公示価格・積算価格＝町丁目単位の目安）。<b style="color:#c25400">売出価格・賃料・住所つき成約事例はポータル／レインズ由来のため自動取得できません</b>（手入力、または有料データ連携＝オプション）。どの範囲を自動化するかは面談でご相談のうえ確定します。</div>
        </div>
      </div>
      <div><div class="card calcpanel" id="calc-panel"></div></div>
