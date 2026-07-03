@@ -375,8 +375,11 @@
   .side .foot span b{color:#ff6600 !important;}
   /* オプション機能：サイドバー最下部に配置。ホバーで右側にフライアウト（下端揃え・上方向に展開） */
   .optdrop{width:100%;margin-top:auto;border-top:1px solid var(--line);padding-top:8px;}
-  .optdrop-btn{width:100%;justify-content:space-between;padding:9px 12px;height:auto;}
+  .optdrop-btn{width:100%;justify-content:space-between;padding:9px 12px;height:auto;color:#ff6600;font-weight:700;}
   .optdrop-menu{top:auto;bottom:0;left:100%;margin-left:2px;}
+  .optdrop:hover .optdrop-btn,.optdrop:focus-within .optdrop-btn{color:#ff6600;}
+  .optdrop:has(button.active) .optdrop-btn{background:var(--ink);color:#ff8a3d;}
+  .optdrop:has(button.active) .optdrop-btn .caret{color:#ff8a3d;}
   /* 本文・帯：全幅前提の中央寄せ計算をサイドバー前提に戻す */
   .topbar{padding:12px 26px;}
   .main{min-width:0;}
