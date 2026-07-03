@@ -331,6 +331,22 @@
   .phase-buy{border-color:#1c1f1a;} .phase-buy .apptitle{background:#1c1f1a;}
   .phase-sell{border-color:#c25400;} .phase-sell .apptitle{background:#c25400;}
   .phase-done{border-color:#729c3a;} .phase-done .apptitle{background:#729c3a;}
+  /* ヘッダー整理（2026-07-03）：項目間隔を広げ、オプション4機能は「オプション機能 ▾」ホバーメニューに集約 */
+  .side{padding:0 28px;}
+  .brand{padding-right:22px;}
+  .nav{gap:6px;}
+  .nav button{padding:10px 15px;white-space:nowrap;}
+  .optdrop{position:relative;}
+  .optdrop-btn{display:flex;align-items:center;gap:7px;border:0;background:transparent;color:var(--body);padding:10px 15px;font-size:13px;font-family:inherit;cursor:pointer;white-space:nowrap;}
+  .optdrop-btn .caret{font-size:10px;color:var(--sub);}
+  .optdrop:hover .optdrop-btn,.optdrop:focus-within .optdrop-btn{background:#f1f3ea;color:var(--ink);}
+  .optdrop:has(button.active) .optdrop-btn{background:var(--ink);color:#fff;}
+  .optdrop:has(button.active) .optdrop-btn .caret{color:#b9c2ae;}
+  .optdrop-menu{display:none;position:absolute;top:100%;left:0;background:#fff;border:1px solid var(--ink);min-width:250px;z-index:60;box-shadow:0 10px 26px rgba(20,25,16,.14);padding:4px 0 6px;}
+  .optdrop:hover .optdrop-menu,.optdrop:focus-within .optdrop-menu{display:block;}
+  .optdrop-note{font-size:10.5px;color:var(--sub);padding:8px 14px 6px;border-bottom:1px solid var(--line);margin-bottom:4px;}
+  .optdrop-menu button{display:flex;width:100%;text-align:left;padding:10px 14px;}
+  .optdrop-menu button.active{background:var(--ink);color:#fff;}
 </style>
 </head>
 <body>
@@ -350,11 +366,16 @@
       <button data-nav="ops" onclick="go('ops')"><span class="ic">◔</span>販売物件一覧</button>
       <button data-nav="review" onclick="go('review')"><span class="ic">↺</span>実績分析</button>
       <button data-nav="access" onclick="go('access')"><span class="ic">▦</span>表示範囲（権限）</button>
-      <div class="group" style="margin-top:auto">オプション機能（任意・別途費用）</div>
-      <button id="nav-bizdash" data-nav="bizdash" class="addon" onclick="go('bizdash')" style="display:none"><span class="ic">◆</span><span>経営ダッシュボード<span class="optbadge">オプション</span></span></button>
-      <button id="nav-perf" data-nav="perf" class="addon" onclick="go('perf')" style="display:none"><span class="ic">◉</span><span>担当者別パフォーマンス<span class="optbadge">オプション</span></span></button>
-      <button data-nav="compare" class="addon" onclick="go('compare')"><span class="ic"></span><span>物件比較・感応度<span class="optbadge">オプション</span></span></button>
-      <button data-nav="market" class="addon" onclick="go('market')"><span class="ic">◎</span><span>相場調査<span class="optbadge">オプション</span></span></button>
+      <div class="optdrop">
+        <button type="button" class="optdrop-btn">オプション機能 <span class="caret">▾</span></button>
+        <div class="optdrop-menu">
+          <div class="optdrop-note">任意の追加機能（別途費用）</div>
+          <button id="nav-bizdash" data-nav="bizdash" class="addon" onclick="go('bizdash')" style="display:none"><span>経営ダッシュボード<span class="optbadge">オプション</span></span></button>
+          <button id="nav-perf" data-nav="perf" class="addon" onclick="go('perf')" style="display:none"><span>担当者別パフォーマンス<span class="optbadge">オプション</span></span></button>
+          <button data-nav="compare" class="addon" onclick="go('compare')"><span>物件比較・感応度<span class="optbadge">オプション</span></span></button>
+          <button data-nav="market" class="addon" onclick="go('market')"><span>相場調査<span class="optbadge">オプション</span></span></button>
+        </div>
+      </div>
     </nav>
     <div class="foot">
       モックアップ v1（試作）<br>
