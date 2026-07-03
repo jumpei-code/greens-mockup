@@ -373,10 +373,10 @@
   .side .foot b{color:var(--ink);}
   .side .foot span{color:var(--sub) !important;}
   .side .foot span b{color:#ff6600 !important;}
-  /* オプション機能：サイドバー内はホバーで右側にフライアウト */
-  .optdrop{width:100%;}
+  /* オプション機能：サイドバー最下部に配置。ホバーで右側にフライアウト（下端揃え・上方向に展開） */
+  .optdrop{width:100%;margin-top:auto;border-top:1px solid var(--line);padding-top:8px;}
   .optdrop-btn{width:100%;justify-content:space-between;padding:9px 12px;height:auto;}
-  .optdrop-menu{top:0;left:100%;margin-left:2px;}
+  .optdrop-menu{top:auto;bottom:0;left:100%;margin-left:2px;}
   /* 本文・帯：全幅前提の中央寄せ計算をサイドバー前提に戻す */
   .topbar{padding:12px 26px;}
   .main{min-width:0;}
@@ -425,7 +425,6 @@
     </nav>
     <div class="foot">
       モックアップ v1（試作）<br>
-      <b>Spira Solutions</b> 受託案件<br>
       ※数値はサンプル（マスキング）<br>
       <span style="color:#fca5a5"><b style="color:#ef4444">オプション</b>＝任意の追加機能（別途費用）</span>
     </div>
