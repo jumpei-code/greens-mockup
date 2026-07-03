@@ -356,6 +356,32 @@
   .topbar{padding:12px max(26px, calc((100% - 1240px)/2 + 26px));}
   /* 角丸の完全排除（2026-07-04 自己点検）：インライン指定の角丸（要対応カード等）も四角に統一 */
   #content [style*="border-radius"]{border-radius:0 !important;}
+
+  /* ===== レイアウト変更（2026-07-04 中西さん指示）：上部タブ → 左サイドバー方式（案Cの配色・質感は維持） ===== */
+  .app{flex-direction:row;flex-wrap:wrap;align-items:flex-start;}
+  .previewbar{flex:0 0 100%;padding:9px 26px;}
+  .side{width:228px;flex:0 0 228px;flex-direction:column;align-items:stretch;position:sticky;top:46px;height:calc(100vh - 46px);
+    background:var(--bg);border-bottom:0;border-right:2px solid var(--ink);padding:0;}
+  .brand{padding:18px 18px 12px;border-bottom:1px solid var(--line);}
+  .brand .logo{font-size:17px;}
+  .brand .sub{display:block;font-size:10.5px;color:var(--sub);margin-top:3px;}
+  .nav{flex-direction:column;align-items:stretch;flex:1;padding:10px 10px 12px;margin-left:0;gap:2px;}
+  .nav .group{display:block;font-size:10px;font-weight:800;letter-spacing:.14em;color:var(--sub);padding:14px 8px 4px;}
+  .nav button{width:100%;text-align:left;padding:9px 12px;margin:0;font-size:13px;white-space:normal;}
+  .nav .newbtn{order:0;margin:2px 0 8px;width:100%;justify-content:center;}
+  .side .foot{display:block;padding:12px 16px;border-top:1px solid var(--line);font-size:10.5px;color:var(--sub);}
+  .side .foot b{color:var(--ink);}
+  .side .foot span{color:var(--sub) !important;}
+  .side .foot span b{color:#ff6600 !important;}
+  /* オプション機能：サイドバー内はホバーで右側にフライアウト */
+  .optdrop{width:100%;}
+  .optdrop-btn{width:100%;justify-content:space-between;padding:9px 12px;height:auto;}
+  .optdrop-menu{top:0;left:100%;margin-left:2px;}
+  /* 本文・帯：全幅前提の中央寄せ計算をサイドバー前提に戻す */
+  .topbar{padding:12px 26px;}
+  .main{min-width:0;}
+  .content{max-width:1180px;margin:0 auto;}
+  @media(max-width:860px){ .side{position:static;width:100%;flex:0 0 100%;height:auto;border-right:0;border-bottom:2px solid var(--ink);} }
 </style>
 </head>
 <body>
@@ -386,7 +412,7 @@
       <button data-nav="review" onclick="go('review')"><span class="ic">↺</span>過去実績</button>
       <button data-nav="access" onclick="go('access')"><span class="ic">▦</span>表示範囲（権限）</button>
       <div class="optdrop">
-        <button type="button" class="optdrop-btn">オプション機能 <span class="caret">▽</span></button>
+        <button type="button" class="optdrop-btn">オプション機能 <span class="caret">▷</span></button>
         <div class="optdrop-menu">
           <div class="optdrop-note">任意の追加機能（別途費用）</div>
           <button id="nav-bizdash" data-nav="bizdash" class="addon" onclick="go('bizdash')" style="display:none"><span>経営ダッシュボード<span class="optbadge">オプション</span></span></button>
