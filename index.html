@@ -394,6 +394,8 @@
       <button id="role-boss" onclick="setRole('boss')">代表</button>
       <span class="pvsep">｜承認の途中段階</span>
       <button id="role-mgr" class="sub" onclick="setRole('mgr')">上長</button>
+      <span class="pvsep">｜</span>
+      <button class="sub" onclick="go('access')">表示範囲（権限）を見る</button>
     </div>
   </div>
   <!-- ヘッダー：1行目ロゴ／2行目メニュー -->
@@ -410,7 +412,6 @@
       <button data-nav="list" onclick="go('list')"><span class="ic">≣</span><span id="nav-list-label">担当物件</span><span id="nav-list-badge" class="navbadge" style="display:none"></span></button>
       <button data-nav="ops" onclick="go('ops')"><span class="ic">◔</span>販売中物件</button>
       <button data-nav="review" onclick="go('review')"><span class="ic">↺</span>過去実績</button>
-      <button data-nav="access" onclick="go('access')"><span class="ic">▦</span>表示範囲（権限）</button>
       <div class="optdrop">
         <button type="button" class="optdrop-btn">オプション機能 <span class="caret">▷</span></button>
         <div class="optdrop-menu">
