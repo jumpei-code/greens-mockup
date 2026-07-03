@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GREENS 収支ナビ｜ダッシュボード デザイン3案（先方ブランド色ベース）</title>
+<style>
+  :root{
+    --g:#8dbd4c; --g-dark:#729c3a; --g-pale:#c9ea9c; --g-bg:#f3f5ef;
+    --orange:#ff6600; --ink:#1c1f1a; --body:#3a3f38; --sub:#7a8076;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",-apple-system,sans-serif;background:#e8eae5;color:var(--ink);font-size:14px;line-height:1.65;}
+  .num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum";}
+
+  /* ===== 比較ページ自体の枠 ===== */
+  .pagehead{background:#161a14;color:#f3f5ef;padding:26px 34px;}
+  .pagehead h1{font-size:19px;font-weight:800;letter-spacing:.02em;}
+  .pagehead p{font-size:12.5px;color:#b9c2ae;margin-top:6px;max-width:920px;}
+  .pagehead .sw{display:inline-block;width:12px;height:12px;vertical-align:-1px;margin:0 4px 0 10px;}
+  .anchor-nav{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid #d7dbd2;padding:10px 34px;display:flex;gap:8px;align-items:center;}
+  .anchor-nav b{font-size:12px;color:var(--sub);margin-right:6px;}
+  .anchor-nav a{font-size:13px;font-weight:700;color:var(--ink);text-decoration:none;border:1px solid #cfd4c9;padding:6px 16px;}
+  .anchor-nav a:hover{background:var(--g-bg);border-color:var(--g-dark);}
+  .secwrap{padding:30px 34px 10px;}
+  .sechead{max-width:1200px;margin:0 auto 14px;}
+  .sechead .tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.14em;color:#fff;background:var(--ink);padding:3px 12px;}
+  .sechead h2{font-size:18px;font-weight:800;margin:8px 0 4px;}
+  .sechead p{font-size:12.5px;color:var(--body);max-width:960px;}
+  .frame{max-width:1200px;margin:0 auto;border:1px solid #c9cec3;box-shadow:0 10px 30px rgba(20,25,16,.10);}
+  .verdict{max-width:1200px;margin:10px auto 0;font-size:12px;color:var(--sub);}
+  .verdict b{color:var(--ink);}
+
+  /* =============================================================
+     案A  コーポレート・グリーン（先方サイトの空気をそのまま業務画面に）
+     ============================================================= */
+  .A{display:flex;background:var(--g-bg);min-height:560px;}
+  .A .side{width:216px;background:#fff;border-right:1px solid #dde1d6;padding:0;flex-shrink:0;display:flex;flex-direction:column;}
+  .A .logo{padding:20px 18px 16px;border-bottom:1px solid #e5e8df;}
+  .A .logo .mk{font-size:15px;font-weight:800;letter-spacing:.02em;}
+  .A .logo .mk i{font-style:normal;color:var(--g-dark);}
+  .A .logo small{display:block;font-size:10px;color:var(--sub);letter-spacing:.12em;margin-top:2px;}
+  .A .nav{padding:12px 0;flex:1;}
+  .A .nav .grp{font-size:10px;font-weight:800;letter-spacing:.16em;color:var(--sub);padding:12px 18px 6px;}
+  .A .nav a{display:flex;align-items:center;gap:10px;padding:9px 18px;font-size:13px;color:var(--body);text-decoration:none;border-left:3px solid transparent;}
+  .A .nav a.on{border-left-color:var(--g-dark);background:var(--g-bg);color:var(--ink);font-weight:700;}
+  .A .nav a:hover{background:var(--g-bg);}
+  .A .nav .ct{margin-left:auto;font-size:11px;font-weight:800;color:#fff;background:var(--orange);padding:0 7px;line-height:18px;}
+  .A .main{flex:1;padding:0;}
+  .A .top{background:#fff;border-bottom:1px solid #dde1d6;padding:14px 26px;display:flex;align-items:center;gap:14px;}
+  .A .top h3{font-size:15.5px;font-weight:800;}
+  .A .top .who{margin-left:auto;font-size:12px;color:var(--sub);}
+  .A .top .who b{color:var(--ink);}
+  .A .body{padding:22px 26px;}
+  .A .todo{background:#fff;border:1px solid #dde1d6;border-top:3px solid var(--g-dark);padding:14px 20px;margin-bottom:18px;display:flex;gap:26px;align-items:center;flex-wrap:wrap;}
+  .A .todo .tl{font-size:12px;font-weight:800;letter-spacing:.06em;}
+  .A .todo a{font-size:13px;color:var(--ink);text-decoration:none;border-bottom:1px solid #b9c2ae;padding-bottom:1px;}
+  .A .todo .n{font-weight:800;color:var(--orange);margin-right:2px;}
+  .A .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px;}
+  .A .kpi{background:#fff;border:1px solid #dde1d6;padding:16px 18px 14px;}
+  .A .kpi .l{font-size:11px;font-weight:700;color:var(--sub);letter-spacing:.05em;}
+  .A .kpi .v{font-size:24px;font-weight:800;margin-top:4px;}
+  .A .kpi .v small{font-size:12px;font-weight:700;color:var(--sub);margin-left:2px;}
+  .A .kpi .d{font-size:11px;margin-top:2px;color:var(--sub);}
+  .A .kpi .d b.up{color:var(--g-dark);}
+  .A .grid2{display:grid;grid-template-columns:1.6fr 1fr;gap:14px;}
+  .A .card{background:#fff;border:1px solid #dde1d6;padding:16px 20px;}
+  .A .card h4{font-size:12.5px;font-weight:800;letter-spacing:.04em;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #eceee7;}
+  .A table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  .A th{text-align:left;font-size:10.5px;font-weight:800;color:var(--sub);letter-spacing:.08em;padding:6px 8px;border-bottom:1px solid #dde1d6;}
+  .A td{padding:8px;border-bottom:1px solid #f0f2ea;}
+  .A .jd{display:inline-block;width:20px;height:20px;line-height:20px;text-align:center;font-weight:800;font-size:12px;}
+  .A .jd.ok{background:var(--g-pale);color:#3d5c14;}
+  .A .jd.md{background:#ffe9d6;color:#a34400;}
+  .A .jd.ng{background:#eee;color:#666;}
+  .A .bars{display:flex;align-items:flex-end;gap:9px;height:120px;padding-top:6px;}
+  .A .bars .b{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:5px;height:100%;}
+  .A .bars .bar{width:60%;background:var(--g);}
+  .A .bars .bar.mut{background:#d8ddd0;}
+  .A .bars small{font-size:10px;color:var(--sub);}
+
+  /* =============================================================
+     案B  ダークオペレーション（金融端末系・数値が主役）
+     ============================================================= */
+  .B{display:flex;min-height:560px;background:#181c16;}
+  .B .side{width:216px;background:#11140e;padding:0;flex-shrink:0;color:#c9cfc0;display:flex;flex-direction:column;}
+  .B .logo{padding:20px 18px 16px;border-bottom:1px solid #262b20;}
+  .B .logo .mk{font-size:15px;font-weight:800;color:#f3f5ef;}
+  .B .logo .mk i{font-style:normal;color:var(--g);}
+  .B .logo small{display:block;font-size:10px;color:#7d8573;letter-spacing:.12em;margin-top:2px;}
+  .B .nav{padding:12px 0;flex:1;}
+  .B .nav .grp{font-size:10px;font-weight:800;letter-spacing:.16em;color:#6b7261;padding:12px 18px 6px;}
+  .B .nav a{display:flex;align-items:center;gap:10px;padding:9px 18px;font-size:13px;color:#c9cfc0;text-decoration:none;border-left:3px solid transparent;}
+  .B .nav a.on{border-left-color:var(--g);background:#1d2317;color:#fff;font-weight:700;}
+  .B .nav .ct{margin-left:auto;font-size:11px;font-weight:800;color:#11140e;background:var(--orange);padding:0 7px;line-height:18px;}
+  .B .main{flex:1;background:#f6f7f3;}
+  .B .top{background:#11140e;color:#f3f5ef;padding:14px 26px;display:flex;align-items:center;gap:14px;}
+  .B .top h3{font-size:15.5px;font-weight:800;}
+  .B .top .live{font-size:10px;font-weight:800;letter-spacing:.1em;color:var(--g);border:1px solid #3a4530;padding:2px 8px;}
+  .B .top .who{margin-left:auto;font-size:12px;color:#9aa38d;}
+  .B .body{padding:22px 26px;}
+  .B .strip{display:grid;grid-template-columns:repeat(4,1fr);background:#11140e;color:#e6eadf;margin-bottom:18px;}
+  .B .strip .cell{padding:16px 20px 14px;border-right:1px solid #262b20;}
+  .B .strip .cell:last-child{border-right:0;}
+  .B .strip .l{font-size:10.5px;font-weight:700;color:#8b9480;letter-spacing:.1em;}
+  .B .strip .v{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:23px;font-weight:700;margin-top:4px;color:#fff;}
+  .B .strip .v small{font-size:11px;color:#8b9480;margin-left:3px;font-family:inherit;}
+  .B .strip .d{font-size:11px;margin-top:2px;}
+  .B .strip .d .up{color:var(--g);}
+  .B .strip .d .al{color:var(--orange);font-weight:800;}
+  .B .grid2{display:grid;grid-template-columns:1.6fr 1fr;gap:14px;}
+  .B .card{background:#fff;border:1px solid #dcdfd5;padding:16px 20px;}
+  .B .card h4{font-size:12px;font-weight:800;letter-spacing:.08em;margin-bottom:12px;color:#454b3e;}
+  .B .card h4 .rule{display:inline-block;width:22px;height:3px;background:var(--g);vertical-align:middle;margin-right:8px;}
+  .B table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  .B th{text-align:left;font-size:10.5px;font-weight:800;color:#7d8473;letter-spacing:.08em;padding:6px 8px;border-bottom:2px solid #11140e;}
+  .B td{padding:8px;border-bottom:1px solid #eceee6;}
+  .B td.mono{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:12px;}
+  .B .jd{font-family:"SF Mono",Menlo,monospace;font-weight:700;font-size:12px;}
+  .B .jd.ok{color:#4c7c15;}
+  .B .jd.md{color:#c25400;}
+  .B .jd.ng{color:#8b9480;}
+  .B .bars{display:flex;align-items:flex-end;gap:9px;height:120px;padding-top:6px;}
+  .B .bars .b{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:5px;height:100%;}
+  .B .bars .bar{width:60%;background:#2e3626;}
+  .B .bars .bar.hi{background:var(--g);}
+  .B .bars small{font-size:10px;color:#7d8473;}
+  .B .alert{background:#11140e;color:#f3f5ef;padding:12px 20px;margin-bottom:18px;font-size:13px;display:flex;gap:14px;align-items:center;}
+  .B .alert .n{font-family:"SF Mono",Menlo,monospace;color:var(--orange);font-weight:700;}
+  .B .alert a{color:var(--g);text-decoration:none;border-bottom:1px solid #3a4530;margin-left:auto;font-size:12px;}
+
+  /* =============================================================
+     案C  エディトリアル・ライト（紙の帳票×SaaSの静けさ）
+     ============================================================= */
+  .C{background:#fcfcfa;min-height:560px;}
+  .C .top{border-bottom:2px solid var(--ink);padding:18px 30px 14px;display:flex;align-items:baseline;gap:18px;background:#fcfcfa;}
+  .C .top .mk{font-size:16px;font-weight:800;}
+  .C .top .mk i{font-style:normal;border-bottom:3px solid var(--g);padding-bottom:1px;}
+  .C .top nav{display:flex;gap:2px;margin-left:26px;}
+  .C .top nav a{font-size:13px;color:var(--body);text-decoration:none;padding:6px 14px;}
+  .C .top nav a.on{background:var(--ink);color:#fff;font-weight:700;}
+  .C .top .ct{font-size:11px;font-weight:800;color:var(--orange);}
+  .C .top .who{margin-left:auto;font-size:12px;color:var(--sub);}
+  .C .body{padding:26px 30px;max-width:1120px;}
+  .C .lede{display:flex;gap:30px;align-items:baseline;border-bottom:1px solid #e3e4dd;padding-bottom:18px;margin-bottom:20px;flex-wrap:wrap;}
+  .C .lede .big{font-size:13px;color:var(--sub);}
+  .C .lede .big b{display:block;font-size:34px;font-weight:800;color:var(--ink);letter-spacing:-.01em;line-height:1.2;}
+  .C .lede .big b small{font-size:14px;font-weight:700;color:var(--sub);margin-left:2px;}
+  .C .lede .big .chg{font-size:11.5px;font-weight:800;color:var(--g-dark);}
+  .C .lede .big .chg.al{color:var(--orange);}
+  .C .cols{display:grid;grid-template-columns:1.6fr 1fr;gap:34px;}
+  .C h4{font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--sub);margin-bottom:10px;}
+  .C table{width:100%;border-collapse:collapse;font-size:13px;}
+  .C th{text-align:left;font-size:10.5px;font-weight:800;color:var(--sub);letter-spacing:.08em;padding:6px 8px 6px 0;border-bottom:2px solid var(--ink);}
+  .C td{padding:9px 8px 9px 0;border-bottom:1px solid #e9eae3;}
+  .C tr:hover td{background:#f4f6ef;}
+  .C .jd{font-weight:800;font-size:12.5px;}
+  .C .jd.ok{color:var(--g-dark);}
+  .C .jd.md{color:var(--orange);}
+  .C .jd.ng{color:#9aa08f;}
+  .C .todo{border:1px solid var(--ink);padding:0;margin-bottom:24px;}
+  .C .todo .th{background:var(--ink);color:#fff;font-size:11px;font-weight:800;letter-spacing:.12em;padding:7px 16px;}
+  .C .todo ul{list-style:none;}
+  .C .todo li{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid #e9eae3;font-size:13px;}
+  .C .todo li:last-child{border-bottom:0;}
+  .C .todo .n{font-weight:800;color:var(--orange);min-width:34px;font-size:15px;}
+  .C .todo a{margin-left:auto;font-size:12px;color:var(--ink);font-weight:700;text-decoration:none;border-bottom:1px solid #c6c9bd;}
+  .C .bars{display:flex;align-items:flex-end;gap:8px;height:110px;margin-top:8px;}
+  .C .bars .b{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:5px;height:100%;}
+  .C .bars .bar{width:100%;background:#e3e6db;}
+  .C .bars .bar.hi{background:var(--g);}
+  .C .bars small{font-size:10px;color:var(--sub);}
+  .C .note{font-size:11px;color:var(--sub);margin-top:10px;}
+
+  .foot{padding:26px 34px 60px;text-align:center;font-size:12px;color:var(--sub);}
+</style>
+</head>
+<body>
+
+<div class="pagehead">
+  <h1>ダッシュボード デザイン3案 — GREENS ブランド色ベース</h1>
+  <p>先方サイト（greens01.co.jp）の実配色から抽出：<span class="sw" style="background:#8dbd4c"></span>#8dbd4c リーフグリーン（メイン）<span class="sw" style="background:#729c3a"></span>#729c3a 濃緑<span class="sw" style="background:#f3f5ef;border:1px solid #555"></span>#f3f5ef オフホワイト<span class="sw" style="background:#ff6600"></span>#ff6600 オレンジ（アクセント）。
+  3案共通で「絵文字アイコン・吹き出し・汎用ネイビー」を排し、要対応＝オレンジ／良好＝グリーンに役割を固定しています。</p>
+</div>
+
+<div class="anchor-nav"><b>JUMP</b><a href="#planA">案A コーポレート・グリーン</a><a href="#planB">案B ダークオペレーション</a><a href="#planC">案C エディトリアル・ライト</a></div>
+
+<!-- ================= 案A ================= -->
+<div class="secwrap" id="planA">
+  <div class="sechead">
+    <span class="tag">案 A</span>
+    <h2>コーポレート・グリーン — 先方サイトの空気をそのまま業務画面に</h2>
+    <p>白サイドバー＋オフホワイト背景＋左罫線のアクティブ表示。緑は「アクティブ・良好・グラフ」だけに絞り、警告はオレンジ。GREENSの社員が「自社のシステムだ」と一目で感じる、いちばん堅実な案。</p>
+  </div>
+  <div class="frame">
+    <div class="A">
+      <aside class="side">
+        <div class="logo"><div class="mk">GREENS <i>収支ナビ</i></div><small>SHUSHI NAVI</small></div>
+        <nav class="nav">
+          <div class="grp">メニュー</div>
+          <a href="#planA" class="on">ダッシュボード</a>
+          <a href="#planA">承認 <span class="ct">3</span></a>
+          <a href="#planA">担当物件一覧</a>
+          <a href="#planA">販売物件一覧</a>
+          <a href="#planA">実績分析</a>
+          <div class="grp">オプション</div>
+          <a href="#planA">経営ダッシュボード</a>
+          <a href="#planA">担当者別パフォーマンス</a>
+        </nav>
+      </aside>
+      <div class="main">
+        <div class="top"><h3>ダッシュボード</h3><span class="who">代表ビュー｜<b>2026年7月3日（金）</b></span></div>
+        <div class="body">
+          <div class="todo">
+            <span class="tl">あなたの要対応</span>
+            <a href="#planA"><span class="n num">3</span>件 — 代表承認待ち</a>
+            <a href="#planA"><span class="n num">2</span>件 — 在庫90日超</a>
+            <a href="#planA"><span class="n num">1</span>件 — 値下げ検討</a>
+          </div>
+          <div class="kpis">
+            <div class="kpi"><div class="l">今期の実現利益</div><div class="v num">¥35<small>百万</small></div><div class="d"><b class="up">＋19.0%</b> 前年比</div></div>
+            <div class="kpi"><div class="l">進行中の見込み粗利</div><div class="v num">¥28<small>百万</small></div><div class="d">在庫6件</div></div>
+            <div class="kpi"><div class="l">販売中の在庫（売出）</div><div class="v num">¥367<small>百万</small></div><div class="d">平均保有 74日</div></div>
+            <div class="kpi"><div class="l">承認待ち</div><div class="v num">3<small>件</small></div><div class="d">¥50百万 相当</div></div>
+          </div>
+          <div class="grid2">
+            <div class="card">
+              <h4>承認待ちの案件</h4>
+              <table>
+                <tr><th>物件</th><th>種別</th><th>原価合計</th><th>利益率</th><th>判定</th></tr>
+                <tr><td>江戸川区◯◯1丁目 土地</td><td>土地</td><td class="num">¥12.8百万</td><td class="num">14.6%</td><td><span class="jd ok">◎</span></td></tr>
+                <tr><td>練馬区◯◯2丁目 土地</td><td>土地</td><td class="num">¥12.7百万</td><td class="num">9.5%</td><td><span class="jd md">△</span></td></tr>
+                <tr><td>足立区◯◯3丁目 アパート用地</td><td>アパート</td><td class="num">¥24.5百万</td><td class="num">7.2%</td><td><span class="jd ng">×</span></td></tr>
+              </table>
+            </div>
+            <div class="card">
+              <h4>月別の売上高（百万円）</h4>
+              <div class="bars">
+                <div class="b"><div class="bar mut" style="height:48%"></div><small>2月</small></div>
+                <div class="b"><div class="bar mut" style="height:92%"></div><small>3月</small></div>
+                <div class="b"><div class="bar mut" style="height:55%"></div><small>4月</small></div>
+                <div class="b"><div class="bar mut" style="height:73%"></div><small>5月</small></div>
+                <div class="b"><div class="bar" style="height:63%"></div><small>6月</small></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="verdict"><b>向くケース：</b>先方に「御社サイトと同じ世界観で作りました」と言い切りたいとき。7/7の提案で最も説明が短くて済む。</div>
+</div>
+
+<!-- ================= 案B ================= -->
+<div class="secwrap" id="planB">
+  <div class="sechead">
+    <span class="tag">案 B</span>
+    <h2>ダークオペレーション — 金融端末系・数値が主役のテック感</h2>
+    <p>サイドバーとKPI帯を「緑がかった黒」で締め、数値は等幅フォント。営業が毎日決済・在庫を「監視する道具」の顔つき。緑はブランドのアクセント、オレンジは警告専用。3案で最もテック感が強い。</p>
+  </div>
+  <div class="frame">
+    <div class="B">
+      <aside class="side">
+        <div class="logo"><div class="mk">GREENS <i>収支ナビ</i></div><small>SHUSHI NAVI</small></div>
+        <nav class="nav">
+          <div class="grp">メニュー</div>
+          <a href="#planB" class="on">ダッシュボード</a>
+          <a href="#planB">承認 <span class="ct">3</span></a>
+          <a href="#planB">担当物件一覧</a>
+          <a href="#planB">販売物件一覧</a>
+          <a href="#planB">実績分析</a>
+          <div class="grp">オプション</div>
+          <a href="#planB">経営ダッシュボード</a>
+          <a href="#planB">担当者別パフォーマンス</a>
+        </nav>
+      </aside>
+      <div class="main">
+        <div class="top"><h3>ダッシュボード</h3><span class="live">LIVE</span><span class="who">代表ビュー｜2026-07-03（金）</span></div>
+        <div class="body">
+          <div class="strip">
+            <div class="cell"><div class="l">今期の実現利益</div><div class="v num">¥35<small>百万</small></div><div class="d"><span class="up">▲ +19.0%</span> <span style="color:#8b9480">前年比</span></div></div>
+            <div class="cell"><div class="l">進行中の見込み粗利</div><div class="v num">¥28<small>百万</small></div><div class="d" style="color:#8b9480">在庫6件</div></div>
+            <div class="cell"><div class="l">販売中の在庫（売出）</div><div class="v num">¥367<small>百万</small></div><div class="d" style="color:#8b9480">平均保有 74日</div></div>
+            <div class="cell"><div class="l">要対応</div><div class="v num" style="color:var(--orange)">6<small>件</small></div><div class="d"><span class="al">承認3・滞留2・値下げ1</span></div></div>
+          </div>
+          <div class="alert">要対応：代表承認待ち <span class="n">3</span>件／在庫90日超 <span class="n">2</span>件／値下げ検討 <span class="n">1</span>件 <a href="#planB">承認画面へ →</a></div>
+          <div class="grid2">
+            <div class="card">
+              <h4><span class="rule"></span>承認待ちの案件</h4>
+              <table>
+                <tr><th>物件</th><th>種別</th><th>原価合計</th><th>利益率</th><th>判定</th></tr>
+                <tr><td>江戸川区◯◯1丁目 土地</td><td>土地</td><td class="mono">12,807,900</td><td class="mono">14.6%</td><td><span class="jd ok">◎ GO</span></td></tr>
+                <tr><td>練馬区◯◯2丁目 土地</td><td>土地</td><td class="mono">12,670,000</td><td class="mono">9.5%</td><td><span class="jd md">△ COND</span></td></tr>
+                <tr><td>足立区◯◯3丁目 アパート用地</td><td>アパート</td><td class="mono">24,500,000</td><td class="mono">7.2%</td><td><span class="jd ng">× HOLD</span></td></tr>
+              </table>
+            </div>
+            <div class="card">
+              <h4><span class="rule"></span>月別の売上高（百万円）</h4>
+              <div class="bars">
+                <div class="b"><div class="bar" style="height:48%"></div><small>2月</small></div>
+                <div class="b"><div class="bar" style="height:92%"></div><small>3月</small></div>
+                <div class="b"><div class="bar" style="height:55%"></div><small>4月</small></div>
+                <div class="b"><div class="bar" style="height:73%"></div><small>5月</small></div>
+                <div class="b"><div class="bar hi" style="height:63%"></div><small>6月</small></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="verdict"><b>向くケース：</b>「システムを入れた」実感・毎日開く道具感を最大化したいとき。永井社長の「嫌でも見る」に顔つきで応える案。※判定の英字（GO/COND/HOLD）は日本語のみにも変更可。</div>
+</div>
+
+<!-- ================= 案C ================= -->
+<div class="secwrap" id="planC">
+  <div class="sechead">
+    <span class="tag">案 C</span>
+    <h2>エディトリアル・ライト — 紙の帳票の信頼感 × SaaSの静けさ</h2>
+    <p>サイドバーを廃して上部ナビに。黒の太罫線と余白で「決裁書類」の格を出しつつ、数字を最も大きく扱う。緑は下線とグラフの1点のみ。役員会に出しても違和感のない、いちばん上品な案。</p>
+  </div>
+  <div class="frame">
+    <div class="C">
+      <div class="top">
+        <span class="mk">GREENS <i>収支ナビ</i></span>
+        <nav>
+          <a href="#planC" class="on">ダッシュボード</a>
+          <a href="#planC">承認<span class="ct">（3）</span></a>
+          <a href="#planC">担当物件一覧</a>
+          <a href="#planC">販売物件一覧</a>
+          <a href="#planC">実績分析</a>
+        </nav>
+        <span class="who">代表ビュー｜2026年7月3日（金）</span>
+      </div>
+      <div class="body">
+        <div class="lede">
+          <div class="big">今期の実現利益<b class="num">¥35<small>百万</small></b><span class="chg">前年比 ＋19.0%</span></div>
+          <div class="big">進行中の見込み粗利<b class="num">¥28<small>百万</small></b><span class="chg" style="color:var(--sub);font-weight:700">在庫6件</span></div>
+          <div class="big">販売中の在庫（売出）<b class="num">¥367<small>百万</small></b><span class="chg" style="color:var(--sub);font-weight:700">平均保有 74日</span></div>
+          <div class="big">要対応<b class="num" style="color:var(--orange)">6<small>件</small></b><span class="chg al">承認3・滞留2・値下げ1</span></div>
+        </div>
+        <div class="cols">
+          <div>
+            <h4>承認待ちの案件</h4>
+            <table>
+              <tr><th>物件</th><th>種別</th><th>原価合計</th><th>利益率</th><th>判定</th></tr>
+              <tr><td>江戸川区◯◯1丁目 土地</td><td>土地</td><td class="num">¥12.8百万</td><td class="num">14.6%</td><td><span class="jd ok">◎ 推奨</span></td></tr>
+              <tr><td>練馬区◯◯2丁目 土地</td><td>土地</td><td class="num">¥12.7百万</td><td class="num">9.5%</td><td><span class="jd md">△ 条件付き</span></td></tr>
+              <tr><td>足立区◯◯3丁目 アパート用地</td><td>アパート</td><td class="num">¥24.5百万</td><td class="num">7.2%</td><td><span class="jd ng">× 見送り</span></td></tr>
+            </table>
+            <div class="note">行をクリックすると収支シートへ。判定＝利益率10%（推奨）／8%（下限）＋IRR10%基準。</div>
+          </div>
+          <div>
+            <div class="todo">
+              <div class="th">あなたの要対応</div>
+              <ul>
+                <li><span class="n num">3件</span>代表承認待ち<a href="#planC">開く</a></li>
+                <li><span class="n num">2件</span>在庫90日超<a href="#planC">開く</a></li>
+                <li><span class="n num">1件</span>値下げ検討<a href="#planC">開く</a></li>
+              </ul>
+            </div>
+            <h4>月別の売上高（百万円）</h4>
+            <div class="bars">
+              <div class="b"><div class="bar" style="height:48%"></div><small>2月</small></div>
+              <div class="b"><div class="bar" style="height:92%"></div><small>3月</small></div>
+              <div class="b"><div class="bar" style="height:55%"></div><small>4月</small></div>
+              <div class="b"><div class="bar" style="height:73%"></div><small>5月</small></div>
+              <div class="b"><div class="bar hi" style="height:63%"></div><small>6月</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="verdict"><b>向くケース：</b>決裁・稟議の文化が強い会社に「書類の置き換え」として自然に見せたいとき。サイドバー廃止は既存モックからの改修範囲が最も大きい点に注意。</div>
+</div>
+
+<div class="foot">GREENS 収支ナビ｜ダッシュボード デザイン3案（サンプル値・マスキング）｜Spira Solutions</div>
+
+</body>
+</html>
