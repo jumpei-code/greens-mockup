@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>「あなたの要対応」デザイン3案</title>
+<style>
+  :root{--ink:#1c1f1a;--body:#3a3f38;--sub:#7a8076;--line:#e9eae3;--g:#8dbd4c;--gd:#729c3a;--o:#ff6600;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",sans-serif;background:#e8eae5;color:var(--ink);font-size:14px;line-height:1.65;}
+  .num{font-variant-numeric:tabular-nums;}
+  .pagehead{background:#161a14;color:#f3f5ef;padding:24px 34px;}
+  .pagehead h1{font-size:18px;font-weight:800;}
+  .pagehead p{font-size:12.5px;color:#b9c2ae;margin-top:5px;}
+  .sec{max-width:1080px;margin:30px auto 8px;padding:0 20px;}
+  .sec .tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.14em;color:#fff;background:var(--ink);padding:3px 12px;}
+  .sec h2{font-size:16.5px;font-weight:800;margin:8px 0 3px;}
+  .sec p{font-size:12.5px;color:var(--body);}
+  .frame{max-width:1080px;margin:12px auto 4px;background:#fcfcfa;border:1px solid #c9cec3;box-shadow:0 8px 22px rgba(20,25,16,.09);padding:22px 24px;}
+  .verdict{max-width:1080px;margin:0 auto;padding:0 20px;font-size:12px;color:var(--sub);}
+  .verdict b{color:var(--ink);}
+  /* 後続コンテンツのダミー（コントラスト確認用） */
+  .after{margin-top:16px;opacity:.5;}
+  .after .note{background:#f6f7f1;border-left:3px solid var(--ink);padding:10px 14px;font-size:12px;color:var(--body);margin-bottom:12px;}
+  .after .kpis{display:flex;border-bottom:1px solid var(--line);padding-bottom:12px;}
+  .after .kpi{flex:1;padding:2px 16px;border-left:1px solid var(--line);}
+  .after .kpi:first-child{border-left:0;padding-left:2px;}
+  .after .kpi .l{font-size:11px;color:var(--sub);}
+  .after .kpi .v{font-size:24px;font-weight:800;}
+  .foot{text-align:center;font-size:12px;color:var(--sub);padding:26px 0 50px;}
+
+  /* ===== 案A：インク・コックピット（現行の強化） ===== */
+  .pA{background:var(--ink);color:#fff;padding:16px 20px;}
+  .pA .hd{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
+  .pA .hd .t{font-weight:800;font-size:14px;}
+  .pA .hd .t i{display:inline-block;width:4px;height:15px;background:var(--o);margin-right:9px;vertical-align:-2px;font-style:normal;}
+  .pA .hd .t small{font-weight:600;font-size:11px;color:rgba(255,255,255,.55);margin-left:8px;}
+  .pA .hd .total{font-size:11.5px;font-weight:800;background:var(--o);color:#1c1f1a;padding:3px 12px;}
+  .pA .chips{display:flex;gap:10px;flex-wrap:wrap;}
+  .pA a{flex:1;min-width:160px;display:flex;align-items:center;gap:13px;padding:12px 15px;border:1px solid rgba(255,255,255,.18);text-decoration:none;color:#fff;cursor:pointer;}
+  .pA a:hover{background:rgba(255,255,255,.06);}
+  .pA a .n{font-size:28px;font-weight:800;color:#ff8a3d;line-height:1;}
+  .pA a.done{opacity:.5;} .pA a.done .n{color:#a4c46c;font-size:22px;}
+  .pA a .lb{font-size:12px;color:rgba(255,255,255,.88);line-height:1.5;}
+  .pA a .lb small{display:block;font-size:10.5px;color:rgba(255,255,255,.5);}
+  .pA .ft{font-size:11px;color:rgba(255,255,255,.55);margin-top:10px;}
+
+  /* ===== 案B：インボックス・リスト（白×オレンジ罫） ===== */
+  .pB{background:#fff;border:1px solid var(--line);border-top:3px solid var(--o);}
+  .pB .hd{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;padding:13px 20px;border-bottom:1px solid var(--line);}
+  .pB .hd .t{font-weight:800;font-size:14px;}
+  .pB .hd .t .cnt{display:inline-block;min-width:22px;text-align:center;background:var(--o);color:#fff;font-size:12.5px;font-weight:800;padding:1px 8px;margin-left:9px;vertical-align:1px;}
+  .pB .hd small{font-size:11px;color:var(--sub);}
+  .pB a{display:flex;align-items:center;gap:14px;padding:11px 20px;border-bottom:1px solid #f0f1ea;text-decoration:none;color:inherit;cursor:pointer;}
+  .pB a:last-of-type{border-bottom:0;}
+  .pB a:hover{background:#fdf7f2;}
+  .pB a .n{font-size:21px;font-weight:800;color:var(--o);min-width:44px;}
+  .pB a .n small{font-size:11px;color:var(--sub);font-weight:600;}
+  .pB a .lb{font-size:13px;font-weight:700;flex:1;}
+  .pB a .lb small{display:block;font-size:11px;color:var(--sub);font-weight:400;}
+  .pB a .go{font-size:11.5px;font-weight:700;color:var(--ink);border:1px solid #cfd4c9;padding:5px 14px;white-space:nowrap;}
+  .pB a:hover .go{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .pB a.done .n{color:var(--gd);} .pB a.done{opacity:.6;}
+  .pB a.done .go{visibility:hidden;}
+  .pB .ft{font-size:11px;color:var(--sub);padding:9px 20px;background:#fafaf6;}
+
+  /* ===== 案C：アラート・ストリップ（1行の帯） ===== */
+  .pC{border:1px solid var(--line);background:#fff;}
+  .pC .strip{display:flex;align-items:stretch;flex-wrap:wrap;}
+  .pC .head{background:var(--o);color:#fff;padding:14px 18px;display:flex;flex-direction:column;justify-content:center;min-width:150px;}
+  .pC .head .t{font-weight:800;font-size:13.5px;line-height:1.4;}
+  .pC .head small{font-size:10px;opacity:.85;}
+  .pC a{flex:1;min-width:150px;display:flex;align-items:center;gap:12px;padding:12px 18px;border-left:1px solid var(--line);text-decoration:none;color:inherit;cursor:pointer;}
+  .pC a:hover{background:#fdf7f2;}
+  .pC a .n{font-size:30px;font-weight:800;color:var(--ink);line-height:1;}
+  .pC a.urgent .n{color:var(--o);}
+  .pC a.done .n{color:var(--gd);font-size:22px;}
+  .pC a.done{opacity:.55;}
+  .pC a .lb{font-size:11.5px;color:var(--body);line-height:1.45;}
+  .pC a .lb b{display:block;font-size:12px;color:var(--ink);}
+  .pC .ft{font-size:11px;color:var(--sub);padding:8px 18px;border-top:1px solid var(--line);background:#fafaf6;}
+</style>
+</head>
+<body>
+
+<div class="pagehead">
+  <h1>「あなたの要対応」デザイン3案</h1>
+  <p>代表ビュー（未対応2種＋対応なし1種）のサンプル。各案の下に、実際に続くコンテンツを薄く表示しています＝<b>前後との差の付き方</b>を見比べてください。</p>
+</div>
+
+<!-- ===== 案A ===== -->
+<div class="sec"><span class="tag">案 A</span><h2>インク・コックピット（現行の強化版）</h2>
+<p>墨色パネル＝ページで唯一の黒。ヘッダー右に「未対応 合計」のオレンジバッジを追加し、遠目でも件数が分かる。</p></div>
+<div class="frame">
+  <div class="pA">
+    <div class="hd">
+      <div class="t"><i></i>あなたの要対応<small>ログインしたら最初にここ</small></div>
+      <div class="total num">未対応 3件</div>
+    </div>
+    <div class="chips">
+      <a><span class="n num">1</span><span class="lb">代表 承認待ち<small>クリックで開く ›</small></span></a>
+      <a><span class="n num">2</span><span class="lb">在庫の販促・値下げ検討<small>クリックで開く ›</small></span></a>
+      <a class="done"><span class="n">✓</span><span class="lb">差し戻し<small>対応なし</small></span></a>
+    </div>
+    <div class="ft">※ 承認・仕入決済・売却の記録は<b style="color:#fff">このシステムでのみ</b>進みます＝嫌でも見に来る導線。</div>
+  </div>
+  <div class="after">
+    <div class="note"><b>代表ビュー</b>：あなた（代表）の承認待ちが1件。上長承認を通った案件が最終判断としてここに集まります。</div>
+    <div class="kpis"><div class="kpi"><div class="l">代表 承認待ち</div><div class="v num">1<small> 件</small></div></div><div class="kpi"><div class="l">上長 承認待ち</div><div class="v num">1<small> 件</small></div></div><div class="kpi"><div class="l">販売中</div><div class="v num">1<small> 件</small></div></div><div class="kpi"><div class="l">◎推奨 判定</div><div class="v num">3<small> 件</small></div></div></div>
+  </div>
+</div>
+<div class="verdict"><b>向くケース：</b>「最優先ゾーン」を最も強く示せる。黒が1か所だけ＝視線が必ず最初にここへ。デモ映えも最強。</div>
+
+<!-- ===== 案B ===== -->
+<div class="sec"><span class="tag">案 B</span><h2>インボックス・リスト（白×オレンジ罫・縦積み）</h2>
+<p>メールの受信箱のような縦リスト。1行1タスクで「開く」ボタンつき＝<b>何をすべきかが文章として読める</b>。件数はタイトル横のオレンジバッジ。</p></div>
+<div class="frame">
+  <div class="pB">
+    <div class="hd"><div class="t">あなたの要対応<span class="cnt num">3</span></div><small>未対応はヘッダーの🔔とメール/LINEにも自動通知（オプション）</small></div>
+    <a><span class="n num">1<small> 件</small></span><span class="lb">代表承認待ち<small>上長承認を通過した案件の最終判断</small></span><span class="go">開く ›</span></a>
+    <a><span class="n num">2<small> 件</small></span><span class="lb">在庫の販促・値下げ検討<small>保有90日超の物件があります</small></span><span class="go">開く ›</span></a>
+    <a class="done"><span class="n">✓</span><span class="lb">差し戻し<small>対応なし</small></span><span class="go">開く ›</span></a>
+    <div class="ft">※ 承認・仕入決済・売却の記録は<b>このシステムでのみ</b>進みます＝嫌でも見に来る導線。</div>
+  </div>
+  <div class="after">
+    <div class="note"><b>代表ビュー</b>：あなた（代表）の承認待ちが1件。上長承認を通った案件が最終判断としてここに集まります。</div>
+    <div class="kpis"><div class="kpi"><div class="l">代表 承認待ち</div><div class="v num">1<small> 件</small></div></div><div class="kpi"><div class="l">上長 承認待ち</div><div class="v num">1<small> 件</small></div></div><div class="kpi"><div class="l">販売中</div><div class="v num">1<small> 件</small></div></div><div class="kpi"><div class="l">◎推奨 判定</div><div class="v num">3<small> 件</small></div></div></div>
+  </div>
+</div>
+<div class="verdict"><b>向くケース：</b>タスクの「説明文」まで読ませたいとき。件数が増えても縦に伸びるだけで崩れない。黒の圧が苦手なら本命。</div>
+
+<!-- ===== 案C ===== -->
+<div class="sec"><span class="tag">案 C</span><h2>アラート・ストリップ（オレンジの見出しブロック＋1行の帯）</h2>
+<p>左端のオレンジブロックが「要対応」を宣言し、右に件数が横並び。<b>高さが最小</b>で、下のコンテンツをほぼ圧迫しない。</p></div>
+<div class="frame">
+  <div class="pC">
+    <div class="strip">
+      <div class="head"><div class="t">あなたの<br>要対応</div><small>ログインしたら最初にここ</small></div>
+      <a class="urgent"><span class="n num">1</span><span class="lb"><b>代表 承認待ち</b>クリックで開く ›</span></a>
+      <a class="urgent"><span class="n num">2</span><span class="lb"><b>在庫の販促・値下げ検討</b>クリックで開く ›</span></a>
+      <a class="done"><span class="n">✓</span><span class="lb"><b>差し戻し</b>対応なし</span></a>
+    </div>
+    <div class="ft">※ 承認・仕入決済・売却の記録は<b>このシステムでのみ</b>進みます＝嫌でも見に来る導線。</div>
+  </div>
+  <div class="after">
+    <div class="note"><b>代表ビュー</b>：あなた（代表）の承認待ちが1件。上長承認を通った案件が最終判断としてここに集まります。</div>
+    <div class="kpis"><div class="kpi"><div class="l">代表 承認待ち</div><div class="v num">1<small> 件</small></div></div><div class="kpi"><div class="l">上長 承認待ち</div><div class="v num">1<small> 件</small></div></div><div class="kpi"><div class="l">販売中</div><div class="v num">1<small> 件</small></div></div><div class="kpi"><div class="l">◎推奨 判定</div><div class="v num">3<small> 件</small></div></div></div>
+  </div>
+</div>
+<div class="verdict"><b>向くケース：</b>ダッシュボードの情報量を最大化したいとき（要対応は薄く常設）。オレンジ＝要注意の色ルールが最も素直に出る。</div>
+
+<div class="foot">GREENS 収支ナビ｜「あなたの要対応」デザイン3案（サンプル値）</div>
+</body>
+</html>
