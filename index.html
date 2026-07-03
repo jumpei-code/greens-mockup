@@ -381,8 +381,8 @@
       <div class="group">メニュー</div>
       <button data-nav="dashboard" class="active" onclick="go('dashboard')"><span class="ic">▣</span>ダッシュボード</button>
       <button data-nav="approve" onclick="go('approve')"><span class="ic">✓</span>承認<span id="nav-appr-badge" class="navbadge" style="display:none"></span></button>
-      <button data-nav="list" onclick="go('list')"><span class="ic">≣</span><span id="nav-list-label">担当物件一覧</span><span id="nav-list-badge" class="navbadge" style="display:none"></span></button>
-      <button data-nav="ops" onclick="go('ops')"><span class="ic">◔</span>販売物件一覧</button>
+      <button data-nav="list" onclick="go('list')"><span class="ic">≣</span><span id="nav-list-label">担当物件</span><span id="nav-list-badge" class="navbadge" style="display:none"></span></button>
+      <button data-nav="ops" onclick="go('ops')"><span class="ic">◔</span>販売中物件</button>
       <button data-nav="review" onclick="go('review')"><span class="ic">↺</span>過去実績</button>
       <button data-nav="access" onclick="go('access')"><span class="ic">▦</span>表示範囲（権限）</button>
       <div class="optdrop">
@@ -563,7 +563,7 @@ const DEALS = [
 
 /* ---------- 計算ロジック（御社Excel準拠） ---------- */
 function fmtY(n){ return '¥'+Math.round(n).toLocaleString('ja-JP'); }
-function fmtYen(n){ return Math.round(n).toLocaleString('ja-JP')+'円'; } // 販売物件一覧＝正規の円表示（例：100,000,000円）
+function fmtYen(n){ return Math.round(n).toLocaleString('ja-JP')+'円'; } // 販売中物件＝正規の円表示（例：100,000,000円）
 function pct(n){ return (n*100).toFixed(1)+'%'; }
 function rate(d,i){ return d.scen[i].profit / d.scen[i].price; }       // 利益率 = 総利益 / 売上
 function adoptedIRR(d){ return d.irr[d.period]; }                       // 採用IRR = プロジェクト期間に対応
@@ -706,11 +706,11 @@ function visibleDeals(){ return ROLE==='staff' ? DEALS.filter(d=>d.staff===CURRE
 function setRole(r){ ROLE=r; document.getElementById('role-staff').classList.toggle('on',r==='staff');
   document.getElementById('role-mgr').classList.toggle('on',r==='mgr');
   document.getElementById('role-boss').classList.toggle('on',r==='boss');
-  const ll=document.getElementById('nav-list-label'); if(ll) ll.textContent=(r==='staff')?'担当物件一覧':'全社物件一覧';
+  const ll=document.getElementById('nav-list-label'); if(ll) ll.textContent=(r==='staff')?'担当物件':'全社物件一覧';
   ['nav-bizdash','nav-perf'].forEach(id=>{const b=document.getElementById(id); if(b) b.style.display=(r==='staff')?'none':'';}); // 経営・成績は上長/代表のみ
   go(CUR.view, CUR.arg); }
 let CUR={view:'dashboard',arg:null};
-const TITLES={dashboard:['ホーム','ダッシュボード'],approve:['承認','承認（あなたの番の承認待ち）'],ops:['販売物件一覧','販売物件一覧（全社・全営業が販売対応）'],list:['物件','担当物件一覧'],detail:['物件 › 収支シート','事業収支シート'],market:['相場','相場調査（オプション機能）'],compare:['物件','物件比較・感応度（オプション）'],review:['過去実績','過去実績（計画→実績の検証・過去の起案参照）'],access:['設定','表示範囲（どの立場に何が見えるか）'],bizdash:['経営','経営ダッシュボード（上長・代表）'],perf:['評価','担当者別パフォーマンス（上長・代表）'],new:['物件 › 新規起案','新規物件の起案（事業計画）']};
+const TITLES={dashboard:['ホーム','ダッシュボード'],approve:['承認','承認（あなたの番の承認待ち）'],ops:['販売中物件','販売中物件（全社・全営業が販売対応）'],list:['物件','担当物件'],detail:['物件 › 収支シート','事業収支シート'],market:['相場','相場調査（オプション機能）'],compare:['物件','物件比較・感応度（オプション）'],review:['過去実績','過去実績（計画→実績の検証・過去の起案参照）'],access:['設定','表示範囲（どの立場に何が見えるか）'],bizdash:['経営','経営ダッシュボード（上長・代表）'],perf:['評価','担当者別パフォーマンス（上長・代表）'],new:['物件 › 新規起案','新規物件の起案（事業計画）']};
 function go(view,arg){
   CUR={view,arg};
   document.querySelectorAll('.nav button[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===view));
@@ -935,10 +935,14 @@ function renderDashboard(){
     ${dealTable(mine,false)}
   `;
 }
-function dealTable(arr,bossMode){
+/* 資料の擬似ダウンロード／アップロード（デザインのみ・モック） */
+function toast(msg){let t=document.getElementById('gtoast');if(!t){t=document.createElement('div');t.id='gtoast';t.style.cssText='position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:#1c1f1a;color:#fff;padding:11px 20px;font-size:12.5px;z-index:99;box-shadow:0 8px 24px rgba(0,0,0,.25);max-width:82%;line-height:1.6';document.body.appendChild(t);}t.textContent=msg;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>{t.style.display='none';},3600);}
+function fakeDL(n){toast('（モック）「'+n+'」の販売資料一式（物件概要書・図面・写真）をダウンロードします。実装版では担当者がアップロードした最新の資料が取得できます。');}
+function fakeUL(n){toast('（モック）「'+n+'」の物件資料をアップロードしました。全営業が「販売中物件」の［販売資料］ボタンからダウンロードできます。');}
+function dealTable(arr,bossMode,withDocs){
   return `<div class="card" style="padding:0;overflow:hidden">
     <table><thead><tr>
-      <th>物件</th><th>種別</th><th class="num">原価合計</th><th class="num">想定②利益率</th><th class="num">採用IRR</th><th>判定</th><th>状態</th><th>担当</th>
+      <th>物件</th><th>種別</th><th class="num">原価合計</th><th class="num">想定②利益率</th><th class="num">採用IRR</th><th>判定</th><th>状態</th><th>担当</th>${withDocs?'<th>物件資料</th>':''}
     </tr></thead><tbody>
     ${arr.map(d=>{const j=judge(d);const closed=(d.status==='done'||d.status==='rej');return `<tr class="clickable" onclick="go('detail','${d.id}')">
       <td><b>${d.name}</b><br><span class="muted" style="font-size:11px">${d.id}・更新 ${d.updated}</span></td>
@@ -949,6 +953,7 @@ function dealTable(arr,bossMode){
       <td><span class="pill ${closed?'j-muted':j.cls}">${j.mark} ${j.label}</span></td>
       <td>${statusPill(d.status)}</td>
       <td>${d.staff}</td>
+      ${withDocs?`<td><button class="btn" style="padding:3px 10px;font-size:11px;white-space:nowrap" onclick="event.stopPropagation();fakeUL('${d.name}')">資料をアップ</button></td>`:''}
     </tr>`;}).join('')}
     </tbody></table></div>`;
 }
@@ -956,9 +961,9 @@ function dealTable(arr,bossMode){
 /* ---------- 物件一覧 ---------- */
 function renderList(){
   const c=document.getElementById('content');
-  document.getElementById('ptitle').textContent=(ROLE==='staff')?'担当物件一覧':'全社物件一覧';
+  document.getElementById('ptitle').textContent=(ROLE==='staff')?'担当物件':'全社物件一覧';
   const bubble=(ROLE==='staff')
-    ? `<div class="bubble">≣ <b>担当物件一覧</b>：あなた（${CURRENT_STAFF}）が担当する物件をまとめて確認。状態で絞り込め、行をクリックすると収支シートが開き、<b>仕入決済の登録・販売活動</b>もここから進められます。</div>`
+    ? `<div class="bubble">≣ <b>担当物件</b>：あなた（${CURRENT_STAFF}）が担当する物件をまとめて確認。行クリックで収支シートが開き、<b>仕入決済の登録・販売活動</b>もここから。<b>［資料をアップ］した物件資料は、全営業が「販売中物件」の［販売資料］からダウンロードできます</b>。</div>`
     : `<div class="bubble">≣ <b>全社物件一覧</b>：全社・全員の物件を横断で確認。エリア・種別・判定・状態で絞り込み、<b>類似案件の相場感</b>や過去の答え合わせに使えます。</div>`;
   c.innerHTML=bubble+`
     <div class="card" style="margin-bottom:16px">
@@ -980,7 +985,7 @@ function filterList(){
     (!t||d.type===t) && (!jf||judge(d).k===jf) && (!ar||(d.area||'').includes(ar)) &&
     (!st || (st==='await' ? (d.status==='await_mgr'||d.status==='await_pres') : d.status===st)) );
   const scope = ROLE==='staff' ? `自分の案件 ${arr.length}件` : `${arr.length}件（過去事例は会社の資産として蓄積されます）`;
-  document.getElementById('listbody').innerHTML=`<div class="muted" style="margin-bottom:8px;font-size:12px">${scope}</div>`+dealTable(arr,false);
+  document.getElementById('listbody').innerHTML=`<div class="muted" style="margin-bottom:8px;font-size:12px">${scope}</div>`+dealTable(arr,false,ROLE==='staff');
 }
 
 /* ---------- 収支シート（詳細・主役） ---------- */
@@ -1376,8 +1381,8 @@ function renderAccess(){
     ['ダッシュボード', Y('自分の案件'), Y('全社'), Y('全社')],
     ['新規物件の起案', Y('起案（主担当）'), Y(''), Y('')],
     ['承認', P('自分の申請状況'), Y('1次承認'), Y('最終承認')],
-    ['担当物件一覧 ／ 全社物件一覧', Y('担当のみ'), Y('全社'), Y('全社')],
-    ['販売物件一覧（全社共有）', Y('全社'), Y('全社'), Y('全社')],
+    ['担当物件 ／ 全社物件一覧', Y('担当のみ'), Y('全社'), Y('全社')],
+    ['販売中物件（全社共有・販売資料DL）', Y('全社'), Y('全社'), Y('全社')],
     ['過去実績（計画→実績の答え合わせ・起案の参照）', Y('全社・閲覧'), Y('全社'), Y('全社')],
     ['　└ 担当者別の成績比較', N, Y(''), Y('')],
   ];
@@ -1412,7 +1417,7 @@ const INVENTORY=[
   {name:'江戸川区△△2丁目 戸建', type:'戸建', area:'江戸川区', cost:38000000, list:46800000, inDate:'04/18', days:74, inq:14, ca:4, staff:'佐藤', state:'価格交渉中'},
   {name:'北区◯◯3丁目 アパート', type:'アパート', area:'北区', cost:98000000, list:112000000, inDate:'05/30', days:32, inq:7, ca:2, staff:'田中', state:'掲載中'},
   {name:'足立区□□1丁目 土地', type:'土地', area:'足立区', cost:21500000, list:27800000, inDate:'02/10', days:141, inq:6, ca:1, staff:'渡辺', state:'値下げ検討'},
-  {name:'杉並区◇◇5丁目 戸建', type:'戸建', area:'杉並区', cost:52000000, list:63500000, inDate:'06/12', days:19, inq:4, ca:1, staff:'佐藤', state:'掲載中'},
+  {name:'杉並区◯◯3丁目 戸建', type:'戸建', area:'杉並区', cost:52000000, list:63500000, inDate:'06/12', days:19, inq:4, ca:1, staff:'田中', state:'掲載中', did:'GR-2026-0011'},
   {name:'板橋区◯◯2丁目 土地', type:'土地', area:'板橋区', cost:16800000, list:21200000, inDate:'05/05', days:57, inq:9, ca:3, staff:'高橋', state:'買付あり'},
   {name:'川口市◯◯4丁目 アパート', type:'アパート', area:'川口市', cost:84000000, list:95800000, inDate:'03/22', days:101, inq:5, ca:2, staff:'田中', state:'掲載中'},
 ];
@@ -1425,8 +1430,8 @@ function inventoryHTML(){
   const dlbl=d=> d>90?'長期・要対応': d>60?'やや長期':'';
   const stbg={'買付あり':'#dcfce7','価格交渉中':'#fef3c7','値下げ検討':'#fee2e2','掲載中':'#e0f2fe'};
   const stfg={'買付あり':'#15803d','価格交渉中':'#b45309','値下げ検討':'#b91c1c','掲載中':'#0369a1'};
-  const row=x=>`<tr>
-    <td><b>${x.name}</b><br><span style="color:var(--sub);font-size:10.5px">${x.area}・取得担当 ${x.staff}・仕入 ${x.inDate}</span></td>
+  const row=x=>`<tr ${x.did?`class="clickable" onclick="go('detail','${x.did}')"`:''}>
+    <td><b>${x.name}</b>${x.did?' <span style="font-size:10px;color:var(--sub)">▶ 収支シート</span>':''}<br><span style="color:var(--sub);font-size:10.5px">${x.area}・取得担当 ${x.staff}・仕入 ${x.inDate}</span></td>
     <td>${x.type}</td>
     <td class="num">${fmtYen(x.cost)}</td>
     <td class="num">${fmtYen(x.list)}</td>
@@ -1434,23 +1439,24 @@ function inventoryHTML(){
     <td class="num">${x.inq}</td>
     <td class="num"><b>${x.ca}</b></td>
     <td><span style="display:inline-block;background:${stbg[x.state]||'#eef2f7'};color:${stfg[x.state]||'#475569'};font-size:11px;font-weight:700;padding:2px 9px">${x.state}</span></td>
+    <td><button class="btn" style="padding:3px 10px;font-size:11px;white-space:nowrap" onclick="event.stopPropagation();fakeDL('${x.name}')">販売資料</button></td>
   </tr>`;
   return `
-    <div class="notebar">仕入れた物件は<b>全社の販売物件</b>として全営業が販売します。<b>立場に関わらず全員が全社分を閲覧</b>でき、誰でも反響対応・販売活動ができます。</div>
+    <div class="notebar">仕入れた物件は<b>全社の販売物件</b>として全営業が販売します。全員が全社分を閲覧でき、<b>［販売資料］から担当者がアップロードした資料（物件概要書・図面・写真）をダウンロード</b>して、誰でも反響対応・販売活動ができます。</div>
     <div style="display:flex;align-items:center;gap:9px;margin:2px 0 12px">
       <span style="display:inline-flex;align-items:center;gap:6px;background:#fee2e2;color:#b91c1c;font-size:11px;font-weight:800;padding:3px 11px;border-radius:999px"><span style="width:7px;height:7px;background:#ef4444;border-radius:50%;display:inline-block"></span>LIVE</span>
       <span style="color:var(--sub);font-size:11.5px">リアルタイムの販売物件（売出中・保有中）。最終更新：たった今</span>
     </div>
     <div class="kpis">
-      ${statBox('販売物件数',inv.length+' 件','売出中・保有中')}
+      ${statBox('販売中物件数',inv.length+' 件','売出中・保有中')}
       ${statBox('在庫総額（売出ベース）',fmtYen(total),'回収予定の上限目安')}
       ${statBox('平均保有日数',avgDays+' 日','短いほど資金回転◎')}
       ${statBox('長期滞留（90日超）',longCnt+' 件','要・値下げ／販促')}
     </div>
     <div class="xwrap">
       <table class="xgrid">
-        <tr><td class="sec" colspan="8">販売物件一覧（全社・全営業が販売対応）</td></tr>
-        <tr><td class="lbl">物件</td><td class="lbl">種別</td><td class="lbl num">仕入原価</td><td class="lbl num">売出価格</td><td class="lbl num">保有日数</td><td class="lbl num">問い合わせ</td><td class="lbl num">CA</td><td class="lbl">状態</td></tr>
+        <tr><td class="sec" colspan="9">販売中物件（全社・全営業が販売対応）｜▶印の行はクリックで起案時の収支シートへ</td></tr>
+        <tr><td class="lbl">物件</td><td class="lbl">種別</td><td class="lbl num">仕入原価</td><td class="lbl num">売出価格</td><td class="lbl num">保有日数</td><td class="lbl num">問い合わせ</td><td class="lbl num">CA</td><td class="lbl">状態</td><td class="lbl">販売資料</td></tr>
         ${inv.map(row).join('')}
       </table>
       <div class="muted" style="font-size:11px;margin-top:10px">※ サンプル値（マスキング）。保有日数の色：90日超＝赤（要対応）／60〜90日＝橙。<b>CA＝守秘義務契約（購入検討の本気度）</b>。実運用では仕入決済の登録から自動でカウント・更新されます。</div>
