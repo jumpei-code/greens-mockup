@@ -995,7 +995,7 @@ function filterList(){
 function docCheckHTML(){
   const ok='<span style="color:#4c7c15;font-weight:800">○</span>', ng='<span style="color:#cc3300;font-weight:800">×</span>';
   return `
-    <div class="sectiontitle" style="margin-top:22px">物件資料の揃い状況（必須資料チェック）<span class="optbadge">オプション</span></div>
+    <div class="sectiontitle" style="margin-top:22px">物件資料の揃い状況（必須資料チェック）</div>
     <div class="xwrap">
       <table class="xgrid">
         <tr><td class="lbl">物件</td><td class="lbl" style="text-align:center">概要書</td><td class="lbl" style="text-align:center">図面</td><td class="lbl" style="text-align:center">測量図</td><td class="lbl" style="text-align:center">登記</td><td class="lbl" style="text-align:center">写真</td><td class="lbl">不足</td></tr>
@@ -1187,7 +1187,7 @@ function settlementPanel(d){
         ${pf('借入実行額','number',Math.round(tochi*0.9))}
       </div>
       <div style="margin-top:14px;border:1px dashed var(--line);padding:11px 14px">
-        <div style="font-weight:800;font-size:12px;margin-bottom:7px;color:var(--ink)">決済前チェックリスト<span class="optbadge">オプション</span><span style="font-weight:700;color:#c25400;font-size:11px;margin-left:8px">⚠ 決済日まであと3日（メール/LINEに自動リマインド）</span></div>
+        <div style="font-weight:800;font-size:12px;margin-bottom:7px;color:var(--ink)">決済前チェックリスト<span style="font-weight:700;color:#c25400;font-size:11px;margin-left:8px">⚠ 決済日まであと3日（メール/LINEに自動リマインド）</span></div>
         <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:4px 18px;font-size:12.5px;color:var(--body)">
           <span>☑ 融資実行の確認（済 06/30）</span><span>☑ 境界・越境の確認（済 06/25）</span>
           <span>☐ 残代金の準備</span><span>☐ 司法書士の手配</span>
@@ -1212,7 +1212,7 @@ function sellingPanel(d){
       </div>
       <div style="margin-top:10px"><button class="btn" onclick="act('price_update','${d.id}')">売出価格・状況を更新</button></div>
       <div style="margin-top:14px;border:1px dashed var(--line);padding:11px 14px">
-        <div style="font-weight:800;font-size:12px;margin-bottom:7px;color:var(--ink)">価格改定履歴<span class="optbadge">オプション</span></div>
+        <div style="font-weight:800;font-size:12px;margin-bottom:7px;color:var(--ink)">価格改定履歴</div>
         <table style="font-size:12px"><thead><tr><th>日付</th><th class="num">売出価格</th><th class="num">増減</th><th>理由</th></tr></thead><tbody>
           <tr><td>売出開始</td><td class="num">${fmtY(Math.round(d.scen[0].price*1.03))}</td><td class="num">—</td><td>出値（想定①ベース）</td></tr>
           <tr><td>3週間後</td><td class="num"><b>${fmtY(d.scen[0].price)}</b></td><td class="num" style="color:#c25400">−3.0%</td><td>反響が鈍く問い合わせ増を狙い改定</td></tr>
@@ -1417,7 +1417,8 @@ function renderAccess(){
     ['新規物件の起案', Y('起案（主担当）'), Y(''), Y('')],
     ['承認', P('自分の申請状況'), Y('1次承認'), Y('最終承認')],
     ['担当物件 ／ 全社物件一覧', Y('担当のみ'), Y('全社'), Y('全社')],
-    ['販売中物件（全社共有・販売資料DL）', Y('全社'), Y('全社'), Y('全社')],
+    ['販売中物件（全社共有・販売資料DL・買付管理・反響ログ）', Y('全社'), Y('全社'), Y('全社')],
+    ['販売業務の管理（価格改定履歴・決済チェックリスト・資料チェック）', Y('担当分'), Y('全社'), Y('全社')],
     ['過去実績（計画→実績の答え合わせ・起案の参照）', Y('全社・閲覧'), Y('全社'), Y('全社')],
     ['　└ 担当者別の成績比較', N, Y(''), Y('')],
   ];
@@ -1426,7 +1427,6 @@ function renderAccess(){
     ['経営ダッシュボード', N, Y('全社'), Y('全社')],
     ['　└ 資金繰り・与信枠（経営DBのタブ）', N, Y('全社'), Y('全社')],
     ['在庫滞留アラート', Y('自分の在庫'), Y('全社'), Y('全社')],
-    ['販売業務パック（買付管理・反響ログ・価格改定履歴・資料チェック・決済期日）', Y('担当分・全社在庫'), Y('全社'), Y('全社')],
     ['通知・タスク', Y('自分宛'), Y(''), Y('')],
     ['取引先台帳', Y('閲覧'), Y(''), Y('')],
     ['稟議書 自動生成', Y('作成'), Y('閲覧'), Y('閲覧')],
@@ -1497,7 +1497,7 @@ function inventoryHTML(){
       </table>
       <div class="muted" style="font-size:11px;margin-top:10px">※ サンプル値（マスキング）。保有日数の色：90日超＝赤（要対応）／60〜90日＝橙。<b>CA＝守秘義務契約（購入検討の本気度）</b>。実運用では仕入決済の登録から自動でカウント・更新されます。</div>
     </div>
-    <div class="sectiontitle">買付・商談管理<span class="optbadge">オプション</span></div>
+    <div class="sectiontitle">買付・商談管理</div>
     <div class="xwrap">
       <table class="xgrid">
         <tr><td class="sec" colspan="7">受領中の買付（回答期限の近い順）</td></tr>
@@ -1508,7 +1508,7 @@ function inventoryHTML(){
       </table>
       <div class="muted" style="font-size:11px;margin-top:8px">※ 買付（購入申込）を受領日・金額・条件・回答期限つきで管理。<b>複数買付の比較と回答漏れ防止</b>。期限が近い買付は通知にも自動で出ます。</div>
     </div>
-    <div class="sectiontitle">反響ログ<span class="optbadge">オプション</span></div>
+    <div class="sectiontitle">反響ログ</div>
     <div class="xwrap">
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
         <span style="background:#f1f4e8;color:#3f5720;font-size:11.5px;font-weight:700;padding:4px 12px">ポータルA 14件</span>
