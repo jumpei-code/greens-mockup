@@ -385,6 +385,15 @@
   .main{min-width:0;}
   .content{max-width:1180px;margin:0 auto;}
   @media(max-width:860px){ .side{position:static;width:100%;flex:0 0 100%;height:auto;border-right:0;border-bottom:2px solid var(--ink);} }
+  /* 案件の流れ／パイプライン（2026-07-04）：白い箱の羅列をやめ、薄緑の帯＋接続線で「流れ」を形で伝える */
+  .flow{background:#f4f6ef;padding:18px 22px;align-items:center;gap:0;}
+  .flow .stage{background:transparent;border:0;padding:0 10px;flex:0 1 auto;min-width:150px;}
+  .flow .stage.st1,.flow .stage.st2,.flow .stage.st3{border-top:0;}
+  .flow .stage .sl{color:#3f5720;font-weight:800;letter-spacing:.04em;}
+  .flow .stage .sv{font-size:30px;}
+  .flow .arrow{flex:1;display:flex;align-items:center;color:#729c3a;font-size:15px;padding:0;min-width:60px;}
+  .flow .arrow::before,.flow .arrow::after{content:'';flex:1;border-top:2px solid #c9d9a8;margin:0 8px;}
+  @media(max-width:860px){ .flow .arrow::before,.flow .arrow::after{content:none;} }
 </style>
 </head>
 <body>
@@ -867,18 +876,18 @@ function todoCardHTML(){
     {n:mine.filter(d=>d.status==='approved').length,lab:'仕入決済待ち',ic:'¥',go:"go('list')",u:true},
     {n:mine.filter(d=>d.status==='sell').length,lab:'販売中（フォロー）',ic:'◷',go:"go('list')",u:false},
   ];
-  const chip=it=>{ const done=it.n===0; const col=done?'#4c7c15':it.u?'#ff6600':'#1c1f1a';
-   return `<a onclick="${done?'':it.go}" style="flex:1;min-width:150px;display:flex;align-items:center;gap:11px;padding:12px 14px;background:#fff;border:1px solid var(--line);border-left:4px solid ${col};border-radius:10px;text-decoration:none;color:inherit;${done?'opacity:.7':'cursor:pointer'}">
-     <span style="font-size:16px;width:20px;text-align:center;color:${col}">${done?'✓':it.ic}</span>
-     <span><span style="font-size:22px;font-weight:800;color:${done?'#15803d':'var(--ink)'}">${it.n}</span><span style="font-size:12px;color:var(--sub)"> 件</span><br><span style="font-size:11.5px;color:var(--sub)">${it.lab}</span></span>
+  const chip=it=>{ const done=it.n===0; const col=done?'#a4c46c':it.u?'#ff8a3d':'#ffffff';
+   return `<a onclick="${done?'':it.go}" style="flex:1;min-width:160px;display:flex;align-items:center;gap:13px;padding:12px 15px;border:1px solid rgba(255,255,255,.18);text-decoration:none;color:#fff;${done?'opacity:.55':'cursor:pointer'}">
+     <span style="font-size:27px;font-weight:800;color:${col};font-variant-numeric:tabular-nums;line-height:1">${done?'✓':it.n}</span>
+     <span style="font-size:12px;color:rgba(255,255,255,.88);line-height:1.5">${it.lab}${done?'<br><span style="font-size:10.5px;color:rgba(255,255,255,.5)">対応なし</span>':'<br><span style="font-size:10.5px;color:rgba(255,255,255,.5)">クリックで開く ›</span>'}</span>
    </a>`; };
-  return `<div style="background:#fff;border:1px solid #dbe3ec;border-top:3px solid var(--navy);border-radius:12px;padding:14px 16px;margin-bottom:16px;box-shadow:0 2px 8px rgba(15,23,42,.05)">
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:11px">
-      <div style="font-weight:800;font-size:14px;color:var(--ink)">あなたの要対応（ログインしたら最初にここ）</div>
-      <div style="font-size:11px;color:var(--sub)">未対応はヘッダーの🔔とメール/LINEにも自動通知（オプション）</div>
+  return `<div style="background:#1c1f1a;padding:16px 20px;margin-bottom:18px;color:#fff">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:12px">
+      <div style="font-weight:800;font-size:14px;color:#fff"><span style="display:inline-block;width:4px;height:15px;background:#ff6600;margin-right:9px;vertical-align:-2px"></span>あなたの要対応 <span style="font-weight:600;font-size:11px;color:rgba(255,255,255,.55)">ログインしたら最初にここ</span></div>
+      <div style="font-size:11px;color:rgba(255,255,255,.55)">未対応はヘッダーの🔔とメール/LINEにも自動通知（オプション）</div>
     </div>
     <div style="display:flex;gap:10px;flex-wrap:wrap">${items.map(chip).join('')}</div>
-    <div style="font-size:11px;color:var(--sub);margin-top:10px">※ 承認・仕入決済・売却の記録は<b>このシステムでのみ</b>進みます＝嫌でも見に来る導線。</div>
+    <div style="font-size:11px;color:rgba(255,255,255,.55);margin-top:10px">※ 承認・仕入決済・売却の記録は<b style="color:#fff">このシステムでのみ</b>進みます＝嫌でも見に来る導線。</div>
   </div>`;
 }
 function toggleNotif(){ const p=document.getElementById('notif-panel'); if(!p) return; p.style.display = (p.style.display==='none'||!p.style.display)?'block':'none'; }
