@@ -488,6 +488,28 @@
 /* ---------- サンプルデータ（受領Excelのマスキング実数） ---------- */
 const DEALS = [
   {
+    id:'GR-2026-0014', type:'土地', name:'葛飾区◯◯3丁目 土地',
+    area:'葛飾区◯◯3丁目', station:'京成線「◯◯」駅 徒歩12分',
+    land_m2:132.2, land_tsubo:40.0, yoseki:1.6, kenpei:0.6, period:12,
+    owner:'F社（売主）', staff:'佐藤', status:'draft', updated:'07/04',
+    appr:{mgr:'鈴木 課長', mgrDate:'', pres:'代表', presDate:''},
+    cost:10480000,
+    costRows:[['土地原価（仕入＋解体整地ほか）',8800000],['建物原価',0],['租税公課',470000],['販売管理費',720000],['営業外費用',490000]],
+    scen:[{t:'① 出値価格',price:12600000,profit:2120000},{t:'② 着地前後価格',price:11600000,profit:1120000},{t:'③ 下限価格',price:11000000,profit:520000}],
+    irr:{12:0.107,18:0.070,24:0.052},
+    mkt:{avg:238000,lo:210000,hi:265000,isshu:150000},
+    intake:{chiban:'葛飾区◯◯三丁目456番7', bldgm2:0, youto:'第一種住居地域', bouka:'準防火地域', kodo:'第2種高度地区', road:'南東側：5ｍ公道', etc:'—', kukaku:1,
+      seller:'F社', buyer:'（未定）', broker1:'◯◯不動産', broker2:'（未定）', buyc:'（未定）', buys:'（未定）', sellc:'（未定）', sells:'（未定）',
+      rosen:8300000, koteiRosen:8300000, beval:0,
+      costDetail:[
+        ['土地原価',[['土地仕入原価',8300000],['仲介手数料',0],['業務委託手数料',0],['解体整地費用',500000],['ライフライン引き込み',0],['譲渡承諾料',0],['測量費用',0],['立退き費用',0],['その他',0]]],
+        ['建物原価',[['建築費',0],['設計費用',0],['地盤改良',0],['インフラ費用（改修）',0],['外構費用',0],['瑕疵担保保険',0]]],
+        ['租税公課',[['取得税(土地)',130000],['取得税(建物)',0],['固定資産税',120000],['都市計画税',0],['登録免許税(土地)',160000],['登録免許税（建物）',0],['抵当権',30000],['印紙税',30000]]],
+        ['販売管理費',[['司法書士報酬',50000],['予備費',100000],['その他',0],['販売手数料',570000]]],
+        ['営業外費用',[['借入金利',260000],['事務手数料',75000],['その他',155000]]]
+      ]}
+  },
+  {
     id:'GR-2026-0012', type:'土地', name:'江戸川区◯◯1丁目 土地',
     area:'江戸川区◯◯1丁目', station:'都営新宿線「◯◯」駅 徒歩16分',
     land_m2:214.57, land_tsubo:64.9, yoseki:1.5, kenpei:0.6, period:12,
@@ -632,7 +654,7 @@ function judge(d){
   if(r2>=0.08 && irr>=0.10) return {k:'warn',mark:'△',label:'条件付き可',cls:'j-warn'};
   return {k:'ng',mark:'×',label:'見送り',cls:'j-ng'};
 }
-const STATUS={await_mgr:['await','上長承認待ち'],await_pres:['await','代表承認待ち'],returned:['returned','差し戻し'],approved:['approved','承認済み（仕入決済前）'],sell:['sell','販売中'],done:['done','検証済（過去実績）'],rej:['rej','見送り']};
+const STATUS={draft:['','検討中（下書き）'],await_mgr:['await','上長承認待ち'],await_pres:['await','代表承認待ち'],returned:['returned','差し戻し'],approved:['approved','承認済み（仕入決済前）'],sell:['sell','販売中'],done:['done','検証済（過去実績）'],rej:['rej','見送り']};
 function statusPill(s){ const x=STATUS[s]; return `<span class="st ${x[0]}">${x[1]}</span>`; }
 function dealById(id){ return DEALS.find(d=>d.id===id); }
 
@@ -881,21 +903,26 @@ function todoCardHTML(){
   const mine=visibleDeals();
   const invA=INVENTORY.filter(x=>x.days>90||x.state==='値下げ検討').length;
   let items;
-  if(ROLE==='boss') items=[
-    {n:DEALS.filter(d=>d.status==='await_pres').length,lab:'代表承認待ち',sub:'上長承認を通過した案件の最終判断',go:"go('approve')",u:true},
-    {n:DEALS.filter(d=>d.status==='await_mgr').length,lab:'上長が確認中',sub:'1次承認の途中段階（参考）',go:"go('approve')",u:false},
+  // 該当1件ならその案件の収支シート（概要）へ直行、複数なら一覧へ
+  const one=(arr,fb)=>arr.length===1?`go('detail','${arr[0].id}')`:fb;
+  if(ROLE==='boss'){ const ap=DEALS.filter(d=>d.status==='await_pres'), am=DEALS.filter(d=>d.status==='await_mgr');
+  items=[
+    {n:ap.length,lab:'代表承認待ち',sub:'上長承認を通過した案件の最終判断',go:one(ap,"go('approve')"),u:true},
+    {n:am.length,lab:'上長が確認中',sub:'1次承認の途中段階（参考）',go:one(am,"go('approve')"),u:false},
     {n:invA,lab:'在庫の販促・値下げ検討',sub:'保有90日超・値下げ検討の物件',go:"go('ops')",u:false},
-  ];
-  else if(ROLE==='mgr') items=[
-    {n:DEALS.filter(d=>d.status==='await_mgr').length,lab:'上長 承認待ち',sub:'あなたの1次承認が必要な案件',go:"go('approve')",u:true},
-    {n:DEALS.filter(d=>d.status==='await_pres').length,lab:'代表へ送付済',sub:'最終承認の判断待ち（参考）',go:"go('approve')",u:false},
+  ];}
+  else if(ROLE==='mgr'){ const am=DEALS.filter(d=>d.status==='await_mgr'), ap=DEALS.filter(d=>d.status==='await_pres');
+  items=[
+    {n:am.length,lab:'上長 承認待ち',sub:'あなたの1次承認が必要な案件',go:one(am,"go('approve')"),u:true},
+    {n:ap.length,lab:'代表へ送付済',sub:'最終承認の判断待ち（参考）',go:one(ap,"go('approve')"),u:false},
     {n:invA,lab:'在庫の販促・値下げ検討',sub:'保有90日超・値下げ検討の物件',go:"go('ops')",u:false},
-  ];
-  else items=[
-    {n:mine.filter(d=>d.status==='returned').length,lab:'差し戻し（要修正）',sub:'修正して再提出が必要です',go:"go('approve')",u:true},
-    {n:mine.filter(d=>d.status==='approved').length,lab:'仕入決済待ち',sub:'承認済み・仕入決済の登録へ',go:"go('list')",u:true},
-    {n:mine.filter(d=>d.status==='sell').length,lab:'販売中（フォロー）',sub:'反響対応・販売状況の更新',go:"go('list')",u:false},
-  ];
+  ];}
+  else{ const rt=mine.filter(d=>d.status==='returned'), apv=mine.filter(d=>d.status==='approved'), sl=mine.filter(d=>d.status==='sell');
+  items=[
+    {n:rt.length,lab:'差し戻し（要修正）',sub:'修正して再提出が必要です',go:one(rt,"go('approve')"),u:true},
+    {n:apv.length,lab:'仕入決済待ち',sub:'承認済み・仕入決済の登録へ',go:one(apv,"go('list')"),u:true},
+    {n:sl.length,lab:'販売中（フォロー）',sub:'反響対応・販売状況の更新',go:one(sl,"go('list')"),u:false},
+  ];}
   const total=items.reduce((a,i)=>a+i.n,0);
   const row=it=>{ const done=it.n===0;
    return `<a class="reqrow${done?' done':''}" onclick="${done?'':it.go}">
@@ -972,9 +999,9 @@ function renderDashboard(){
     <div class="sectiontitle">案件の流れ（自分の検討中 → 承認待ち → 販売中）</div>
     <div class="flow">
       <div class="stage st1">
-        <div class="sl">① 自分の検討中</div>
-        <div class="sv">${mine.length}<small> 件</small></div>
-        <div class="sc">起案・収支シート作成中</div>
+        <div class="sl">① 自分の検討中（下書き）</div>
+        <div class="sv">${mine.filter(d=>d.status==='draft').length}<small> 件</small></div>
+        <div class="sc">下書き保存した収支シート</div>
       </div>
       <div class="arrow">▶</div>
       <div class="stage st2">
@@ -1031,7 +1058,7 @@ function renderList(){
         <div><div class="muted" style="font-size:11px">エリア</div><select class="btn" id="f-area" onchange="filterList()"><option value="">すべて</option><option>江戸川区</option><option>杉並区</option><option>北区</option><option>世田谷区</option><option>板橋区</option><option>足立区</option><option>練馬区</option><option>川口市</option></select></div>
         <div><div class="muted" style="font-size:11px">種別</div><select class="btn" id="f-type" onchange="filterList()"><option value="">すべて</option><option>土地</option><option>戸建</option><option>アパート</option></select></div>
         <div><div class="muted" style="font-size:11px">判定</div><select class="btn" id="f-judge" onchange="filterList()"><option value="">すべて</option><option value="ok">◎ 推奨</option><option value="warn">△ 条件付き可</option><option value="ng">× 見送り</option></select></div>
-        <div><div class="muted" style="font-size:11px">状態</div><select class="btn" id="f-status" onchange="filterList()"><option value="">すべて</option><option value="await">承認待ち</option><option value="approved">承認済み（仕入決済前）</option><option value="sell">販売中</option><option value="done">実績分析済</option><option value="returned">差し戻し</option><option value="rej">見送り</option></select></div>
+        <div><div class="muted" style="font-size:11px">状態</div><select class="btn" id="f-status" onchange="filterList()"><option value="">すべて</option><option value="draft">検討中（下書き）</option><option value="await">承認待ち</option><option value="approved">承認済み（仕入決済前）</option><option value="sell">販売中</option><option value="done">実績分析済</option><option value="returned">差し戻し</option><option value="rej">見送り</option></select></div>
       </div>
     </div>
     <div id="listbody"></div>
@@ -2602,6 +2629,7 @@ function recalcNew(){
       </div>
     </div>
     <button class="btn primary" style="width:100%;margin-bottom:8px" onclick="submitNew()">保存して提出（代表承認へ）</button>
+    <button class="btn" style="width:100%;margin-bottom:8px" onclick="toast('（モック）下書きに保存しました。ダッシュボードの「①自分の検討中」と担当物件に「検討中（下書き）」として表示されます。')">下書き保存（検討中として保管）</button>
     <button class="btn" style="width:100%" onclick="go('dashboard')">下書き保存して戻る</button>`;
   // 相場比較（仕入坪単価 vs 成約相場）
   const m2=gv('n_m2'), yo=gv('n_yoseki'), tsubo=m2*0.3025;
