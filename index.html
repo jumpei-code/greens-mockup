@@ -394,6 +394,26 @@
   .flow .arrow{flex:1;display:flex;align-items:center;color:#729c3a;font-size:15px;padding:0;min-width:60px;}
   .flow .arrow::before,.flow .arrow::after{content:'';flex:1;border-top:2px solid #c9d9a8;margin:0 8px;}
   @media(max-width:860px){ .flow .arrow::before,.flow .arrow::after{content:none;} }
+  /* あなたの要対応（2026-07-04 案B採用）：インボックス・リスト（白×オレンジ罫・縦積み） */
+  .reqbox{background:#fff;border:1px solid var(--line);border-top:3px solid #ff6600;margin-bottom:18px;}
+  .reqbox .rhd{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;padding:12px 20px;border-bottom:1px solid var(--line);}
+  .reqbox .rt{font-weight:800;font-size:14px;color:var(--ink);}
+  .reqbox .rcnt{display:inline-block;min-width:22px;text-align:center;background:#ff6600;color:#fff;font-size:12.5px;font-weight:800;padding:1px 8px;margin-left:9px;vertical-align:1px;font-variant-numeric:tabular-nums;}
+  .reqbox .rok{display:inline-block;color:#4c7c15;font-size:12.5px;font-weight:800;margin-left:9px;}
+  .reqbox .rhd small{font-size:11px;color:var(--sub);}
+  .reqrow{display:flex;align-items:center;gap:14px;padding:11px 20px;border-bottom:1px solid #f0f1ea;text-decoration:none;color:inherit;cursor:pointer;}
+  .reqrow:hover{background:#fdf7f2;}
+  .reqrow .rn{font-size:21px;font-weight:800;color:#ff6600;min-width:48px;font-variant-numeric:tabular-nums;}
+  .reqrow .rn small{font-size:11px;color:var(--sub);font-weight:600;}
+  .reqrow .rl{font-size:13px;font-weight:700;flex:1;color:var(--ink);}
+  .reqrow .rl small{display:block;font-size:11px;color:var(--sub);font-weight:400;}
+  .reqrow .rgo{font-size:11.5px;font-weight:700;color:var(--ink);border:1px solid #cfd4c9;padding:5px 14px;white-space:nowrap;}
+  .reqrow:hover .rgo{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .reqrow.done{opacity:.6;cursor:default;}
+  .reqrow.done:hover{background:transparent;}
+  .reqrow.done .rn{color:#729c3a;}
+  .reqrow.done .rgo{visibility:hidden;}
+  .reqbox .rft{font-size:11px;color:var(--sub);padding:9px 20px;background:#fafaf6;}
 </style>
 </head>
 <body>
@@ -862,32 +882,31 @@ function todoCardHTML(){
   const invA=INVENTORY.filter(x=>x.days>90||x.state==='値下げ検討').length;
   let items;
   if(ROLE==='boss') items=[
-    {n:DEALS.filter(d=>d.status==='await_pres').length,lab:'代表 承認待ち',ic:'',go:"go('approve')",u:true},
-    {n:DEALS.filter(d=>d.status==='await_mgr').length,lab:'上長が確認中',ic:'',go:"go('approve')",u:false},
-    {n:invA,lab:'在庫の販促・値下げ検討',ic:'',go:"go('ops')",u:false},
+    {n:DEALS.filter(d=>d.status==='await_pres').length,lab:'代表承認待ち',sub:'上長承認を通過した案件の最終判断',go:"go('approve')",u:true},
+    {n:DEALS.filter(d=>d.status==='await_mgr').length,lab:'上長が確認中',sub:'1次承認の途中段階（参考）',go:"go('approve')",u:false},
+    {n:invA,lab:'在庫の販促・値下げ検討',sub:'保有90日超・値下げ検討の物件',go:"go('ops')",u:false},
   ];
   else if(ROLE==='mgr') items=[
-    {n:DEALS.filter(d=>d.status==='await_mgr').length,lab:'上長 承認待ち',ic:'',go:"go('approve')",u:true},
-    {n:DEALS.filter(d=>d.status==='await_pres').length,lab:'代表へ送付済',ic:'⏩',go:"go('approve')",u:false},
-    {n:invA,lab:'在庫の販促・値下げ検討',ic:'',go:"go('ops')",u:false},
+    {n:DEALS.filter(d=>d.status==='await_mgr').length,lab:'上長 承認待ち',sub:'あなたの1次承認が必要な案件',go:"go('approve')",u:true},
+    {n:DEALS.filter(d=>d.status==='await_pres').length,lab:'代表へ送付済',sub:'最終承認の判断待ち（参考）',go:"go('approve')",u:false},
+    {n:invA,lab:'在庫の販促・値下げ検討',sub:'保有90日超・値下げ検討の物件',go:"go('ops')",u:false},
   ];
   else items=[
-    {n:mine.filter(d=>d.status==='returned').length,lab:'差し戻し（要修正）',ic:'↩',go:"go('approve')",u:true},
-    {n:mine.filter(d=>d.status==='approved').length,lab:'仕入決済待ち',ic:'¥',go:"go('list')",u:true},
-    {n:mine.filter(d=>d.status==='sell').length,lab:'販売中（フォロー）',ic:'◷',go:"go('list')",u:false},
+    {n:mine.filter(d=>d.status==='returned').length,lab:'差し戻し（要修正）',sub:'修正して再提出が必要です',go:"go('approve')",u:true},
+    {n:mine.filter(d=>d.status==='approved').length,lab:'仕入決済待ち',sub:'承認済み・仕入決済の登録へ',go:"go('list')",u:true},
+    {n:mine.filter(d=>d.status==='sell').length,lab:'販売中（フォロー）',sub:'反響対応・販売状況の更新',go:"go('list')",u:false},
   ];
-  const chip=it=>{ const done=it.n===0; const col=done?'#a4c46c':it.u?'#ff8a3d':'#ffffff';
-   return `<a onclick="${done?'':it.go}" style="flex:1;min-width:160px;display:flex;align-items:center;gap:13px;padding:12px 15px;border:1px solid rgba(255,255,255,.18);text-decoration:none;color:#fff;${done?'opacity:.55':'cursor:pointer'}">
-     <span style="font-size:27px;font-weight:800;color:${col};font-variant-numeric:tabular-nums;line-height:1">${done?'✓':it.n}</span>
-     <span style="font-size:12px;color:rgba(255,255,255,.88);line-height:1.5">${it.lab}${done?'<br><span style="font-size:10.5px;color:rgba(255,255,255,.5)">対応なし</span>':'<br><span style="font-size:10.5px;color:rgba(255,255,255,.5)">クリックで開く ›</span>'}</span>
+  const total=items.reduce((a,i)=>a+i.n,0);
+  const row=it=>{ const done=it.n===0;
+   return `<a class="reqrow${done?' done':''}" onclick="${done?'':it.go}">
+     <span class="rn">${done?'✓':it.n+'<small> 件</small>'}</span>
+     <span class="rl">${it.lab}<small>${done?'対応なし':it.sub}</small></span>
+     <span class="rgo">開く ›</span>
    </a>`; };
-  return `<div style="background:#1c1f1a;padding:16px 20px;margin-bottom:18px;color:#fff">
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:12px">
-      <div style="font-weight:800;font-size:14px;color:#fff"><span style="display:inline-block;width:4px;height:15px;background:#ff6600;margin-right:9px;vertical-align:-2px"></span>あなたの要対応 <span style="font-weight:600;font-size:11px;color:rgba(255,255,255,.55)">ログインしたら最初にここ</span></div>
-      <div style="font-size:11px;color:rgba(255,255,255,.55)">未対応はヘッダーの🔔とメール/LINEにも自動通知（オプション）</div>
-    </div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap">${items.map(chip).join('')}</div>
-    <div style="font-size:11px;color:rgba(255,255,255,.55);margin-top:10px">※ 承認・仕入決済・売却の記録は<b style="color:#fff">このシステムでのみ</b>進みます＝嫌でも見に来る導線。</div>
+  return `<div class="reqbox">
+    <div class="rhd"><div class="rt">あなたの要対応${total?`<span class="rcnt">${total}</span>`:'<span class="rok">✓ 0</span>'}</div><small>未対応はヘッダーの🔔とメール/LINEにも自動通知（オプション）</small></div>
+    ${items.map(row).join('')}
+    <div class="rft">※ 承認・仕入決済・売却の記録は<b>このシステムでのみ</b>進みます＝嫌でも見に来る導線。</div>
   </div>`;
 }
 function toggleNotif(){ const p=document.getElementById('notif-panel'); if(!p) return; p.style.display = (p.style.display==='none'||!p.style.display)?'block':'none'; }
