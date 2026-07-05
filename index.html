@@ -2266,6 +2266,39 @@ const STOCK_LAND=[
   [128000000,'27.80',4604316,'角地','荻窪9分','◯◯3丁目'],
   [84800000,'21.72',3904235,'業物・当該物件に近い','阿佐ヶ谷11分','◯◯1丁目']
 ];
+/* 相場の共通部品（フォーム版・グリッド版で中身を統一）。基盤＝担当入力の近隣在庫／オプション＝自動取得サンプル */
+function nearInvHTML(){ return `
+   <div class="subhead" style="margin-top:12px;color:#3f5720">担当が入力した近隣販売在庫（レインズ・ポータル等の調査結果）</div>
+   <div class="muted" style="font-size:11px;margin:2px 0 6px">※ 受領Excelの手入力項目。担当が調べた結果を入力＝<b>基盤に含む・合法</b>。入力ぶんは全社で共有・過去分も検索できます。</div>
+   <table class="xgrid">
+     <tr><td class="sec" colspan="6">新築　販売在庫（近隣）</td></tr>
+     <tr><td class="lbl num">価格</td><td class="lbl num">土地面積</td><td class="lbl num">坪単価</td><td class="lbl">延床面積（間取）</td><td class="lbl">駅距離</td><td class="lbl">住所</td></tr>
+     ${STOCK_NEW.map(r=>`<tr><td class="num">¥${r[0].toLocaleString()}</td><td class="num">${r[1]}坪</td><td class="num">¥${r[2].toLocaleString()}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td></tr>`).join('')}
+   </table>
+   <table class="xgrid" style="margin-top:14px">
+     <tr><td class="sec" colspan="6">土地　販売在庫（近隣）</td></tr>
+     <tr><td class="lbl num">価格</td><td class="lbl num">土地面積</td><td class="lbl num">坪単価</td><td class="lbl">特徴</td><td class="lbl">駅距離</td><td class="lbl">住所</td></tr>
+     ${STOCK_LAND.map(r=>`<tr><td class="num">¥${r[0].toLocaleString()}</td><td class="num">${r[1]}坪</td><td class="num">¥${r[2].toLocaleString()}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td></tr>`).join('')}
+   </table>`; }
+function marketSampleHTML(){ return `
+   <div class="subhead" style="margin-top:16px">自動取得の相場データ（サンプル）<span class="optbadge">オプション</span></div>
+   <div class="row" style="gap:10px;margin:6px 0 12px">
+     <div style="flex:1;min-width:160px"><div class="muted" style="font-size:11px">成約 坪単価（直近1年）<span class="srctag">成約</span></div><div style="font-size:16px;font-weight:700;color:var(--ink)">¥${MARKET.soldAvg.toLocaleString()}<span class="muted" style="font-size:11px;font-weight:400"> /坪（¥${MARKET.soldLo.toLocaleString()}〜¥${MARKET.soldHi.toLocaleString()}）</span></div></div>
+     <div style="flex:1;min-width:140px"><div class="muted" style="font-size:11px">成約 一種単価<span class="srctag">成約</span></div><div style="font-size:16px;font-weight:700;color:var(--ink)">¥${MARKET.isshuAvg.toLocaleString()}<span class="muted" style="font-size:11px;font-weight:400"> /坪・種</span></div></div>
+   </div>
+   <div class="row" style="gap:10px;margin-bottom:12px">
+     <div style="flex:1;min-width:140px"><div class="muted" style="font-size:11px">販売中 坪単価<span class="srctag sale">売出</span></div><div style="font-weight:700;color:var(--ink)">¥${MARKET.saleAvg.toLocaleString()} /坪</div></div>
+     <div style="flex:1;min-width:140px"><div class="muted" style="font-size:11px">近隣 賃料相場<span class="srctag rent">賃料</span></div><div style="font-weight:700;color:var(--ink)">¥${MARKET.rent.toLocaleString()} /坪・月</div></div>
+   </div>
+   <div class="row" style="gap:10px;margin-bottom:14px">
+     <div style="flex:1;min-width:140px"><div class="muted" style="font-size:11px">公示価格<span class="srctag pub">公的</span></div><div style="font-weight:700;color:var(--ink)">¥${MARKET.kouji.toLocaleString()} /㎡</div></div>
+     <div style="flex:1;min-width:160px"><div class="muted" style="font-size:11px">積算価格（路線価＋建物評価）<span class="srctag pub">公的</span></div><div style="font-weight:700;color:var(--ink)" id="m_sekisan">—</div></div>
+   </div>
+   <div class="muted" style="font-size:11.5px;margin-bottom:6px">成約事例（直近1年）</div>
+   <table><thead><tr><th>住所</th><th class="num">坪単価</th><th class="num">一種単価</th><th>成約</th><th>駅距離</th></tr></thead><tbody>
+     ${MARKET.comps.map(c=>`<tr><td>${c[0]}</td><td class="num">¥${c[1].toLocaleString()}</td><td class="num">¥${c[2].toLocaleString()}</td><td>${c[3]}</td><td>${c[4]}</td></tr>`).join('')}
+   </tbody></table>
+   <div class="muted" style="font-size:11px;margin-top:8px">※ サンプル値。成約坪単価・賃料・住所つき成約事例は<b>ポータル／レインズ由来のため自動取得できません</b>（有料データ連携＝オプション）。基盤に含まれるのは公的データのレンジ（成約レンジ・公示・積算＝町丁目単位の目安）と、上の担当入力の近隣在庫です。どこまで自動化するかは面談でご相談のうえ確定します。</div>`; }
 function fld(label,id,v,o){
   o=o||{};
   const val=nv(id,v);
@@ -2459,17 +2492,9 @@ function newGridLeft(){ const comps=MARKET.comps; return `
      </table>
    </div>
    ${gridSalesSection()}
-   <table class="xgrid" style="margin-top:14px">
-     <tr><td class="sec" colspan="6">新築　販売在庫（近隣）</td></tr>
-     <tr><td class="lbl num">価格</td><td class="lbl num">土地面積</td><td class="lbl num">坪単価</td><td class="lbl">延床面積（間取）</td><td class="lbl">駅距離</td><td class="lbl">住所</td></tr>
-     ${STOCK_NEW.map(r=>`<tr><td class="num">¥${r[0].toLocaleString()}</td><td class="num">${r[1]}坪</td><td class="num">¥${r[2].toLocaleString()}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td></tr>`).join('')}
-   </table>
-   <table class="xgrid" style="margin-top:14px">
-     <tr><td class="sec" colspan="6">土地　販売在庫（近隣）</td></tr>
-     <tr><td class="lbl num">価格</td><td class="lbl num">土地面積</td><td class="lbl num">坪単価</td><td class="lbl">特徴</td><td class="lbl">駅距離</td><td class="lbl">住所</td></tr>
-     ${STOCK_LAND.map(r=>`<tr><td class="num">¥${r[0].toLocaleString()}</td><td class="num">${r[1]}坪</td><td class="num">¥${r[2].toLocaleString()}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td></tr>`).join('')}
-   </table>
+   ${nearInvHTML()}
    <div id="market-live" style="margin-top:10px"></div>
+   ${marketSampleHTML()}
   </div>`; }
 function fakeUpload(){ const n=document.getElementById('upload-note'); if(n) n.innerHTML='<span style="color:#15803d;font-weight:700">✓ 「事業収支_雛型.xlsx」を読み込みました（デモ）。物件名・地積・容積率・原価などが自動で入力されます。</span>'; }
 function uploadCardHTML(){ return `
@@ -2579,25 +2604,10 @@ function renderNew(){
          ${fld('建物評価額','n_beval',500000,{green:1})}
        </div></div>
        ${salesFormSection()}
-       <div class="card"><h3>⑩ 相場の目安（サンプル表示）<span class="optbadge">オプション</span></h3>
-         <div id="market-live"></div>
-         <div class="row" style="gap:10px;margin:6px 0 12px">
-           <div style="flex:1;min-width:160px"><div class="muted" style="font-size:11px">成約 坪単価（直近1年）<span class="srctag">成約</span></div><div style="font-size:16px;font-weight:700;color:var(--ink)">¥${MARKET.soldAvg.toLocaleString()}<span class="muted" style="font-size:11px;font-weight:400"> /坪（¥${MARKET.soldLo.toLocaleString()}〜¥${MARKET.soldHi.toLocaleString()}）</span></div></div>
-           <div style="flex:1;min-width:140px"><div class="muted" style="font-size:11px">成約 一種単価<span class="srctag">成約</span></div><div style="font-size:16px;font-weight:700;color:var(--ink)">¥${MARKET.isshuAvg.toLocaleString()}<span class="muted" style="font-size:11px;font-weight:400"> /坪・種</span></div></div>
-         </div>
-         <div class="row" style="gap:10px;margin-bottom:12px">
-           <div style="flex:1;min-width:140px"><div class="muted" style="font-size:11px">販売中 坪単価<span class="srctag sale">売出</span></div><div style="font-weight:700;color:var(--ink)">¥${MARKET.saleAvg.toLocaleString()} /坪</div></div>
-           <div style="flex:1;min-width:140px"><div class="muted" style="font-size:11px">近隣 賃料相場<span class="srctag rent">賃料</span></div><div style="font-weight:700;color:var(--ink)">¥${MARKET.rent.toLocaleString()} /坪・月</div></div>
-         </div>
-         <div class="row" style="gap:10px;margin-bottom:14px">
-           <div style="flex:1;min-width:140px"><div class="muted" style="font-size:11px">公示価格<span class="srctag pub">公的</span></div><div style="font-weight:700;color:var(--ink)">¥${MARKET.kouji.toLocaleString()} /㎡</div></div>
-           <div style="flex:1;min-width:160px"><div class="muted" style="font-size:11px">積算価格（路線価＋建物評価）<span class="srctag pub">公的</span></div><div style="font-weight:700;color:var(--ink)" id="m_sekisan">—</div></div>
-         </div>
-         <div class="muted" style="font-size:11.5px;margin-bottom:6px">成約事例（直近1年）</div>
-         <table><thead><tr><th>住所</th><th class="num">坪単価</th><th class="num">一種単価</th><th>成約</th><th>駅距離</th></tr></thead><tbody>
-           ${MARKET.comps.map(c=>`<tr><td>${c[0]}</td><td class="num">¥${c[1].toLocaleString()}</td><td class="num">¥${c[2].toLocaleString()}</td><td>${c[3]}</td><td>${c[4]}</td></tr>`).join('')}
-         </tbody></table>
-         <div class="muted" style="font-size:11px;margin-top:8px">※ サンプル値。この画面のようなフル表示（売出・賃料・成約事例つき）は<b>オプション（相場データ連携）</b>です。<b>基盤に含まれるのは公的データのレンジ表示のみ</b>（成約レンジ・公示価格・積算価格＝町丁目単位の目安）。<b style="color:#c25400">売出価格・賃料・住所つき成約事例はポータル／レインズ由来のため自動取得できません</b>（手入力、または有料データ連携＝オプション）。どの範囲を自動化するかは面談でご相談のうえ確定します。</div>
+       <div class="card"><h3>⑩ 相場の目安</h3>
+         ${nearInvHTML()}
+         <div id="market-live" style="margin-top:12px"></div>
+         ${marketSampleHTML()}
        </div>
      </div>
      <div><div class="card calcpanel" id="calc-panel"></div></div>
