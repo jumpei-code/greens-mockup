@@ -988,7 +988,7 @@ function refreshNotif(){
   if(apprN) items.push({ic:'',t:ROLE==='staff'?'あなたの対応が必要な案件があります':'あなたの番の承認待ちがあります',s:apprN+'件',go:ROLE==='staff'?"go('list')":"go('approve')",red:true});
   const invA=INVENTORY.filter(x=>x.days>90);
   if(invA.length) items.push({ic:'',t:'在庫が90日超（要販促・値下げ検討）',s:invA[0].name+(invA.length>1?' ほか'+(invA.length-1)+'件':''),go:"go('ops')",red:true});
-  items.push({ic:'',t:'仕入決済の期日が近づいています（決済期日リマインド）',s:'江戸川区◯◯1丁目 土地・決済予定 07/10（あと3日）',go:"go('detail','GR-2026-0012')",red:false});
+  items.push({ic:'',t:'仕入決済の期日が近づいています（決済期日リマインド）',s:'足立区◯◯4丁目 戸建・決済予定 07/15（承認済み・決済待ち）',go:"go('detail','GR-2026-0016')",red:false});
   items.push({ic:'',t:'買付の回答期限が本日です（買付・商談管理）',s:'川口市◯◯4丁目 アパート・指値89,000,000円',go:"go('ops')",red:true});
   items.push({ic:'',t:'今週の全社サマリーが届きました',s:'売上・在庫・粗利（週次サマリー自動配信＝オプション）',go:(ROLE==='staff'?"go('review')":"go('bizdash')"),red:false});
   const unread=items.filter(i=>i.red).length;
@@ -2161,6 +2161,7 @@ function renderPerf(){
 const CREDIT={limit:800, used:610};  // 与信枠と使用中残高（百万円）
 const CASH_EVENTS=[  // m:月, kind:'out'(仕入決済=出金)/'in'(売却決済=入金), amt:百万円
   {m:'7月', d:'07/10', kind:'out', name:'江戸川区◯◯1丁目 土地（仕入決済）',            amt:12.8, staff:'佐藤', id:'GR-2026-0012'},
+  {m:'7月', d:'07/15', kind:'out', name:'足立区◯◯4丁目 戸建（仕入決済・承認済み）',      amt:21.2, staff:'佐藤', id:'GR-2026-0016'},
   {m:'7月', d:'07/17', kind:'in',  name:'板橋区◯◯2丁目 土地（売却決済・買付あり）',     amt:15.2, staff:'高橋'},
   {m:'7月', d:'07/22', kind:'out', name:'練馬区◯◯2丁目 土地（仕入決済・承認後見込み）', amt:12.7, staff:'高橋', id:'GR-2026-0013'},
   {m:'7月', d:'07/28', kind:'out', name:'足立区◯◯3丁目 アパート用地（仕入決済）',       amt:24.5, staff:'田中'},
