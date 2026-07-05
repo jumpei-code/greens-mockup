@@ -2267,19 +2267,31 @@ const STOCK_LAND=[
   [84800000,'21.72',3904235,'業物・当該物件に近い','阿佐ヶ谷11分','◯◯1丁目']
 ];
 /* 相場の共通部品（フォーム版・グリッド版で中身を統一）。基盤＝担当入力の近隣在庫／オプション＝自動取得サンプル */
-function nearInvHTML(){ return `
-   <div class="subhead" style="margin-top:12px;color:#3f5720">担当が入力した近隣販売在庫（レインズ・ポータル等の調査結果）</div>
-   <div class="muted" style="font-size:11px;margin:2px 0 6px">※ 受領Excelの手入力項目。担当が調べた結果を入力＝<b>基盤に含む・合法</b>。入力ぶんは全社で共有・過去分も検索できます。</div>
+function nearInvHTML(){
+  const row=r=>`<tr>
+     <td class="gin num"><input class="xin" value="${r[0].toLocaleString()}"></td>
+     <td class="gin num"><input class="xin" value="${r[1]}"></td>
+     <td class="gin num"><input class="xin" value="${r[2].toLocaleString()}"></td>
+     <td class="gin"><input class="xin" value="${r[3]}"></td>
+     <td class="gin"><input class="xin" value="${r[4]}"></td>
+     <td class="gin"><input class="xin" value="${r[5]}"></td>
+   </tr>`;
+  const blank=`<tr>${'<td class="gin"><input class="xin" placeholder="入力"></td>'.repeat(6)}</tr>`;
+  return `
+   <div class="muted" style="font-size:11px;margin:2px 0 6px">※ 受領Excelの手入力項目。担当がレインズ・ポータル等で調べた近隣事例を入力＝<b>基盤に含む</b>。入力ぶんは全社で共有・過去分も検索できます（下の数値は参考のサンプル。緑＝入力欄）。</div>
    <table class="xgrid">
      <tr><td class="sec" colspan="6">新築　販売在庫（近隣）</td></tr>
      <tr><td class="lbl num">価格</td><td class="lbl num">土地面積</td><td class="lbl num">坪単価</td><td class="lbl">延床面積（間取）</td><td class="lbl">駅距離</td><td class="lbl">住所</td></tr>
-     ${STOCK_NEW.map(r=>`<tr><td class="num">¥${r[0].toLocaleString()}</td><td class="num">${r[1]}坪</td><td class="num">¥${r[2].toLocaleString()}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td></tr>`).join('')}
+     ${STOCK_NEW.map(row).join('')}
+     ${blank}
    </table>
    <table class="xgrid" style="margin-top:14px">
      <tr><td class="sec" colspan="6">土地　販売在庫（近隣）</td></tr>
      <tr><td class="lbl num">価格</td><td class="lbl num">土地面積</td><td class="lbl num">坪単価</td><td class="lbl">特徴</td><td class="lbl">駅距離</td><td class="lbl">住所</td></tr>
-     ${STOCK_LAND.map(r=>`<tr><td class="num">¥${r[0].toLocaleString()}</td><td class="num">${r[1]}坪</td><td class="num">¥${r[2].toLocaleString()}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td></tr>`).join('')}
-   </table>`; }
+     ${STOCK_LAND.map(row).join('')}
+     ${blank}
+   </table>`;
+}
 function marketSampleHTML(){ return `
    <div class="subhead" style="margin-top:16px">自動取得の相場データ（サンプル）<span class="optbadge">オプション</span></div>
    <div class="row" style="gap:10px;margin:6px 0 12px">
@@ -2493,8 +2505,6 @@ function newGridLeft(){ const comps=MARKET.comps; return `
    </div>
    ${gridSalesSection()}
    ${nearInvHTML()}
-   <div id="market-live" style="margin-top:10px"></div>
-   ${marketSampleHTML()}
   </div>`; }
 function fakeUpload(){ const n=document.getElementById('upload-note'); if(n) n.innerHTML='<span style="color:#15803d;font-weight:700">✓ 「事業収支_雛型.xlsx」を読み込みました（デモ）。物件名・地積・容積率・原価などが自動で入力されます。</span>'; }
 function uploadCardHTML(){ return `
@@ -2604,10 +2614,8 @@ function renderNew(){
          ${fld('建物評価額','n_beval',500000,{green:1})}
        </div></div>
        ${salesFormSection()}
-       <div class="card"><h3>⑩ 相場の目安</h3>
+       <div class="card"><h3>⑩ 相場の目安（近隣販売在庫）</h3>
          ${nearInvHTML()}
-         <div id="market-live" style="margin-top:12px"></div>
-         ${marketSampleHTML()}
        </div>
      </div>
      <div><div class="card calcpanel" id="calc-panel"></div></div>
@@ -2683,9 +2691,8 @@ function recalcNew(){
         <div class="muted" style="font-size:11px;margin-top:2px">現在の原価合計 ${fmtY(cost)}</div>
       </div>
     </div>
-    <button class="btn primary" style="width:100%;margin-bottom:8px" onclick="submitNew()">保存して提出（代表承認へ）</button>
-    <button class="btn" style="width:100%;margin-bottom:8px" onclick="toast('（モック）下書きに保存しました。ダッシュボードの「①自分の検討中」と担当物件に「検討中（下書き）」として表示されます。')">下書き保存（検討中として保管）</button>
-    <button class="btn" style="width:100%" onclick="go('dashboard')">下書き保存して戻る</button>`;
+    <button class="btn primary" style="width:100%;margin-bottom:8px" onclick="submitNew()">保存して提出</button>
+    <button class="btn" style="width:100%;margin-bottom:8px" onclick="toast('（モック）下書きに保存しました。ダッシュボードの「①自分の検討中」と担当物件に「検討中（下書き）」として表示されます。')">下書き保存（検討中として保管）</button>`;
   // 相場比較（仕入坪単価 vs 成約相場）
   const m2=gv('n_m2'), yo=gv('n_yoseki'), tsubo=m2*0.3025;
   const buyTsubo=tsubo>0?land/tsubo:0, buyIsshu=yo>0?buyTsubo/(yo/100):0;
