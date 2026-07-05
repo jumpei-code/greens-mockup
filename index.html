@@ -414,6 +414,8 @@
   .reqrow.done .rn{color:#729c3a;}
   .reqrow.done .rgo{visibility:hidden;}
   .reqbox .rft{font-size:11px;color:var(--sub);padding:9px 20px;background:#fafaf6;}
+  .btn.submit-green{background:#729c3a !important;border-color:#729c3a !important;color:#fff !important;}
+  .btn.submit-green:hover{background:#5f8430 !important;border-color:#5f8430 !important;}
 </style>
 </head>
 <body>
@@ -2691,7 +2693,7 @@ function recalcNew(){
         <div class="muted" style="font-size:11px;margin-top:2px">現在の原価合計 ${fmtY(cost)}</div>
       </div>
     </div>
-    <button class="btn primary" style="width:100%;margin-bottom:8px" onclick="submitNew()">保存して提出</button>
+    <button class="btn primary submit-green" style="width:100%;margin-bottom:8px" onclick="submitNew()">保存して提出</button>
     <button class="btn" style="width:100%;margin-bottom:8px" onclick="toast('（モック）下書きに保存しました。ダッシュボードの「①自分の検討中」と担当物件に「検討中（下書き）」として表示されます。')">下書き保存（検討中として保管）</button>`;
   // 相場比較（仕入坪単価 vs 成約相場）
   const m2=gv('n_m2'), yo=gv('n_yoseki'), tsubo=m2*0.3025;
