@@ -2897,13 +2897,13 @@ function renderConfirm(){
    <div class="card" style="margin-bottom:16px">
      <h3>③ AI所見 <span class="optbadge">オプション</span></h3>
      <div style="font-size:12.5px;color:var(--ink);line-height:1.8;margin-bottom:10px">
+       <div style="margin-bottom:10px;padding:9px 11px;background:#eef4e3;border-left:3px solid #729c3a"><b style="color:#729c3a">【総合】</b>${aiTotal}</div>
        <div style="margin-bottom:6px"><b style="color:#729c3a">【過去実績】</b>${aiPast}</div>
        ${aiMarket?`<div style="margin-bottom:6px"><b style="color:#729c3a">【相場照合】</b>${aiMarket}</div>`:''}
        ${aiInv?`<div style="margin-bottom:6px"><b style="color:#729c3a">【販売環境】</b>${aiInv}</div>`:''}
-       ${aiFloor?`<div style="margin-bottom:6px"><b style="color:#729c3a">【下振れ耐性】</b>${aiFloor}</div>`:''}
-       <div><b style="color:#729c3a">【総合】</b>${aiTotal}</div>
+       ${aiFloor?`<div><b style="color:#729c3a">【下振れ耐性】</b>${aiFloor}</div>`:''}
      </div>
-     <div class="muted" style="font-size:11px">AI所見はオプション（別途費用）＝過去実績・相場データ・社内の販売状況を横断して要点を言語化します。基盤は上の自動判定（ルール計算）です。（サンプル表示）</div>
+     <div class="muted" style="font-size:11px">AI所見はオプション（別途費用）＝過去実績・相場データ・社内の販売状況を横断して要点を言語化します。相場照合は公的データ（国交省・無料）のレンジ照合から始められ、有料API併用で精度が上がります。基盤は上の自動判定（ルール計算）です。（サンプル表示）</div>
    </div>
 
    </div>
