@@ -2783,6 +2783,40 @@ function recalcNew(){
 }
 /* submitNew は renderConfirm 内の申請ボタンに統合 */
 
+/* ---------- AI分析レポート用レーダーチャートSVG生成 ---------- */
+function radarSVG(axes, size){
+  if(!axes || axes.length < 3) return '';
+  const N = axes.length, cx = size/2, cy = size/2, R = size/2 - 36;
+  const angle = i => (Math.PI * 2 / N) * i - Math.PI/2;
+  const px = (i, r) => cx + r * Math.cos(angle(i));
+  const py = (i, r) => cy + r * Math.sin(angle(i));
+  const grids = [25,50,75,100].map(pct => {
+    const r = R * pct/100;
+    const pts = axes.map((_,i) => `${px(i,r).toFixed(1)},${py(i,r).toFixed(1)}`).join(' ');
+    return `<polygon points="${pts}" fill="none" stroke="#e2e8f0" stroke-width="${pct===100?1.2:0.8}"/>`;
+  }).join('');
+  const axLines = axes.map((_,i) => `<line x1="${cx}" y1="${cy}" x2="${px(i,R).toFixed(1)}" y2="${py(i,R).toFixed(1)}" stroke="#e2e8f0" stroke-width="0.8"/>`).join('');
+  const pts = axes.map((a,i) => {
+    const r = R * Math.max(0,Math.min(100,a.score))/100;
+    return `${px(i,r).toFixed(1)},${py(i,r).toFixed(1)}`;
+  }).join(' ');
+  const dots = axes.map((a,i) => {
+    const r = R * Math.max(0,Math.min(100,a.score))/100;
+    return `<circle cx="${px(i,r).toFixed(1)}" cy="${py(i,r).toFixed(1)}" r="3.5" fill="#729c3a" stroke="#fff" stroke-width="1.5"/>`;
+  }).join('');
+  const labels = axes.map((a,i) => {
+    const lx = px(i, R+22), ly = py(i, R+22);
+    const anchor = lx < cx-5 ? 'end' : lx > cx+5 ? 'start' : 'middle';
+    return `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${anchor}" dominant-baseline="middle" font-size="9.5" fill="#475569">${a.label}</text>
+<text x="${lx.toFixed(1)}" y="${(ly+12).toFixed(1)}" text-anchor="${anchor}" dominant-baseline="middle" font-size="9" fill="#729c3a" font-weight="700">${a.score}</text>`;
+  }).join('');
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="overflow:visible">
+  ${grids}${axLines}
+  <polygon points="${pts}" fill="rgba(114,156,58,0.25)" stroke="#729c3a" stroke-width="2"/>
+  ${dots}${labels}
+</svg>`;
+}
+
 /* ---------- 申請前確認ページ（3段フロー：入力→確認→完了） ---------- */
 function renderConfirm(){
   // 入力フォームが画面にある時だけ同期（確認ページ上の再描画で値を壊さない）
@@ -2856,6 +2890,36 @@ function renderConfirm(){
   const aiInv=invSame.length?`社内の${NEW_TYPE}在庫は${invSame.length}件・平均保有${Math.round(invSame.reduce((a,b)=>a+b.days,0)/invSame.length)}日${invSame.some(i=>i.days>90)?`（うち90日超の滞留 ${invSame.filter(i=>i.days>90).length}件＝同種別の販売は長期化傾向。売出初動の値付けが重要です）`:''}。`:'';
   const aiTotal=jmark==='×'?`基準未達のため、申請前に原価・売価の条件を再検討することを推奨します。`:`判定は${jmark}${jlabel}。${vsAvg>0.05&&NEW_TYPE==='土地'?`ただし売価は相場比で強気のため、売出後の反響が鈍い場合は早期の価格見直しを推奨します。`:`売価設定・下振れ耐性とも無理のない計画です。`}`;
 
+  // ── AI分析レポート用スコア計算 ────────────────────────────────────────────
+  const avgDiff = sameDone.length
+    ? sameDone.map(d=>(d.actual.profit/d.actual.price)-rate(d,1)).reduce((a,b)=>a+b,0)/sameDone.length
+    : 0;
+  const aiScorePast  = Math.max(0, Math.min(100, Math.round(50 + avgDiff * 1000)));
+  const aiScoreMkt   = (NEW_TYPE==='土地' && tsuboP>0)
+    ? Math.max(0, Math.min(100, Math.round(100 - Math.max(0, vsAvg) * 150)))
+    : null;
+  const avgDaysInv   = invSame.length
+    ? Math.round(invSame.reduce((a,b)=>a+b.days,0)/invSame.length)
+    : null;
+  const aiScoreInv   = invSame.length
+    ? Math.max(0, Math.min(100, Math.round(100 - Math.max(0, (avgDaysInv||0) - 30) * 0.8)))
+    : 70; /* 販売環境は全種別対象（社内在庫は種別ごとに存在）・在庫0件は中立70 */
+  const aiScoreFloor = (!INCOME_TYPES.includes(NEW_TYPE) && p2>0)
+    ? Math.max(0, Math.min(100, Math.round(roomPct * 10)))
+    : null;
+  const scoreChip = s => s>=70
+    ? `<span style="font-size:10px;font-weight:700;background:#eef4e3;color:#4c7c15;padding:1px 7px;border-radius:999px">良好</span>`
+    : s>=40
+    ? `<span style="font-size:10px;font-weight:700;background:#fff7ed;color:#c25400;padding:1px 7px;border-radius:999px">注意</span>`
+    : `<span style="font-size:10px;font-weight:700;background:#fef2f2;color:#cc3300;padding:1px 7px;border-radius:999px">要警戒</span>`;
+  // レーダー軸（nullでない観点のみ）
+  const radarAxes = [
+    {label:'過去実績', score:aiScorePast},
+    aiScoreMkt   != null ? {label:'相場照合',   score:aiScoreMkt}   : null,
+    aiScoreInv   != null ? {label:'販売環境',   score:aiScoreInv}   : null,
+    aiScoreFloor != null ? {label:'下振れ耐性', score:aiScoreFloor} : null,
+  ].filter(Boolean);
+
   // ボタン行HTML（HW_LOCK状態で切り替える）
   const submitBtnHTML=HW_LOCK
     ?`<button class="btn" style="width:100%;margin-bottom:8px;background:#e5e7eb;border-color:#e5e7eb;color:#9ca3af;cursor:not-allowed" disabled>✓ この内容で申請する</button>
@@ -2868,8 +2932,6 @@ function renderConfirm(){
    <div style="font-size:11.5px;color:var(--sub);margin-bottom:12px;padding:8px 14px;background:#f8fafc;border:1px solid var(--line);border-radius:8px">
      基盤＝自動判定・過去案件・申請操作 ／ <span class="optbadge">オプション</span>＝AI所見・相場照合の分析
    </div>
-   <div class="twocol">
-   <div>
 
    <div class="card" style="margin-bottom:16px">
      <h3>① 自動判定サマリー</h3>
@@ -2914,36 +2976,104 @@ function renderConfirm(){
      ${rejRowHTML}
    </div>
 
-   <div class="card" style="margin-bottom:16px">
-     <h3>③ AI所見 <span class="optbadge">オプション</span></h3>
-     <div style="font-size:12.5px;color:var(--ink);line-height:1.8;margin-bottom:10px">
-       <div style="margin-bottom:10px;padding:9px 11px;background:#eef4e3;border-left:3px solid #729c3a"><b style="color:#729c3a">【総合】</b>${aiTotal}</div>
-       <div style="margin-bottom:6px"><b style="color:#729c3a">【過去実績】</b>${aiPast}</div>
-       ${aiMarket?`<div style="margin-bottom:6px"><b style="color:#729c3a">【相場照合】</b>${aiMarket}</div>
-       <div style="margin-bottom:10px;padding:8px 12px;background:#f8fafc;border:1px solid var(--line);border-radius:8px">
-         ${(()=>{const lo=MARKET.soldLo,hi=MARKET.soldHi,avg=MARKET.soldAvg;const overRange=tsuboP>hi;const clampedP=Math.min(tsuboP,hi*1.4);return rangeBar(clampedP,lo,hi,avg,'この物件 ¥'+Math.round(tsuboP).toLocaleString()+'/坪'+(overRange?' ※レンジ上限超え':''))+'<div style="display:flex;justify-content:space-between;font-size:10.5px;color:var(--sub);margin-top:4px"><span>下限 ¥'+lo.toLocaleString()+'</span><span>平均 ¥'+avg.toLocaleString()+'</span><span>上限 ¥'+hi.toLocaleString()+'</span></div>';})()}
-       </div>`:''}
-       ${aiInv?`<div style="margin-bottom:6px"><b style="color:#729c3a">【販売環境】</b>${aiInv}</div>`:''}
-       ${aiFloor?`<div style="margin-bottom:6px"><b style="color:#729c3a">【下振れ耐性】</b>${aiFloor}</div>
-       <div style="padding:8px 12px;background:#f8fafc;border:1px solid var(--line);border-radius:8px;margin-bottom:6px">
-         ${(()=>{if(p2<=0)return '';if(roomPct<=0){return '<div style="height:18px;background:#cc3300;border-radius:4px;display:flex;align-items:center;padding:0 8px"><span style="color:#fff;font-size:11px;font-weight:700">余地なし（損益分岐を下回っています）</span></div>';}const safeW=Math.max(5,Math.min(90,roomPct*3));return '<div style="display:flex;align-items:center;gap:6px"><div style="flex:1;height:18px;background:#eef4e3;border-radius:4px;overflow:hidden"><div style="width:'+safeW+'%;height:100%;background:#729c3a;border-radius:4px"></div></div><span style="font-size:11.5px;font-weight:700;color:#4c7c15;white-space:nowrap">▲'+roomPct.toFixed(1)+'% の余地</span></div><div style="font-size:10.5px;color:var(--sub);margin-top:3px">損益分岐 '+fmtY(Math.round(floorPrice))+' → 想定② '+fmtY(Math.round(p2))+' の下げ余地</div>';})()}
-       </div>`:''}
+   <div class="card" style="margin-bottom:16px;padding:0;overflow:hidden">
+     <!-- レポートヘッダー帯 -->
+     <div style="background:#1c1f1a;padding:12px 18px;display:flex;align-items:center;justify-content:space-between">
+       <span style="color:#fff;font-weight:700;font-size:14px">AI分析レポート</span>
+       <span><span class="optbadge">オプション</span><span style="color:#9ca3af;font-size:10.5px;margin-left:6px">サンプル表示</span></span>
      </div>
-     <div class="muted" style="font-size:11px">AI所見はオプション（別途費用）＝過去実績・相場データ・社内の販売状況を横断して要点を言語化します。相場照合は公的データ（国交省・無料）のレンジ照合から始められ、有料API併用で精度が上がります。基盤は上の自動判定（ルール計算）です。（サンプル表示）</div>
+     <!-- 総合評価帯 -->
+     <div style="padding:14px 18px;background:${jmark==='◎'?'#eef4e3':jmark==='△'?'#fff7ed':'#fef2f2'};border-left:4px solid ${jmark==='◎'?'#729c3a':jmark==='△'?'#c25400':'#cc3300'};display:flex;align-items:flex-start;gap:14px">
+       <div style="font-size:30px;font-weight:800;color:${jmark==='◎'?'#4c7c15':jmark==='△'?'#c25400':'#cc3300'};line-height:1">${jmark}</div>
+       <div style="font-size:13px;color:#1c1f1a;line-height:1.7">${aiTotal}</div>
+     </div>
+     <!-- レーダー＋観点ミニカード -->
+     <div style="padding:16px 18px">
+       <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
+         <!-- レーダーチャート（3軸以上のみ） -->
+         ${radarAxes.length>=3 ? `<div style="flex:0 0 220px">${radarSVG(radarAxes, 220)}</div>` : ''}
+         <!-- 観点ミニカード群 -->
+         <div style="flex:1;min-width:260px;display:grid;grid-template-columns:repeat(2,1fr);gap:10px">
+           <!-- 過去実績カード -->
+           <div style="border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:#fafafa">
+             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+               <span style="font-size:11.5px;font-weight:700;color:#1c1f1a">過去実績</span>${scoreChip(aiScorePast)}
+             </div>
+             <div style="font-size:18px;font-weight:800;color:${avgDiff>=0?'#4c7c15':'#cc3300'};margin-bottom:4px">${avgDiff>=0?'+':'▲'}${Math.abs(avgDiff*100).toFixed(1)}pt</div>
+             <div style="font-size:10.5px;color:#475569;line-height:1.5;margin-bottom:6px">${aiPast}</div>
+             ${sameDone.length?`<div style="display:flex;flex-direction:column;gap:3px">
+               <div style="display:flex;align-items:center;gap:4px"><span style="font-size:9.5px;color:var(--sub);width:24px">計画</span><div style="flex:1;height:7px;background:#e2e8f0;border-radius:2px;overflow:hidden"><div style="width:${Math.max(5,Math.min(100,(sameDone.reduce((a,d)=>a+rate(d,1),0)/sameDone.length)/0.15*100)).toFixed(0)}%;height:100%;background:#94a3b8;border-radius:2px"></div></div></div>
+               <div style="display:flex;align-items:center;gap:4px"><span style="font-size:9.5px;color:var(--sub);width:24px">実績</span><div style="flex:1;height:7px;background:#e2e8f0;border-radius:2px;overflow:hidden"><div style="width:${Math.max(5,Math.min(100,(sameDone.reduce((a,d)=>a+d.actual.profit/d.actual.price,0)/sameDone.length)/0.15*100)).toFixed(0)}%;height:100%;background:${avgDiff>=0?'#4c7c15':'#cc3300'};border-radius:2px"></div></div></div>
+             </div>`:'<div style="font-size:10px;color:var(--sub)">実績なし</div>'}
+             <div style="font-size:9px;color:#9ca3af;margin-top:6px">データ源：自社実績</div>
+           </div>
+           <!-- 相場照合カード（土地のみ） -->
+           ${aiScoreMkt!=null?`<div style="border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:#fafafa">
+             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+               <span style="font-size:11.5px;font-weight:700;color:#1c1f1a">相場照合</span>${scoreChip(aiScoreMkt)}
+             </div>
+             <div style="font-size:18px;font-weight:800;color:${vsAvg>0.05?'#c25400':'#4c7c15'};margin-bottom:4px">${vsAvg>=0?'+':'▲'}${Math.abs(vsAvg*100).toFixed(0)}%</div>
+             <div style="font-size:10.5px;color:#475569;line-height:1.5;margin-bottom:6px">${aiMarket}</div>
+             <div style="padding:6px 8px;background:#f8fafc;border:1px solid var(--line);border-radius:6px;margin-bottom:6px">
+               ${(()=>{const lo=MARKET.soldLo,hi=MARKET.soldHi,avg=MARKET.soldAvg;const overRange=tsuboP>hi;const clampedP=Math.min(tsuboP,hi*1.4);return rangeBar(clampedP,lo,hi,avg,'¥'+Math.round(tsuboP).toLocaleString()+'/坪'+(overRange?' ※超え':''))+'<div style="display:flex;justify-content:space-between;font-size:9.5px;color:var(--sub);margin-top:3px"><span>下限</span><span>平均</span><span>上限</span></div>';})()}
+             </div>
+             <div style="font-size:9px;color:#9ca3af">データ源：国交省レンジ＋成約サンプル</div>
+           </div>`:`<div style="border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:#f8fafc;display:flex;align-items:center;justify-content:center"><span style="font-size:11px;color:var(--sub)">相場照合<br>（土地のみ）</span></div>`}
+           <!-- 販売環境カード（土地のみ） -->
+           ${aiScoreInv!=null?`<div style="border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:#fafafa">
+             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+               <span style="font-size:11.5px;font-weight:700;color:#1c1f1a">販売環境</span>${scoreChip(aiScoreInv)}
+             </div>
+             <div style="font-size:18px;font-weight:800;color:${(avgDaysInv||0)>90?'#cc3300':'#4c7c15'};margin-bottom:4px">平均${avgDaysInv!=null?avgDaysInv:'-'}日</div>
+             <div style="font-size:10.5px;color:#475569;line-height:1.5;margin-bottom:6px">${aiInv||'在庫情報なし'}</div>
+             <div style="padding:6px 8px;background:#f8fafc;border:1px solid var(--line);border-radius:6px;margin-bottom:6px">
+               <div style="font-size:9.5px;color:var(--sub);margin-bottom:3px">保有日数（警戒線90日）</div>
+               <div style="display:flex;align-items:center;gap:6px"><div style="flex:1;height:10px;background:#e2e8f0;border-radius:3px;position:relative;overflow:visible">
+                 <div style="width:${Math.min(100,(avgDaysInv||0)/150*100).toFixed(0)}%;height:100%;background:${(avgDaysInv||0)>90?'#cc3300':'#729c3a'};border-radius:3px;transition:width .3s"></div>
+                 <div style="position:absolute;top:-3px;bottom:-3px;left:${(90/150*100).toFixed(0)}%;width:2px;background:#f59e0b;border-radius:1px"></div>
+               </div><span style="font-size:10.5px;font-weight:700;color:${(avgDaysInv||0)>90?'#cc3300':'#4c7c15'};white-space:nowrap">${avgDaysInv!=null?avgDaysInv+' 日':'–'}</span></div>
+             </div>
+             <div style="font-size:9px;color:#9ca3af">データ源：社内在庫</div>
+           </div>`:`<div style="border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:#f8fafc;display:flex;align-items:center;justify-content:center"><span style="font-size:11px;color:var(--sub)">販売環境<br>（土地のみ）</span></div>`}
+           <!-- 下振れ耐性カード（アパート以外） -->
+           ${aiScoreFloor!=null?`<div style="border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:#fafafa">
+             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+               <span style="font-size:11.5px;font-weight:700;color:#1c1f1a">下振れ耐性</span>${scoreChip(aiScoreFloor)}
+             </div>
+             <div style="font-size:18px;font-weight:800;color:${roomPct>0?'#4c7c15':'#cc3300'};margin-bottom:4px">▲${roomPct.toFixed(1)}%</div>
+             <div style="font-size:10.5px;color:#475569;line-height:1.5;margin-bottom:6px">${aiFloor}</div>
+             <div style="padding:6px 8px;background:#f8fafc;border:1px solid var(--line);border-radius:6px;margin-bottom:6px">
+               ${(()=>{if(p2<=0)return '';if(roomPct<=0){return '<div style="height:14px;background:#cc3300;border-radius:3px;display:flex;align-items:center;padding:0 6px"><span style="color:#fff;font-size:10px;font-weight:700">余地なし</span></div>';}const safeW=Math.max(5,Math.min(90,roomPct*3));return '<div style="display:flex;align-items:center;gap:6px"><div style="flex:1;height:12px;background:#eef4e3;border-radius:3px;overflow:hidden"><div style="width:'+safeW+'%;height:100%;background:#729c3a;border-radius:3px"></div></div><span style="font-size:10.5px;font-weight:700;color:#4c7c15;white-space:nowrap">▲'+roomPct.toFixed(1)+'%</span></div>';})()}
+             </div>
+             <div style="font-size:9px;color:#9ca3af">データ源：自動計算</div>
+           </div>`:`<div style="border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:#f8fafc;display:flex;align-items:center;justify-content:center"><span style="font-size:11px;color:var(--sub)">下振れ耐性<br>（収益物件は別指標）</span></div>`}
+         </div>
+       </div>
+       <!-- フッター注記 -->
+       <div class="muted" style="font-size:11px;margin-top:12px;border-top:1px solid var(--line);padding-top:10px">AI所見はオプション（別途費用）＝過去実績・相場データ・社内の販売状況を横断して要点を言語化します。相場照合は公的データ（国交省・無料）のレンジ照合から始められ、有料API併用で精度が上がります。基盤は上の自動判定（ルール計算）です。（サンプル表示）</div>
+     </div>
    </div>
 
-   </div>
-
-   <div><div class="card calcpanel" id="confirm-action">
-     <h3>操作</h3>
-     <div class="judgebox ${jcls}" style="margin-bottom:12px"><div class="big" style="font-size:22px">${jmark}</div>
-       <div><div style="font-weight:700;color:var(--ink);font-size:13px">${jlabel}</div>
-       <div class="muted" style="font-size:11.5px">想定②利益率 ${pct(r2)}・採用IRR ${pct(irr)}</div></div></div>
-     ${submitBtnHTML}
-     <button class="btn" style="width:100%;margin-bottom:8px" onclick="toast('（デモ）検討中（下書き）として保存しました');go('dashboard')">下書きとして保存</button>
-     <button class="btn" style="width:100%;color:var(--sub)" onclick="go('new')">← 戻って修正</button>
-   </div></div>
-
+   <div class="card" id="confirm-action" style="margin-bottom:16px">
+     <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:stretch">
+       <!-- 左：判定再掲 -->
+       <div style="flex:0 0 auto;min-width:180px">
+         <div style="font-size:11.5px;color:var(--sub);margin-bottom:6px">判定</div>
+         <div class="judgebox ${jcls}" style="padding:12px 16px;margin-bottom:0">
+           <div class="big" style="font-size:26px">${jmark}</div>
+           <div>
+             <div style="font-weight:700;color:var(--ink);font-size:13px">${jlabel}</div>
+             <div class="muted" style="font-size:11px">利益率 ${pct(r2)}・IRR ${pct(irr)}</div>
+           </div>
+         </div>
+       </div>
+       <!-- 右：ボタン群 -->
+       <div style="flex:1;min-width:200px;display:flex;flex-direction:column;justify-content:center;gap:8px">
+         ${submitBtnHTML}
+         <button class="btn" style="width:100%" onclick="toast('（デモ）検討中（下書き）として保存しました');go('dashboard')">下書きとして保存</button>
+         <button class="btn" style="width:100%;color:var(--sub)" onclick="go('new')">← 戻って修正</button>
+       </div>
+     </div>
    </div>`;
 }
 function confirmSubmit(){
