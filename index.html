@@ -2789,10 +2789,11 @@ function renderConfirm(){
   if(document.getElementById('n_land')) syncNewVals();
 
   // ① 自動判定サマリー（recalcNew と同じロジックで再計算）
-  const land=parseFloat(NEW_VALS['n_land'])||0,chukai=parseFloat(NEW_VALS['n_chukai'])||0,out=parseFloat(NEW_VALS['n_out'])||0,demo=parseFloat(NEW_VALS['n_demo'])||750000,lifeline=parseFloat(NEW_VALS['n_lifeline'])||0,assign=parseFloat(NEW_VALS['n_assign'])||0,survey=parseFloat(NEW_VALS['n_survey'])||0,evict=parseFloat(NEW_VALS['n_evict'])||0,other=parseFloat(NEW_VALS['n_other'])||0;
-  const kenchiku=parseFloat(NEW_VALS['n_kenchiku'])||0,sekkei=parseFloat(NEW_VALS['n_sekkei'])||0,jiban=parseFloat(NEW_VALS['n_jiban'])||0,infra=parseFloat(NEW_VALS['n_infra'])||300000,gaikou=parseFloat(NEW_VALS['n_gaikou'])||0,kasi=parseFloat(NEW_VALS['n_kasi'])||0;
-  const inshi=parseFloat(NEW_VALS['n_inshi'])||30000,shihou=parseFloat(NEW_VALS['n_shihou'])||50000,yobi=parseFloat(NEW_VALS['n_yobi'])||100000,kanriOther=parseFloat(NEW_VALS['n_kanriOther'])||0,eigyoOther=parseFloat(NEW_VALS['n_eigyoOther'])||0;
-  const kotei=parseFloat(NEW_VALS['n_kotei'])||10000000,beval=parseFloat(NEW_VALS['n_beval'])||500000,period=parseFloat(NEW_VALS['n_period'])||12;
+  // recalcNew と完全に同じ読み方（gv＝入力欄が無ければ保存値NEW_VALSを読む）＝フォームのリアルタイム判定と必ず一致させる
+  const land=gv('n_land'),chukai=gv('n_chukai'),out=gv('n_out'),demo=gv('n_demo'),lifeline=gv('n_lifeline'),assign=gv('n_assign'),survey=gv('n_survey'),evict=gv('n_evict'),other=gv('n_other');
+  const kenchiku=gv('n_kenchiku'),sekkei=gv('n_sekkei'),jiban=gv('n_jiban'),infra=gv('n_infra'),gaikou=gv('n_gaikou'),kasi=gv('n_kasi');
+  const inshi=gv('n_inshi'),shihou=gv('n_shihou'),yobi=gv('n_yobi'),kanriOther=gv('n_kanriOther'),eigyoOther=gv('n_eigyoOther');
+  const kotei=gv('n_kotei'),beval=gv('n_beval'),period=gv('n_period')||12;
   const SCN=newScenarios();
   const p1=SCN.prices[0]||0,p2=SCN.prices[SCN.ji]||0;
   const borrow=land*0.9,interest=borrow*0.035/12*period,jimu=borrow*0.01;
@@ -2804,7 +2805,7 @@ function renderConfirm(){
   const admin=shihou+yobi+kanriOther+salesFee,nonop=interest+jimu+eigyoOther;
   const cost=landBlock+bldgBlock+taxes+admin+nonop;
   const r2=p2>0?(p2-cost)/p2:0;
-  const irr=INCOME_TYPES.includes(NEW_TYPE)?irrApt(cost,parseFloat(NEW_VALS['n_rent'])||0,p2,period):((cost>0&&p2>0)?Math.pow(p2/cost,12/period)-1:0);
+  const irr=INCOME_TYPES.includes(NEW_TYPE)?irrApt(cost,gv('n_rent'),p2,period):((cost>0&&p2>0)?Math.pow(p2/cost,12/period)-1:0);
   let jmark,jlabel,jcls;
   if(r2>=0.10&&irr>=0.10){jmark='◎';jlabel='推奨';jcls='j-ok';}
   else if(r2>=0.08&&irr>=0.10){jmark='△';jlabel='条件付き可';jcls='j-warn';}
@@ -2832,6 +2833,21 @@ function renderConfirm(){
     </tr>`;
   }).join(''):`<tr><td colspan="4" style="color:var(--sub)">同種別（${NEW_TYPE}）の過去実績はまだありません。</td></tr>`;
   const rejRowHTML=sameRej.length?`<div style="margin-top:12px"><div style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:6px">同種別の見送り案件</div><table><thead><tr><th>物件</th><th class="num">想定②利益率</th><th>見送り理由</th></tr></thead><tbody>${sameRej.map(d=>`<tr class="clickable" onclick="go('detail','${d.id}')"><td><b>${d.name}</b><br><span style="font-size:10.5px;color:var(--sub)">${d.id}・担当 ${d.staff}</span></td><td class="num">${pct(rate(d,1))}</td><td style="font-size:11px;color:var(--sub)">${d.rejReason}</td></tr>`).join('')}</tbody></table></div>`:'' ;
+
+  // ③ AI所見（サンプル）＝画面内の実データ・実ロジックから動的生成（静的文言だと表の数字と矛盾するため）
+  const aiPast=(()=>{ if(!sameDone.length) return `同種別（${NEW_TYPE}）の売却済み実績はまだ少なく、過去比較は蓄積後に精度が上がります。`;
+    const diffs=sameDone.map(d=>(d.actual.profit/d.actual.price)-rate(d,1));
+    const avg=diffs.reduce((a,b)=>a+b,0)/diffs.length; const up=avg>=0;
+    return `同種別の売却済み${sameDone.length}件では、実績が計画を平均<b style="color:${up?'#4c7c15':'#cc3300'}">${up?'+':'▲'}${Math.abs(avg*100).toFixed(1)}pt</b>${up?'上回り':'下回り'}ました${sameRej.length?`（見送り${sameRej.length}件の理由も上表参照）`:''}。`; })();
+  const m2v=gv('n_m2'), tsuboCnt=m2v*0.3025, tsuboP=(tsuboCnt>0&&p2>0)?p2/tsuboCnt:0;
+  const vsAvg=tsuboP>0?(tsuboP/MARKET.soldAvg-1):0;
+  const aiMarket=(NEW_TYPE==='土地'&&tsuboP>0)?`想定②の坪単価 <b>${fmtY(Math.round(tsuboP))}/坪</b> は、近隣成約平均（${fmtY(MARKET.soldAvg)}/坪）比 <b style="color:${vsAvg>0.05?'#c25400':'#4c7c15'}">${vsAvg>=0?'+':'▲'}${Math.abs(vsAvg*100).toFixed(0)}%</b>${tsuboP>MARKET.soldHi?`・成約レンジ上限（${fmtY(MARKET.soldHi)}/坪）超え＝強気の値付けで、販売長期化のリスクがあります`:(tsuboP<MARKET.soldLo?`・成約レンジ下限未満＝早期売却が見込める保守的な値付けです`:`・成約レンジ内の妥当な値付けです`)}。`:'';
+  const floorPrice=Math.max(cost/(1-MIN_RATE), cost*Math.pow(1+MIN_IRR,period/12));
+  const roomPct=p2>0?(1-floorPrice/p2)*100:0;
+  const aiFloor=(!INCOME_TYPES.includes(NEW_TYPE)&&p2>0)?(roomPct>0?`売価を <b>${fmtY(Math.round(floorPrice))}</b>（▲${roomPct.toFixed(1)}%）まで下げても、最低ライン（利益率8%＋IRR10%）を維持できます＝下振れ耐性あり。`:`想定②が既に最低ラインの損益分岐（${fmtY(Math.round(floorPrice))}）を下回っています＝下げ余地なし。`):'';
+  const invSame=INVENTORY.filter(i=>i.type===NEW_TYPE);
+  const aiInv=invSame.length?`社内の${NEW_TYPE}在庫は${invSame.length}件・平均保有${Math.round(invSame.reduce((a,b)=>a+b.days,0)/invSame.length)}日${invSame.some(i=>i.days>90)?`（うち90日超の滞留 ${invSame.filter(i=>i.days>90).length}件＝同種別の販売は長期化傾向。売出初動の値付けが重要です）`:''}。`:'';
+  const aiTotal=jmark==='×'?`基準未達のため、申請前に原価・売価の条件を再検討することを推奨します。`:`判定は${jmark}${jlabel}。${vsAvg>0.05&&NEW_TYPE==='土地'?`ただし売価は相場比で強気のため、売出後の反響が鈍い場合は早期の価格見直しを推奨します。`:`売価設定・下振れ耐性とも無理のない計画です。`}`;
 
   // ボタン行HTML（HW_LOCK状態で切り替える）
   const submitBtnHTML=HW_LOCK
@@ -2880,8 +2896,14 @@ function renderConfirm(){
 
    <div class="card" style="margin-bottom:16px">
      <h3>③ AI所見 <span class="optbadge">オプション</span></h3>
-     <div style="font-size:13px;color:var(--ink);line-height:1.7;margin-bottom:10px">（サンプル）同種別の過去3件は、実績が計画を平均▲1.2pt下回っています。想定②の売価は保守的に見る余地があります。</div>
-     <div class="muted" style="font-size:11px">AIによる所見はオプション（別途費用）。基盤は上の自動判定（ルール計算）です。</div>
+     <div style="font-size:12.5px;color:var(--ink);line-height:1.8;margin-bottom:10px">
+       <div style="margin-bottom:6px"><b style="color:#729c3a">【過去実績】</b>${aiPast}</div>
+       ${aiMarket?`<div style="margin-bottom:6px"><b style="color:#729c3a">【相場照合】</b>${aiMarket}</div>`:''}
+       ${aiInv?`<div style="margin-bottom:6px"><b style="color:#729c3a">【販売環境】</b>${aiInv}</div>`:''}
+       ${aiFloor?`<div style="margin-bottom:6px"><b style="color:#729c3a">【下振れ耐性】</b>${aiFloor}</div>`:''}
+       <div><b style="color:#729c3a">【総合】</b>${aiTotal}</div>
+     </div>
+     <div class="muted" style="font-size:11px">AI所見はオプション（別途費用）＝過去実績・相場データ・社内の販売状況を横断して要点を言語化します。基盤は上の自動判定（ルール計算）です。（サンプル表示）</div>
    </div>
 
    </div>
