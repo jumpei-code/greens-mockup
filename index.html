@@ -2679,7 +2679,7 @@ function renderNew(){
    </div>`;
   recalcNew();
 }
-function gv(id){ const e=document.getElementById(id); return e?(parseFloat(e.value)||0):0; }
+function gv(id){ const e=document.getElementById(id); if(e) return parseFloat(e.value)||0; return parseFloat(NEW_VALS[id])||0; /* 画面に入力欄が無い時（確認ページ等）は保存値を読む */ }
 function recalcNew(){
   const land=gv('n_land'),chukai=gv('n_chukai'),out=gv('n_out'),demo=gv('n_demo'),lifeline=gv('n_lifeline'),assign=gv('n_assign'),survey=gv('n_survey'),evict=gv('n_evict'),other=gv('n_other');
   const kenchiku=gv('n_kenchiku'),sekkei=gv('n_sekkei'),jiban=gv('n_jiban'),infra=gv('n_infra'),gaikou=gv('n_gaikou'),kasi=gv('n_kasi');
@@ -2785,8 +2785,8 @@ function recalcNew(){
 
 /* ---------- 申請前確認ページ（3段フロー：入力→確認→完了） ---------- */
 function renderConfirm(){
-  // NEW_VALS が空なら入力値を同期
-  syncNewVals();
+  // 入力フォームが画面にある時だけ同期（確認ページ上の再描画で値を壊さない）
+  if(document.getElementById('n_land')) syncNewVals();
 
   // ① 自動判定サマリー（recalcNew と同じロジックで再計算）
   const land=parseFloat(NEW_VALS['n_land'])||0,chukai=parseFloat(NEW_VALS['n_chukai'])||0,out=parseFloat(NEW_VALS['n_out'])||0,demo=parseFloat(NEW_VALS['n_demo'])||750000,lifeline=parseFloat(NEW_VALS['n_lifeline'])||0,assign=parseFloat(NEW_VALS['n_assign'])||0,survey=parseFloat(NEW_VALS['n_survey'])||0,evict=parseFloat(NEW_VALS['n_evict'])||0,other=parseFloat(NEW_VALS['n_other'])||0;
@@ -2842,7 +2842,8 @@ function renderConfirm(){
 
   document.getElementById('content').innerHTML=`
    <span class="back" onclick="go('new')">← フォームに戻る</span>
-   <div style="max-width:800px">
+   <div class="twocol">
+   <div>
 
    <div class="card" style="margin-bottom:16px">
      <h3>① 自動判定サマリー</h3>
@@ -2883,12 +2884,17 @@ function renderConfirm(){
      <div class="muted" style="font-size:11px">AIによる所見はオプション（別途費用）。基盤は上の自動判定（ルール計算）です。</div>
    </div>
 
-   <div class="card" style="margin-bottom:16px" id="confirm-action">
-     <h3>④ 操作</h3>
+   </div>
+
+   <div><div class="card calcpanel" id="confirm-action">
+     <h3>操作</h3>
+     <div class="judgebox ${jcls}" style="margin-bottom:12px"><div class="big" style="font-size:22px">${jmark}</div>
+       <div><div style="font-weight:700;color:var(--ink);font-size:13px">${jlabel}</div>
+       <div class="muted" style="font-size:11.5px">想定②利益率 ${pct(r2)}・採用IRR ${pct(irr)}</div></div></div>
      ${submitBtnHTML}
      <button class="btn" style="width:100%;margin-bottom:8px" onclick="toast('（デモ）検討中（下書き）として保存しました');go('dashboard')">下書きとして保存</button>
      <button class="btn" style="width:100%;color:var(--sub)" onclick="go('new')">← 戻って修正</button>
-   </div>
+   </div></div>
 
    </div>`;
 }
