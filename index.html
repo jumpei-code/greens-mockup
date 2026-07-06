@@ -728,9 +728,12 @@ function stackBar(rows){
 }
 function rangeBar(val,lo,hi,avg,lbl){
   const max=hi*1.15;
+  const pos=clampW(val,max);
+  /* 端に近いラベルは内側寄せ（右端で見切れないように） */
+  const anchor=pos>75?'left:auto;right:0;transform:none;':(pos<12?'left:0;transform:none;':'');
   return `<div class="rangebar"><div class="band" style="left:${clampW(lo,max)}%;width:${clampW(hi,max)-clampW(lo,max)}%"></div>
     <div class="avg" style="left:${clampW(avg,max)}%"></div>
-    <div class="marker" style="left:${clampW(val,max)}%"><span>${lbl||('この物件 ¥'+Math.round(val).toLocaleString())}</span></div></div>`;
+    <div class="marker" style="left:${pos}%"><span style="${anchor}">${lbl||('この物件 ¥'+Math.round(val).toLocaleString())}</span></div></div>`;
 }
 function trendBars(data,max){
   return `<div style="display:flex;align-items:flex-end;gap:7px;height:96px">${data.map(p=>{const h=Math.max(4,Math.round(p[1]/max*78));return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end">
@@ -1800,10 +1803,11 @@ function diagnosisHTML(){
   const topType=byType[0];
   if(topType && topType.rev/totalRev>0.4){ins.push({lv:'info',t:'収益の偏り',b:`「${topType.t}」が収益の <b>${(topType.rev/totalRev*100).toFixed(0)}%</b> を占めます。`,a:'一つの類型・エリアへの依存はリスク。ポートフォリオ分散も意識。'});}
   const col={high:'#b91c1c',good:'#15803d',info:'#334155'}, icn={high:'⚠',good:'✓',info:''};
-  const insHTML=ins.map(x=>`<div style="border:1px solid var(--line);border-left:3px solid ${col[x.lv]};padding:11px 14px;margin-bottom:9px">
+  /* ボックス型（横長）×2列グリッド（2026-07-07 中西さん指示） */
+  const insHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">${ins.map(x=>`<div style="border:1px solid var(--line);border-left:4px solid ${col[x.lv]};padding:12px 14px;background:#fff">
     <div style="font-weight:800;font-size:13px;color:var(--ink)">${icn[x.lv]} ${x.t}</div>
-    <div style="font-size:12.5px;margin-top:3px;line-height:1.6">${x.b}</div>
-    <div style="font-size:12px;margin-top:5px;color:var(--sub)"><b style="color:var(--ink)">→ 推奨：</b>${x.a}</div></div>`).join('');
+    <div style="font-size:12px;margin-top:4px;line-height:1.6">${x.b}</div>
+    <div style="font-size:11.5px;margin-top:6px;color:var(--sub)"><b style="color:var(--ink)">→ 推奨：</b>${x.a}</div></div>`).join('')}</div>`;
   return `<div class="card" style="padding:18px 20px"><div class="sectiontitle" style="margin-top:0">課題・改善の自動診断</div>${insHTML}<div class="muted" style="font-size:11px;margin-top:2px">※ サンプルデータに基づく自動生成の示唆（参考）。</div></div>`;
 }
 /* 買取再販タブ */
@@ -1828,12 +1832,21 @@ function resaleSectionsHTML(){
   else if(BIZ_BREAKDOWN==='asset'){ const as=['土地','戸建','アパート']; groups=as.map(k=>({name:k,cnt:A.filter(r=>assetOf(r.t)===k).length,rev:A.filter(r=>assetOf(r.t)===k).reduce((s,r)=>s+r.rev,0)})).filter(x=>x.cnt); }
   else { const areas=[...new Set(A.map(r=>r.a))]; groups=areas.map(a=>({name:a,cnt:A.filter(r=>r.a===a).length,rev:A.filter(r=>r.a===a).reduce((s,r)=>s+r.rev,0)})); }
   groups.sort((x,y)=>y.rev-x.rev);
+  /* 想定精度（実績−計画）＝開発事業の数字（DEALS由来）なので本タブに表示（2026-07-07 全社サマリーから移設） */
+  const doneDeals=DEALS.filter(d=>d.actual);
+  const insDiffs=doneDeals.map(d=>(d.actual.profit/d.actual.price)-rate(d,1));
+  const insAvg=insDiffs.length?insDiffs.reduce((a,b)=>a+b,0)/insDiffs.length:0;
+  const insCol=insAvg>=0?COLR.ok:COLR.ng;
   return `
     <div class="kpis">
       ${statBox('売却済み（'+PL+'）',sold.length+' 件',fmtYm(sold.reduce((s,r)=>s+r.rev,0))+'（実現粗利）')}
       ${statBox('在庫・販売中（現在）',holdSell.length+' 件',fmtYm(holdSell.reduce((s,r)=>s+r.rev,0))+'（見込み粗利）')}
       ${statBox('開発事業 収益（'+PL+'）',fmtYm(total),'再販合計（サンプル）')}
       ${statBox('平均リードタイム（'+PL+'）',sold.length?Math.round(avgLead)+' 日':'—',sold.length?'約'+(avgLead/30).toFixed(1)+'ヶ月・売却済み':'この期の売却なし')}
+    </div>
+    <div class="insight" style="margin-top:6px;margin-bottom:16px">
+      <div class="muted" style="font-size:12px;margin-bottom:2px">開発事業の想定精度（実績 − 計画）</div>
+      <div class="big" style="color:${insCol}">実績は、計画（着地見込み）を 平均 ${insAvg>=0?'+':''}${pct(insAvg)}</div>
     </div>
     <div class="card" style="padding:18px 20px;margin-bottom:16px">
       <div class="sectiontitle" style="margin-top:0">⏱ リードタイム（仕入決済〜売却決済＝資金が寝ている期間）</div>
@@ -2020,9 +2033,6 @@ function renderBizdash(){
   const invTotal=INVENTORY.reduce((a,x)=>a+x.list,0);
   const invGross=invTotal-INVENTORY.reduce((a,x)=>a+x.cost,0);
   const invAvg=Math.round(INVENTORY.reduce((a,x)=>a+x.days,0)/INVENTORY.length);
-  const diffs=done.map(d=>(d.actual.profit/d.actual.price)-rate(d,1));
-  const avgDiff=diffs.reduce((a,b)=>a+b,0)/diffs.length;
-  const dc=avgDiff>=0?COLR.ok:COLR.ng;
   const tabs=[['all','全社サマリー'],['resale','開発事業'],['broker','仲介事業'],['cash','資金繰り・与信枠']];
   const tabBar=`<div style="display:flex;gap:2px;border-bottom:2px solid var(--line);margin-bottom:14px">${tabs.map(([k,l])=>`<button onclick="setBizTab('${k}')" style="border:0;background:none;padding:9px 18px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit;color:${BIZ_TAB===k?'var(--navy)':'var(--sub)'};border-bottom:3px solid ${BIZ_TAB===k?'var(--navy)':'transparent'};margin-bottom:-2px">${l}</button>`).join('')}</div>`;
   const bon='border:1px solid var(--navy);background:var(--navy);color:#fff;padding:5px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit';
@@ -2063,23 +2073,22 @@ function renderBizdash(){
       </div>
       <div style="font-size:11.5px;color:var(--sub);margin-top:10px;border-left:3px solid var(--line);padding-left:10px">"見に行かない"を数値で監視。悪化を早期に検知し、軌道修正します。</div>
     </div>
+    <div class="card" style="padding:18px 20px;margin-bottom:16px">
+    ${fyBar}
     <div class="kpis">
       ${statBox('今期の実現利益（累計）',fmtYm(realized/1e6),done.length+'件 売却済み')}
       ${statBox('進行中の見込み粗利',fmtYm(invGross/1e6),'在庫の売出−仕入')}
       ${statBox('販売中の在庫（売出）',fmtYm(invTotal/1e6),INVENTORY.length+'件・平均保有'+invAvg+'日')}
       ${statBox('承認待ち（意思決定）',awaitD.length+' 件',fmtYm(awaitAmt/1e6)+' 相当')}
     </div>
-    <div class="card" style="padding:18px 20px;margin-bottom:16px">
-      <div class="sectiontitle" style="margin-top:0">事業別の構成（開発・仲介・コンサルティング）</div>
+      <div class="sectiontitle">事業別の構成（開発・仲介・コンサルティング）</div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px">
         ${mixDonut('売上 構成','sales')}
         ${mixDonut('粗利 構成','gp')}
         ${mixDonut('コスト 構成','cost')}
       </div>
       <div class="muted" style="font-size:11px;margin-top:8px">※ 売上・コストは開発事業が大半でも、粗利では仲介・コンサルの比率が高い＝収益源の分散が読み取れます（サンプル・決算期で切替）。</div>
-    </div>
-    <div class="card" style="padding:18px 20px">
-      <div class="sectiontitle" style="margin-top:0">事業の推移（売上・粗利・在庫）</div>
+      <div class="sectiontitle">事業の推移（売上・粗利・在庫）</div>
       <div id="biz-chart"></div>
     </div>
     <div class="sectiontitle">案件パイプライン（全社）</div>
@@ -2090,15 +2099,11 @@ function renderBizdash(){
       <div class="arrow">▶</div>
       <div class="stage"><div class="sl">③ 売却済み・実績</div><div class="sv">${done.length}<small> 件</small></div><div class="sc">実現利益 ${fmtYm(realized/1e6)}</div></div>
     </div>
-    <div class="insight" style="margin-top:6px">
-      <div class="muted" style="font-size:12px;margin-bottom:2px">会社全体の想定精度（実績 − 計画）</div>
-      <div class="big" style="color:${dc}">実績は、計画（着地見込み）を 平均 ${avgDiff>=0?'+':''}${pct(avgDiff)}</div>
-    </div>
     ${diagnosisHTML()}`;
   }
   c.innerHTML=`
     <div class="bubble"><b>経営ビュー（上長・代表）</b>：会社全体・事業ごと（開発事業／仲介事業）・資金繰りをタブで切り替えて把握できます。</div>
-    ${tabBar}${BIZ_TAB==='cash'?'':fyBar}${body}
+    ${tabBar}${(BIZ_TAB==='cash'||BIZ_TAB==='all')?'':fyBar}${body}
     <div class="muted" style="font-size:11px;margin-top:10px">※ サンプル値（マスキング）。この画面は<b>上長・代表のみ</b>閲覧できます。</div>`;
   if(BIZ_TAB==='all') drawBizChart();
 }
