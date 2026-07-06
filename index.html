@@ -836,7 +836,7 @@ function setRole(r){ ROLE=r; document.getElementById('role-staff').classList.tog
   ['nav-bizdash','nav-perf'].forEach(id=>{const b=document.getElementById(id); if(b) b.style.display=(r==='staff')?'none':'';}); // 経営・成績は上長/代表のみ
   go(CUR.view, CUR.arg); }
 let CUR={view:'dashboard',arg:null};
-const TITLES={dashboard:['ホーム','ダッシュボード'],approve:['承認','承認（あなたの番の承認待ち）'],ops:['販売中物件','販売中物件（全社・全営業が販売対応）'],list:['物件','担当物件'],detail:['物件 › 収支シート','事業収支シート'],market:['相場','相場調査（オプション機能）'],compare:['物件','物件比較・感応度（オプション）'],review:['過去実績','過去実績（計画→実績の検証・過去の起案参照）'],access:['設定','表示範囲（どの立場に何が見えるか）'],bizdash:['経営','経営ダッシュボード（オプション・上長/代表）'],perf:['評価','担当者別パフォーマンス（オプション・上長/代表）'],new:['物件 › 新規起案','新規物件の起案（事業計画）'],confirm:['物件 › 申請前確認','申請前の確認（自動判定と過去案件）']};
+const TITLES={dashboard:['ホーム','ダッシュボード'],approve:['承認','承認（あなたの番の承認待ち）'],ops:['販売中物件','販売中物件（全社・全営業が販売対応）'],list:['物件','担当物件'],detail:['物件 › 収支シート','事業収支シート'],market:['相場','相場調査（オプション機能）'],compare:['物件','物件比較・感応度（オプション）'],review:['過去実績','過去実績（計画→実績の検証・過去の起案参照）'],access:['設定','表示範囲（どの立場に何が見えるか）'],bizdash:['経営','経営ダッシュボード（オプション・上長/代表）'],perf:['評価','担当者別パフォーマンス（オプション・上長/代表）'],new:['物件 › 新規起案','新規物件の起案（事業計画）'],confirm:['物件 › 申請前分析','申請前分析（自動判定・過去案件・AI所見）']};
 function go(view,arg){
   CUR={view,arg};
   document.querySelectorAll('.nav button[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===view));
@@ -2565,7 +2565,7 @@ function hwLockBannerHTML(){
   if(!HW_LOCK) return '';
   return `<div style="background:#fef2f2;border:2px solid #fecaca;border-left:4px solid #cc3300;padding:14px 16px;margin-bottom:16px">
     <div style="font-weight:800;font-size:13.5px;color:#cc3300;margin-bottom:6px">⚠ 宿題ロック：売却済みで実績が未入力の案件があります</div>
-    <div style="font-size:12.5px;color:#7f1d1d;margin-bottom:10px">${HW_DEAL.name}（${HW_DEAL.sold}売却）の実績が入力されていません。実績を入力するまで、確認ページから申請できません。</div>
+    <div style="font-size:12.5px;color:#7f1d1d;margin-bottom:10px">${HW_DEAL.name}（${HW_DEAL.sold}売却）の実績が入力されていません。実績を入力するまで、申請前分析ページから申請できません。</div>
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
       <button class="btn" style="background:#cc3300;color:#fff;border-color:#cc3300;font-weight:700;padding:8px 16px" onclick="toast('（デモ）該当案件の収支シートで「売却決済を登録 → 実績分析へ」ボタンから実績を入力します。実績入力が完了するとロックが解除され、申請できるようになります。')">実績を入力する</button>
       <span style="font-size:11.5px;color:#9ca3af">
@@ -2748,7 +2748,7 @@ function recalcNew(){
         <div class="muted" style="font-size:11px;margin-top:2px">現在の原価合計 ${fmtY(cost)}</div>
       </div>
     </div>
-    <button class="btn primary submit-green" style="width:100%;margin-bottom:8px" onclick="syncNewVals();go('confirm')">保存して確認へ進む</button>
+    <button class="btn primary submit-green" style="width:100%;margin-bottom:8px" onclick="syncNewVals();go('confirm')">保存して申請前分析へ</button>
     <button class="btn" style="width:100%;margin-bottom:8px" onclick="toast('（モック）下書きに保存しました。ダッシュボードの「①自分の検討中」と担当物件に「検討中（下書き）」として表示されます。')">下書き保存（検討中として保管）</button>`;
   // 相場比較（仕入坪単価 vs 成約相場）
   const m2=gv('n_m2'), yo=gv('n_yoseki'), tsubo=m2*0.3025;
@@ -2821,17 +2821,24 @@ function renderConfirm(){
   // ② 似た過去案件（同種別・done・actualあり・最大3件 ＋ 見送り1件）
   const sameDone=DEALS.filter(d=>d.status==='done'&&d.actual&&d.type===NEW_TYPE).slice(0,3);
   const sameRej=DEALS.filter(d=>d.status==='rej'&&d.type===NEW_TYPE&&d.rejReason).slice(0,1);
+  const _pastMax=sameDone.length?Math.max(...sameDone.map(d=>Math.max(rate(d,1),d.actual.profit/d.actual.price)),0.15):0.15;
   const pastRowHTML=sameDone.length?sameDone.map(d=>{
     const planR=rate(d,1),actR=d.actual.profit/d.actual.price,diff=actR-planR,up=diff>=0;
     const jd=judge(d);
     const note=d.actual.note||'';
+    const barW=v=>Math.max(0,Math.min(100,v/_pastMax*100)).toFixed(1);
+    const miniBar=`<div style="display:flex;flex-direction:column;gap:3px;min-width:120px">
+      <div style="display:flex;align-items:center;gap:4px"><div style="width:${barW(planR)}%;height:8px;background:#94a3b8;border-radius:2px;min-width:2px"></div><span style="font-size:9.5px;color:var(--sub);white-space:nowrap">${pct(planR)}</span></div>
+      <div style="display:flex;align-items:center;gap:4px"><div style="width:${barW(actR)}%;height:8px;background:${up?'#4c7c15':'#cc3300'};border-radius:2px;min-width:2px"></div><span style="font-size:9.5px;color:${up?'#4c7c15':'#cc3300'};white-space:nowrap">${pct(actR)}</span></div>
+    </div>`;
     return `<tr class="clickable" onclick="go('detail','${d.id}')">
       <td><b>${d.name}</b><br><span style="font-size:10.5px;color:var(--sub)">${d.id}・担当 ${d.staff}</span></td>
       <td class="num">${pct(planR)} → <b style="color:${up?'#4c7c15':'#cc3300'}">${pct(actR)}</b></td>
+      <td>${miniBar}</td>
       <td style="text-align:center"><span class="pill ${jd.cls}">${jd.mark} ${jd.label}</span></td>
       <td style="font-size:11px;color:var(--sub)">${note}</td>
     </tr>`;
-  }).join(''):`<tr><td colspan="4" style="color:var(--sub)">同種別（${NEW_TYPE}）の過去実績はまだありません。</td></tr>`;
+  }).join(''):`<tr><td colspan="5" style="color:var(--sub)">同種別（${NEW_TYPE}）の過去実績はまだありません。</td></tr>`;
   const rejRowHTML=sameRej.length?`<div style="margin-top:12px"><div style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:6px">同種別の見送り案件</div><table><thead><tr><th>物件</th><th class="num">想定②利益率</th><th>見送り理由</th></tr></thead><tbody>${sameRej.map(d=>`<tr class="clickable" onclick="go('detail','${d.id}')"><td><b>${d.name}</b><br><span style="font-size:10.5px;color:var(--sub)">${d.id}・担当 ${d.staff}</span></td><td class="num">${pct(rate(d,1))}</td><td style="font-size:11px;color:var(--sub)">${d.rejReason}</td></tr>`).join('')}</tbody></table></div>`:'' ;
 
   // ③ AI所見（サンプル）＝画面内の実データ・実ロジックから動的生成（静的文言だと表の数字と矛盾するため）
@@ -2858,6 +2865,9 @@ function renderConfirm(){
 
   document.getElementById('content').innerHTML=`
    <span class="back" onclick="go('new')">← フォームに戻る</span>
+   <div style="font-size:11.5px;color:var(--sub);margin-bottom:12px;padding:8px 14px;background:#f8fafc;border:1px solid var(--line);border-radius:8px">
+     基盤＝自動判定・過去案件・申請操作 ／ <span class="optbadge">オプション</span>＝AI所見・相場照合の分析
+   </div>
    <div class="twocol">
    <div>
 
@@ -2867,14 +2877,24 @@ function renderConfirm(){
      <div class="judgebox ${jcls}" style="margin-bottom:14px"><div class="big">${jmark}</div>
        <div><div style="font-weight:700;color:var(--ink);font-size:15px">${jlabel}</div>
        <div class="muted" style="font-size:12px">想定②利益率 <b>${pct(r2)}</b>・採用IRR <b>${pct(irr)}</b></div></div></div>
-     <table><tbody>
-       <tr><td><b>原価合計</b></td><td class="num"><b>${fmtY(cost)}</b></td></tr>
-       <tr><td class="muted" style="font-size:12px">　土地原価</td><td class="num muted">${fmtY(landBlock)}</td></tr>
-       <tr><td class="muted" style="font-size:12px">　建物原価</td><td class="num muted">${fmtY(bldgBlock)}</td></tr>
-       <tr><td class="muted" style="font-size:12px">　租税公課</td><td class="num muted">${fmtY(taxes)}</td></tr>
-       <tr><td class="muted" style="font-size:12px">　販売管理費</td><td class="num muted">${fmtY(admin)}</td></tr>
-       <tr><td class="muted" style="font-size:12px">　営業外（借入金利ほか）</td><td class="num muted">${fmtY(nonop)}</td></tr>
-     </tbody></table>
+     <div class="gaugewrap" style="margin-bottom:12px">
+       ${gauge('想定②利益率（最低8%／推奨10%）',r2,0.25,[{v:0.08,label:'最低8%'},{v:0.10,label:'推奨10%'}],r2>=0.10?COLR.ok:r2>=0.08?COLR.warn:COLR.ng)}
+       ${gauge('採用IRR（基準10%・'+period+'ヶ月）',irr,0.25,[{v:0.10,label:'10%'}],irr>=0.10?COLR.ok:COLR.ng)}
+     </div>
+     <div style="border-top:1px solid var(--line);margin:12px 0 10px;padding-top:10px">
+       <div style="font-weight:700;color:var(--ink);font-size:12.5px;margin-bottom:8px">原価内訳</div>
+       <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+         <div>${donut([['土地原価',landBlock],['建物原価',bldgBlock],['租税公課',taxes],['販売管理費',admin],['営業外',nonop]])}</div>
+         <div style="flex:1;min-width:160px"><table><tbody>
+           <tr><td style="font-size:12px"><i style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#1c1f1a;margin-right:5px;vertical-align:-1px"></i>土地原価</td><td class="num" style="font-size:12px">${fmtY(landBlock)}</td></tr>
+           <tr><td style="font-size:12px"><i style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#3f5720;margin-right:5px;vertical-align:-1px"></i>建物原価</td><td class="num" style="font-size:12px">${fmtY(bldgBlock)}</td></tr>
+           <tr><td style="font-size:12px"><i style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#729c3a;margin-right:5px;vertical-align:-1px"></i>租税公課</td><td class="num" style="font-size:12px">${fmtY(taxes)}</td></tr>
+           <tr><td style="font-size:12px"><i style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#a4c46c;margin-right:5px;vertical-align:-1px"></i>販売管理費</td><td class="num" style="font-size:12px">${fmtY(admin)}</td></tr>
+           <tr><td style="font-size:12px"><i style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#d9e6bd;margin-right:5px;vertical-align:-1px"></i>営業外</td><td class="num" style="font-size:12px">${fmtY(nonop)}</td></tr>
+           <tr><td style="font-size:12px"><b>原価合計</b></td><td class="num" style="font-size:12px"><b>${fmtY(cost)}</b></td></tr>
+         </tbody></table></div>
+       </div>
+     </div>
      <div style="border-top:1px solid var(--line);margin:12px 0 10px;padding-top:10px">
        <div style="font-weight:700;color:var(--ink);font-size:12.5px;margin-bottom:6px">仕入れ最低ライン</div>
        <div style="padding:9px 11px;background:#f8fafc;border:1px solid var(--line);border-radius:8px">
@@ -2889,7 +2909,7 @@ function renderConfirm(){
    <div class="card" style="margin-bottom:16px;border-left:4px solid #729c3a">
      <h3 style="margin-bottom:10px">② 似た過去案件</h3>
      <div class="muted" style="font-size:12px;margin-bottom:10px">似た案件の「計画と実績のズレ」を確認してから申請します。</div>
-     <table><thead><tr><th>物件</th><th class="num">想定②→実績 利益率</th><th>判定</th><th>所見</th></tr></thead>
+     <table><thead><tr><th>物件</th><th class="num">想定②→実績 利益率</th><th style="min-width:140px">利益率推移</th><th>判定</th><th>所見</th></tr></thead>
      <tbody>${pastRowHTML}</tbody></table>
      ${rejRowHTML}
    </div>
@@ -2899,9 +2919,15 @@ function renderConfirm(){
      <div style="font-size:12.5px;color:var(--ink);line-height:1.8;margin-bottom:10px">
        <div style="margin-bottom:10px;padding:9px 11px;background:#eef4e3;border-left:3px solid #729c3a"><b style="color:#729c3a">【総合】</b>${aiTotal}</div>
        <div style="margin-bottom:6px"><b style="color:#729c3a">【過去実績】</b>${aiPast}</div>
-       ${aiMarket?`<div style="margin-bottom:6px"><b style="color:#729c3a">【相場照合】</b>${aiMarket}</div>`:''}
+       ${aiMarket?`<div style="margin-bottom:6px"><b style="color:#729c3a">【相場照合】</b>${aiMarket}</div>
+       <div style="margin-bottom:10px;padding:8px 12px;background:#f8fafc;border:1px solid var(--line);border-radius:8px">
+         ${(()=>{const lo=MARKET.soldLo,hi=MARKET.soldHi,avg=MARKET.soldAvg;const overRange=tsuboP>hi;const clampedP=Math.min(tsuboP,hi*1.4);return rangeBar(clampedP,lo,hi,avg,'この物件 ¥'+Math.round(tsuboP).toLocaleString()+'/坪'+(overRange?' ※レンジ上限超え':''))+'<div style="display:flex;justify-content:space-between;font-size:10.5px;color:var(--sub);margin-top:4px"><span>下限 ¥'+lo.toLocaleString()+'</span><span>平均 ¥'+avg.toLocaleString()+'</span><span>上限 ¥'+hi.toLocaleString()+'</span></div>';})()}
+       </div>`:''}
        ${aiInv?`<div style="margin-bottom:6px"><b style="color:#729c3a">【販売環境】</b>${aiInv}</div>`:''}
-       ${aiFloor?`<div><b style="color:#729c3a">【下振れ耐性】</b>${aiFloor}</div>`:''}
+       ${aiFloor?`<div style="margin-bottom:6px"><b style="color:#729c3a">【下振れ耐性】</b>${aiFloor}</div>
+       <div style="padding:8px 12px;background:#f8fafc;border:1px solid var(--line);border-radius:8px;margin-bottom:6px">
+         ${(()=>{if(p2<=0)return '';if(roomPct<=0){return '<div style="height:18px;background:#cc3300;border-radius:4px;display:flex;align-items:center;padding:0 8px"><span style="color:#fff;font-size:11px;font-weight:700">余地なし（損益分岐を下回っています）</span></div>';}const safeW=Math.max(5,Math.min(90,roomPct*3));return '<div style="display:flex;align-items:center;gap:6px"><div style="flex:1;height:18px;background:#eef4e3;border-radius:4px;overflow:hidden"><div style="width:'+safeW+'%;height:100%;background:#729c3a;border-radius:4px"></div></div><span style="font-size:11.5px;font-weight:700;color:#4c7c15;white-space:nowrap">▲'+roomPct.toFixed(1)+'% の余地</span></div><div style="font-size:10.5px;color:var(--sub);margin-top:3px">損益分岐 '+fmtY(Math.round(floorPrice))+' → 想定② '+fmtY(Math.round(p2))+' の下げ余地</div>';})()}
+       </div>`:''}
      </div>
      <div class="muted" style="font-size:11px">AI所見はオプション（別途費用）＝過去実績・相場データ・社内の販売状況を横断して要点を言語化します。相場照合は公的データ（国交省・無料）のレンジ照合から始められ、有料API併用で精度が上がります。基盤は上の自動判定（ルール計算）です。（サンプル表示）</div>
    </div>
