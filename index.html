@@ -445,7 +445,7 @@
       <button data-nav="approve" onclick="go('approve')"><span class="ic">✓</span>承認<span id="nav-appr-badge" class="navbadge" style="display:none"></span></button>
       <button data-nav="list" onclick="go('list')"><span class="ic">≣</span><span id="nav-list-label">担当物件</span><span id="nav-list-badge" class="navbadge" style="display:none"></span></button>
       <button data-nav="ops" onclick="go('ops')"><span class="ic">◔</span>販売中物件</button>
-      <button data-nav="review" onclick="go('review')"><span class="ic">↺</span>過去実績</button>
+      <button id="nav-review" data-nav="review" onclick="go('review')"><span class="ic">↺</span>過去実績</button>
       <button id="nav-perf" data-nav="perf" onclick="go('perf')" style="display:none"><span class="ic">▤</span>担当者別パフォーマンス</button>
       <div class="optdrop">
         <button type="button" class="optdrop-btn">オプション機能 <span class="caret">▷</span></button>
@@ -837,6 +837,10 @@ function setRole(r){ ROLE=r; document.getElementById('role-staff').classList.tog
   document.getElementById('role-boss').classList.toggle('on',r==='boss');
   const ll=document.getElementById('nav-list-label'); if(ll) ll.textContent=(r==='staff')?'担当物件':'全社物件一覧';
   ['nav-bizdash','nav-perf'].forEach(id=>{const b=document.getElementById(id); if(b) b.style.display=(r==='staff')?'none':'';}); // 経営・成績は上長/代表のみ
+  // 過去実績メニュー＝営業担当のみ（上長・代表は全社物件一覧に統一・2026-07-07）。全社物件一覧は販売中の下へ移動
+  const rvB=document.getElementById('nav-review'); if(rvB) rvB.style.display=(r==='staff')?'':'none';
+  const lstB=document.querySelector('.nav [data-nav="list"]'), opsB=document.querySelector('.nav [data-nav="ops"]');
+  if(lstB&&opsB){ if(r==='staff'){ opsB.parentNode.insertBefore(lstB,opsB); } else { opsB.parentNode.insertBefore(lstB,opsB.nextSibling); } }
   go(CUR.view, CUR.arg); }
 let CUR={view:'dashboard',arg:null};
 const TITLES={dashboard:['ホーム','ダッシュボード'],approve:['承認','承認（あなたの番の承認待ち）'],ops:['販売中物件','販売中物件（全社・全営業が販売対応）'],list:['物件','担当物件'],detail:['物件 › 収支シート','事業収支シート'],market:['相場','相場調査（オプション機能）'],compare:['物件','物件比較・感応度（オプション）'],review:['過去実績','過去実績（計画→実績の検証・過去の起案参照）'],access:['設定','表示範囲（どの立場に何が見えるか）'],bizdash:['経営','経営ダッシュボード（オプション・上長/代表）'],perf:['評価','担当者別パフォーマンス（上長・代表）'],new:['物件 › 新規起案','新規物件の起案（事業計画）'],confirm:['物件 › 申請前分析','申請前分析（自動判定・過去案件・AI所見）']};
@@ -889,16 +893,35 @@ function renderApprove(){
 /* ---------- ダッシュボード ---------- */
 /* ---------- オプション：物件比較・感応度 ---------- */
 let CMP_DEAL=null, CMP_MONTHS=null;
+let CMP_SEL=[]; /* 比較対象の選択（2〜3件・検討中/販売中/過去実績から横断・2026-07-07） */
+function toggleCmp(id){
+  const i=CMP_SEL.indexOf(id);
+  if(i>=0){ CMP_SEL.splice(i,1); }
+  else{ if(CMP_SEL.length>=3){ toast('比較できるのは3件までです。どれかを外してから追加してください。'); return; } CMP_SEL.push(id); }
+  renderCompare();
+}
 function irrAt(d,price,months){ return Math.pow(price/d.cost, 12/months)-1; } // 既存 d.irr と一致するモデル
 function judgeAt(r2,irr){ if(r2>=0.10&&irr>=0.10)return{mark:'◎',label:'推奨',cls:'j-ok'}; if(r2>=0.08&&irr>=0.10)return{mark:'△',label:'条件付き可',cls:'j-warn'}; return{mark:'×',label:'見送り',cls:'j-ng'}; }
 function setCmpDeal(id){ CMP_DEAL=id; const d=dealById(id); CMP_MONTHS=d?d.period:12; renderCompare(); }
 function setCmpMonths(m){ CMP_MONTHS=m; renderCompare(); }
 function renderCompare(){
   const c=document.getElementById('content');
-  const stages=['await_mgr','await_pres','returned','approved'];
-  let pool=visibleDeals().filter(d=>stages.includes(d.status));
-  if(pool.length<2) pool=visibleDeals().slice(0,3);
-  pool=pool.slice(0,3);
+  const cmpAll=visibleDeals().filter(d=>d.status!=='rej');
+  if(!CMP_SEL.length){ const stages=['await_mgr','await_pres','returned','approved','draft']; let def=cmpAll.filter(d=>stages.includes(d.status)); if(def.length<2) def=cmpAll.slice(0,3); CMP_SEL=def.slice(0,3).map(d=>d.id); }
+  CMP_SEL=CMP_SEL.filter(id=>cmpAll.find(d=>d.id===id));
+  let pool=CMP_SEL.map(id=>dealById(id)).filter(Boolean);
+  const cmpGroups=[['検討中（担当の検討・承認段階）',['draft','await_mgr','await_pres','returned','approved']],['販売中',['sell']],['過去実績（売却済み）',['done']]];
+  const picker=`<div class="card" style="margin-bottom:16px">
+    <div class="sectiontitle" style="margin-top:0">比較する物件を選ぶ（2〜3件）</div>
+    ${cmpGroups.map(([lab,sts])=>{const ds=cmpAll.filter(d=>sts.includes(d.status)); if(!ds.length) return '';
+      return `<div style="margin-bottom:8px"><div style="font-size:11px;font-weight:700;color:var(--sub);margin-bottom:5px">${lab}</div>
+      <div class="viewtoggle" style="flex-wrap:wrap;row-gap:6px">${ds.map(d=>`<button class="${CMP_SEL.includes(d.id)?'on':''}" onclick="toggleCmp('${d.id}')">${d.name}</button>`).join('')}</div></div>`;}).join('')}
+    <div class="muted" style="font-size:11px">選択中 <b>${pool.length}件</b>（最大3件）。検討中・販売中・過去実績（売却済み）から横断で選べます。クリックで追加／解除。</div>
+  </div>`;
+  if(pool.length<2){
+    c.innerHTML=`<div class="bubble"><b>物件比較・感応度（オプション）</b>：比較したい物件を<b>2〜3件</b>選ぶと、横並び比較と感応度が表示されます。</div>${picker}`;
+    return;
+  }
   if(!CMP_DEAL||!pool.find(d=>d.id===CMP_DEAL)){ CMP_DEAL=pool[0].id; CMP_MONTHS=pool[0].period; }
   const sd=dealById(CMP_DEAL); const months=CMP_MONTHS||sd.period;
   const r2=d=>rate(d,1), prof2=d=>d.scen[1].profit, price2=d=>d.scen[1].price, irr=d=>adoptedIRR(d);
@@ -945,7 +968,7 @@ function renderCompare(){
         <span style="color:var(--sub)">損益分岐の売値 <b>${fmtYen(be)}</b>（これを下回ると赤字）／利益率8%ライン <b>${fmtYen(floor8)}</b>／推奨10%ライン <b>${fmtYen(floor10)}</b>。保有期間が延びるほどIRRは下がります。</span>
       </div>
     </div>`;
-  c.innerHTML=`<div class="bubble"><b>物件比較・感応度（オプション）</b>：仕入れ候補を横並びで比べ、売値・保有期間が動いたときに判定（◎△×）がどう変わるかを見ます。「どれを買う？」「読みが外れたら赤字？」の判断材料です。</div>${board}${sens}`;
+  c.innerHTML=`<div class="bubble"><b>物件比較・感応度（オプション）</b>：仕入れ候補を横並びで比べ、売値・保有期間が動いたときに判定（◎△×）がどう変わるかを見ます。「どれを買う？」「読みが外れたら赤字？」の判断材料です。</div>${picker}${board}${sens}`;
 }
 /* ---------- 定着の要（要対応カード・通知） ---------- */
 function todoCardHTML(){
@@ -1091,17 +1114,8 @@ function renderDashboard(){
   const total=DEALS.length;
   const awaitMgr=DEALS.filter(d=>d.status==='await_mgr');
   const awaitPres=DEALS.filter(d=>d.status==='await_pres');
-  const returned=DEALS.filter(d=>d.status==='returned');
-  const selling=DEALS.filter(d=>d.status==='sell').length;
-  const ok=DEALS.filter(d=>judge(d).k==='ok').length;
-
   if(ROLE==='boss'){
     c.innerHTML=`${todoCardHTML()}
-      <div class="bubble"><b>代表ビュー</b>：あなた（代表）の承認待ちが <b>${awaitPres.length}件</b>。上長承認を通った案件が最終判断としてここに集まります（＝必ず目に入る）。</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px">
-        <span style="border:1px solid var(--line);background:#fff;padding:5px 13px;font-size:12px">◎推奨 判定 <b>${ok}件</b></span>
-        <span style="border:1px solid var(--line);background:#fff;padding:5px 13px;font-size:12px">販売中（仕入済）<b>${selling}件</b></span>
-      </div>
       <div class="sectiontitle">あなた（代表）の承認待ち</div>
       ${awaitPres.length?dealTable(awaitPres,true):'<div class="card muted">代表承認待ちはありません。</div>'}
       <div style="height:16px"></div>
@@ -1112,11 +1126,6 @@ function renderDashboard(){
   }
   if(ROLE==='mgr'){
     c.innerHTML=`${todoCardHTML()}
-      <div class="bubble"><b>上長ビュー</b>：あなた（上長）の承認待ちが <b>${awaitMgr.length}件</b>。担当が起案した案件は、まず上長のあなたが確認し、代表へ上げます。</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px">
-        <span style="border:1px solid var(--line);background:#fff;padding:5px 13px;font-size:12px">◎推奨 判定 <b>${ok}件</b></span>
-        <span style="border:1px solid var(--line);background:#fff;padding:5px 13px;font-size:12px">差し戻し中 <b>${returned.length}件</b></span>
-      </div>
       <div class="sectiontitle">あなた（上長）の承認待ち</div>
       ${awaitMgr.length?dealTable(awaitMgr,true):'<div class="card muted">上長承認待ちはありません。</div>'}
     `;
@@ -1127,7 +1136,6 @@ function renderDashboard(){
   const myReturned=mine.filter(d=>d.status==='returned');
   const mySelling=mine.filter(d=>d.status==='sell').length;
   c.innerHTML=`${todoCardHTML()}
-    <div class="bubble"><b>営業担当ビュー（${CURRENT_STAFF}）</b>：表示は<b>自分の案件のみ</b>。やること（要対応）と自分の成績が毎日ここで見える。</div>
     ${myScoreCardHTML()}
     <div class="sectiontitle">自分の案件</div>
     ${dealTable(mine,false)}
@@ -1441,7 +1449,7 @@ function donePanel(d){
         <tr><td>差分（実績−想定②）</td><td class="num">—</td><td class="num">—</td><td class="num ${up?'delta-dn':'delta-up'}"><b>${up?'▲':'▼'} ${pct(Math.abs(diff))}</b></td></tr>
       </tbody></table>
       <div class="muted" style="font-size:12px;margin-bottom:10px">所見：${a.note||''}</div>`:''}
-      <button class="btn" onclick="go('review')">過去実績を見る</button>
+      ${ROLE==='staff'?`<button class="btn" onclick="go('review')">過去実績を見る</button>`:`<button class="btn" onclick="go('list')">全社物件一覧で見る</button>`}
     </div></div>`;
 }
 
@@ -1578,10 +1586,10 @@ function renderReview(){
       <button class="btn" onclick="REV_F={area:'',staff:'',type:''};renderReview()">リセット</button>
       <span class="muted" style="font-size:11px">仕入れ検討中の物件と<b>同エリアの直近事例</b>（新しい順）を確認できます${filtered?`／<b style="color:var(--accent)">絞り込み中：${[REV_F.area,REV_F.staff,REV_F.type].filter(Boolean).join('・')}</b>`:''}</span>
     </div>
-    <div class="insight">
+    ${ROLE==='staff'?'':`<div class="insight">
       <div class="muted" style="font-size:12px;margin-bottom:2px">過去実績の分析${filtered?'（絞り込み結果）':''}</div>
       <div class="big" style="color:${dc}">${done.length?`実績は、計画（着地見込み）を 平均 ${avgDiff>=0?'+':''}${pct(avgDiff)}`:'該当する完了案件がありません（条件を変えてください）'}</div>
-    </div>
+    </div>`}
     <div class="kpis">
       ${statBox('振り返った案件',done.length+' 件','売却まで完了')}
       ${statBox('計画どおり以上',done.length?hits+' / '+done.length+' 件':'—','実績 ≥ 計画')}
@@ -1617,7 +1625,7 @@ function renderAccess(){
     ['担当物件（資料アップロード） ／ 全社物件一覧', Y('担当のみ'), Y('全社'), Y('全社')],
     ['販売中物件（全社共有・販売資料DL・買付管理・反響ログ）', Y('全社'), Y('全社'), Y('全社')],
     ['販売業務の管理（価格改定履歴・決済チェックリスト・資料チェック）', Y('担当分'), Y('全社'), Y('全社')],
-    ['過去実績（計画→実績の答え合わせ・起案の参照）', Y('全社・閲覧'), Y('全社'), Y('全社')],
+    ['過去実績（計画→実績の答え合わせ・起案の参照）', Y('全社・閲覧'), P('全社物件一覧に統合'), P('全社物件一覧に統合')],
     ['担当者別パフォーマンス（成績・育成の材料）', N, Y('全社'), Y('全社')],
     ['定着メーター（システムが見られているかの監視）', N, N, Y('ダッシュボード')],
     ['通知・要対応（メール／在庫滞留・決済期日・買付期限アラート）', Y('自分宛'), Y('全社'), Y('全社')],
