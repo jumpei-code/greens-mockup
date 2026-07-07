@@ -894,6 +894,8 @@ function renderApprove(){
 /* ---------- オプション：物件比較・感応度 ---------- */
 let CMP_DEAL=null, CMP_MONTHS=null;
 let CMP_SEL=[]; /* 比較対象の選択（2〜3件・検討中/販売中/過去実績から横断・2026-07-07） */
+let CMP_F={st:'',area:'',type:'',q:''}; /* 比較候補の絞り込み（件数が増えても探せるように） */
+function setCmpF(k,v){ CMP_F[k]=v; renderCompare(); }
 function toggleCmp(id){
   const i=CMP_SEL.indexOf(id);
   if(i>=0){ CMP_SEL.splice(i,1); }
@@ -910,13 +912,32 @@ function renderCompare(){
   if(!CMP_SEL.length){ const stages=['await_mgr','await_pres','returned','approved','draft']; let def=cmpAll.filter(d=>stages.includes(d.status)); if(def.length<2) def=cmpAll.slice(0,3); CMP_SEL=def.slice(0,3).map(d=>d.id); }
   CMP_SEL=CMP_SEL.filter(id=>cmpAll.find(d=>d.id===id));
   let pool=CMP_SEL.map(id=>dealById(id)).filter(Boolean);
-  const cmpGroups=[['検討中（担当の検討・承認段階）',['draft','await_mgr','await_pres','returned','approved']],['販売中',['sell']],['過去実績（売却済み）',['done']]];
+  /* 絞り込み型セレクタ（2026-07-07 チップ羅列→絞り込みに変更＝件数が増えても困らない） */
+  const stOf=d=> d.status==='sell'?'sell':(d.status==='done'?'done':'pend');
+  const stLab={pend:'検討中',sell:'販売中',done:'過去実績'};
+  const cmpAreas=[...new Set(cmpAll.map(d=>d.area))].sort(), cmpTypes=[...new Set(cmpAll.map(d=>d.type))];
+  const cand=cmpAll.filter(d=>(!CMP_F.st||stOf(d)===CMP_F.st)&&(!CMP_F.area||d.area===CMP_F.area)&&(!CMP_F.type||d.type===CMP_F.type)&&(!CMP_F.q||d.name.includes(CMP_F.q)||d.id.includes(CMP_F.q)));
+  const selStyle='border:1px solid var(--line);background:#fff;padding:6px 10px;font-size:12px;font-family:inherit';
+  const chips=pool.length?pool.map(d=>`<span style="display:inline-flex;align-items:center;gap:6px;border:1px solid #729c3a;background:#eef4e3;color:#1c1f1a;padding:4px 10px;font-size:12px;font-weight:700">${d.name}<a onclick="toggleCmp('${d.id}')" style="cursor:pointer;color:#4c7c15;font-weight:800">×</a></span>`).join(''):'<span class="muted" style="font-size:12px">未選択（下の一覧から追加）</span>';
   const picker=`<div class="card" style="margin-bottom:16px">
-    <div class="sectiontitle" style="margin-top:0">比較する物件を選ぶ（2〜3件）</div>
-    ${cmpGroups.map(([lab,sts])=>{const ds=cmpAll.filter(d=>sts.includes(d.status)); if(!ds.length) return '';
-      return `<div style="margin-bottom:8px"><div style="font-size:11px;font-weight:700;color:var(--sub);margin-bottom:5px">${lab}</div>
-      <div class="viewtoggle" style="flex-wrap:wrap;row-gap:6px">${ds.map(d=>`<button class="${CMP_SEL.includes(d.id)?'on':''}" onclick="toggleCmp('${d.id}')">${d.name}</button>`).join('')}</div></div>`;}).join('')}
-    <div class="muted" style="font-size:11px">選択中 <b>${pool.length}件</b>（最大3件）。検討中・販売中・過去実績（売却済み）から横断で選べます。クリックで追加／解除。</div>
+    <div class="sectiontitle" style="margin-top:0">比較する物件を絞り込んで選ぶ（2〜3件）</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px">
+      <span style="font-size:11.5px;font-weight:700;color:var(--sub)">選択中 ${pool.length}/3</span>${chips}
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+      <select style="${selStyle}" onchange="setCmpF('st',this.value)"><option value="">状態：すべて</option>${['pend','sell','done'].map(k=>`<option value="${k}" ${CMP_F.st===k?'selected':''}>${stLab[k]}</option>`).join('')}</select>
+      <select style="${selStyle}" onchange="setCmpF('area',this.value)"><option value="">エリア：すべて</option>${cmpAreas.map(a=>`<option ${CMP_F.area===a?'selected':''}>${a}</option>`).join('')}</select>
+      <select style="${selStyle}" onchange="setCmpF('type',this.value)"><option value="">種別：すべて</option>${cmpTypes.map(a=>`<option ${CMP_F.type===a?'selected':''}>${a}</option>`).join('')}</select>
+      <input style="${selStyle};min-width:180px" placeholder="物件名・IDで検索" value="${CMP_F.q}" onchange="setCmpF('q',this.value)">
+    </div>
+    <div style="max-height:230px;overflow-y:auto;border:1px solid var(--line)">
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead><tr><th style="text-align:left;padding:7px 10px;background:#f4f6ef">物件</th><th style="text-align:left;padding:7px 10px;background:#f4f6ef">状態</th><th style="text-align:left;padding:7px 10px;background:#f4f6ef">種別</th><th style="text-align:left;padding:7px 10px;background:#f4f6ef">エリア</th><th style="text-align:right;padding:7px 10px;background:#f4f6ef">想定②利益率</th><th style="background:#f4f6ef"></th></tr></thead>
+        <tbody>${cand.length?cand.map(d=>{const on=CMP_SEL.includes(d.id);
+          return `<tr style="border-top:1px solid #eef2f6;${on?'background:#eef4e3':''}"><td style="padding:7px 10px"><b>${d.name}</b> <span class="muted" style="font-size:10.5px">${d.id}</span></td><td style="padding:7px 10px">${stLab[stOf(d)]}</td><td style="padding:7px 10px">${d.type}</td><td style="padding:7px 10px">${d.area}</td><td style="padding:7px 10px;text-align:right">${pct(rate(d,1))}</td><td style="padding:5px 10px;text-align:right"><button class="btn" style="padding:4px 12px;font-size:11.5px;${on?'':'background:#729c3a;border-color:#729c3a;color:#fff'}" onclick="toggleCmp('${d.id}')">${on?'解除':'＋ 追加'}</button></td></tr>`;}).join(''):`<tr><td colspan="6" style="padding:12px;color:var(--sub)">該当なし（絞り込み条件を変えてください）</td></tr>`}</tbody>
+      </table>
+    </div>
+    <div class="muted" style="font-size:11px;margin-top:8px">状態（検討中／販売中／過去実績）・エリア・種別・検索で絞り込み。件数が増えても探せます。</div>
   </div>`;
   if(pool.length<2){
     c.innerHTML=`<div class="bubble"><b>物件比較・感応度（オプション）</b>：比較したい物件を<b>2〜3件</b>選ぶと、横並び比較と感応度が表示されます。</div>${picker}`;
