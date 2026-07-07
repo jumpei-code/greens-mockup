@@ -416,6 +416,25 @@
   .reqbox .rft{font-size:11px;color:var(--sub);padding:9px 20px;background:#fafaf6;}
   .btn.submit-green{background:#729c3a !important;border-color:#729c3a !important;color:#fff !important;}
   .btn.submit-green:hover{background:#5f8430 !important;border-color:#5f8430 !important;}
+  /* ---------- AIチャット（オプション・デモ演出） ---------- */
+  .ai-float-btn{position:fixed;right:24px;bottom:24px;z-index:9000;width:52px;height:52px;border-radius:50%;background:#729c3a;color:#fff;font-size:15px;font-weight:800;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(114,156,58,.45);display:flex;align-items:center;justify-content:center;transition:background .18s;}
+  .ai-float-btn:hover{background:#5f8430;}
+  .ai-chat-panel{position:fixed;right:24px;bottom:86px;z-index:9001;width:340px;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 40px rgba(15,23,42,.18);display:none;flex-direction:column;overflow:hidden;max-height:480px;}
+  .ai-chat-panel.open{display:flex;}
+  .ai-chat-hd{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line);background:#f7faf1;}
+  .ai-chat-hd .ai-title{font-size:14px;font-weight:700;color:var(--ink);}
+  .ai-chat-hd .ai-demo{font-size:10px;color:var(--sub);margin-left:auto;padding-right:4px;}
+  .ai-chat-hd .ai-close{border:none;background:transparent;font-size:18px;cursor:pointer;color:var(--sub);line-height:1;padding:0 4px;}
+  .ai-chat-msgs{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10px;background:#fafdf5;}
+  .ai-bubble{max-width:88%;padding:8px 12px;border-radius:12px;font-size:12.5px;line-height:1.55;}
+  .ai-bubble.user{align-self:flex-end;background:#729c3a;color:#fff;border-radius:12px 12px 2px 12px;}
+  .ai-bubble.bot{align-self:flex-start;background:#fff;color:var(--ink);border:1px solid #d9e4c5;border-radius:12px 12px 12px 2px;}
+  .ai-chat-input{display:flex;gap:6px;padding:10px 12px;border-top:1px solid var(--line);background:#fff;}
+  .ai-chat-input input{flex:1;border:1px solid #cfd4c9;border-radius:8px;padding:7px 10px;font-size:12.5px;outline:none;}
+  .ai-chat-input input:focus{border-color:#729c3a;}
+  .ai-chat-input button{background:#729c3a;color:#fff;border:none;border-radius:8px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;}
+  .ai-chat-input button:hover{background:#5f8430;}
+  .ai-chat-ft{font-size:10.5px;color:var(--sub);padding:6px 14px 10px;background:#fff;border-top:1px solid #f0f0ea;line-height:1.5;}
 </style>
 </head>
 <body>
@@ -442,11 +461,12 @@
       <button class="newbtn" onclick="go('new')">＋ 新規物件の起案</button>
       <div class="group">メニュー</div>
       <button data-nav="dashboard" class="active" onclick="go('dashboard')"><span class="ic">▣</span>ダッシュボード</button>
+      <button data-nav="consider" onclick="go('consider')"><span class="ic">◷</span>検討リスト</button>
       <button data-nav="approve" onclick="go('approve')"><span class="ic">✓</span>承認<span id="nav-appr-badge" class="navbadge" style="display:none"></span></button>
       <button data-nav="list" onclick="go('list')"><span class="ic">≣</span><span id="nav-list-label">担当物件</span><span id="nav-list-badge" class="navbadge" style="display:none"></span></button>
       <button data-nav="ops" onclick="go('ops')"><span class="ic">◔</span>販売中物件</button>
       <button id="nav-review" data-nav="review" onclick="go('review')"><span class="ic">↺</span>過去実績</button>
-      <button id="nav-perf" data-nav="perf" onclick="go('perf')" style="display:none"><span class="ic">▤</span>担当者別パフォーマンス</button>
+      <button id="nav-perf" data-nav="perf" onclick="go('perf')"><span class="ic">▤</span>担当者別パフォーマンス</button>
       <div class="optdrop">
         <button type="button" class="optdrop-btn">オプション機能 <span class="caret">▷</span></button>
         <div class="optdrop-menu">
@@ -484,6 +504,23 @@
     </div>
     <div class="content" id="content"><!-- rendered by JS --></div>
   </div>
+</div>
+
+<!-- AIチャット（オプション・デモ演出） -->
+<button class="ai-float-btn" onclick="toggleAiChat()" title="AIチャット（構想デモ）">AI</button>
+<div class="ai-chat-panel" id="ai-chat-panel">
+  <div class="ai-chat-hd">
+    <span class="ai-title">AIチャット</span>
+    <span class="optbadge">オプション</span>
+    <span class="ai-demo">構想デモ</span>
+    <button class="ai-close" onclick="toggleAiChat()" aria-label="閉じる">✕</button>
+  </div>
+  <div class="ai-chat-msgs" id="ai-chat-msgs"></div>
+  <div class="ai-chat-input">
+    <input type="text" id="ai-chat-inp" placeholder="質問を入力…" onkeydown="if(event.key==='Enter')sendAiChat()">
+    <button onclick="sendAiChat()">送信</button>
+  </div>
+  <div class="ai-chat-ft">※ 本機能はオプション（別途費用）です。本実装では登録データをもとに回答します。</div>
 </div>
 
 <script>
@@ -687,6 +724,115 @@ const DEALS = [
   }
 ];
 
+/* ---------- 検討リスト（キマール登録前の段階管理） ---------- */
+/* status:'active'=検討中 / 'pass'=見送り */
+const CONSIDER_REASONS=['価格が合わない','物件条件','資金・与信','スピード負け','その他'];
+let CONSIDER=[
+  {id:'C-001',name:'葛飾区◯◯2丁目 土地',type:'土地',area:'葛飾区',price:8500,src:'レインズ検索',staff:'佐藤',date:'07/01',memo:'接道4m・南道路。競合も動いている様子。',status:'active',passReason:''},
+  {id:'C-002',name:'江東区◯◯3丁目 土地',type:'土地',area:'江東区',price:11200,src:'業者持込',staff:'田中',date:'07/02',memo:'売主は急いでいないため指値交渉の余地あり。',status:'active',passReason:''},
+  {id:'C-003',name:'足立区◯◯5丁目 戸建',type:'戸建',area:'足立区',price:4800,src:'紹介',staff:'高橋',date:'07/03',memo:'築30年・リノベ前提。解体費要確認。',status:'active',passReason:''},
+  {id:'C-004',name:'板橋区◯◯1丁目 土地',type:'土地',area:'板橋区',price:6300,src:'レインズ検索',staff:'渡辺',date:'07/04',memo:'角地・整形地。坪単価は相場並みか少し上。',status:'active',passReason:''},
+  {id:'C-005',name:'葛飾区◯◯4丁目 土地',type:'土地',area:'葛飾区',price:7800,src:'業者持込',staff:'佐藤',date:'06/28',memo:'仕入値が高く利益率8%に届かず。',status:'pass',passReason:'価格が合わない'},
+  {id:'C-006',name:'江東区◯◯1丁目 アパート',type:'アパート',area:'江東区',price:9800,src:'紹介',staff:'田中',date:'06/25',memo:'買付競争になり他社に負けた。',status:'pass',passReason:'スピード負け'},
+  {id:'C-007',name:'足立区◯◯2丁目 土地',type:'土地',area:'足立区',price:5100,src:'その他',staff:'田中',date:'06/22',memo:'接道・形状ともに難あり。分割困難。',status:'pass',passReason:'物件条件'},
+];
+let CONSIDER_PASS_INLINE={}; /* インライン理由選択の表示状態 {id: true/false} */
+
+function renderConsider(){
+  const c=document.getElementById('content');
+  const active=CONSIDER.filter(x=>x.status==='active');
+  const pass=CONSIDER.filter(x=>x.status==='pass');
+  /* 理由別集計 */
+  const rsn=CONSIDER_REASONS.map(r=>({r,n:pass.filter(x=>x.passReason===r).length})).filter(x=>x.n>0);
+  const areas=['葛飾区','江東区','足立区','板橋区','練馬区','世田谷区','北区','杉並区','江戸川区','川口市'];
+  const areaOpts=areas.map(a=>`<option>${a}</option>`).join('');
+  /* 登録フォーム */
+  const form=`<div class="card" style="margin-bottom:16px">
+    <h3>物件を検討リストに登録</h3>
+    <div class="grid2">
+      <div class="field"><label>物件名</label><input type="text" id="ci_name" placeholder="例：葛飾区◯◯1丁目 土地"></div>
+      <div class="field"><label>エリア</label><select id="ci_area"><option value="">選択</option>${areaOpts}</select></div>
+      <div class="field"><label>種別</label><select id="ci_type"><option>土地</option><option>戸建</option><option>アパート</option></select></div>
+      <div class="field"><label>価格（万円）</label><input type="number" id="ci_price" placeholder="例：8500"></div>
+      <div class="field"><label>情報元</label><select id="ci_src"><option>レインズ検索</option><option>業者持込</option><option>紹介</option><option>その他</option></select></div>
+      <div class="field"><label>メモ</label><input type="text" id="ci_memo" placeholder="気になる点・確認事項など"></div>
+    </div>
+    <button class="btn primary" style="margin-top:8px" onclick="addConsider()">登録</button>
+  </div>`;
+  /* 検討中一覧 */
+  const rowActive=x=>{
+    const showing=CONSIDER_PASS_INLINE[x.id];
+    const chips=CONSIDER_REASONS.map(r=>`<span onclick="passConsider('${x.id}','${r}')" style="display:inline-block;padding:3px 10px;font-size:11.5px;font-weight:700;border:1px solid var(--line);background:#fff;cursor:pointer;margin:2px">${r}</span>`).join('');
+    return `<tr>
+      <td><b>${x.name}</b><br><span class="muted" style="font-size:11px">${x.id}・${x.date}登録</span></td>
+      <td>${x.type}</td><td>${x.area}</td>
+      <td class="num">${Number(x.price).toLocaleString()}万円</td>
+      <td>${x.src}</td><td>${x.staff}</td>
+      <td style="font-size:11.5px;color:var(--sub)">${x.memo||'—'}</td>
+      <td style="white-space:nowrap;min-width:160px">
+        <button class="btn ok" style="padding:4px 10px;font-size:11.5px;white-space:nowrap" onclick="goConsiderNew('${x.id}')">収支計算へ</button>
+        ${showing
+          ? `<div style="margin-top:6px">${chips}</div>`
+          : `<button class="btn" style="padding:4px 10px;font-size:11.5px;margin-top:4px;color:var(--sub)" onclick="showPassChips('${x.id}')">見送り▾</button>`}
+      </td>
+    </tr>`;
+  };
+  const tableActive=active.length
+    ? `<div class="card" style="padding:0;overflow:hidden;margin-bottom:16px"><table><thead><tr>
+        <th>物件</th><th>種別</th><th>エリア</th><th class="num">価格</th><th>情報元</th><th>担当</th><th>メモ</th><th>操作</th>
+      </tr></thead><tbody>${active.map(rowActive).join('')}</tbody></table></div>`
+    : `<div class="card muted" style="margin-bottom:16px">検討中の物件はありません。上のフォームから登録してください。</div>`;
+  /* 見送り理由集計チップ */
+  const rsnChips=rsn.length
+    ? `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">`+rsn.map(x=>`<span style="display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:#fff;padding:4px 12px;font-size:12px;font-weight:700">${x.r}<b style="color:#ff6600;margin-left:4px">${x.n}件</b></span>`).join('')+'</div>'
+    : '';
+  /* 見送り一覧 */
+  const rowPass=x=>`<tr>
+    <td><b>${x.name}</b><br><span class="muted" style="font-size:11px">${x.id}</span></td>
+    <td>${x.type}</td><td>${x.area}</td>
+    <td class="num">${Number(x.price).toLocaleString()}万円</td>
+    <td>${x.staff}</td><td>${x.date}</td>
+    <td><span style="display:inline-block;padding:2px 10px;font-size:11.5px;font-weight:700;background:#fee2e2;color:#b91c1c">${x.passReason}</span></td>
+  </tr>`;
+  const tablePass=pass.length
+    ? `${rsnChips}<div class="card" style="padding:0;overflow:hidden"><table><thead><tr>
+        <th>物件</th><th>種別</th><th>エリア</th><th class="num">価格</th><th>担当</th><th>登録日</th><th>見送り理由</th>
+      </tr></thead><tbody>${pass.map(rowPass).join('')}</tbody></table></div>`
+    : `<div class="card muted">見送り案件はありません。</div>`;
+  c.innerHTML=`
+    <div class="notebar">物件を入手したらまずここに登録。検討・見送りの記録が会社に残ります（キマールへの登録は仕入れ検討に進んでから）。</div>
+    ${form}
+    <div class="sectiontitle">検討中（${active.length}件）</div>
+    ${tableActive}
+    <div class="sectiontitle">見送り（${pass.length}件）</div>
+    ${tablePass}`;
+}
+function addConsider(){
+  const name=(document.getElementById('ci_name')||{}).value||'';
+  if(!name.trim()){toast('物件名を入力してください。');return;}
+  const area=(document.getElementById('ci_area')||{}).value||'';
+  const type=(document.getElementById('ci_type')||{}).value||'土地';
+  const price=parseFloat((document.getElementById('ci_price')||{}).value)||0;
+  const src=(document.getElementById('ci_src')||{}).value||'その他';
+  const memo=(document.getElementById('ci_memo')||{}).value||'';
+  const today=new Date();const mm=String(today.getMonth()+1).padStart(2,'0');const dd=String(today.getDate()).padStart(2,'0');
+  CONSIDER.unshift({id:'C-'+(100+CONSIDER.length),name,type,area,price,src,staff:CURRENT_STAFF,date:mm+'/'+dd,memo,status:'active',passReason:''});
+  toast('登録しました。ここから収支計算へ進むと起案になります。');
+  renderConsider();
+}
+function showPassChips(id){ CONSIDER_PASS_INLINE[id]=true; renderConsider(); }
+function passConsider(id,reason){
+  const x=CONSIDER.find(c=>c.id===id); if(!x) return;
+  x.status='pass'; x.passReason=reason;
+  delete CONSIDER_PASS_INLINE[id];
+  toast('見送り理由「'+reason+'」で見送り一覧へ移動しました。');
+  renderConsider();
+}
+function goConsiderNew(id){
+  const x=CONSIDER.find(c=>c.id===id); if(x){toast('「'+x.name+'」の収支計算を開始します。新規起案フォームへ移動します。');}
+  go('new');
+}
+
 /* ---------- 計算ロジック（御社Excel準拠） ---------- */
 function fmtY(n){ return '¥'+Math.round(n).toLocaleString('ja-JP'); }
 function fmtYen(n){ return Math.round(n).toLocaleString('ja-JP')+'円'; } // 販売中物件＝正規の円表示（例：100,000,000円）
@@ -836,21 +982,21 @@ function setRole(r){ ROLE=r; document.getElementById('role-staff').classList.tog
   document.getElementById('role-mgr').classList.toggle('on',r==='mgr');
   document.getElementById('role-boss').classList.toggle('on',r==='boss');
   const ll=document.getElementById('nav-list-label'); if(ll) ll.textContent=(r==='staff')?'担当物件':'全社物件一覧';
-  ['nav-bizdash','nav-perf'].forEach(id=>{const b=document.getElementById(id); if(b) b.style.display=(r==='staff')?'none':'';}); // 経営・成績は上長/代表のみ
+  ['nav-bizdash'].forEach(id=>{const b=document.getElementById(id); if(b) b.style.display=(r==='staff')?'none':'';});  // 経営DBは上長/代表のみ。担当者別パフォーマンスは全社公開（活動と成果の見える化）
   // 過去実績メニュー＝営業担当のみ（上長・代表は全社物件一覧に統一・2026-07-07）。全社物件一覧は販売中の下へ移動
   const rvB=document.getElementById('nav-review'); if(rvB) rvB.style.display=(r==='staff')?'':'none';
   const lstB=document.querySelector('.nav [data-nav="list"]'), opsB=document.querySelector('.nav [data-nav="ops"]');
   if(lstB&&opsB){ if(r==='staff'){ opsB.parentNode.insertBefore(lstB,opsB); } else { opsB.parentNode.insertBefore(lstB,opsB.nextSibling); } }
   go(CUR.view, CUR.arg); }
 let CUR={view:'dashboard',arg:null};
-const TITLES={dashboard:['ホーム','ダッシュボード'],approve:['承認','承認（あなたの番の承認待ち）'],ops:['販売中物件','販売中物件（全社・全営業が販売対応）'],list:['物件','担当物件'],detail:['物件 › 収支シート','事業収支シート'],market:['相場','相場調査（オプション機能）'],compare:['物件','物件比較・感応度（オプション）'],review:['過去実績','過去実績（計画→実績の検証・過去の起案参照）'],access:['設定','表示範囲（どの立場に何が見えるか）'],bizdash:['経営','経営ダッシュボード（オプション・上長/代表）'],perf:['評価','担当者別パフォーマンス（上長・代表）'],new:['物件 › 新規起案','新規物件の起案（事業計画）'],confirm:['物件 › 申請前分析','申請前分析（自動判定・過去案件・AI所見）']};
+const TITLES={dashboard:['ホーム','ダッシュボード'],consider:['検討','検討リスト（キマール登録前の段階管理）'],approve:['承認','承認（あなたの番の承認待ち）'],ops:['販売中物件','販売中物件（全社・全営業が販売対応）'],list:['物件','担当物件'],detail:['物件 › 収支シート','事業収支シート'],market:['相場','相場調査（オプション機能）'],compare:['物件','物件比較・感応度（オプション）'],review:['過去実績','過去実績（計画→実績の検証・過去の起案参照）'],access:['設定','表示範囲（どの立場に何が見えるか）'],bizdash:['経営','経営ダッシュボード（オプション・上長/代表）'],perf:['評価','担当者別パフォーマンス（全営業・上長・代表）'],new:['物件 › 新規起案','新規物件の起案（事業計画）'],confirm:['物件 › 申請前分析','申請前分析（自動判定・過去案件・AI所見）']};
 function go(view,arg){
   CUR={view,arg};
   document.querySelectorAll('.nav button[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===view));
   const t=TITLES[view]||['',''];
   document.getElementById('crumb').textContent=t[0];
   document.getElementById('ptitle').textContent=t[1];
-  const _r=({dashboard:renderDashboard,approve:renderApprove,ops:renderOps,list:renderList,detail:renderDetail,market:renderMarket,compare:renderCompare,review:renderReview,access:renderAccess,bizdash:renderBizdash,perf:renderPerf,new:renderNew,confirm:renderConfirm}[view]); if(_r) _r(arg); else return;
+  const _r=({dashboard:renderDashboard,consider:renderConsider,approve:renderApprove,ops:renderOps,list:renderList,detail:renderDetail,market:renderMarket,compare:renderCompare,review:renderReview,access:renderAccess,bizdash:renderBizdash,perf:renderPerf,new:renderNew,confirm:renderConfirm}[view]); if(_r) _r(arg); else return;
   updateApprBadge(); updateListBadge(); refreshNotif();
   const _np=document.getElementById('notif-panel'); if(_np) _np.style.display='none';
   window.scrollTo(0,0);
@@ -1647,7 +1793,8 @@ function renderAccess(){
     ['販売中物件（全社共有・販売資料DL・買付管理・反響ログ）', Y('全社'), Y('全社'), Y('全社')],
     ['販売業務の管理（価格改定履歴・決済チェックリスト・資料チェック）', Y('担当分'), Y('全社'), Y('全社')],
     ['過去実績（計画→実績の答え合わせ・起案の参照）', Y('全社・閲覧'), P('全社物件一覧に統合'), P('全社物件一覧に統合')],
-    ['担当者別パフォーマンス（成績・育成の材料）', N, Y('全社'), Y('全社')],
+    ['担当者別パフォーマンス（成績・育成の材料）', Y('全社'), Y('全社'), Y('全社')],
+    ['検討リスト（登録・見送り記録）', Y('全社'), Y('全社'), Y('全社')],
     ['定着メーター（システムが見られているかの監視）', N, N, Y('ダッシュボード')],
     ['通知・要対応（メール／在庫滞留・決済期日・買付期限アラート）', Y('自分宛'), Y('全社'), Y('全社')],
   ];
@@ -1676,7 +1823,7 @@ function renderAccess(){
         <tr><td class="lbl" colspan="4">オプション機能（任意・別途費用 ／ 表示範囲は想定・提案）</td></tr>
         ${opt.map(r=>rrow(r,true)).join('')}
       </table>
-      <div class="muted" style="font-size:11px;margin-top:10px">※ オプション＝任意の追加機能（別途費用）。表示範囲は導入時に調整できます。営業担当に「担当者別の成績比較」を出さないのは、社内の成績表化を避けるためです。</div>
+      <div class="muted" style="font-size:11px;margin-top:10px">※ オプション＝任意の追加機能（別途費用）。表示範囲は導入時に調整できます。担当者別パフォーマンスは全営業に公開（活動と成果の見える化）。表示範囲は導入時に調整できます。</div>
     </div>`;
 }
 
@@ -2171,7 +2318,6 @@ function renderBizdash(){
 }
 function renderPerf(){
   const c=document.getElementById('content');
-  if(ROLE==='staff'){ c.innerHTML=accessDenied('担当者別パフォーマンス'); return; }
   const staffs=[...new Set(DEALS.map(d=>d.staff))];
   const rows=staffs.map(s=>{
     const ds=DEALS.filter(d=>d.staff===s);
@@ -2213,7 +2359,7 @@ function renderPerf(){
       ${st.length?`<div style="font-size:12px;margin-top:4px"><b style="color:#15803d">強み：</b>${st.join(' ／ ')}</div>`:''}
       ${wt.length?`<div style="font-size:12px;margin-top:3px"><b style="color:#b45309">留意：</b>${wt.join(' ／ ')}</div>`:''}</div>`;}).join('');
   c.innerHTML=`
-    <div class="bubble"><b>担当者別パフォーマンス（上長・代表のみ）</b>：起案の量・通過・売却・実現利益・想定の的中・クセ・得意分野を横断で。育成と評価の材料です（営業担当には非表示）。</div>
+    <div class="bubble"><b>担当者別パフォーマンス（全社公開・活動と成果の見える化）</b>：起案の量・通過・売却・実現利益・想定の的中・クセ・得意分野を横断で。全営業が互いの活動を把握し、育成・連携の材料にします。</div>
     <div class="kpis">
       ${statBox('全社 実現利益',fmtYm(totReal/1e6),totDone+'件 売却')}
       ${statBox('トップ担当',top?top.s:'—',top?fmtYm(top.realized/1e6):'')}
@@ -3181,6 +3327,37 @@ function initSearch(){
   const uniq=[...new Set([...DEALS.map(d=>d.name), ...DEALS.map(d=>d.id), ...INVENTORY.map(i=>i.name)])];
   dl.innerHTML=uniq.map(n=>`<option value="${n}"></option>`).join('');
 }
+/* ---------- AIチャット（オプション・デモ演出） ---------- */
+let CHAT_OPEN=false;
+const CHAT_SAMPLE=[
+  {role:'user', text:'江戸川区の物件の判定は？'},
+  {role:'bot',  text:'GR-2026-0012（江戸川区◯◯1丁目 土地）は ◎推奨 です。想定②利益率14.6%・採用IRR17.1%。現在は代表承認待ちの段階です。'},
+  {role:'user', text:'似た過去案件は？'},
+  {role:'bot',  text:'土地の売却済みでは GR-2026-0003（世田谷区◯◯3丁目 土地）が計画12.3%→実績14.9%で着地しています。見送りは足立区の1件（GR-2026-0007・利益率5.8%・基準未達）です。'},
+];
+let CHAT_MSGS=[...CHAT_SAMPLE];
+function renderAiChat(){
+  const el=document.getElementById('ai-chat-msgs'); if(!el) return;
+  el.innerHTML=CHAT_MSGS.map(m=>`<div class="ai-bubble ${m.role}">${m.text}</div>`).join('');
+  el.scrollTop=el.scrollHeight;
+}
+function toggleAiChat(){
+  CHAT_OPEN=!CHAT_OPEN;
+  const p=document.getElementById('ai-chat-panel');
+  if(p) p.classList.toggle('open', CHAT_OPEN);
+  if(CHAT_OPEN) renderAiChat();
+}
+function sendAiChat(){
+  const inp=document.getElementById('ai-chat-inp'); if(!inp||!inp.value.trim()) return;
+  CHAT_MSGS.push({role:'user', text:inp.value.trim()});
+  inp.value='';
+  renderAiChat();
+  setTimeout(()=>{
+    CHAT_MSGS.push({role:'bot', text:'（構想デモ）本実装では、登録された物件情報・過去の検討記録から回答します。'});
+    renderAiChat();
+  },600);
+}
+
 /* 初期表示 */
 initSearch();
 go('dashboard');
