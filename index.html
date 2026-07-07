@@ -446,12 +446,12 @@
       <button data-nav="list" onclick="go('list')"><span class="ic">≣</span><span id="nav-list-label">担当物件</span><span id="nav-list-badge" class="navbadge" style="display:none"></span></button>
       <button data-nav="ops" onclick="go('ops')"><span class="ic">◔</span>販売中物件</button>
       <button data-nav="review" onclick="go('review')"><span class="ic">↺</span>過去実績</button>
+      <button id="nav-perf" data-nav="perf" onclick="go('perf')" style="display:none"><span class="ic">▤</span>担当者別パフォーマンス</button>
       <div class="optdrop">
         <button type="button" class="optdrop-btn">オプション機能 <span class="caret">▷</span></button>
         <div class="optdrop-menu">
           <div class="optdrop-note">任意の追加機能（別途費用）</div>
           <button id="nav-bizdash" data-nav="bizdash" class="addon" onclick="go('bizdash')" style="display:none"><span>経営ダッシュボード<span class="optbadge">オプション</span></span></button>
-          <button id="nav-perf" data-nav="perf" class="addon" onclick="go('perf')" style="display:none"><span>担当者別パフォーマンス<span class="optbadge">オプション</span></span></button>
           <button data-nav="compare" class="addon" onclick="go('compare')"><span>物件比較・感応度<span class="optbadge">オプション</span></span></button>
           <button data-nav="market" class="addon" onclick="go('market')"><span>相場調査<span class="optbadge">オプション</span></span></button>
         </div>
@@ -839,7 +839,7 @@ function setRole(r){ ROLE=r; document.getElementById('role-staff').classList.tog
   ['nav-bizdash','nav-perf'].forEach(id=>{const b=document.getElementById(id); if(b) b.style.display=(r==='staff')?'none':'';}); // 経営・成績は上長/代表のみ
   go(CUR.view, CUR.arg); }
 let CUR={view:'dashboard',arg:null};
-const TITLES={dashboard:['ホーム','ダッシュボード'],approve:['承認','承認（あなたの番の承認待ち）'],ops:['販売中物件','販売中物件（全社・全営業が販売対応）'],list:['物件','担当物件'],detail:['物件 › 収支シート','事業収支シート'],market:['相場','相場調査（オプション機能）'],compare:['物件','物件比較・感応度（オプション）'],review:['過去実績','過去実績（計画→実績の検証・過去の起案参照）'],access:['設定','表示範囲（どの立場に何が見えるか）'],bizdash:['経営','経営ダッシュボード（オプション・上長/代表）'],perf:['評価','担当者別パフォーマンス（オプション・上長/代表）'],new:['物件 › 新規起案','新規物件の起案（事業計画）'],confirm:['物件 › 申請前分析','申請前分析（自動判定・過去案件・AI所見）']};
+const TITLES={dashboard:['ホーム','ダッシュボード'],approve:['承認','承認（あなたの番の承認待ち）'],ops:['販売中物件','販売中物件（全社・全営業が販売対応）'],list:['物件','担当物件'],detail:['物件 › 収支シート','事業収支シート'],market:['相場','相場調査（オプション機能）'],compare:['物件','物件比較・感応度（オプション）'],review:['過去実績','過去実績（計画→実績の検証・過去の起案参照）'],access:['設定','表示範囲（どの立場に何が見えるか）'],bizdash:['経営','経営ダッシュボード（オプション・上長/代表）'],perf:['評価','担当者別パフォーマンス（上長・代表）'],new:['物件 › 新規起案','新規物件の起案（事業計画）'],confirm:['物件 › 申請前分析','申請前分析（自動判定・過去案件・AI所見）']};
 function go(view,arg){
   CUR={view,arg};
   document.querySelectorAll('.nav button[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===view));
@@ -974,15 +974,17 @@ function todoCardHTML(){
     {n:sl.length,lab:'販売中（フォロー）',sub:'反響対応・販売状況の更新',go:one(sl,"go('list')"),u:false},
   ];}
   const total=items.reduce((a,i)=>a+i.n,0);
-  const row=it=>{ const done=it.n===0;
-   return `<a class="reqrow${done?' done':''}" onclick="${done?'':it.go}">
-     <span class="rn">${done?'✓':it.n+'<small> 件</small>'}</span>
-     <span class="rl">${it.lab}<small>${done?'対応なし':it.sub}</small></span>
-     <span class="rgo">開く ›</span>
+  /* 横並びカード型（2026-07-07 中西さん指示） */
+  const row=it=>{ const done=it.n===0; const ac=done?'#4c7c15':(it.u?'#cc3300':'#1c2a3a');
+   return `<a onclick="${done?'':it.go}" style="display:block;border:1px solid var(--line);border-top:3px solid ${ac};background:#fff;padding:11px 13px;cursor:${done?'default':'pointer'};text-decoration:none;color:inherit">
+     <div style="font-size:21px;font-weight:800;color:${ac};line-height:1.2">${done?'✓':it.n+'<small style="font-size:11.5px;color:var(--sub);font-weight:600"> 件</small>'}</div>
+     <div style="font-weight:800;font-size:12px;margin-top:2px">${it.lab}</div>
+     <div style="font-size:10.5px;color:var(--sub);margin-top:3px;line-height:1.5">${done?'対応なし':it.sub}</div>
+     ${done?'':'<div style="font-size:11px;font-weight:700;color:#729c3a;margin-top:6px">開く ›</div>'}
    </a>`; };
   return `<div class="reqbox">
     <div class="rhd"><div class="rt">あなたの要対応${total?`<span class="rcnt">${total}</span>`:'<span class="rok">✓ 0</span>'}</div><small>未対応はヘッダーの🔔とメール/LINEにも自動通知（オプション）</small></div>
-    ${items.map(row).join('')}
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px">${items.map(row).join('')}</div>
     <div class="rft">※ 承認・仕入決済・売却の記録は<b>このシステムでのみ</b>進みます＝嫌でも見に来る導線。</div>
   </div>`;
 }
@@ -1003,6 +1005,50 @@ function refreshNotif(){
    + items.map(i=>`<a onclick="document.getElementById('notif-panel').style.display='none';${i.go}" style="display:flex;gap:10px;padding:11px 14px;border-bottom:1px solid #f1f5f9;cursor:pointer;text-decoration:none;color:inherit"><span style="font-size:15px;width:18px;text-align:center">${i.ic}</span><span style="flex:1"><span style="font-weight:700;font-size:12.5px;color:var(--ink)">${i.t}</span><br><span style="font-size:11px;color:var(--sub)">${i.s}</span></span>${i.red?'<span style="width:8px;height:8px;background:#ef4444;border-radius:50%;margin-top:5px;flex:none"></span>':''}</a>`).join('')
    + `<div style="padding:9px 14px;background:#f8fafc;font-size:11px;color:var(--sub)">これらは<b>メール／LINE／Slack</b>にも自動配信できます（オプション）。取りに行かなくても届く＝見落とさない。</div>`;
 }
+/* 定着メーター（基盤・2026-07-07 経営DB→代表ダッシュボードへ移設・オプションから基盤化） */
+function retentionMeterHTML(){
+  return `<div class="card" style="margin-bottom:16px">
+      <h3 style="margin-bottom:12px">定着メーター（このシステムが見られているか）</h3>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+        <div style="border:1px solid var(--line);padding:12px 14px;background:#fff">
+          <div style="font-size:11.5px;color:var(--sub);margin-bottom:4px">ログイン率（今週）</div>
+          <div style="font-size:22px;font-weight:800;color:#4c7c15">92<small style="font-size:13px;font-weight:600;color:var(--sub)">%</small></div>
+          <div style="font-size:11px;color:var(--sub);margin-top:3px">7人中6〜7人が毎日</div>
+          <div style="height:5px;background:#eef2f7;margin-top:8px"><div style="height:5px;width:92%;background:#4c7c15"></div></div>
+        </div>
+        <div style="border:1px solid var(--line);padding:12px 14px;background:#fff">
+          <div style="font-size:11.5px;color:var(--sub);margin-bottom:4px">実績入力 期限内充足率</div>
+          <div style="font-size:22px;font-weight:800;color:#c25400">78<small style="font-size:13px;font-weight:600;color:var(--sub)">%</small></div>
+          <div style="font-size:11px;color:#c25400;margin-top:3px">未入力 2件</div>
+          <div style="height:5px;background:#eef2f7;margin-top:8px"><div style="height:5px;width:78%;background:#c25400"></div></div>
+        </div>
+        <div style="border:1px solid var(--line);padding:12px 14px;background:#fff">
+          <div style="font-size:11.5px;color:var(--sub);margin-bottom:4px">過去実績の参照（今週）</div>
+          <div style="font-size:22px;font-weight:800;color:#4c7c15">34<small style="font-size:13px;font-weight:600;color:var(--sub)">回</small></div>
+          <div style="font-size:11px;color:var(--sub);margin-top:3px">先週比 +8回</div>
+          <div style="height:5px;background:#eef2f7;margin-top:8px"><div style="height:5px;width:72%;background:#4c7c15"></div></div>
+        </div>
+        <div style="border:1px solid var(--line);padding:12px 14px;background:#fff">
+          <div style="font-size:11.5px;color:var(--sub);margin-bottom:4px">更新が止まっている案件</div>
+          <div style="font-size:22px;font-weight:800;color:#c25400">3<small style="font-size:13px;font-weight:600;color:var(--sub)">件</small></div>
+          <div style="font-size:11px;color:#c25400;margin-top:3px">7日以上 更新なし</div>
+          <div style="height:5px;background:#eef2f7;margin-top:8px"><div style="height:5px;width:40%;background:#c25400"></div></div>
+        </div>
+      </div>
+      <div style="font-size:11.5px;color:var(--sub);margin-top:10px;border-left:3px solid var(--line);padding-left:10px">"見に行かない"を数値で監視。悪化を早期に検知し、軌道修正します。</div>
+    </div>`;
+}
+/* 担当者別パフォーマンスの要約（代表ダッシュボード・基盤）＝実現利益ランキングをDEALS実績から自動集計 */
+function perfSummaryHTML(){
+  const staffs=[...new Set(DEALS.map(d=>d.staff))];
+  const rows=staffs.map(s=>{const ds=DEALS.filter(d=>d.staff===s&&d.actual);return {s,p:ds.reduce((a,d)=>a+d.actual.profit,0),n:ds.length};}).filter(x=>x.n>0).sort((a,b)=>b.p-a.p);
+  const mx=rows.length?rows[0].p:1;
+  return `<div class="card" style="margin-bottom:16px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px"><h3 style="margin:0">担当者別パフォーマンス（実現利益）</h3><a onclick="go('perf')" style="font-size:11.5px;font-weight:700;color:#729c3a;cursor:pointer;text-decoration:underline">詳細を見る ›</a></div>
+    ${rows.map(r=>`<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><span style="width:56px;font-size:12px;font-weight:700">${r.s}</span><div style="flex:1;height:14px;background:#eef2f7"><div style="height:14px;width:${Math.max(3,Math.round(r.p/mx*100))}%;background:#729c3a"></div></div><span style="width:118px;text-align:right;font-size:12px;font-weight:700">${fmtYm(r.p/1e6)}<small style="color:var(--sub);font-weight:600">・${r.n}件</small></span></div>`).join('')}
+    <div class="muted" style="font-size:10.5px;margin-top:4px">売却済み案件の実現利益（自動集計）。起案数・通過率・的中率・回転日数は「担当者別パフォーマンス」画面で。</div>
+  </div>`;
+}
 /* マイ成績（営業担当ダッシュボード・2026-07-07）：目標達成率＋月別の活動量。達成率の実績は自分の売却実績（DEALS）から計算 */
 const MY_TARGET={sales:300000000, profit:40000000}; /* 今期目標（サンプル） */
 const MY_ACTIVITY=[{m:'2月',reg:6,sub:4,app:3},{m:'3月',reg:8,sub:5,app:4},{m:'4月',reg:7,sub:5,app:3},{m:'5月',reg:9,sub:6,app:5},{m:'6月',reg:8,sub:6,app:4},{m:'7月',reg:4,sub:3,app:2}]; /* 月間の案件登録・起案・承認（サンプル） */
@@ -1018,26 +1064,25 @@ function myScoreCardHTML(){
         <b style="font-size:18px;color:${col};min-width:48px;text-align:right">${p}%</b>
       </div></div>`;};
   const maxV=Math.max(...MY_ACTIVITY.flatMap(x=>[x.reg,x.sub,x.app]));
-  const mbar=(v,c)=>`<div style="width:9px;height:${Math.max(3,Math.round(v/maxV*78))}px;background:${c}" title="${v}件"></div>`;
+  const mbar=(v,c)=>`<div style="display:flex;flex-direction:column;align-items:center;gap:2px"><span style="font-size:9px;color:var(--sub);font-weight:700">${v}</span><div style="width:13px;height:${Math.max(3,Math.round(v/maxV*84))}px;background:${c}"></div></div>`;
   const months=MY_ACTIVITY.map(x=>`<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end">
-      <div style="display:flex;align-items:flex-end;gap:3px;height:82px">${mbar(x.reg,'#9ca3af')}${mbar(x.sub,'#1c1f1a')}${mbar(x.app,'#729c3a')}</div>
+      <div style="display:flex;align-items:flex-end;gap:4px;height:104px">${mbar(x.reg,'#9ca3af')}${mbar(x.sub,'#1c1f1a')}${mbar(x.app,'#729c3a')}</div>
       <div style="font-size:10px;color:var(--sub);margin-top:5px">${x.m}</div></div>`).join('');
+  const tot=k=>MY_ACTIVITY.reduce((a,x)=>a+x[k],0);
   return `<div class="card" style="margin-bottom:16px">
     <h3 style="margin-bottom:4px">マイ成績（${CURRENT_STAFF}・今期）</h3>
     <div class="muted" style="font-size:11.5px;margin-bottom:14px">今期の目標達成と、月々の活動量。※目標・活動はサンプル値／実績は自分の売却実績から自動集計。</div>
-    <div style="display:grid;grid-template-columns:1.1fr 1fr;gap:24px;align-items:start">
-      <div>
-        ${bar('売上目標の達成率',actSales,MY_TARGET.sales)}
-        ${bar('粗利目標の達成率',actProfit,MY_TARGET.profit)}
-        <div class="muted" style="font-size:10.5px">売却済み ${myDone.length}件の実績（売上 ${fmtYm(actSales/1e6)}・粗利 ${fmtYm(actProfit/1e6)}）</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;margin-bottom:16px">
+      ${bar('売上目標の達成率',actSales,MY_TARGET.sales)}
+      ${bar('粗利目標の達成率',actProfit,MY_TARGET.profit)}
+    </div>
+    <div class="muted" style="font-size:10.5px;margin-bottom:14px">売却済み ${myDone.length}件の実績（売上 ${fmtYm(actSales/1e6)}・粗利 ${fmtYm(actProfit/1e6)}）</div>
+    <div style="border-top:1px solid var(--line);padding-top:12px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;flex-wrap:wrap;gap:6px">
+        <b style="font-size:12.5px">月間の活動量</b>
+        <span style="font-size:11px;color:var(--sub)">今期合計：<b style="color:var(--ink)">案件登録 ${tot('reg')}件</b>・<b style="color:var(--ink)">起案（提出） ${tot('sub')}件</b>・<b style="color:var(--ink)">承認 ${tot('app')}件</b>　<span style="color:#9ca3af">■</span>登録　<span style="color:#1c1f1a">■</span>起案　<span style="color:#729c3a">■</span>承認</span>
       </div>
-      <div>
-        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
-          <b style="font-size:12.5px">月間の活動量</b>
-          <span style="font-size:10px;color:var(--sub)"><span style="color:#9ca3af">■</span>案件登録　<span style="color:#1c1f1a">■</span>起案（提出）　<span style="color:#729c3a">■</span>承認</span>
-        </div>
-        <div style="display:flex;gap:6px;border-bottom:2px solid var(--line);padding-bottom:0">${months}</div>
-      </div>
+      <div style="display:flex;gap:10px;border-bottom:2px solid var(--line)">${months}</div>
     </div>
   </div>`;
 }
@@ -1059,6 +1104,9 @@ function renderDashboard(){
       </div>
       <div class="sectiontitle">あなた（代表）の承認待ち</div>
       ${awaitPres.length?dealTable(awaitPres,true):'<div class="card muted">代表承認待ちはありません。</div>'}
+      <div style="height:16px"></div>
+      ${retentionMeterHTML()}
+      ${perfSummaryHTML()}
     `;
     return;
   }
@@ -1570,13 +1618,13 @@ function renderAccess(){
     ['販売中物件（全社共有・販売資料DL・買付管理・反響ログ）', Y('全社'), Y('全社'), Y('全社')],
     ['販売業務の管理（価格改定履歴・決済チェックリスト・資料チェック）', Y('担当分'), Y('全社'), Y('全社')],
     ['過去実績（計画→実績の答え合わせ・起案の参照）', Y('全社・閲覧'), Y('全社'), Y('全社')],
-    ['　└ 担当者別の成績比較', N, Y(''), Y('')],
+    ['担当者別パフォーマンス（成績・育成の材料）', N, Y('全社'), Y('全社')],
+    ['定着メーター（システムが見られているかの監視）', N, N, Y('ダッシュボード')],
     ['通知・要対応（メール／在庫滞留・決済期日・買付期限アラート）', Y('自分宛'), Y('全社'), Y('全社')],
   ];
   const opt=[
     ['経営ダッシュボード', N, Y('全社'), Y('全社')],
     ['　└ 資金繰り・与信枠（経営DBのタブ）', N, Y('全社'), Y('全社')],
-    ['担当者別パフォーマンス', N, Y('全社'), Y('全社')],
     ['物件比較・感応度', Y(''), Y(''), Y('')],
     ['相場調査（体験版）', Y(''), Y(''), Y('')],
     ['　└ 相場・有料API連携（住所レベル±10〜15%）', Y(''), Y(''), Y('')],
@@ -2058,36 +2106,6 @@ function renderBizdash(){
   else if(BIZ_TAB==='broker'){ body=brokerSectionsHTML(); }
   else if(BIZ_TAB==='cash'){ body=cashSectionsHTML(); }
   else { body=`
-    <div class="card" style="margin-bottom:16px">
-      <h3 style="margin-bottom:12px">定着メーター（このシステムが見られているか）</h3>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
-        <div style="border:1px solid var(--line);padding:12px 14px;background:#fff">
-          <div style="font-size:11.5px;color:var(--sub);margin-bottom:4px">ログイン率（今週）</div>
-          <div style="font-size:22px;font-weight:800;color:#4c7c15">92<small style="font-size:13px;font-weight:600;color:var(--sub)">%</small></div>
-          <div style="font-size:11px;color:var(--sub);margin-top:3px">7人中6〜7人が毎日</div>
-          <div style="height:5px;background:#eef2f7;margin-top:8px"><div style="height:5px;width:92%;background:#4c7c15"></div></div>
-        </div>
-        <div style="border:1px solid var(--line);padding:12px 14px;background:#fff">
-          <div style="font-size:11.5px;color:var(--sub);margin-bottom:4px">実績入力 期限内充足率</div>
-          <div style="font-size:22px;font-weight:800;color:#c25400">78<small style="font-size:13px;font-weight:600;color:var(--sub)">%</small></div>
-          <div style="font-size:11px;color:#c25400;margin-top:3px">未入力 2件</div>
-          <div style="height:5px;background:#eef2f7;margin-top:8px"><div style="height:5px;width:78%;background:#c25400"></div></div>
-        </div>
-        <div style="border:1px solid var(--line);padding:12px 14px;background:#fff">
-          <div style="font-size:11.5px;color:var(--sub);margin-bottom:4px">過去実績の参照（今週）</div>
-          <div style="font-size:22px;font-weight:800;color:#4c7c15">34<small style="font-size:13px;font-weight:600;color:var(--sub)">回</small></div>
-          <div style="font-size:11px;color:var(--sub);margin-top:3px">先週比 +8回</div>
-          <div style="height:5px;background:#eef2f7;margin-top:8px"><div style="height:5px;width:72%;background:#4c7c15"></div></div>
-        </div>
-        <div style="border:1px solid var(--line);padding:12px 14px;background:#fff">
-          <div style="font-size:11.5px;color:var(--sub);margin-bottom:4px">更新が止まっている案件</div>
-          <div style="font-size:22px;font-weight:800;color:#c25400">3<small style="font-size:13px;font-weight:600;color:var(--sub)">件</small></div>
-          <div style="font-size:11px;color:#c25400;margin-top:3px">7日以上 更新なし</div>
-          <div style="height:5px;background:#eef2f7;margin-top:8px"><div style="height:5px;width:40%;background:#c25400"></div></div>
-        </div>
-      </div>
-      <div style="font-size:11.5px;color:var(--sub);margin-top:10px;border-left:3px solid var(--line);padding-left:10px">"見に行かない"を数値で監視。悪化を早期に検知し、軌道修正します。</div>
-    </div>
     <div class="card" style="padding:18px 20px;margin-bottom:16px">
     ${fyBar}
     <div class="kpis">
