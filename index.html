@@ -1003,6 +1003,44 @@ function refreshNotif(){
    + items.map(i=>`<a onclick="document.getElementById('notif-panel').style.display='none';${i.go}" style="display:flex;gap:10px;padding:11px 14px;border-bottom:1px solid #f1f5f9;cursor:pointer;text-decoration:none;color:inherit"><span style="font-size:15px;width:18px;text-align:center">${i.ic}</span><span style="flex:1"><span style="font-weight:700;font-size:12.5px;color:var(--ink)">${i.t}</span><br><span style="font-size:11px;color:var(--sub)">${i.s}</span></span>${i.red?'<span style="width:8px;height:8px;background:#ef4444;border-radius:50%;margin-top:5px;flex:none"></span>':''}</a>`).join('')
    + `<div style="padding:9px 14px;background:#f8fafc;font-size:11px;color:var(--sub)">これらは<b>メール／LINE／Slack</b>にも自動配信できます（オプション）。取りに行かなくても届く＝見落とさない。</div>`;
 }
+/* マイ成績（営業担当ダッシュボード・2026-07-07）：目標達成率＋月別の活動量。達成率の実績は自分の売却実績（DEALS）から計算 */
+const MY_TARGET={sales:300000000, profit:40000000}; /* 今期目標（サンプル） */
+const MY_ACTIVITY=[{m:'2月',reg:6,sub:4,app:3},{m:'3月',reg:8,sub:5,app:4},{m:'4月',reg:7,sub:5,app:3},{m:'5月',reg:9,sub:6,app:5},{m:'6月',reg:8,sub:6,app:4},{m:'7月',reg:4,sub:3,app:2}]; /* 月間の案件登録・起案・承認（サンプル） */
+function myScoreCardHTML(){
+  const myDone=DEALS.filter(d=>d.staff===CURRENT_STAFF && d.actual);
+  const actSales=myDone.reduce((a,d)=>a+d.actual.price,0);
+  const actProfit=myDone.reduce((a,d)=>a+d.actual.profit,0);
+  const bar=(label,act,tgt)=>{const p=Math.min(100,Math.round(act/tgt*100));const col=p>=100?'#4c7c15':(p>=70?'#729c3a':'#c25400');
+    return `<div style="margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;font-size:11.5px;margin-bottom:5px"><b style="font-size:12.5px">${label}</b><span style="color:var(--sub)">実績 ${fmtYm(act/1e6)} ／ 目標 ${fmtYm(tgt/1e6)}</span></div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="flex:1;height:13px;background:#eef2f7"><div style="height:13px;width:${p}%;background:${col}"></div></div>
+        <b style="font-size:18px;color:${col};min-width:48px;text-align:right">${p}%</b>
+      </div></div>`;};
+  const maxV=Math.max(...MY_ACTIVITY.flatMap(x=>[x.reg,x.sub,x.app]));
+  const mbar=(v,c)=>`<div style="width:9px;height:${Math.max(3,Math.round(v/maxV*78))}px;background:${c}" title="${v}件"></div>`;
+  const months=MY_ACTIVITY.map(x=>`<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end">
+      <div style="display:flex;align-items:flex-end;gap:3px;height:82px">${mbar(x.reg,'#9ca3af')}${mbar(x.sub,'#1c1f1a')}${mbar(x.app,'#729c3a')}</div>
+      <div style="font-size:10px;color:var(--sub);margin-top:5px">${x.m}</div></div>`).join('');
+  return `<div class="card" style="margin-bottom:16px">
+    <h3 style="margin-bottom:4px">マイ成績（${CURRENT_STAFF}・今期）</h3>
+    <div class="muted" style="font-size:11.5px;margin-bottom:14px">今期の目標達成と、月々の活動量。※目標・活動はサンプル値／実績は自分の売却実績から自動集計。</div>
+    <div style="display:grid;grid-template-columns:1.1fr 1fr;gap:24px;align-items:start">
+      <div>
+        ${bar('売上目標の達成率',actSales,MY_TARGET.sales)}
+        ${bar('粗利目標の達成率',actProfit,MY_TARGET.profit)}
+        <div class="muted" style="font-size:10.5px">売却済み ${myDone.length}件の実績（売上 ${fmtYm(actSales/1e6)}・粗利 ${fmtYm(actProfit/1e6)}）</div>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
+          <b style="font-size:12.5px">月間の活動量</b>
+          <span style="font-size:10px;color:var(--sub)"><span style="color:#9ca3af">■</span>案件登録　<span style="color:#1c1f1a">■</span>起案（提出）　<span style="color:#729c3a">■</span>承認</span>
+        </div>
+        <div style="display:flex;gap:6px;border-bottom:2px solid var(--line);padding-bottom:0">${months}</div>
+      </div>
+    </div>
+  </div>`;
+}
 function renderDashboard(){
   const c=document.getElementById('content');
   const total=DEALS.length;
@@ -1015,11 +1053,9 @@ function renderDashboard(){
   if(ROLE==='boss'){
     c.innerHTML=`${todoCardHTML()}
       <div class="bubble"><b>代表ビュー</b>：あなた（代表）の承認待ちが <b>${awaitPres.length}件</b>。上長承認を通った案件が最終判断としてここに集まります（＝必ず目に入る）。</div>
-      <div class="kpis">
-        <div class="kpi"><div class="l">代表 承認待ち</div><div class="v">${awaitPres.length}<small> 件</small></div></div>
-        <div class="kpi"><div class="l">上長 承認待ち</div><div class="v">${awaitMgr.length}<small> 件</small></div></div>
-        <div class="kpi"><div class="l">販売中（仕入済）</div><div class="v">${selling}<small> 件</small></div></div>
-        <div class="kpi"><div class="l">◎推奨 判定</div><div class="v">${ok}<small> 件</small></div></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px">
+        <span style="border:1px solid var(--line);background:#fff;padding:5px 13px;font-size:12px">◎推奨 判定 <b>${ok}件</b></span>
+        <span style="border:1px solid var(--line);background:#fff;padding:5px 13px;font-size:12px">販売中（仕入済）<b>${selling}件</b></span>
       </div>
       <div class="sectiontitle">あなた（代表）の承認待ち</div>
       ${awaitPres.length?dealTable(awaitPres,true):'<div class="card muted">代表承認待ちはありません。</div>'}
@@ -1029,11 +1065,9 @@ function renderDashboard(){
   if(ROLE==='mgr'){
     c.innerHTML=`${todoCardHTML()}
       <div class="bubble"><b>上長ビュー</b>：あなた（上長）の承認待ちが <b>${awaitMgr.length}件</b>。担当が起案した案件は、まず上長のあなたが確認し、代表へ上げます。</div>
-      <div class="kpis">
-        <div class="kpi"><div class="l">上長 承認待ち</div><div class="v">${awaitMgr.length}<small> 件</small></div></div>
-        <div class="kpi"><div class="l">代表へ送付済</div><div class="v">${awaitPres.length}<small> 件</small></div></div>
-        <div class="kpi"><div class="l">差し戻し中</div><div class="v">${returned.length}<small> 件</small></div></div>
-        <div class="kpi"><div class="l">◎推奨 判定</div><div class="v">${ok}<small> 件</small></div></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px">
+        <span style="border:1px solid var(--line);background:#fff;padding:5px 13px;font-size:12px">◎推奨 判定 <b>${ok}件</b></span>
+        <span style="border:1px solid var(--line);background:#fff;padding:5px 13px;font-size:12px">差し戻し中 <b>${returned.length}件</b></span>
       </div>
       <div class="sectiontitle">あなた（上長）の承認待ち</div>
       ${awaitMgr.length?dealTable(awaitMgr,true):'<div class="card muted">上長承認待ちはありません。</div>'}
@@ -1045,28 +1079,8 @@ function renderDashboard(){
   const myReturned=mine.filter(d=>d.status==='returned');
   const mySelling=mine.filter(d=>d.status==='sell').length;
   c.innerHTML=`${todoCardHTML()}
-    <div class="bubble"><b>営業担当ビュー（${CURRENT_STAFF}）</b>：表示は<b>自分の案件のみ</b>。承認待ち・差し戻し・販売中・未分析が一目で分かる＝<b>放置できない</b>仕組み。</div>
-    <div class="sectiontitle">案件の流れ（自分の検討中 → 承認待ち → 販売中）</div>
-    <div class="flow">
-      <div class="stage st1">
-        <div class="sl">① 自分の検討中（下書き）</div>
-        <div class="sv">${mine.filter(d=>d.status==='draft').length}<small> 件</small></div>
-        <div class="sc">下書き保存した収支シート</div>
-      </div>
-      <div class="arrow">▶</div>
-      <div class="stage st2">
-        <div class="sl">② 承認待ち（上長＋代表）</div>
-        <div class="sv">${myAwait.length}<small> 件</small></div>
-        <div class="sc">上長 → 代表 の順に承認${myReturned.length?`<br><span class="branch">↩ 差し戻し ${myReturned.length}件（要対応）</span>`:''}</div>
-      </div>
-      <div class="arrow">▶</div>
-      <div class="stage st3">
-        <div class="sl">③ 販売中</div>
-        <div class="sv">${mySelling}<small> 件</small></div>
-        <div class="sc">仕入決済済・売出し中</div>
-      </div>
-    </div>
-    ${myReturned.length?`<div class="sectiontitle">↩ 差し戻し（修正して再提出）</div>${dealTable(myReturned,false)}`:''}
+    <div class="bubble"><b>営業担当ビュー（${CURRENT_STAFF}）</b>：表示は<b>自分の案件のみ</b>。やること（要対応）と自分の成績が毎日ここで見える。</div>
+    ${myScoreCardHTML()}
     <div class="sectiontitle">自分の案件</div>
     ${dealTable(mine,false)}
   `;
