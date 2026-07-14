@@ -339,10 +339,19 @@ input,select,textarea{font-family:inherit;font-size:13px}
 .log-badge-update{background:#f3f4f6;color:#6b7280}
 /* ファネル期間切替（セグメントボタン） */
 .seg-wrap{display:flex;align-items:center;gap:0}
-.seg-btn{border:1px solid var(--line);background:#fff;color:var(--sub);padding:6px 16px;font-size:12px;font-weight:600;cursor:pointer}
+.seg-btn{border:1px solid var(--line);background:#fff;color:var(--sub);padding:6px 16px;font-size:12px;font-weight:600;cursor:pointer;border-radius:0}
 .seg-btn:first-child{border-radius:6px 0 0 6px}
-.seg-btn+.seg-btn{border-left:none;border-radius:0 6px 6px 0}
+.seg-btn+.seg-btn{border-left:none}
+.seg-btn:last-child{border-radius:0 6px 6px 0}
 .seg-btn.active{background:var(--green);border-color:var(--green);color:#fff}
+/* ホームフィードの自分/みんなタブ＋クリック可能な行 */
+.feed-tabs{display:inline-flex;gap:0;margin-left:auto}
+.feed-tab{border:1px solid var(--line);background:#fff;color:var(--sub);padding:2px 12px;font-size:11px;font-weight:600;cursor:pointer;border-radius:0}
+.feed-tab:first-child{border-radius:5px 0 0 5px}
+.feed-tab+.feed-tab{border-left:none;border-radius:0 5px 5px 0}
+.feed-tab.active{background:var(--green);border-color:var(--green);color:#fff}
+.home-feed-item{cursor:pointer;transition:background .1s;border-radius:6px;padding-left:6px;padding-right:6px;margin-left:-6px;margin-right:-6px}
+.home-feed-item:hover{background:var(--green-light)}
 .next-card{background:var(--green-light);border:1.5px solid var(--green-mid);border-radius:12px;padding:20px;margin-bottom:16px}
 .next-card-label{font-size:11px;font-weight:700;color:var(--green);letter-spacing:.06em;margin-bottom:6px}
 .next-card-question{font-size:15px;font-weight:800;color:var(--ink);line-height:1.5;margin-bottom:12px}
@@ -460,7 +469,13 @@ input,select,textarea{font-family:inherit;font-size:13px}
 
       <div class="home-2col">
         <div>
-          <div class="home-section-title">昨日からの更新</div>
+          <div class="home-section-title" style="display:flex;align-items:center;gap:10px">
+            <span>昨日からの更新</span>
+            <span class="feed-tabs">
+              <button class="feed-tab active" onclick="setFeedMode('mine', this)">自分</button>
+              <button class="feed-tab" onclick="setFeedMode('all', this)">みんな</button>
+            </span>
+          </div>
           <div id="home-feed"></div>
         </div>
         <div>
@@ -1290,10 +1305,18 @@ input,select,textarea{font-family:inherit;font-size:13px}
           <div class="view-title">集計ファネル<span class="help-wrap" style="margin-left:4px"><button class="help-btn" onclick="toggleHelp(this)" title="この集計の説明">？</button><div class="help-pop help-pop-float" style="display:none">ステータス変更の履歴を自動記録しているため、期間別の件数と滞留日数が計算できます。</div></span></div>
           <div class="view-desc">案件の通過状況を工程別に集計します。</div>
         </div>
-        <div class="seg-wrap">
-          <button class="seg-btn active" id="seg-all" onclick="setFunnelPeriod('all', this)">全期間</button>
-          <button class="seg-btn" id="seg-month" onclick="setFunnelPeriod('month', this)">今月</button>
-          <span class="help-wrap" style="margin-left:6px"><button class="help-btn" onclick="toggleHelp(this)" title="期間切替の説明">？</button><div class="help-pop help-pop-float" style="display:none;right:0;left:auto">今月＝2026年7月の履歴で集計しています（取得は取得日で判定）。前月比較・日次/週次の切替は本実装で対応します。</div></span>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <div class="seg-wrap" id="seg-period">
+            <button class="seg-btn active" id="seg-all" onclick="setFunnelPeriod('all', this)">全期間</button>
+            <button class="seg-btn" id="seg-month" onclick="setFunnelPeriod('month', this)">今月</button>
+          </div>
+          <div class="seg-wrap" id="seg-staff">
+            <button class="seg-btn active" id="seg-staff-all" onclick="setFunnelStaff('all', this)">全社</button>
+            <button class="seg-btn" onclick="setFunnelStaff('田中', this)">田中</button>
+            <button class="seg-btn" onclick="setFunnelStaff('佐藤', this)">佐藤</button>
+            <button class="seg-btn" onclick="setFunnelStaff('鈴木', this)">鈴木</button>
+          </div>
+          <span class="help-wrap"><button class="help-btn" onclick="toggleHelp(this)" title="切替の説明">？</button><div class="help-pop help-pop-float" style="display:none;right:0;left:auto">今月＝2026年7月の履歴で集計しています（取得は取得日で判定）。担当者別の表示も、同じ履歴データから切り替えています。前月比較・日次/週次の切替は本実装で対応します。</div></span>
         </div>
       </div>
       <div class="funnel-wrap">
@@ -2403,12 +2426,34 @@ function toggleHelp(btn) {
 
 /* ===== V4 ファネル ===== */
 let funnelPeriod = 'all'; // 'all'＝全期間／'month'＝今月（TODAYのYYYY-MM）
+let funnelStaff  = 'all'; // 'all'＝全社／'田中'／'佐藤'／'鈴木'（案件の担当 deal.staff で絞る）
+
+/* セグメントのactive切替＝同じグループ（親要素）内だけ入れ替える */
+function activateSeg(btn) {
+  if (!btn || !btn.parentElement) return;
+  btn.parentElement.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
 
 function setFunnelPeriod(p, btn) {
   funnelPeriod = p;
-  document.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
+  activateSeg(btn);
   renderFunnel();
+}
+
+function setFunnelStaff(s, btn) {
+  funnelStaff = s;
+  activateSeg(btn);
+  renderFunnel();
+}
+
+/* 期間・担当で絞ったDEALS（担当＝案件のstaff。h.byではない） */
+function funnelDealsScope() {
+  const thisMonth = TODAY.slice(0, 7);
+  let deals = DEALS;
+  if (funnelPeriod === 'month') deals = deals.filter(d => (d.acquiredDate || '').startsWith(thisMonth));
+  if (funnelStaff !== 'all')    deals = deals.filter(d => d.staff === funnelStaff);
+  return deals;
 }
 
 function calcFunnel() {
@@ -2426,13 +2471,16 @@ function calcFunnel() {
   };
   const thisMonth = TODAY.slice(0, 7);
   // 今月＝HISTORYを当月でフィルタ（取得ステージのみ acquiredDate で判定）
-  const histScope = funnelPeriod === 'month' ? HISTORY.filter(h => (h.date || '').startsWith(thisMonth)) : HISTORY;
+  let histScope = funnelPeriod === 'month' ? HISTORY.filter(h => (h.date || '').startsWith(thisMonth)) : HISTORY;
+  // 担当＝案件の担当（deal.staff）で絞る
+  if (funnelStaff !== 'all') {
+    const staffIds = new Set(DEALS.filter(d => d.staff === funnelStaff).map(d => d.id));
+    histScope = histScope.filter(h => staffIds.has(h.dealId));
+  }
   const counts = {};
   stages.forEach(s => {
     if (s === '取得') {
-      counts[s] = funnelPeriod === 'month'
-        ? DEALS.filter(d => (d.acquiredDate || '').startsWith(thisMonth)).length
-        : DEALS.length;
+      counts[s] = funnelDealsScope().length;
       return;
     }
     // h.toガード＝判断イベント（type:'decision'・toなし）を集計に混ぜない
@@ -2465,11 +2513,8 @@ function renderFunnel() {
       + '</div>';
   }).join('');
 
-  // 統計カード・担当者別も期間に連動（今月＝今月取得の案件に絞る）
-  const thisMonth = TODAY.slice(0, 7);
-  const dealsScope = funnelPeriod === 'month'
-    ? DEALS.filter(d => (d.acquiredDate || '').startsWith(thisMonth))
-    : DEALS;
+  // 統計カード＝期間×担当に連動
+  const dealsScope = funnelDealsScope();
 
   const keiyaku = dealsScope.filter(d => d.status === '契約').length;
   const misend  = dealsScope.filter(d => d.status === '見送り').length;
@@ -2484,12 +2529,19 @@ function renderFunnel() {
   setText('fstat-kaifu', kaifu + '件');
   setText('fstat-active', active + '件');
 
+  // 担当者別テーブル＝常設（全員比較用・期間のみ連動）。選択中の担当行をハイライト
+  const thisMonth = TODAY.slice(0, 7);
+  const periodScope = funnelPeriod === 'month'
+    ? DEALS.filter(d => (d.acquiredDate || '').startsWith(thisMonth))
+    : DEALS;
+
   const staffTbody = document.getElementById('funnel-staff-tbody');
   if (!staffTbody) return;
   staffTbody.innerHTML = '';
   ['田中','佐藤','鈴木'].forEach(st => {
-    const my = dealsScope.filter(d => d.staff === st);
+    const my = periodScope.filter(d => d.staff === st);
     const tr = document.createElement('tr');
+    if (st === funnelStaff) tr.style.background = 'var(--green-light)';
     tr.innerHTML = '<td><strong>' + st + '</strong></td>'
       + '<td>' + my.length + '件</td>'
       + '<td class="text-ok">' + my.filter(d => d.status === '契約').length + '件</td>'
@@ -2762,6 +2814,18 @@ function calcDeal5Nums() {
   return { sell: sellB, total, profit: profitB, rate: sellB > 0 ? (profitB / sellB * 100) : 0 };
 }
 
+/* ホームフィードの表示切替：自分（既定）／みんな＝全担当の更新をフルオープンで見る */
+let feedMode = 'mine'; // 'mine' | 'all'
+
+function setFeedMode(m, btn) {
+  feedMode = m;
+  if (btn && btn.parentElement) {
+    btn.parentElement.querySelectorAll('.feed-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  renderHome();
+}
+
 function renderHome() {
   // N件（緑数字・自動抽出）
   const priority = calcPriorityDeals();
@@ -2812,18 +2876,21 @@ function renderHome() {
     }
   }
 
-  // フィード：HISTORYの直近5件（TODAY以前）
+  // フィード：自分＝田中の更新（名前なし）／みんな＝全担当の直近5件（「◯◯が」つき）
+  // 行クリックで該当案件の詳細（サマリータブ）へ＝他営業の検討中案件もそのまま開ける
   const feedEl = document.getElementById('home-feed');
   if (feedEl) {
     const user = '田中'; // デモでは固定（本実装ではログインユーザー）
-    const feedItems = HISTORY.filter(h => h.by === user).sort((a,b) => b.date.localeCompare(a.date)).slice(0,5);
+    const feedItems = (feedMode === 'all' ? HISTORY.slice() : HISTORY.filter(h => h.by === user))
+      .sort((a,b) => b.date.localeCompare(a.date)).slice(0,5);
     feedEl.innerHTML = feedItems.map(h => {
       const d = DEALS.find(x => x.id === h.dealId);
       const name = d ? d.name : '(案件)';
+      const who = (feedMode === 'all') ? '<strong>' + h.by + '</strong>が ' : '';
       const body = (h.type === 'decision')
-        ? '<strong>' + name + '</strong>　' + h.text
-        : '<strong>' + name + '</strong> を <strong>' + toLabel(h) + '</strong> に進めました';
-      return '<div class="home-feed-item">'
+        ? who + '<strong>' + name + '</strong>　' + h.text
+        : who + '<strong>' + name + '</strong> を <strong>' + toLabel(h) + '</strong> に進めました';
+      return '<div class="home-feed-item" onclick="openDetail(' + h.dealId + ')" title="クリックで案件を開く">'
         + '<div class="home-feed-dot"></div>'
         + '<div><div class="home-feed-text">' + body + '</div>'
         + '<div class="home-feed-meta">' + h.date + '</div></div>'
