@@ -60,10 +60,13 @@ input,select,textarea{font-family:inherit;font-size:13px}
 .data-table td{padding:12px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
 .data-table tbody tr{cursor:pointer;transition:background .1s}
 .data-table tbody tr:hover{background:var(--green-light)}
+.data-table tbody tr.my-row{background:#f2f9f3}
+.data-table tbody tr.my-row td:first-child{border-left:3px solid var(--green)}
 .data-table tbody tr.hold-alert{background:#fff7ed}
 .data-table tbody tr.hold-alert td:first-child{border-left:3px solid var(--warn-fg)}
 .chip{display:inline-flex;align-items:center;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;white-space:nowrap}
 .chip-gray{background:#f3f4f6;color:#6b7280}
+.chip-status{background:#f3f4f6;color:#4b5563}
 .chip-blue{background:#dbeafe;color:#1d4ed8}
 .chip-purple{background:#ede9fe;color:#7c3aed}
 .chip-cyan{background:#cffafe;color:#0e7490}
@@ -473,7 +476,7 @@ input,select,textarea{font-family:inherit;font-size:13px}
             <span>昨日からの更新</span>
             <span class="feed-tabs">
               <button class="feed-tab active" onclick="setFeedMode('mine', this)">自分</button>
-              <button class="feed-tab" onclick="setFeedMode('all', this)">みんな</button>
+              <button class="feed-tab" onclick="setFeedMode('all', this)">全社</button>
             </span>
           </div>
           <div id="home-feed"></div>
@@ -1538,15 +1541,8 @@ function setInner(id, html) {
   if (el) el.innerHTML = html;
 }
 function statusChip(status) {
-  const map = {
-    '未検討':'chip-gray','検討中':'chip-blue','市場調査中':'chip-purple',
-    '概算収支作成済み':'chip-cyan','販売会社ヒアリング中':'chip-orange',
-    '建築プラン依頼中':'chip-yellow','買付検討中':'chip-indigo',
-    '買付提出':'chip-green-dark','見送り':'chip-ng','保留':'chip-warn','契約':'chip-ok'
-  };
-  const cls = map[status] || 'chip-gray';
-  const bold = status === '契約' ? ' text-bold' : '';
-  return '<span class="chip ' + cls + bold + '">' + status + '</span>';
+  // ステータスの色分けは行わない（単色・中西さん指示 2026-07-14）
+  return '<span class="chip chip-status">' + status + '</span>';
 }
 
 /* 一覧「次に行うこと」列＝ステータス連動の短句マップ（要件14節の9列準拠） */
@@ -1668,9 +1664,10 @@ function renderList() {
     tbody.innerHTML = deals.map(d => {
       const hd = holdDays(d);
       const alertCls = hd > 30 ? ' hold-alert' : '';
+      const myCls = d.staff === '田中' ? ' my-row' : '';  // ログインユーザー（デモ固定）の担当案件
       const holdInfo = hd > 30 ? '<span style="margin-left:6px;font-size:10px;color:var(--warn-fg);font-weight:700">⚠ ' + hd + '日</span>' : '';
       const priceStr = d.price != null ? Math.round(d.price).toLocaleString('ja-JP') + '円' : '—';
-      return '<tr class="' + alertCls + '" onclick="openDetail(' + d.id + ')">'
+      return '<tr class="' + myCls + alertCls + '" onclick="openDetail(' + d.id + ')">'
         + '<td><strong>' + d.name + '</strong>' + holdInfo + '</td>'
         + '<td>' + d.area + '</td>'
         + '<td>' + statusChip(d.status) + '</td>'
