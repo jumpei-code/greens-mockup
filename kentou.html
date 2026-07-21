@@ -66,6 +66,11 @@ input,select,textarea{font-family:inherit;font-size:13px}
 .data-table tbody tr.my-row td:first-child{border-left:3px solid var(--green)}
 .data-table tbody tr.hold-alert{background:#fff7ed}
 .data-table tbody tr.hold-alert td:first-child{border-left:3px solid var(--warn-fg)}
+.list-deal-cell{display:flex;align-items:center;gap:10px;min-width:190px}
+.list-thumb{width:54px;height:40px;border-radius:6px;background:#edf1f4;border:1px solid #dfe5ea;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#8b98a6;flex-shrink:0}
+.list-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.list-thumb-icon{font-size:16px;line-height:1}
+.list-deal-name{min-width:0}
 .chip{display:inline-flex;align-items:center;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;white-space:nowrap}
 .chip-gray{background:#f3f4f6;color:#6b7280}
 .chip-status{background:#f3f4f6;color:#4b5563}
@@ -240,49 +245,53 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .home-n-inline{font-size:26px;font-weight:900;color:var(--green);line-height:1;margin:0 2px}
 .home-see-all{color:var(--green);font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap}
 .home-see-all:hover{text-decoration:underline}
-.home-deal-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.home-deal-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.06);display:flex;flex-direction:column;gap:8px}
-.home-deal-card:hover{border-color:var(--green-mid);box-shadow:0 2px 8px rgba(26,107,58,.12)}
-.home-card-top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
-.home-card-name{font-size:14px;font-weight:700;color:var(--ink)}
+.home-deal-list{display:grid;grid-template-columns:1fr;gap:14px}
+.home-deal-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;box-shadow:0 1px 4px rgba(0,0,0,.06);display:grid;grid-template-columns:38px 112px minmax(0,1fr) minmax(240px,330px);gap:16px;align-items:center;transition:border-color .15s,box-shadow .15s,transform .15s}
+.home-deal-card:hover{border-color:var(--green-mid);box-shadow:0 4px 14px rgba(26,107,58,.13);transform:translateY(-1px)}
+.home-deal-num{width:32px;height:32px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;font-variant-numeric:tabular-nums}
+.home-thumb{width:112px;height:78px;border-radius:8px;background:#edf1f4;border:1px solid #dfe5ea;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#8b98a6;flex-shrink:0}
+.home-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.home-thumb-icon{font-size:24px;line-height:1}
+.home-card-main{min-width:0}
+.home-card-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.home-card-name{font-size:18px;font-weight:800;color:var(--ink);line-height:1.35}
+.strategy-badge{font-size:11px;font-weight:800;padding:3px 9px;border-radius:12px;background:var(--green-light);color:var(--green);white-space:nowrap}
 .prio-badge{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:10px;white-space:nowrap}
 .prio-high{background:#fdeaea;color:#c0392b}
 .prio-mid{background:#fdf3e0;color:#b9770e}
 .prio-low{background:#f0f0f0;color:#666}
-.home-card-done{font-size:11.5px;color:var(--green);margin:6px 0 2px}
+.home-card-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.home-card-stat{border-left:3px solid var(--green-mid);padding-left:10px;min-width:0}
+.home-card-stat-label{font-size:11px;color:var(--sub);font-weight:700;margin-bottom:4px}
+.home-card-stat-val{font-size:14px;font-weight:800;color:var(--ink);line-height:1.25}
+.home-card-stat-val.yield{font-size:24px;color:var(--green);font-variant-numeric:tabular-nums}
+.home-card-stat-val.na{font-size:13px;color:var(--sub);font-weight:700}
+.home-card-side{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.home-card-q-label{font-size:11px;font-weight:800;color:var(--sub)}
+.home-card-question{font-size:13px;font-weight:700;color:var(--ink);line-height:1.55;background:var(--green-light);border-radius:7px;padding:9px 11px;width:100%}
+.home-card-open-btn{display:inline-flex;align-items:center;justify-content:center;min-width:112px;padding:10px 18px;border:none;border-radius:6px;background:#1f6f43;color:#fff;font-size:13px;font-weight:800;cursor:pointer;text-align:center;transition:opacity .15s,transform .15s}
+.home-card-open-btn:hover{opacity:.9}
+.home-card-open-btn:active{transform:translateY(1px)}
 .summary-2col{display:grid;grid-template-columns:1fr 300px;gap:22px}
 .summary-2col-right{border-left:1px solid var(--line);padding-left:22px}
 .sum-block-title{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:10px}
 .hint-item{display:flex;gap:8px;font-size:12.5px;color:var(--body);line-height:1.7;margin-bottom:10px}
 .hint-dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:7px}
 @media(max-width:960px){.summary-2col{grid-template-columns:1fr}.summary-2col-right{border-left:none;padding-left:0;border-top:1px solid var(--line);padding-top:14px}}
-.home-card-q-label{font-size:10px;font-weight:700;color:var(--sub);letter-spacing:.04em}
-.home-card-question{font-size:12.5px;font-weight:700;color:var(--ink);line-height:1.55;background:var(--green-light);border-radius:6px;padding:8px 10px}
-.home-card-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.home-card-stat-label{font-size:10px;color:var(--sub);font-weight:600;margin-bottom:2px}
-.home-card-stat-val{font-size:17px;font-weight:800;color:var(--ink)}
-.home-card-stat-val.na{font-size:11px;color:var(--sub);font-weight:600}
-.home-card-open-btn{display:block;width:100%;margin-top:auto;padding:9px 0;border:none;border-radius:6px;background:var(--green);color:#fff;font-size:13px;font-weight:700;cursor:pointer;text-align:center;transition:opacity .15s}
-.home-card-open-btn:hover{opacity:.88}
-.home-2col{display:grid;grid-template-columns:3fr 2fr;gap:24px;margin-top:8px;align-items:start}
 .home-section-title{font-size:13px;font-weight:700;color:var(--ink);margin:24px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--line)}
-.home-feed-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
-.home-feed-dot{width:8px;height:8px;border-radius:50%;background:var(--green-2);flex-shrink:0;margin-top:5px}
-.home-feed-text{font-size:13px;color:var(--body);flex:1}
-.home-feed-meta{font-size:11px;color:var(--sub);margin-top:2px}
-.home-goals-grid{display:grid;gap:12px}
-.home-goal-card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
-.home-goal-label{font-size:11px;color:var(--sub);font-weight:600;margin-bottom:6px}
-.home-goal-bar-wrap{height:8px;background:var(--bg);border-radius:4px;overflow:hidden;margin-bottom:4px}
-.home-goal-bar{height:100%;background:var(--green-2);border-radius:4px;transition:width .3s}
-.home-goal-nums{font-size:12px;color:var(--body);font-weight:600}
 @media(max-width:768px){
-  .home-deal-cards{grid-template-columns:1fr}
-  .home-2col{grid-template-columns:1fr}
+  .home-deal-card{grid-template-columns:34px 96px 1fr;align-items:start}
+  .home-card-side{grid-column:2 / -1}
+  .home-thumb{width:96px;height:70px}
+  .home-card-stats{grid-template-columns:1fr}
 }
 @media(max-width:480px){
   .home-n-inline{font-size:22px}
   .home-greeting{font-size:18px}
+  .home-deal-card{grid-template-columns:30px 1fr;gap:12px;padding:14px}
+  .home-thumb{grid-column:2;width:100%;height:120px}
+  .home-card-main,.home-card-side{grid-column:1 / -1}
+  .home-deal-num{width:28px;height:28px;font-size:13px}
 }
 
 /* ===== サマリータブ（判断ナビ） ===== */
@@ -318,14 +327,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .modal-text{font-size:13.5px;color:var(--body);line-height:1.8;margin-bottom:10px}
 .modal-facts{font-size:12.5px;color:var(--sub);background:var(--bg);border-radius:6px;padding:8px 12px;margin-bottom:12px}
 .modal-btns{display:flex;justify-content:flex-end;gap:10px}
-/* ホームフィードの自分/みんなタブ＋クリック可能な行 */
-.feed-tabs{display:inline-flex;gap:0;margin-left:auto}
-.feed-tab{border:1px solid var(--line);background:#fff;color:var(--sub);padding:2px 12px;font-size:11px;font-weight:600;cursor:pointer;border-radius:0}
-.feed-tab:first-child{border-radius:5px 0 0 5px}
-.feed-tab+.feed-tab{border-left:none;border-radius:0 5px 5px 0}
-.feed-tab.active{background:var(--green);border-color:var(--green);color:#fff}
-.home-feed-item{cursor:pointer;transition:background .1s;border-radius:6px;padding-left:6px;padding-right:6px;margin-left:-6px;margin-right:-6px}
-.home-feed-item:hover{background:var(--green-light)}
 .next-card{background:var(--green-light);border:1.5px solid var(--green-mid);border-radius:12px;padding:20px;margin-bottom:16px}
 .next-card-label{font-size:11px;font-weight:700;color:var(--green);letter-spacing:.06em;margin-bottom:6px}
 .next-card-question{font-size:15px;font-weight:800;color:var(--ink);line-height:1.5;margin-bottom:12px}
@@ -416,25 +417,12 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
           <span>件 あります</span>
           <span class="help-wrap"><button class="help-btn" onclick="toggleHelp(this)" title="この件数の説明">？</button><div class="help-pop help-pop-float" style="display:none">件数とカードは、登録データと履歴から自動で抽出しています（①保留が30日を超えた案件 ②現在の段階で止まっている期間が長い案件 ③次のアクション待ちの案件）。作り置きの数字はありません。</div></span>
         </div>
-        <a class="home-see-all" onclick="openListAll(document.querySelector('[data-view=list]'))">すべて見る →</a>
       </div>
-      <div class="home-deal-cards" id="home-deal-cards"></div>
-
-      <div class="home-2col">
-        <div>
-          <div class="home-section-title" style="display:flex;align-items:center;gap:10px">
-            <span>昨日からの更新</span>
-            <span class="feed-tabs">
-              <button class="feed-tab active" onclick="setFeedMode('mine', this)">自分</button>
-              <button class="feed-tab" onclick="setFeedMode('all', this)">全社</button>
-            </span>
-          </div>
-          <div id="home-feed"></div>
-        </div>
-        <div>
-          <div class="home-section-title">あなたの進捗（今月）<span class="help-wrap"><button class="help-btn" onclick="toggleHelp(this)" title="この集計の説明">？</button><div class="help-pop help-pop-float" style="display:none">今月の件数は履歴から自動集計しています。目標値は設定画面で変更する想定です。</div></span></div>
-          <div class="home-goals-grid" id="home-goals-grid"></div>
-        </div>
+      <div class="home-deal-list" id="home-priority-list"></div>
+      <div class="home-section-title">担当中の案件（すべて）</div>
+      <div class="home-deal-list" id="home-all-list"></div>
+      <div style="margin-top:18px">
+        <a class="home-see-all" onclick="openListAll(document.querySelector('[data-view=list]'))">すべての案件を見る →</a>
       </div>
     </div>
 
@@ -1289,21 +1277,21 @@ const TODAY_DATE = new Date('2026-07-11');
 // reg＝各工程の「登録」フラグ（market:市場調査/pl:概算収支/hearing:ヒアリング/plan:建築プラン）
 // 値は現ステータスと矛盾しない初期値。荒川南千住(id:7)のみ market:false＝市場調査を飛ばした案件（デモ用）
 const DEALS = [
-  {id:1,name:'○○邸新築',area:'世田谷',status:'概算収支作成済み',staff:'田中',type:'戸建て建売',acquiredDate:'2026-06-01',price:null,note:'',holdDate:null,reg:{market:true,pl:true,hearing:false,plan:false}},
-  {id:2,name:'△△町土地',area:'杉並',status:'市場調査中',staff:'佐藤',type:'土地',acquiredDate:'2026-06-05',price:null,note:'',holdDate:null,reg:{market:true,pl:false,hearing:false,plan:false}},
-  {id:3,name:'□□2丁目',area:'練馬',status:'買付提出',staff:'鈴木',type:'戸建て建売',acquiredDate:'2026-05-15',price:null,note:'',holdDate:null,reg:{market:true,pl:true,hearing:true,plan:true},shiryo:[{name:'物件概要書.pdf'},{name:'測量図.pdf'}]},
-  {id:4,name:'××ハイツ跡地',area:'中野',status:'見送り',staff:'田中',type:'土地',acquiredDate:'2026-05-20',price:null,note:'接道条件',holdDate:null,reg:{market:true,pl:false,hearing:false,plan:false}},
-  {id:15,name:'大島6丁目土地',area:'江東',status:'販売会社ヒアリング中',staff:'田中',type:'土地',acquiredDate:'2026-07-02',price:null,note:'',holdDate:null,reg:{market:true,pl:true,hearing:true,plan:false}},
-  {id:5,name:'北葛西建売',area:'江戸川',status:'概算収支作成済み',staff:'田中',type:'戸建て建売',acquiredDate:'2026-06-10',price:82800000,note:'',holdDate:null,reg:{market:true,pl:true,hearing:false,plan:false},shiryo:[{name:'物件概要書.pdf'},{name:'現地写真_南側.jpg'},{name:'公図.pdf'}]},
-  {id:6,name:'板橋本町土地',area:'板橋',status:'検討中',staff:'佐藤',type:'土地',acquiredDate:'2026-06-20',price:null,note:'',holdDate:null,reg:{market:false,pl:false,hearing:false,plan:false}},
-  {id:7,name:'荒川南千住',area:'荒川',status:'販売会社ヒアリング中',staff:'鈴木',type:'戸建て建売',acquiredDate:'2026-06-08',price:null,note:'',holdDate:null,reg:{market:false,pl:true,hearing:true,plan:false}},
-  {id:8,name:'葛飾立石',area:'葛飾',status:'建築プラン依頼中',staff:'田中',type:'戸建て建売',acquiredDate:'2026-06-03',price:null,note:'',holdDate:null,reg:{market:true,pl:true,hearing:true,plan:true},shiryo:[{name:'建築プラン図面.pdf'}]},
-  {id:9,name:'足立梅島',area:'足立',status:'保留',staff:'佐藤',type:'土地',acquiredDate:'2026-05-07',price:null,note:'売主都合で保留',holdDate:'2026-06-06',reg:{market:true,pl:true,hearing:false,plan:false}},
-  {id:10,name:'墨田横川',area:'墨田',status:'保留',staff:'鈴木',type:'戸建て建売',acquiredDate:'2026-06-15',price:null,note:'金融機関調整中',holdDate:'2026-06-28',reg:{market:true,pl:false,hearing:false,plan:false}},
-  {id:11,name:'品川戸越',area:'品川',status:'契約',staff:'田中',type:'戸建て建売',acquiredDate:'2026-05-01',price:6800,note:'',holdDate:null,reg:{market:true,pl:true,hearing:true,plan:true}},
-  {id:12,name:'目黒碑文谷',area:'目黒',status:'契約',staff:'佐藤',type:'戸建て建売',acquiredDate:'2026-04-20',price:7200,note:'',holdDate:null,reg:{market:true,pl:true,hearing:true,plan:true}},
-  {id:13,name:'江東南砂',area:'江東',status:'見送り',staff:'鈴木',type:'土地',acquiredDate:'2026-06-25',price:null,note:'価格折り合わず',holdDate:null,reg:{market:false,pl:false,hearing:false,plan:false}},
-  {id:14,name:'北区赤羽',area:'北',status:'未検討',staff:'佐藤',type:'土地',acquiredDate:'2026-07-01',price:null,note:'',holdDate:null,reg:{market:false,pl:false,hearing:false,plan:false}},
+  {id:1,name:'○○邸新築',area:'世田谷',status:'概算収支作成済み',staff:'田中',type:'戸建て建売',photo:'photos/house1.jpg',acquiredDate:'2026-06-01',price:null,note:'',holdDate:null,reg:{market:true,pl:true,hearing:false,plan:false}},
+  {id:2,name:'△△町土地',area:'杉並',status:'市場調査中',staff:'佐藤',type:'土地',photo:'photos/land1.jpg',acquiredDate:'2026-06-05',price:null,note:'',holdDate:null,reg:{market:true,pl:false,hearing:false,plan:false}},
+  {id:3,name:'□□2丁目',area:'練馬',status:'買付提出',staff:'鈴木',type:'戸建て建売',photo:'photos/house2.jpg',acquiredDate:'2026-05-15',price:null,note:'',holdDate:null,reg:{market:true,pl:true,hearing:true,plan:true},shiryo:[{name:'物件概要書.pdf'},{name:'測量図.pdf'}]},
+  {id:4,name:'××ハイツ跡地',area:'中野',status:'見送り',staff:'田中',type:'土地',photo:'photos/land2.jpg',acquiredDate:'2026-05-20',price:null,note:'接道条件',holdDate:null,reg:{market:true,pl:false,hearing:false,plan:false}},
+  {id:15,name:'大島6丁目土地',area:'江東',status:'販売会社ヒアリング中',staff:'田中',type:'土地',photo:'photos/land3.jpg',acquiredDate:'2026-07-02',price:null,note:'',holdDate:null,reg:{market:true,pl:true,hearing:true,plan:false}},
+  {id:5,name:'北葛西建売',area:'江戸川',status:'概算収支作成済み',staff:'田中',type:'戸建て建売',photo:'photos/house1.jpg',acquiredDate:'2026-06-10',price:82800000,note:'',holdDate:null,reg:{market:true,pl:true,hearing:false,plan:false},shiryo:[{name:'物件概要書.pdf'},{name:'現地写真_南側.jpg'},{name:'公図.pdf'}]},
+  {id:6,name:'板橋本町土地',area:'板橋',status:'検討中',staff:'佐藤',type:'土地',photo:'photos/land4.jpg',acquiredDate:'2026-06-20',price:null,note:'',holdDate:null,reg:{market:false,pl:false,hearing:false,plan:false}},
+  {id:7,name:'荒川南千住',area:'荒川',status:'販売会社ヒアリング中',staff:'鈴木',type:'戸建て建売',photo:'photos/house2.jpg',acquiredDate:'2026-06-08',price:null,note:'',holdDate:null,reg:{market:false,pl:true,hearing:true,plan:false}},
+  {id:8,name:'葛飾立石',area:'葛飾',status:'建築プラン依頼中',staff:'田中',type:'戸建て建売',photo:'photos/house1.jpg',acquiredDate:'2026-06-03',price:null,note:'',holdDate:null,reg:{market:true,pl:true,hearing:true,plan:true},shiryo:[{name:'建築プラン図面.pdf'}]},
+  {id:9,name:'足立梅島',area:'足立',status:'保留',staff:'佐藤',type:'土地',photo:'photos/land1.jpg',acquiredDate:'2026-05-07',price:null,note:'売主都合で保留',holdDate:'2026-06-06',reg:{market:true,pl:true,hearing:false,plan:false}},
+  {id:10,name:'墨田横川',area:'墨田',status:'保留',staff:'鈴木',type:'戸建て建売',photo:'photos/house2.jpg',acquiredDate:'2026-06-15',price:null,note:'金融機関調整中',holdDate:'2026-06-28',reg:{market:true,pl:false,hearing:false,plan:false}},
+  {id:11,name:'品川戸越',area:'品川',status:'契約',staff:'田中',type:'戸建て建売',photo:'photos/house1.jpg',acquiredDate:'2026-05-01',price:6800,note:'',holdDate:null,reg:{market:true,pl:true,hearing:true,plan:true}},
+  {id:12,name:'目黒碑文谷',area:'目黒',status:'契約',staff:'佐藤',type:'戸建て建売',photo:'photos/house2.jpg',acquiredDate:'2026-04-20',price:7200,note:'',holdDate:null,reg:{market:true,pl:true,hearing:true,plan:true}},
+  {id:13,name:'江東南砂',area:'江東',status:'見送り',staff:'鈴木',type:'土地',photo:'photos/land2.jpg',acquiredDate:'2026-06-25',price:null,note:'価格折り合わず',holdDate:null,reg:{market:false,pl:false,hearing:false,plan:false}},
+  {id:14,name:'北区赤羽',area:'北',status:'未検討',staff:'佐藤',type:'土地',photo:'photos/land3.jpg',acquiredDate:'2026-07-01',price:null,note:'',holdDate:null,reg:{market:false,pl:false,hearing:false,plan:false}},
 ];
 
 const HISTORY = [
@@ -1540,7 +1528,7 @@ function renderList() {
       const priceStr = d.price != null ? Math.round(d.price).toLocaleString('ja-JP') + '円' : '—';
       const sh = d.shiryo || [];
       return '<tr class="' + myCls + alertCls + pastCls + '" onclick="openDetail(' + d.id + ')">'
-        + '<td><strong>' + d.name + '</strong>' + holdInfo + '</td>'
+        + '<td>' + listDealCellHtml(d, holdInfo) + '</td>'
         + '<td>' + d.area + '</td>'
         + '<td>' + statusChip(d.status) + '</td>'
         + '<td style="font-size:12px;color:var(--green);font-weight:600;white-space:nowrap">' + (NEXT_LIST_LABEL[d.status] || '—') + '</td>'
@@ -1556,6 +1544,16 @@ function renderList() {
 
   const pager = document.getElementById('pager-info');
   if (pager) pager.textContent = deals.length + '件 / 全' + DEALS.length + '件';
+}
+
+function listDealCellHtml(deal, holdInfo) {
+  const thumb = deal.photo
+    ? '<div class="list-thumb"><img src="' + deal.photo + '" alt="' + deal.name + '"></div>'
+    : '<div class="list-thumb" aria-label="物件写真なし"><span class="list-thumb-icon">⌂</span></div>';
+  return '<div class="list-deal-cell">'
+    + thumb
+    + '<div class="list-deal-name"><strong>' + deal.name + '</strong>' + holdInfo + '</div>'
+    + '</div>';
 }
 
 /* ===== 資料（📎）管理：登録・収支・詳細のどこから追加しても同じ deal.shiryo 配列に一元化 ===== */
@@ -2178,7 +2176,7 @@ function buildNewDealFromForm(status) {
     area: m ? m[1] : addr, address: addr,
     chiban: (gvs('nr-chiban') || '').trim(),
     menseki: numVal('nr-menseki'), ekitoho: numVal('nr-eki'),
-    status: status, staff: '田中', type: '戸建て建売',
+    status: status, staff: '田中', type: '戸建て建売', photo: 'photos/house1.jpg',
     acquiredDate: TODAY, price: null, note: '', holdDate: null,
     reg: {market:false, pl:false, hearing:false, plan:false},
     shiryo: newregShiryo,
@@ -2531,7 +2529,6 @@ const NEXT_RULES = {
   },
 };
 
-/* ===== STAFF_GOALS：担当者別の今月目標 ===== */
 /* 判断ポイント（助言）＝ステータス連動の定型ヒント。経験者の考え方を言語化する枠。
    文言は要件定義で貴社の判断基準をお伺いして作り込む（評価・判定はしない） */
 const JUDGE_HINTS = {
@@ -2546,12 +2543,6 @@ const JUDGE_HINTS = {
   '保留': ['保留の理由が解消されたかを定期的に確認します。理由が変わらなければ見送りへの切り替えも判断できます。'],
   '見送り': ['見送り理由を分類して残すと、会社全体の判断の傾向が見えるようになります。'],
   '契約': ['計画時の想定価格・原価を残してあるため、販売後に判断の振り返りができます。'],
-};
-
-const STAFF_GOALS = {
-  '収支作成': 20,
-  'ヒアリング': 10,
-  '買付': 5,
 };
 
 /* ===== ホーム：優先案件の抽出ロジック ===== */
@@ -2610,16 +2601,78 @@ function calcDeal5Nums() {
   return { sell: sellB, total, profit: profitB, rate: sellB > 0 ? (profitB / sellB * 100) : 0 };
 }
 
-/* ホームフィードの表示切替：自分（既定）／みんな＝全担当の更新をフルオープンで見る */
-let feedMode = 'mine'; // 'mine' | 'all'
+const HOME_DEADLINES = {
+  1:'2026-07-12', 2:'2026-07-15', 3:'2026-07-12', 5:'2026-07-13', 6:'2026-07-18',
+  7:'2026-07-14', 8:'2026-07-12', 9:'2026-07-11', 10:'2026-07-17', 14:'2026-07-16', 15:'2026-07-13'
+};
 
-function setFeedMode(m, btn) {
-  feedMode = m;
-  if (btn && btn.parentElement) {
-    btn.parentElement.querySelectorAll('.feed-tab').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+const HOME_ACTION_TEXT = {
+  '未検討': '基本情報を確認し、収支作成に進めるか整理する',
+  '検討中': '不足情報を再調査し、収支作成に進めるか確認する',
+  '市場調査中': '近隣事例を確認し、概算収支を作成する',
+  '概算収支作成済み': 'ヒアリング結果を記録し、収支の前提を固める',
+  '販売会社ヒアリング中': 'ヒアリング内容を記録し、収支へ反映する',
+  '建築プラン依頼中': '収支の前提を再確認し、買付判断に進めるか確認する',
+  '買付検討中': '買付価格と条件を整理し、提出判断を行う',
+  '買付提出': '売主回答を記録し、条件変更があれば収支を再確認する',
+  '保留': '保留理由を確認し、再調査か見送り判断へ進める'
+};
+
+function homeStrategyLabel(type) {
+  if ((type || '').includes('アパート')) return 'アパート';
+  if ((type || '').includes('土地')) return '土地転売';
+  return '戸建て';
+}
+
+function homePriorityBadge(score) {
+  if (score >= 100) return '<span class="prio-badge prio-high">優先度 高</span>';
+  if (score >= 50) return '<span class="prio-badge prio-mid">優先度 中</span>';
+  return '<span class="prio-badge prio-low">優先度 低</span>';
+}
+
+function homeThumbHtml(deal) {
+  if (deal.photo) return '<div class="home-thumb"><img src="' + deal.photo + '" alt="' + deal.name + '"></div>';
+  return '<div class="home-thumb" aria-label="物件写真なし"><span class="home-thumb-icon">⌂</span></div>';
+}
+
+function homeYieldHtml(deal) {
+  if (deal.id === 5) {
+    const pl = calcDeal5Nums();
+    return '<div class="home-card-stat-val yield">' + pl.rate.toFixed(1) + '%</div>';
   }
-  renderHome();
+  return '<div class="home-card-stat-val na">収支未作成</div>';
+}
+
+function renderHomeCards(items, startIndex) {
+  if (items.length === 0) {
+    return '<div style="color:var(--sub);font-size:13px;padding:16px 0">表示する案件はありません。</div>';
+  }
+  return items.map((item, i) => {
+    const deal = item.deal || item;
+    const score = item.score || 0;
+    const action = HOME_ACTION_TEXT[deal.status] || '次の判断に必要な情報を確認する';
+    return '<article class="home-deal-card">'
+      + '<div class="home-deal-num">' + (startIndex + i) + '</div>'
+      + homeThumbHtml(deal)
+      + '<div class="home-card-main">'
+      + '<div class="home-card-top">'
+      + '<span class="home-card-name">' + deal.name + '</span>'
+      + '<span class="strategy-badge">' + homeStrategyLabel(deal.type) + '</span>'
+      + homePriorityBadge(score)
+      + '</div>'
+      + '<div class="home-card-stats">'
+      + '<div class="home-card-stat"><div class="home-card-stat-label">検討ステージ</div><div class="home-card-stat-val">' + deal.status + '</div></div>'
+      + '<div class="home-card-stat"><div class="home-card-stat-label">想定利回り</div>' + homeYieldHtml(deal) + '</div>'
+      + '<div class="home-card-stat"><div class="home-card-stat-label">判断期限</div><div class="home-card-stat-val">' + (HOME_DEADLINES[deal.id] || TODAY) + '</div></div>'
+      + '</div>'
+      + '</div>'
+      + '<div class="home-card-side">'
+      + '<div class="home-card-q-label">次に考えること</div>'
+      + '<div class="home-card-question">' + action + '</div>'
+      + '<button class="home-card-open-btn" onclick="openDetail(' + deal.id + ')">開始する</button>'
+      + '</div>'
+      + '</article>';
+  }).join('');
 }
 
 function renderHome() {
@@ -2627,96 +2680,12 @@ function renderHome() {
   const priority = calcPriorityDeals();
   setText('home-n-count', priority.length);
 
-  // 案件カード横並び3枚（イメージ画面のカードデザイン）
-  const cardsEl = document.getElementById('home-deal-cards');
-  if (cardsEl) {
-    if (priority.length === 0) {
-      cardsEl.innerHTML = '<div style="color:var(--sub);font-size:13px;grid-column:1/-1;padding:16px 0">現在、優先的に判断が必要な案件はありません。</div>';
-    } else {
-      const DONE_LINES = {
-        '未検討':'案件の登録は完了しています。','検討中':'案件の登録は完了しています。','市場調査中':'案件の登録は完了しています。',
-        '概算収支作成済み':'概算収支の作成は完了しています。','販売会社ヒアリング中':'概算収支の作成は完了しています。',
-        '建築プラン依頼中':'販売会社ヒアリングは完了しています。','買付検討中':'建築プランの確認は完了しています。',
-        '買付提出':'買付の提出は完了しています。','保留':'前回までの検討内容は記録されています。'
-      };
-      cardsEl.innerHTML = priority.map(({deal, score}) => {
-        const rule = NEXT_RULES[deal.status] || {};
-        const q = rule.question || '—';
-        const prio = score >= 100 ? '<span class="prio-badge prio-high">優先度 高</span>'
-                   : score >= 50  ? '<span class="prio-badge prio-mid">優先度 中</span>'
-                   : '<span class="prio-badge prio-low">優先度 低</span>';
-        const doneLine = DONE_LINES[deal.status] ? '<div class="home-card-done">✓ ' + DONE_LINES[deal.status] + '</div>' : '';
-        // 収支データがある案件のみ実数（id:5＝北葛西）・他は「収支未作成」
-        let statsHtml;
-        if (deal.id === 5) {
-          const pl = calcDeal5Nums();
-          statsHtml = '<div class="home-card-stats">'
-            + '<div><div class="home-card-stat-label">想定利益率</div><div class="home-card-stat-val">' + pl.rate.toFixed(1) + '%</div></div>'
-            + '<div><div class="home-card-stat-label">想定売上</div><div class="home-card-stat-val">' + Math.round(pl.sell / 10000).toLocaleString('ja-JP') + '万円</div></div>'
-            + '</div>';
-        } else {
-          statsHtml = '<div class="home-card-stats">'
-            + '<div><div class="home-card-stat-label">想定利益率</div><div class="home-card-stat-val na">収支未作成</div></div>'
-            + '<div><div class="home-card-stat-label">想定売上</div><div class="home-card-stat-val na">収支未作成</div></div>'
-            + '</div>';
-        }
-        return '<div class="home-deal-card">'
-          + '<div class="home-card-top"><span class="home-card-name">' + deal.name + '</span>' + prio + '</div>'
-          + '<div class="home-card-q-label">次に考えること</div>'
-          + '<div class="home-card-question">' + q + '</div>'
-          + doneLine
-          + statsHtml
-          + '<button class="home-card-open-btn" onclick="openDetail(' + deal.id + ')">案件を開く</button>'
-          + '</div>';
-      }).join('');
-    }
-  }
-
-  // フィード：自分＝田中の更新（名前なし）／みんな＝全担当の直近5件（「◯◯が」つき）
-  // 行クリックで該当案件の詳細（サマリータブ）へ＝他営業の検討中案件もそのまま開ける
-  const feedEl = document.getElementById('home-feed');
-  if (feedEl) {
-    const user = '田中'; // デモでは固定（本実装ではログインユーザー）
-    const feedItems = (feedMode === 'all' ? HISTORY.slice() : HISTORY.filter(h => h.by === user))
-      .sort((a,b) => b.date.localeCompare(a.date)).slice(0,5);
-    feedEl.innerHTML = feedItems.map(h => {
-      const d = DEALS.find(x => x.id === h.dealId);
-      const name = d ? d.name : '(案件)';
-      const who = (feedMode === 'all') ? '<strong>' + h.by + '</strong>が ' : '';
-      const body = (h.type === 'decision')
-        ? who + '<strong>' + name + '</strong>　' + h.text
-        : who + '<strong>' + name + '</strong> を <strong>' + toLabel(h) + '</strong> に進めました';
-      return '<div class="home-feed-item" onclick="openDetail(' + h.dealId + ')" title="クリックで案件を開く">'
-        + '<div class="home-feed-dot"></div>'
-        + '<div><div class="home-feed-text">' + body + '</div>'
-        + '<div class="home-feed-meta">' + h.date + '</div></div>'
-        + '</div>';
-    }).join('') || '<div style="color:var(--sub);font-size:13px;padding:8px 0">更新はありません</div>';
-  }
-
-  // あなたの進捗（今月）：TODAY基準でYYYY-MM部分で判定・HISTORYから自動集計
-  const goalsEl = document.getElementById('home-goals-grid');
-  if (goalsEl) {
-    const thisMonth = TODAY.slice(0, 7); // '2026-07'
-    const user = '田中'; // デモでは固定（本実装ではログインユーザー）
-    const toStatusMap = {
-      '収支作成': ['概算収支作成済み'],
-      'ヒアリング': ['販売会社ヒアリング中'],
-      '買付': ['買付提出', '契約'],
-    };
-    goalsEl.innerHTML = Object.entries(STAFF_GOALS).map(([label, goal]) => {
-      const statuses = toStatusMap[label] || [];
-      const achieved = HISTORY.filter(h =>
-        h.by === user && h.date.startsWith(thisMonth) && statuses.includes(h.to)
-      ).length;
-      const pct = Math.min(100, goal > 0 ? Math.round(achieved / goal * 100) : 0);
-      return '<div class="home-goal-card">'
-        + '<div class="home-goal-label">' + label + '</div>'
-        + '<div class="home-goal-bar-wrap"><div class="home-goal-bar" style="width:' + pct + '%"></div></div>'
-        + '<div class="home-goal-nums">' + achieved + '件 / 目標' + goal + '件</div>'
-        + '</div>';
-    }).join('');
-  }
+  const priorityIds = priority.map(x => x.deal.id);
+  const activeDeals = DEALS.filter(d => !PAST_STATUSES.includes(d.status) && !priorityIds.includes(d.id));
+  const priorityEl = document.getElementById('home-priority-list');
+  const allEl = document.getElementById('home-all-list');
+  if (priorityEl) priorityEl.innerHTML = renderHomeCards(priority, 1);
+  if (allEl) allEl.innerHTML = renderHomeCards(activeDeals, priority.length + 1);
 }
 
 /* ===== サマリータブ（判断ナビ）描画 ===== */
