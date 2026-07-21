@@ -25,8 +25,6 @@ input,select,textarea{font-family:inherit;font-size:13px}
 .demo-badge{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.4);border-radius:4px;padding:3px 8px;font-size:11px;font-weight:600}
 .app-layout{display:flex;min-height:calc(100vh - 52px)}
 .sidebar{width:200px;flex-shrink:0;background:#fff;border-right:1px solid var(--line);padding:16px 0;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto}
-.sidebar-newreg-wrap{padding:0 12px 12px}
-.sidebar-newreg-btn{width:100%;justify-content:center;font-size:13px;padding:9px 8px}
 .sidebar-nav-item{display:flex;align-items:center;gap:10px;padding:11px 20px;cursor:pointer;color:var(--body);font-size:13px;font-weight:500;border-left:3px solid transparent;transition:background .15s,color .15s;user-select:none}
 .sidebar-nav-item:hover{background:var(--green-light);color:var(--green)}
 .sidebar-nav-item.active{background:var(--green-light);color:var(--green);border-left-color:var(--green);font-weight:700}
@@ -225,7 +223,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .right{text-align:right}
 @media(max-width:768px){
   .sidebar{width:60px}
-  .sidebar-label,.sidebar-section,.sidebar-newreg-label{display:none}
+  .sidebar-label,.sidebar-section{display:none}
   .sidebar-nav-item{padding:12px;justify-content:center}
   .sidebar-badge{display:none}
   .view{padding:16px 10px}
@@ -377,13 +375,14 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 
 <div class="app-layout">
   <nav class="sidebar" id="sidebar">
-    <div class="sidebar-newreg-wrap">
-      <button class="btn btn-primary sidebar-newreg-btn" onclick="openNewReg()">➕<span class="sidebar-newreg-label"> 新規案件登録</span></button>
-    </div>
     <div class="sidebar-section">メニュー</div>
     <div class="sidebar-nav-item active" data-view="home" onclick="showView('home',this)">
       <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
       <span class="sidebar-label">ホーム</span>
+    </div>
+    <div class="sidebar-nav-item" data-view="newreg" onclick="openNewReg(this)">
+      <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9l7 7v9a2 2 0 0 1-2 2z"/><path d="M14 3v7h7"/></svg></span>
+      <span class="sidebar-label">案件登録</span>
     </div>
     <div class="sidebar-nav-item" data-view="list" onclick="openListAll(this)">
       <span class="sidebar-icon"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></span>
@@ -2133,11 +2132,11 @@ function switchTab(name, el) {
 /* ===== 新規案件登録（専用画面）＝5項目入力→「登録」で収支シートへ／「検討しない」で見送り記録 ===== */
 let newregShiryo = []; // 登録前の一時添付（登録/見送りの確定時に案件の shiryo へ移す）
 
-function openNewReg() {
+function openNewReg(el) {
   ['nr-name','nr-address','nr-chiban','nr-menseki','nr-eki'].forEach(id => sv(id, ''));
   newregShiryo = [];
   renderShiryoNewreg();
-  showView('newreg', null);
+  showView('newreg', el || document.querySelector('[data-view=newreg]'));
   const first = document.getElementById('nr-name');
   if (first) first.focus();
 }
