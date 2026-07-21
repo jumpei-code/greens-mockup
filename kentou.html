@@ -197,14 +197,14 @@ input,select,textarea{font-family:inherit;font-size:13px}
 .first-est-title{font-size:11px;font-weight:700;color:var(--green);margin-bottom:4px}
 .dup-warning{background:var(--warn-bg);border:1px solid #fcd34d;border-radius:6px;padding:8px 12px;font-size:12px;color:var(--warn-fg);margin-top:6px;line-height:1.6}
 .past-case-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;margin-bottom:8px;background:#fff;flex-wrap:wrap}
-/* ===== 一覧タブ（進行中/過去）・過去行のミュート・資料（📎）添付 ===== */
+/* ===== 一覧タブ（進行中/実績）・実績行のミュート・資料（📎）添付 ===== */
 .data-table tbody tr.past-row{background:#fafafa}
 .data-table tbody tr.past-row td{color:var(--sub)}
 .data-table tbody tr.past-row .chip{opacity:.65}
 .data-table tbody tr.past-row:hover{background:#f0f1f3}
-.clip-btn{border:1px solid var(--line);background:#fff;border-radius:5px;padding:2px 8px;font-size:13px;line-height:1.3;cursor:pointer;vertical-align:middle}
-.clip-btn:hover{background:var(--green-light);border-color:var(--green-mid)}
-.clip-badge{display:inline-block;background:var(--green-light);color:var(--green);border-radius:10px;padding:1px 7px;font-size:11px;font-weight:700;margin-right:6px;vertical-align:middle;white-space:nowrap}
+/* 数字入力の共通ルール：スピナー非表示（全画面共通） */
+input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .shiryo-box{border:1.5px dashed var(--green-mid);border-radius:8px;padding:12px 14px;background:#fff}
 .shiryo-title{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:6px}
 .shiryo-item{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--body);padding:5px 0;border-bottom:1px dashed var(--line)}
@@ -424,7 +424,7 @@ input,select,textarea{font-family:inherit;font-size:13px}
 <div class="app-layout">
   <nav class="sidebar" id="sidebar">
     <div class="sidebar-newreg-wrap">
-      <button class="btn btn-primary sidebar-newreg-btn" onclick="createNewDeal()">➕<span class="sidebar-newreg-label"> 新規案件登録</span></button>
+      <button class="btn btn-primary sidebar-newreg-btn" onclick="openNewReg()">➕<span class="sidebar-newreg-label"> 新規案件登録</span></button>
     </div>
     <div class="sidebar-section">メニュー</div>
     <div class="sidebar-nav-item active" data-view="home" onclick="showView('home',this)">
@@ -512,13 +512,13 @@ input,select,textarea{font-family:inherit;font-size:13px}
           <div class="view-title"><span id="list-view-title">案件一覧</span><span class="help-wrap" id="mikomi-help" style="display:none;margin-left:4px"><button class="help-btn" onclick="toggleHelp(this)" title="見込み案件の説明">？</button><div class="help-pop help-pop-float" style="display:none">どの段階からを「見込み案件」と呼ぶかは、お打ち合わせでご確認ください（現在は買付検討中・買付提出を表示しています）。</div></span></div>
           <div class="view-desc">登録された仕入れ検討案件の一覧です。行をクリックすると詳細を開きます。</div>
         </div>
-        <button class="btn btn-primary" onclick="createNewDeal()">➕ 新規案件登録</button>
+        <button class="btn btn-primary" onclick="openNewReg()">➕ 新規案件登録</button>
       </div>
       <div id="hold-banner-wrap"></div>
-      <!-- 進行中／過去（見送り・完了）のタブ切替（JSのみ・ページ遷移なし） -->
+      <!-- 進行中／実績（見送り・契約済みの終了案件）のタブ切替（JSのみ・ページ遷移なし） -->
       <div class="tabs" style="margin-bottom:14px">
         <button class="tab-btn active" id="list-tab-active" onclick="setListTab('active')">進行中</button>
-        <button class="tab-btn" id="list-tab-past" onclick="setListTab('past')">過去（見送り・完了）</button>
+        <button class="tab-btn" id="list-tab-past" onclick="setListTab('past')">実績</button>
       </div>
       <div class="filter-bar">
         <input class="search-input" type="text" id="search-input" placeholder="案件名・エリアで検索…" oninput="renderList()">
@@ -554,6 +554,50 @@ input,select,textarea{font-family:inherit;font-size:13px}
       </div>
     </div>
 
+    <!-- V2: 新規案件登録（専用画面・5項目のみの軽い入力） -->
+    <div id="view-newreg" class="view" style="display:none">
+      <div class="view-header">
+        <div>
+          <div class="view-title">新規案件登録</div>
+          <div class="view-desc">まず5項目だけ入力します。詳しい収支は「登録」後の収支シートで作成します。</div>
+        </div>
+      </div>
+      <div class="card" style="max-width:560px">
+        <div class="card-body">
+          <div class="form-group mb12">
+            <label class="form-label">物件名</label>
+            <input class="form-input" type="text" id="nr-name" placeholder="例：北葛西建売プロジェクト" onkeydown="nrEnter(event,'nr-address')">
+          </div>
+          <div class="form-group mb12">
+            <label class="form-label">住所</label>
+            <input class="form-input" type="text" id="nr-address" placeholder="例：江戸川区北葛西3丁目" onkeydown="nrEnter(event,'nr-chiban')">
+          </div>
+          <div class="form-group mb12">
+            <label class="form-label">地番</label>
+            <input class="form-input" type="text" id="nr-chiban" placeholder="例：1234番5" onkeydown="nrEnter(event,'nr-menseki')">
+          </div>
+          <div class="form-group mb12">
+            <label class="form-label">面積（㎡）</label>
+            <input class="form-input" type="text" id="nr-menseki" inputmode="numeric" placeholder="例：120" oninput="numFormat(this)" onkeydown="nrEnter(event,'nr-eki')">
+          </div>
+          <div class="form-group mb12">
+            <label class="form-label">駅距離（徒歩分）</label>
+            <input class="form-input" type="text" id="nr-eki" inputmode="numeric" placeholder="例：8" oninput="numFormat(this)" onkeydown="nrEnter(event,'nr-submit-btn')">
+          </div>
+          <!-- 資料（任意）＝収支・一覧と同じ deal.shiryo に一元保存（登録・見送りの確定時に案件へ移る） -->
+          <div class="shiryo-box mt12">
+            <div class="shiryo-title">📎 資料（任意）｜画像・PDF共通</div>
+            <div id="newreg-shiryo-list"></div>
+            <button class="btn btn-secondary btn-sm mt8" onclick="openShiryoPickerNewreg()">ファイルを選択（資料を追加）</button>
+          </div>
+          <div class="flex gap8 mt16" style="justify-content:flex-end">
+            <button class="btn btn-ghost" onclick="openMiokuriModal()">検討しない</button>
+            <button class="btn btn-primary" id="nr-submit-btn" onclick="createNewDeal()">登録</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- V3: 案件詳細 -->
     <div id="view-detail" class="view" style="display:none">
       <div class="breadcrumb">
@@ -568,6 +612,14 @@ input,select,textarea{font-family:inherit;font-size:13px}
         <span class="help-wrap"><button class="help-btn" onclick="toggleHelp(this)" title="このシートの説明">？</button><div class="help-pop help-pop-float" style="display:none;right:0;left:auto">お使いの雛型と同じ配置・同じ計算式です（水色のセル＝入力、白のセル＝自動計算）。「登録」を押すとステップが自動で進み、最初の登録の内容は「初回の想定」として記録されます。</div></span>
       </div>
       <div class="info-grid" id="detail-info-grid"></div>
+      <!-- 資料バー：案件を開いてすぐ見える位置に資料一覧＋追加ボタン（deal.shiryo＝収支シート内の資料枠と同じ保管場所） -->
+      <div class="card mb16" id="detail-shiryo-bar">
+        <div class="card-body" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 18px">
+          <span style="font-weight:700;color:var(--ink);font-size:13px;white-space:nowrap">📎 資料</span>
+          <span id="detail-shiryo-names" style="flex:1;font-size:12.5px;color:var(--body);min-width:200px">—</span>
+          <button class="btn btn-secondary btn-sm" onclick="openShiryoPicker(currentDealId)">📎 資料を追加</button>
+        </div>
+      </div>
       <div class="card">
         <div class="card-header" style="padding:0 18px">
           <div class="tabs" id="detail-tabs" style="border-bottom:none;flex:1">
@@ -1438,6 +1490,24 @@ input,select,textarea{font-family:inherit;font-size:13px}
   </div>
 </div>
 
+<!-- 検討しない（見送り）＝理由を残して実績タブへ保存するモーダル -->
+<div id="miokuri-modal" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <div class="modal-title">検討しない（見送りとして記録）</div>
+    <div class="modal-text">見送りの理由を残しておくと、後から「どんな案件を・なぜ見送ったか」を振り返れます。</div>
+    <select class="form-select" id="miokuri-class" style="width:100%;margin-bottom:10px">
+      <option>価格が合わない（利益率・IRRが基準未達）</option>
+      <option>立地・接道・形状などの物件条件</option>
+      <option>その他</option>
+    </select>
+    <input class="form-input" id="miokuri-free" type="text" placeholder="補足メモ（任意・自由記入）" style="width:100%;margin-bottom:14px">
+    <div class="modal-btns">
+      <button class="btn btn-ghost" onclick="closeMiokuriModal()">戻る</button>
+      <button class="btn btn-primary" onclick="miokuriSubmit()">見送りとして保存</button>
+    </div>
+  </div>
+</div>
+
 <!-- 資料添付用の隠しファイル選択（モック＝ファイル名のみメモリ保持・実アップロードなし） -->
 <input type="file" id="shiryo-file-input" multiple accept="image/*,.pdf" style="display:none" onchange="onShiryoSelected(this)">
 
@@ -1656,7 +1726,7 @@ function syncListHeader() {
 /* ===== V1 一覧 ===== */
 let currentDealId = null;
 
-/* 一覧タブ：進行中／過去（見送り・完了＝契約） */
+/* 一覧タブ：進行中／実績（見送り・契約＝終了案件） */
 const PAST_STATUSES = ['見送り', '契約'];
 let listTab = 'active'; // 'active' | 'past'
 function setListTab(tab) {
@@ -1703,7 +1773,7 @@ function renderList() {
   });
 
   syncListTabBtns();
-  // タブ絞り込み：進行中＝終了案件（見送り・契約）以外／過去＝終了案件のみ
+  // タブ絞り込み：進行中＝終了案件（見送り・契約）以外／実績＝終了案件のみ
   deals = deals.filter(d => listTab === 'past' ? PAST_STATUSES.includes(d.status) : !PAST_STATUSES.includes(d.status));
   if (listPreset) deals = deals.filter(d => listPreset.statuses.includes(d.status));
   if (kw)      deals = deals.filter(d => d.name.toLowerCase().includes(kw) || d.area.toLowerCase().includes(kw));
@@ -1722,11 +1792,10 @@ function renderList() {
       const isPast = PAST_STATUSES.includes(d.status);
       const pastCls = isPast ? ' past-row' : '';
       const alertCls = hd > 30 ? ' hold-alert' : '';
-      const myCls = (!isPast && d.staff === '田中') ? ' my-row' : '';  // ログインユーザー（デモ固定）の担当案件（過去タブではグレー優先）
+      const myCls = (!isPast && d.staff === '田中') ? ' my-row' : '';  // ログインユーザー（デモ固定）の担当案件（実績タブではグレー優先）
       const holdInfo = hd > 30 ? '<span style="margin-left:6px;font-size:10px;color:var(--warn-fg);font-weight:700">⚠ ' + hd + '日</span>' : '';
       const priceStr = d.price != null ? Math.round(d.price).toLocaleString('ja-JP') + '円' : '—';
       const sh = d.shiryo || [];
-      const clipBadge = sh.length > 0 ? '<span class="clip-badge" title="資料' + sh.length + '件">📎' + sh.length + '</span>' : '';
       return '<tr class="' + myCls + alertCls + pastCls + '" onclick="openDetail(' + d.id + ')">'
         + '<td><strong>' + d.name + '</strong>' + holdInfo + '</td>'
         + '<td>' + d.area + '</td>'
@@ -1737,8 +1806,7 @@ function renderList() {
         + '<td>' + d.acquiredDate + '</td>'
         + '<td style="text-align:right">' + priceStr + '</td>'
         + '<td style="color:var(--sub);font-size:12px">' + (d.note || '') + '</td>'
-        + '<td style="white-space:nowrap">' + clipBadge
-        + '<button class="clip-btn" title="資料を追加" onclick="event.stopPropagation();openShiryoPicker(' + d.id + ')">📎</button></td>'
+        + '<td style="text-align:center;color:var(--sub)">' + (sh.length > 0 ? '<span title="資料あり">📎</span>' : '-') + '</td>'
         + '</tr>';
     }).join('');
   }
@@ -1747,8 +1815,8 @@ function renderList() {
   if (pager) pager.textContent = deals.length + '件 / 全' + DEALS.length + '件';
 }
 
-/* ===== 資料（📎）管理：一覧・登録・収支のどこから追加しても同じ deal.shiryo 配列に一元化 ===== */
-let shiryoTargetId = null;
+/* ===== 資料（📎）管理：登録・収支・詳細のどこから追加しても同じ deal.shiryo 配列に一元化 ===== */
+let shiryoTargetId = null; // 数値＝案件ID／'__newreg__'＝新規登録画面の一時添付
 function getShiryo(deal) {
   if (!deal.shiryo) deal.shiryo = [];
   return deal.shiryo;
@@ -1759,9 +1827,22 @@ function openShiryoPicker(dealId) {
   const inp = document.getElementById('shiryo-file-input');
   if (inp) { inp.value = ''; inp.click(); }
 }
+function openShiryoPickerNewreg() { // 新規登録画面：案件確定前の一時添付
+  shiryoTargetId = '__newreg__';
+  const inp = document.getElementById('shiryo-file-input');
+  if (inp) { inp.value = ''; inp.click(); }
+}
 function onShiryoSelected(inp) {
+  if (!inp.files || inp.files.length === 0) return;
+  if (shiryoTargetId === '__newreg__') {
+    Array.from(inp.files).forEach(f => newregShiryo.push({name: f.name}));
+    showToast('資料を' + inp.files.length + '件添付しました（登録時に案件へ保存されます）');
+    inp.value = '';
+    renderShiryoNewreg();
+    return;
+  }
   const deal = DEALS.find(d => d.id === shiryoTargetId);
-  if (!deal || !inp.files || inp.files.length === 0) return;
+  if (!deal) return;
   const arr = getShiryo(deal);
   Array.from(inp.files).forEach(f => arr.push({name: f.name}));
   showToast('資料を' + inp.files.length + '件追加しました（' + deal.name + '）');
@@ -1778,6 +1859,35 @@ function removeShiryo(dealId, idx) {
 function refreshShiryoViews() {
   if (currentView === 'list') renderList();
   renderShiryoPL();
+  renderShiryoDetail();
+}
+/* 詳細画面上部の資料バー（開いてすぐ見える位置） */
+function renderShiryoDetail() {
+  const names = document.getElementById('detail-shiryo-names');
+  if (!names) return;
+  const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
+  if (!deal) { names.textContent = '—'; return; }
+  const sh = getShiryo(deal);
+  names.textContent = sh.length === 0
+    ? 'まだ資料がありません（画像・PDFをこの案件にまとめて保管できます）'
+    : sh.map(f => f.name).join('・') + '（' + sh.length + '件）';
+}
+/* 新規登録画面の資料枠（一時添付 newregShiryo を表示） */
+function renderShiryoNewreg() {
+  const list = document.getElementById('newreg-shiryo-list');
+  if (!list) return;
+  list.innerHTML = newregShiryo.length === 0
+    ? '<div class="shiryo-empty">まだ資料がありません（任意）。物件概要書・現地写真・図面などを添付できます。</div>'
+    : newregShiryo.map((f, i) =>
+        '<div class="shiryo-item"><span>📄</span><span style="flex:1">' + f.name + '</span>'
+        + '<button class="shiryo-del" title="この資料を削除" onclick="removeShiryoNewreg(' + i + ')">✕ 削除</button></div>'
+      ).join('');
+}
+function removeShiryoNewreg(idx) {
+  if (!newregShiryo[idx]) return;
+  const removed = newregShiryo.splice(idx, 1);
+  showToast('資料「' + removed[0].name + '」を削除しました');
+  renderShiryoNewreg();
 }
 function renderShiryoPL() {
   const list = document.getElementById('pl-shiryo-list');
@@ -1857,6 +1967,7 @@ function openDetail(id) {
   setInner('sheet-dup-warning', '');
   calcPL();
   renderShiryoPL();
+  renderShiryoDetail();
   renderHistoryTab(deal);
   // サマリータブをデフォルト表示
   const summaryBtn = document.querySelector('#detail-tabs .tab-btn');
@@ -2364,23 +2475,105 @@ function changeStatus() {
   showToast('ステータスを「' + newStatus + '」に変更しました');
 }
 
-/* ===== 新規登録＝クリックで即Excel入力へ ===== */
-function createNewDeal() {
+/* ===== 新規案件登録（専用画面）＝5項目入力→「登録」で収支シートへ／「検討しない」で見送り記録 ===== */
+let newregShiryo = []; // 登録前の一時添付（登録/見送りの確定時に案件の shiryo へ移す）
+
+function openNewReg() {
+  ['nr-name','nr-address','nr-chiban','nr-menseki','nr-eki'].forEach(id => sv(id, ''));
+  newregShiryo = [];
+  renderShiryoNewreg();
+  showView('newreg', null);
+  const first = document.getElementById('nr-name');
+  if (first) first.focus();
+}
+
+/* 数字入力の共通ルール：全角→半角・数字以外は除去・3桁カンマ表示 */
+function numFormat(el) {
+  let v = (el.value || '').replace(/[０-９]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0));
+  v = v.replace(/[^0-9]/g, '');
+  el.value = v ? parseInt(v, 10).toLocaleString('ja-JP') : '';
+}
+function numVal(id) {
+  const el = document.getElementById(id);
+  if (!el) return 0;
+  const n = parseInt((el.value || '').replace(/[^0-9]/g, ''), 10);
+  return isFinite(n) ? n : 0;
+}
+/* 数字入力の共通ルール：Enterで次の項目へ移動 */
+function nrEnter(e, nextId) {
+  if (e.key !== 'Enter') return;
+  e.preventDefault();
+  const next = document.getElementById(nextId);
+  if (next) next.focus();
+}
+function gvs(id) {
+  const el = document.getElementById(id);
+  return el ? el.value : '';
+}
+
+/* 登録フォームの5項目から案件オブジェクトを作る（登録・見送り共通） */
+function buildNewDealFromForm(status) {
   const newId = DEALS.length ? Math.max(...DEALS.map(d => d.id)) + 1 : 1;
+  const addr = (gvs('nr-address') || '').trim();
+  const m = addr.match(/^(?:.+?[都道府県])?(.+?)[区市]/);
   const deal = {
-    id: newId, name: '（新規案件）', area: '', address: '',
-    status: '未検討', staff: '田中', type: '戸建て建売',
+    id: newId, name: (gvs('nr-name') || '').trim() || '（新規案件）',
+    area: m ? m[1] : addr, address: addr,
+    chiban: (gvs('nr-chiban') || '').trim(),
+    menseki: numVal('nr-menseki'), ekitoho: numVal('nr-eki'),
+    status: status, staff: '田中', type: '戸建て建売',
     acquiredDate: TODAY, price: null, note: '', holdDate: null,
     reg: {market:false, pl:false, hearing:false, plan:false},
-    shiryo: [],
+    shiryo: newregShiryo,
   };
   DEALS.push(deal);
-  HISTORY.push({dealId: newId, date: TODAY, from: '—', to: '未検討', by: '田中'});
-  openDetail(newId);
-  // 新規作成時は収支（Excel入力）タブへ直行（サイドバー「収支作成」の入口）
+  newregShiryo = [];
+  return deal;
+}
+
+/* 「登録」＝案件を作成して収支シートへ（既存フローに接続） */
+function createNewDeal() {
+  const deal = buildNewDealFromForm('未検討');
+  HISTORY.push({dealId: deal.id, date: TODAY, from: '—', to: '未検討', by: '田中'});
+  openDetail(deal.id);
+  // 収支（Excel入力）タブへ直行し、登録画面の入力値をシートへ引き継ぐ
   const plBtn = document.querySelectorAll('#detail-tabs .tab-btn')[1];
   if (plBtn) switchTab('pl', plBtn);
-  showToast('新規案件を作成しました。物件名・所在地を入力すると一覧に反映されます');
+  sv('pl-chiban', deal.chiban || '');
+  if (deal.menseki > 0) sv('pl-menseki', deal.menseki);
+  if (deal.ekitoho > 0) sv('pl-kotsu', '徒歩' + deal.ekitoho + '分');
+  calcPL();
+  showToast('案件を登録しました。続けて収支シートを作成できます');
+}
+
+/* 「検討しない」＝見送り理由を記録して実績タブへ保存 */
+function openMiokuriModal() {
+  const modal = document.getElementById('miokuri-modal');
+  if (!modal) return;
+  const sel = document.getElementById('miokuri-class');
+  if (sel) sel.selectedIndex = 0;
+  sv('miokuri-free', '');
+  modal.style.display = 'flex';
+}
+function closeMiokuriModal() {
+  const modal = document.getElementById('miokuri-modal');
+  if (modal) modal.style.display = 'none';
+}
+function miokuriSubmit() {
+  const cls = (document.getElementById('miokuri-class') || {value:'その他'}).value;
+  const free = (gvs('miokuri-free') || '').trim();
+  const reason = free ? cls + '：' + free : cls;
+  const deal = buildNewDealFromForm('見送り');
+  deal.note = reason;
+  HISTORY.push({dealId: deal.id, date: TODAY, from: '—', to: '見送り', by: '田中', reason: reason});
+  closeMiokuriModal();
+  // 一覧の「実績」タブへ（見送り案件として保存済み）
+  listPreset = null;
+  listTab = 'past';
+  const fs = document.getElementById('filter-status');
+  if (fs) fs.value = '';
+  showView('list', document.querySelector('[data-view=list]'));
+  showToast('「' + deal.name + '」を見送りとして記録しました（実績タブ）');
 }
 
 /* ===== シート⇄案件データの同期 ===== */
@@ -3192,6 +3385,7 @@ function applyHashRoute() {
     return true;
   }
   if (h === 'home') { showView('home', q('[data-view=home]')); return true; }
+  if (h === 'newreg') { openNewReg(); return true; }
   if (h === 'list') { openListAll(q('[data-view=list]')); return true; }
   if (LIST_PRESETS[h]) { openListPreset(h, q('[data-nav="' + h + '"]')); return true; }
   if (['log','funnel','settings'].includes(h)) { showView(h, q('[data-view=' + h + ']')); return true; }
