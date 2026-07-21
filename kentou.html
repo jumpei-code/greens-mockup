@@ -143,40 +143,6 @@ input,select,textarea{font-family:inherit;font-size:13px}
 .hearing-q{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px}
 .hearing-note{border:1px solid var(--line);border-radius:6px;padding:8px;font-size:13px;resize:vertical;min-height:60px;width:100%;background:#fff}
 .hearing-note:focus{outline:none;border-color:var(--green-mid)}
-.plan-card{background:#fff;border:1px solid var(--line);border-radius:8px;padding:16px;margin-bottom:14px}
-.plan-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:12px}
-.timeline{display:grid;gap:0}
-.timeline-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
-.timeline-dot{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;margin-top:2px}
-.timeline-dot-default{background:var(--green-light);color:var(--green)}
-.timeline-dot-ok{background:var(--ok-bg);color:var(--ok-fg)}
-.timeline-dot-ng{background:var(--ng-bg);color:var(--ng-fg)}
-.timeline-dot-warn{background:var(--warn-bg);color:var(--warn-fg)}
-.timeline-body{flex:1}
-.timeline-meta{font-size:11px;color:var(--sub);margin-bottom:2px}
-.timeline-text{font-size:13px;color:var(--body)}
-.timeline-text strong{color:var(--ink)}
-.status-change-form{background:var(--green-light);border:1px solid var(--green-mid);border-radius:8px;padding:16px;margin-bottom:16px}
-.status-change-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.arrow{color:var(--sub);font-size:18px;line-height:1}
-.funnel-wrap{display:grid;grid-template-columns:2fr 1fr;gap:20px;align-items:start}
-.funnel-chart{display:grid;gap:8px}
-.funnel-row{display:flex;align-items:center;gap:10px}
-.funnel-label{width:90px;font-size:12px;font-weight:600;color:var(--body);text-align:right;flex-shrink:0}
-.funnel-bar-wrap{flex:1;height:32px;background:var(--bg);border-radius:4px;overflow:hidden;position:relative}
-.funnel-bar{height:100%;border-radius:4px;background:var(--green-2);display:flex;align-items:center;justify-content:flex-end;padding-right:8px}
-.funnel-bar.bar-drop{background:var(--green-mid);opacity:.6}
-.funnel-bar-num{font-size:12px;font-weight:700;color:#fff;position:absolute;left:8px;top:50%;transform:translateY(-50%)}
-.funnel-count{width:30px;font-size:13px;font-weight:800;color:var(--ink);flex-shrink:0;text-align:center}
-.funnel-row-ng .funnel-bar{background:var(--ng-fg)}
-.funnel-row-ok .funnel-bar{background:var(--ok-fg)}
-.funnel-stat-grid{display:grid;gap:10px}
-.funnel-stat-card{background:#fff;border:1px solid var(--line);border-radius:8px;padding:12px 14px}
-.funnel-stat-title{font-size:11px;color:var(--sub);font-weight:600;margin-bottom:4px}
-.funnel-stat-val{font-size:20px;font-weight:800;color:var(--ink)}
-.funnel-staff-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:12px}
-.funnel-staff-table th{padding:7px 10px;text-align:left;background:var(--bg);color:var(--sub);font-size:11px;font-weight:700;border-bottom:1px solid var(--line)}
-.funnel-staff-table td{padding:7px 10px;border-bottom:1px solid var(--line)}
 .breadcrumb{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--sub);margin-bottom:16px}
 .breadcrumb a{color:var(--green);cursor:pointer;font-weight:600}
 .info-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:16px}
@@ -261,12 +227,10 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
   .pl-layout{grid-template-columns:1fr}
   .market-grid{grid-template-columns:1fr}
   .hearing-grid{grid-template-columns:1fr}
-  .funnel-wrap{grid-template-columns:1fr}
 }
 @media(max-width:480px){
   .form-grid{grid-template-columns:1fr}
   .info-grid{grid-template-columns:1fr 1fr}
-  .funnel-label{width:70px;font-size:11px}
 }
 
 /* ===== ホーム画面 ===== */
@@ -354,17 +318,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .modal-text{font-size:13.5px;color:var(--body);line-height:1.8;margin-bottom:10px}
 .modal-facts{font-size:12.5px;color:var(--sub);background:var(--bg);border-radius:6px;padding:8px 12px;margin-bottom:12px}
 .modal-btns{display:flex;justify-content:flex-end;gap:10px}
-/* 判断イベントのバッジ */
-.log-badge{display:inline-block;border-radius:4px;padding:1px 7px;font-size:10px;font-weight:700;margin-right:6px;vertical-align:middle}
-.log-badge-decision{background:var(--ok-bg);color:var(--ok-fg)}
-.log-badge-update{background:#f3f4f6;color:#6b7280}
-/* ファネル期間切替（セグメントボタン） */
-.seg-wrap{display:flex;align-items:center;gap:0}
-.seg-btn{border:1px solid var(--line);background:#fff;color:var(--sub);padding:6px 16px;font-size:12px;font-weight:600;cursor:pointer;border-radius:0}
-.seg-btn:first-child{border-radius:6px 0 0 6px}
-.seg-btn+.seg-btn{border-left:none}
-.seg-btn:last-child{border-radius:0 6px 6px 0}
-.seg-btn.active{background:var(--green);border-color:var(--green);color:#fff}
 /* ホームフィードの自分/みんなタブ＋クリック可能な行 */
 .feed-tabs{display:inline-flex;gap:0;margin-left:auto}
 .feed-tab{border:1px solid var(--line);background:#fff;color:var(--sub);padding:2px 12px;font-size:11px;font-weight:600;cursor:pointer;border-radius:0}
@@ -436,26 +389,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
       <span class="sidebar-label">案件一覧</span>
       <span class="sidebar-badge" id="sidebar-badge-hold" style="display:none">!</span>
     </div>
-    <div class="sidebar-nav-item" data-nav="hearing" onclick="openListPreset('hearing',this)">
-      <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
-      <span class="sidebar-label">販売会社ヒアリング</span>
-    </div>
-    <div class="sidebar-nav-item" data-nav="archplan" onclick="openListPreset('archplan',this)">
-      <span class="sidebar-icon"><svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="1"/><line x1="9" y1="7" x2="10" y2="7"/><line x1="14" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="10" y2="11"/><line x1="14" y1="11" x2="15" y2="11"/><path d="M10 22v-4h4v4"/></svg></span>
-      <span class="sidebar-label">建築プラン依頼</span>
-    </div>
-    <div class="sidebar-nav-item" data-nav="mikomi" onclick="openListPreset('mikomi',this)">
-      <span class="sidebar-icon"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
-      <span class="sidebar-label">見込み案件</span>
-    </div>
-    <div class="sidebar-nav-item" data-view="log" onclick="showView('log',this)">
-      <span class="sidebar-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
-      <span class="sidebar-label">判断履歴</span>
-    </div>
-    <div class="sidebar-nav-item" data-view="funnel" onclick="showView('funnel',this)">
-      <span class="sidebar-icon"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
-      <span class="sidebar-label">データ分析</span>
-    </div>
     <div class="sidebar-nav-item" data-view="settings" onclick="showView('settings',this)">
       <span class="sidebar-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
       <span class="sidebar-label">設定</span>
@@ -509,7 +442,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
     <div id="view-list" class="view">
       <div class="view-header">
         <div>
-          <div class="view-title"><span id="list-view-title">案件一覧</span><span class="help-wrap" id="mikomi-help" style="display:none;margin-left:4px"><button class="help-btn" onclick="toggleHelp(this)" title="見込み案件の説明">？</button><div class="help-pop help-pop-float" style="display:none">どの段階からを「見込み案件」と呼ぶかは、お打ち合わせでご確認ください（現在は買付検討中・買付提出を表示しています）。</div></span></div>
+          <div class="view-title">案件一覧</div>
           <div class="view-desc">登録された仕入れ検討案件の一覧です。行をクリックすると詳細を開きます。</div>
         </div>
         <button class="btn btn-primary" onclick="openNewReg()">➕ 新規案件登録</button>
@@ -522,7 +455,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
       </div>
       <div class="filter-bar">
         <input class="search-input" type="text" id="search-input" placeholder="案件名・エリアで検索…" oninput="renderList()">
-        <select class="filter-select" id="filter-status" onchange="clearListPreset()">
+        <select class="filter-select" id="filter-status" onchange="onStatusFilterChange()">
           <option value="">すべてのステータス</option>
           <option>未検討</option><option>検討中</option><option>市場調査中</option>
           <option>概算収支作成済み</option><option>販売会社ヒアリング中</option>
@@ -627,8 +560,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
             <button class="tab-btn" onclick="switchTab('pl',this)">収支</button>
             <button class="tab-btn" onclick="switchTab('market',this)">市場調査</button>
             <button class="tab-btn" onclick="switchTab('hearing',this)">ヒアリング</button>
-            <button class="tab-btn" onclick="switchTab('archplan',this)">建築プラン</button>
-            <button class="tab-btn" onclick="switchTab('history',this)">判断と履歴</button>
           </div>
         </div>
         <div class="card-body">
@@ -1287,166 +1218,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
             </div>
           </div>
 
-          <!-- 建築プランタブ -->
-          <div id="tab-archplan" class="tab-content">
-            <div class="form-section-title">建築プラン</div>
-            <div class="plan-card">
-              <div class="plan-title">プランA（標準案）</div>
-              <div class="form-grid">
-                <div class="form-group">
-                  <label class="form-label">区画数</label>
-                  <input class="form-input" type="number" value="3">
-                </div>
-                <div class="form-group">
-                  <label class="form-label">延床面積（㎡/棟）</label>
-                  <input class="form-input" type="number" value="95">
-                </div>
-                <div class="form-group">
-                  <label class="form-label">間取り</label>
-                  <input class="form-input" type="text" value="4LDK">
-                </div>
-                <div class="form-group">
-                  <label class="form-label">建築費用（万円/棟）</label>
-                  <input class="form-input" type="number" value="800">
-                </div>
-                <div class="form-group">
-                  <label class="form-label">工期（ヶ月）</label>
-                  <input class="form-input" type="number" value="8">
-                </div>
-                <div class="form-group">
-                  <label class="form-label">建築会社</label>
-                  <input class="form-input" type="text" placeholder="施工会社名">
-                </div>
-              </div>
-            </div>
-            <div class="plan-card">
-              <div class="plan-title">特記・懸念事項</div>
-              <textarea class="form-textarea" style="min-height:80px" placeholder="設備仕様・外装・注意点など"></textarea>
-            </div>
-            <div class="flex gap8 mt12">
-              <button class="btn btn-primary btn-sm" onclick="registerStep('plan')">✅ 登録</button>
-              <button class="btn btn-ghost btn-sm" onclick="showToast('プランBの追加は本番環境で対応します')">＋ 別案追加</button>
-            </div>
-          </div>
-
-          <!-- 判断と履歴タブ -->
-          <div id="tab-history" class="tab-content">
-            <div class="form-section-title">ステータス変更</div>
-            <div class="status-change-form">
-              <div class="status-change-row">
-                <div>
-                  <div style="font-size:11px;color:var(--sub);margin-bottom:2px">現在のステータス</div>
-                  <div id="history-current-status"></div>
-                </div>
-                <div class="arrow">→</div>
-                <div>
-                  <div style="font-size:11px;color:var(--sub);margin-bottom:2px">変更後</div>
-                  <select class="form-select" id="history-new-status" style="min-width:180px" onchange="onNewStatusChange()">
-                    <option>未検討</option><option>検討中</option><option>市場調査中</option>
-                    <option>概算収支作成済み</option><option>販売会社ヒアリング中</option>
-                    <option>建築プラン依頼中</option><option>買付検討中</option><option>買付提出</option>
-                    <option>保留</option><option>見送り</option><option>契約</option>
-                  </select>
-                </div>
-                <div id="misoku-reason-wrap" style="display:none">
-                  <div style="font-size:11px;color:var(--sub);margin-bottom:2px">見送り理由</div>
-                  <select class="form-select" id="misoku-reason" style="min-width:200px">
-                    <option>販売価格が合わない</option>
-                    <option>原価が高い</option>
-                    <option>規定利益を確保できない</option>
-                    <option>建築プランが入らない</option>
-                    <option>販売会社の評価が低い</option>
-                    <option>競合価格に勝てない</option>
-                    <option>売主条件が合わない</option>
-                    <option>その他</option>
-                  </select>
-                </div>
-                <div style="flex:1;min-width:120px">
-                  <div style="font-size:11px;color:var(--sub);margin-bottom:2px">変更理由・メモ</div>
-                  <input class="form-input" type="text" id="history-reason" placeholder="任意" style="width:100%">
-                </div>
-                <button class="btn btn-primary" onclick="changeStatus()">変更を記録</button>
-              </div>
-            </div>
-            <div class="form-section-title">判断メモ</div>
-            <div class="form-group mb16">
-              <textarea class="form-textarea" id="judge-memo" style="min-height:80px" placeholder="この物件に関する判断の根拠・背景・懸念点などを記録します"></textarea>
-              <div class="flex gap8 mt8">
-                <button class="btn btn-secondary btn-sm" onclick="showToast('判断メモを保存しました')">保存</button>
-              </div>
-            </div>
-            <div class="form-section-title">変更履歴</div>
-            <div class="timeline" id="history-timeline"></div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-
-    <!-- V4: 集計ファネル -->
-    <div id="view-funnel" class="view" style="display:none">
-      <div class="view-header">
-        <div>
-          <div class="view-title">集計ファネル<span class="help-wrap" style="margin-left:4px"><button class="help-btn" onclick="toggleHelp(this)" title="この集計の説明">？</button><div class="help-pop help-pop-float" style="display:none">ステータス変更の履歴を自動記録しているため、期間別の件数と滞留日数が計算できます。</div></span></div>
-          <div class="view-desc">案件の通過状況を工程別に集計します。</div>
-        </div>
-        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-          <div class="seg-wrap" id="seg-period">
-            <button class="seg-btn active" id="seg-all" onclick="setFunnelPeriod('all', this)">全期間</button>
-            <button class="seg-btn" id="seg-month" onclick="setFunnelPeriod('month', this)">今月</button>
-          </div>
-          <div class="seg-wrap" id="seg-staff">
-            <button class="seg-btn active" id="seg-staff-all" onclick="setFunnelStaff('all', this)">全社</button>
-            <button class="seg-btn" onclick="setFunnelStaff('田中', this)">田中</button>
-            <button class="seg-btn" onclick="setFunnelStaff('佐藤', this)">佐藤</button>
-            <button class="seg-btn" onclick="setFunnelStaff('鈴木', this)">鈴木</button>
-          </div>
-          <span class="help-wrap"><button class="help-btn" onclick="toggleHelp(this)" title="切替の説明">？</button><div class="help-pop help-pop-float" style="display:none;right:0;left:auto">今月＝2026年7月の履歴で集計しています（取得は取得日で判定）。担当者別の表示も、同じ履歴データから切り替えています。前月比較・日次/週次の切替は本実装で対応します。</div></span>
-        </div>
-      </div>
-      <div class="funnel-wrap">
-        <div>
-          <div class="card mb16">
-            <div class="card-header">案件ファネル（ステータス別件数）</div>
-            <div class="card-body">
-              <div class="funnel-chart" id="funnel-chart"></div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-header">担当者別集計</div>
-            <div class="card-body">
-              <table class="funnel-staff-table">
-                <thead>
-                  <tr><th>担当</th><th>担当件数</th><th>契約件数</th><th>見送り件数</th><th>保留件数</th></tr>
-                </thead>
-                <tbody id="funnel-staff-tbody"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-        <div class="funnel-stat-grid">
-          <div class="funnel-stat-card"><div class="funnel-stat-title">総案件数</div><div class="funnel-stat-val" id="fstat-total">—</div></div>
-          <div class="funnel-stat-card"><div class="funnel-stat-title">契約件数</div><div class="funnel-stat-val text-ok" id="fstat-keiyaku">—</div></div>
-          <div class="funnel-stat-card"><div class="funnel-stat-title">見送り件数</div><div class="funnel-stat-val text-ng" id="fstat-misend">—</div></div>
-          <div class="funnel-stat-card"><div class="funnel-stat-title">保留件数</div><div class="funnel-stat-val text-warn" id="fstat-hold">—</div></div>
-          <div class="funnel-stat-card"><div class="funnel-stat-title">買付提出中</div><div class="funnel-stat-val" id="fstat-kaifu">—</div></div>
-          <div class="funnel-stat-card"><div class="funnel-stat-title">進行中（検討〜建築）</div><div class="funnel-stat-val" id="fstat-active">—</div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- V5: 判断履歴（全案件横断） -->
-    <div id="view-log" class="view" style="display:none">
-      <div class="view-header">
-        <div>
-          <div class="view-title">判断履歴<span class="help-wrap" style="margin-left:4px"><button class="help-btn" onclick="toggleHelp(this)" title="この画面の説明">？</button><div class="help-pop help-pop-float" style="display:none">全案件の判断・更新の記録を、履歴データから自動生成しています。価格設定などの「判断」は、ステータスの「更新」と区別して表示します。本実装では価格の設定根拠（参考にした事例）とセットで記録します。</div></span></div>
-          <div class="view-desc">全案件のステータス変更・判断の記録を時系列で表示します。案件名をクリックすると詳細を開きます。</div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-header">全案件の変更履歴<span id="log-count" style="font-weight:400;font-size:12px;color:var(--sub)"></span></div>
-        <div class="card-body">
-          <div class="timeline" id="log-timeline"></div>
         </div>
       </div>
     </div>
@@ -1647,6 +1418,10 @@ function statusChip(status) {
   // ステータスの色分けは行わない（単色・中西さん指示 2026-07-14）
   return '<span class="chip chip-status">' + status + '</span>';
 }
+/* 遷移先の表示ラベル：見送りは理由つきで表示（ホームの更新フィードで使用） */
+function toLabel(h) {
+  return (h.to === '見送り' && h.reason) ? '見送り（理由：' + h.reason + '）' : h.to;
+}
 
 /* 一覧「次に行うこと」列＝ステータス連動の短句マップ（要件14節の9列準拠） */
 const NEXT_LIST_LABEL = {
@@ -1675,52 +1450,21 @@ function showView(name, el) {
   if (el) el.classList.add('active');
   currentView = name;
   if (name === 'home')   { renderHome(); }
-  if (name === 'list')   { syncListHeader(); renderList(); renderHoldBanner(); }
-  if (name === 'funnel') renderFunnel();
-  if (name === 'log')    renderLog();
+  if (name === 'list')   { renderList(); renderHoldBanner(); }
   if (name === 'settings') renderSettings();
 }
 
-/* ===== 一覧のプリセット絞り込み（サイドバー：ヒアリング/プラン依頼/見込み案件） ===== */
-let listPreset = null; // {statuses:[], title:'', mikomi:bool}
-const LIST_PRESETS = {
-  hearing:  {statuses:['販売会社ヒアリング中'],  title:'販売会社ヒアリング中の案件',           mikomi:false},
-  archplan: {statuses:['建築プラン依頼中'],      title:'建築プラン依頼中の案件',               mikomi:false},
-  mikomi:   {statuses:['買付検討中','買付提出'], title:'見込み案件（買付検討中・買付提出）',   mikomi:true},
-};
-function openListPreset(key, el) {
-  listPreset = LIST_PRESETS[key] || null;
-  listTab = 'active'; // プリセットは進行中の案件が対象
-  const fs = document.getElementById('filter-status');
-  if (fs) fs.value = (listPreset && listPreset.statuses.length === 1) ? listPreset.statuses[0] : '';
-  showView('list', el);
-  setHash(key);
-}
+/* ===== 一覧を開く（絞り込みなしの全件表示） ===== */
 function openListAll(el) {
-  listPreset = null;
   listTab = 'active';
   const fs = document.getElementById('filter-status');
   if (fs) fs.value = '';
   showView('list', el);
 }
-function clearListPreset() { // ステータス絞り込みを手動変更したらプリセット解除
-  listPreset = null;
-  // 見送り・契約を選んだら「過去」タブへ、それ以外なら「進行中」タブへ自動で合わせる
+function onStatusFilterChange() { // ステータス絞り込み変更時：見送り・契約なら「実績」タブへ、それ以外は「進行中」へ自動で合わせる
   const v = ((document.getElementById('filter-status') || {value:''}).value) || '';
   if (v) listTab = PAST_STATUSES.includes(v) ? 'past' : 'active';
-  syncListHeader();
   renderList();
-}
-function syncListHeader() {
-  const t = document.getElementById('list-view-title');
-  if (t) t.textContent = listPreset ? listPreset.title : '案件一覧';
-  // 見込み案件プリセットのときだけ見出し横の「？」を表示（開きっぱなしのポップも閉じる）
-  const help = document.getElementById('mikomi-help');
-  if (help) {
-    const on = !!(listPreset && listPreset.mikomi);
-    help.style.display = on ? '' : 'none';
-    if (!on) { const pop = help.querySelector('.help-pop'); if (pop) pop.style.display = 'none'; }
-  }
 }
 
 /* ===== V1 一覧 ===== */
@@ -1775,7 +1519,6 @@ function renderList() {
   syncListTabBtns();
   // タブ絞り込み：進行中＝終了案件（見送り・契約）以外／実績＝終了案件のみ
   deals = deals.filter(d => listTab === 'past' ? PAST_STATUSES.includes(d.status) : !PAST_STATUSES.includes(d.status));
-  if (listPreset) deals = deals.filter(d => listPreset.statuses.includes(d.status));
   if (kw)      deals = deals.filter(d => d.name.toLowerCase().includes(kw) || d.area.toLowerCase().includes(kw));
   if (fStatus) deals = deals.filter(d => d.status === fStatus);
   if (fStaff)  deals = deals.filter(d => d.staff === fStaff);
@@ -1967,7 +1710,6 @@ function openDetail(id) {
   calcPL();
   renderShiryoPL();
   renderShiryoDetail();
-  renderHistoryTab(deal);
   // サマリータブをデフォルト表示
   const summaryBtn = document.querySelector('#detail-tabs .tab-btn');
   switchTab('summary', summaryBtn);
@@ -2217,17 +1959,17 @@ function refreshAfterReg(deal) {
     const items = grid.querySelectorAll('.info-item');
     if (items[2]) items[2].querySelector('.info-item-val').innerHTML = statusChip(deal.status);
   }
-  renderHistoryTab(deal);
   renderSummaryTab(deal);
   renderHoldBanner();
   if (currentView === 'list') renderList();
   if (currentView === 'home') renderHome();
 }
 
-/* タブ移動（サマリーの誘導ボタン・ステップバーの！から使用） */
+/* タブ移動（サマリーの誘導ボタン・ステップバーの！から使用）
+   ※対象外のタブ名（旧・建築プラン/判断と履歴）は何もしない＝安全に無効化 */
 function gotoTab(name) {
   const tabBtns = document.querySelectorAll('#detail-tabs .tab-btn');
-  const tabMap = {summary:0, pl:1, market:2, hearing:3, archplan:4, history:5};
+  const tabMap = {summary:0, pl:1, market:2, hearing:3};
   const idx = tabMap[name];
   if (idx !== undefined && tabBtns[idx]) switchTab(name, tabBtns[idx]);
 }
@@ -2390,90 +2132,6 @@ function switchTab(name, el) {
   }
 }
 
-/* ===== 履歴タブ ===== */
-/* 遷移先の表示ラベル：見送りは理由（8分類）つきで表示 */
-function toLabel(h) {
-  return (h.to === '見送り' && h.reason) ? '見送り（理由：' + h.reason + '）' : h.to;
-}
-
-function renderHistoryTab(deal) {
-  const csEl = document.getElementById('history-current-status');
-  if (csEl) csEl.innerHTML = statusChip(deal.status);
-
-  const nSel = document.getElementById('history-new-status');
-  if (nSel) nSel.value = deal.status;
-  onNewStatusChange();
-
-  const tl = document.getElementById('history-timeline');
-  if (!tl) return;
-
-  const items = HISTORY.filter(h => h.dealId === deal.id)
-    .sort((a, b) => b.date.localeCompare(a.date));
-
-  if (items.length === 0) {
-    tl.innerHTML = '<div style="color:var(--sub);font-size:13px;padding:12px 0">変更履歴がありません</div>';
-    return;
-  }
-
-  tl.innerHTML = items.map(h => {
-    // 判断イベント（type:'decision'）はバッジで区別表示
-    if (h.type === 'decision') {
-      return '<div class="timeline-item">'
-        + '<div class="timeline-dot timeline-dot-ok">✎</div>'
-        + '<div class="timeline-body">'
-        + '<div class="timeline-meta">' + h.date + '　担当：' + h.by + '</div>'
-        + '<div class="timeline-text"><span class="log-badge log-badge-decision">判断</span>' + h.text + '</div>'
-        + '</div></div>';
-    }
-    let dotCls = 'timeline-dot-default';
-    if (h.to === '契約') dotCls = 'timeline-dot-ok';
-    else if (h.to === '見送り') dotCls = 'timeline-dot-ng';
-    else if (h.to === '保留') dotCls = 'timeline-dot-warn';
-    return '<div class="timeline-item">'
-      + '<div class="timeline-dot ' + dotCls + '">→</div>'
-      + '<div class="timeline-body">'
-      + '<div class="timeline-meta">' + h.date + '　担当：' + h.by + '</div>'
-      + '<div class="timeline-text"><span class="log-badge log-badge-update">更新</span><strong>' + h.from + '</strong> → <strong>' + toLabel(h) + '</strong></div>'
-      + '</div></div>';
-  }).join('');
-}
-
-/* 見送り選択時のみ理由セレクタ（8分類）を表示。保留は自由入力メモ（変更理由・メモ欄）のみで可 */
-function onNewStatusChange() {
-  const v = ((document.getElementById('history-new-status') || {}).value) || '';
-  const wrap = document.getElementById('misoku-reason-wrap');
-  if (wrap) wrap.style.display = (v === '見送り') ? '' : 'none';
-}
-
-function changeStatus() {
-  if (currentDealId === null) return;
-  const deal = DEALS.find(d => d.id === currentDealId);
-  if (!deal) return;
-  const nSel = document.getElementById('history-new-status');
-  const newStatus = nSel ? nSel.value : '';
-  if (!newStatus || newStatus === deal.status) { showToast('ステータスが変わっていません'); return; }
-  const from = deal.status;
-  const entry = {dealId: deal.id, date: TODAY, from: from, to: newStatus, by: '田中'};
-  // 見送りは理由（8分類）を記録に含める
-  if (newStatus === '見送り') {
-    const rSel = document.getElementById('misoku-reason');
-    if (rSel && rSel.value) entry.reason = rSel.value;
-  }
-  HISTORY.push(entry);
-  deal.status = newStatus;
-  if (newStatus === '保留') deal.holdDate = TODAY;
-  else if (from === '保留') deal.holdDate = null;
-  renderHistoryTab(deal);
-
-  // info grid更新
-  const grid = document.getElementById('detail-info-grid');
-  if (grid) {
-    const items = grid.querySelectorAll('.info-item');
-    if (items[2]) items[2].querySelector('.info-item-val').innerHTML = statusChip(deal.status);
-  }
-  showToast('ステータスを「' + newStatus + '」に変更しました');
-}
-
 /* ===== 新規案件登録（専用画面）＝5項目入力→「登録」で収支シートへ／「検討しない」で見送り記録 ===== */
 let newregShiryo = []; // 登録前の一時添付（登録/見送りの確定時に案件の shiryo へ移す）
 
@@ -2567,7 +2225,6 @@ function miokuriSubmit() {
   HISTORY.push({dealId: deal.id, date: TODAY, from: '—', to: '見送り', by: '田中', reason: reason});
   closeMiokuriModal();
   // 一覧の「実績」タブへ（見送り案件として保存済み）
-  listPreset = null;
   listTab = 'past';
   const fs = document.getElementById('filter-status');
   if (fs) fs.value = '';
@@ -2726,170 +2383,6 @@ function toggleHelp(btn) {
   if (d) d.style.display = (d.style.display === 'none') ? 'block' : 'none';
 }
 
-/* ===== V4 ファネル ===== */
-let funnelPeriod = 'all'; // 'all'＝全期間／'month'＝今月（TODAYのYYYY-MM）
-let funnelStaff  = 'all'; // 'all'＝全社／'田中'／'佐藤'／'鈴木'（案件の担当 deal.staff で絞る）
-
-/* セグメントのactive切替＝同じグループ（親要素）内だけ入れ替える */
-function activateSeg(btn) {
-  if (!btn || !btn.parentElement) return;
-  btn.parentElement.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-}
-
-function setFunnelPeriod(p, btn) {
-  funnelPeriod = p;
-  activateSeg(btn);
-  renderFunnel();
-}
-
-function setFunnelStaff(s, btn) {
-  funnelStaff = s;
-  activateSeg(btn);
-  renderFunnel();
-}
-
-/* 期間・担当で絞ったDEALS（担当＝案件のstaff。h.byではない） */
-function funnelDealsScope() {
-  const thisMonth = TODAY.slice(0, 7);
-  let deals = DEALS;
-  if (funnelPeriod === 'month') deals = deals.filter(d => (d.acquiredDate || '').startsWith(thisMonth));
-  if (funnelStaff !== 'all')    deals = deals.filter(d => d.staff === funnelStaff);
-  return deals;
-}
-
-function calcFunnel() {
-  const stages = ['取得','検討開始','市場調査','収支作成','ヒアリング','プラン依頼','買付提出','見送り','契約'];
-  const statusMap = {
-    '取得':['未検討'],
-    '検討開始':['検討中'],
-    '市場調査':['市場調査中'],
-    '収支作成':['概算収支作成済み'],
-    'ヒアリング':['販売会社ヒアリング中'],
-    'プラン依頼':['建築プラン依頼中'],
-    '買付提出':['買付検討中','買付提出'],
-    '見送り':['見送り'],
-    '契約':['契約']
-  };
-  const thisMonth = TODAY.slice(0, 7);
-  // 今月＝HISTORYを当月でフィルタ（取得ステージのみ acquiredDate で判定）
-  let histScope = funnelPeriod === 'month' ? HISTORY.filter(h => (h.date || '').startsWith(thisMonth)) : HISTORY;
-  // 担当＝案件の担当（deal.staff）で絞る
-  if (funnelStaff !== 'all') {
-    const staffIds = new Set(DEALS.filter(d => d.staff === funnelStaff).map(d => d.id));
-    histScope = histScope.filter(h => staffIds.has(h.dealId));
-  }
-  const counts = {};
-  stages.forEach(s => {
-    if (s === '取得') {
-      counts[s] = funnelDealsScope().length;
-      return;
-    }
-    // h.toガード＝判断イベント（type:'decision'・toなし）を集計に混ぜない
-    counts[s] = new Set(histScope.filter(h => h.to && statusMap[s].includes(h.to)).map(h => h.dealId)).size;
-  });
-  return {stages, counts};
-}
-
-function renderFunnel() {
-  const {stages, counts} = calcFunnel();
-  const maxVal = Math.max(...stages.map(s => counts[s] || 0), 1);
-
-  const chart = document.getElementById('funnel-chart');
-  if (!chart) return;
-
-  chart.innerHTML = stages.map(s => {
-    const cnt = counts[s] || 0;
-    const barPct = Math.round((cnt / maxVal) * 100);
-    let rowCls = '';
-    let barCls = '';
-    if (s === '見送り') rowCls = 'funnel-row-ng';
-    else if (s === '契約') rowCls = 'funnel-row-ok';
-    else if (cnt < maxVal * 0.4 && s !== '取得') barCls = 'bar-drop';
-    return '<div class="funnel-row ' + rowCls + '">'
-      + '<div class="funnel-label">' + s + '</div>'
-      + '<div class="funnel-bar-wrap">'
-      + '<div class="funnel-bar ' + barCls + '" style="width:' + Math.max(barPct, 4) + '%">'
-      + '<span class="funnel-bar-num">' + cnt + '</span></div></div>'
-      + '<div class="funnel-count">' + cnt + '</div>'
-      + '</div>';
-  }).join('');
-
-  // 統計カード＝期間×担当に連動
-  const dealsScope = funnelDealsScope();
-
-  const keiyaku = dealsScope.filter(d => d.status === '契約').length;
-  const misend  = dealsScope.filter(d => d.status === '見送り').length;
-  const hold    = dealsScope.filter(d => d.status === '保留').length;
-  const kaifu   = dealsScope.filter(d => d.status === '買付提出' || d.status === '買付検討中').length;
-  const active  = dealsScope.filter(d => ['検討中','市場調査中','概算収支作成済み','販売会社ヒアリング中','建築プラン依頼中'].includes(d.status)).length;
-
-  setText('fstat-total', dealsScope.length + '件');
-  setText('fstat-keiyaku', keiyaku + '件');
-  setText('fstat-misend', misend + '件');
-  setText('fstat-hold', hold + '件');
-  setText('fstat-kaifu', kaifu + '件');
-  setText('fstat-active', active + '件');
-
-  // 担当者別テーブル＝常設（全員比較用・期間のみ連動）。選択中の担当行をハイライト
-  const thisMonth = TODAY.slice(0, 7);
-  const periodScope = funnelPeriod === 'month'
-    ? DEALS.filter(d => (d.acquiredDate || '').startsWith(thisMonth))
-    : DEALS;
-
-  const staffTbody = document.getElementById('funnel-staff-tbody');
-  if (!staffTbody) return;
-  staffTbody.innerHTML = '';
-  ['田中','佐藤','鈴木'].forEach(st => {
-    const my = periodScope.filter(d => d.staff === st);
-    const tr = document.createElement('tr');
-    if (st === funnelStaff) tr.style.background = 'var(--green-light)';
-    tr.innerHTML = '<td><strong>' + st + '</strong></td>'
-      + '<td>' + my.length + '件</td>'
-      + '<td class="text-ok">' + my.filter(d => d.status === '契約').length + '件</td>'
-      + '<td class="text-ng">' + my.filter(d => d.status === '見送り').length + '件</td>'
-      + '<td class="text-warn">' + my.filter(d => d.status === '保留').length + '件</td>';
-    staffTbody.appendChild(tr);
-  });
-}
-
-/* ===== V5 判断履歴（全案件横断・HISTORYから自動生成） ===== */
-function renderLog() {
-  const wrap = document.getElementById('log-timeline');
-  if (!wrap) return;
-  setText('log-count', '　全' + HISTORY.length + '件');
-  const items = HISTORY.map((h, i) => ({h, i}))
-    .sort((a, b) => b.h.date.localeCompare(a.h.date) || b.i - a.i); // 日付降順・同日中は新しい記録が先
-  if (items.length === 0) {
-    wrap.innerHTML = '<div style="color:var(--sub);font-size:13px;padding:12px 0">記録がありません</div>';
-    return;
-  }
-  wrap.innerHTML = items.map(({h}) => {
-    const d = DEALS.find(x => x.id === h.dealId);
-    const name = d ? d.name : '（案件）';
-    const link = '<a style="color:var(--green);font-weight:700;cursor:pointer" onclick="openDetail(' + h.dealId + ')">' + name + '</a>';
-    // 判断イベント（type:'decision'）はステータス変更（データ更新）とバッジで区別
-    if (h.type === 'decision') {
-      return '<div class="timeline-item">'
-        + '<div class="timeline-dot timeline-dot-ok">✎</div>'
-        + '<div class="timeline-body">'
-        + '<div class="timeline-meta">' + h.date + '　担当：' + h.by + '</div>'
-        + '<div class="timeline-text"><span class="log-badge log-badge-decision">判断</span>' + link + '　' + h.text + '</div>'
-        + '</div></div>';
-    }
-    let dotCls = 'timeline-dot-default';
-    if (h.to === '契約') dotCls = 'timeline-dot-ok';
-    else if (h.to === '見送り') dotCls = 'timeline-dot-ng';
-    else if (h.to === '保留') dotCls = 'timeline-dot-warn';
-    return '<div class="timeline-item">'
-      + '<div class="timeline-dot ' + dotCls + '">→</div>'
-      + '<div class="timeline-body">'
-      + '<div class="timeline-meta">' + h.date + '　担当：' + h.by + '</div>'
-      + '<div class="timeline-text"><span class="log-badge log-badge-update">更新</span>' + link + '　' + h.from + ' → <strong>' + toLabel(h) + '</strong></div>'
-      + '</div></div>';
-  }).join('');
-}
-
 /* ===== V6 設定：ステップ名（仮）の編集＝STEP_LABELSに即反映（in-memory） ===== */
 function renderSettings() {
   const wrap = document.getElementById('step-label-inputs');
@@ -2977,7 +2470,7 @@ const NEXT_RULES = {
     why: [
       '建築費の確定値を収支シートに反映すると、利益率の確度が上がります。',
       '買付前の最終チェックとして、下限価格でも利益率が確保できているかを確認しましょう。',
-      '判断の根拠を「判断と履歴」タブに記録しておくと、後から振り返れます。',
+      '判断の根拠を記録しておくと、後から振り返れます。',
     ],
     theme: '最終収支確認',
   },
@@ -3238,8 +2731,8 @@ function renderSummaryTab(deal) {
     {label:STEP_LABELS[1], statuses:['市場調査中'],                     reg:'market',  tab:'market'},
     {label:STEP_LABELS[2], statuses:['概算収支作成済み'],               reg:'pl',      tab:'pl'},
     {label:STEP_LABELS[3], statuses:['販売会社ヒアリング中'],           reg:'hearing', tab:'hearing'},
-    {label:STEP_LABELS[4], statuses:['建築プラン依頼中'],               reg:'plan',    tab:'archplan'},
-    {label:STEP_LABELS[5], statuses:['買付検討中','買付提出','契約'],   reg:null,      tab:'history'},
+    {label:STEP_LABELS[4], statuses:['建築プラン依頼中'],               reg:'plan',    tab:null},  // 建築プランタブは契約範囲外＝クリック遷移なし（ラベルは維持）
+    {label:STEP_LABELS[5], statuses:['買付検討中','買付提出','契約'],   reg:null,      tab:null},  // 判断と履歴タブは契約範囲外＝クリック遷移なし（ラベルは維持）
   ];
   const curIdx = STATUS_ORDER.indexOf(deal.status);
 
@@ -3294,8 +2787,15 @@ function renderSummaryTab(deal) {
   const aBtn = document.getElementById('summary-action-btn');
   if (qEl)  qEl.textContent  = rule.question  || '—';
   if (aBtn) {
-    aBtn.textContent = rule.action || '詳細を開く';
-    aBtn.onclick = rule.tab ? () => { gotoTab(rule.tab); } : () => {};
+    // 遷移先タブが現存するものだけボタンを表示（旧・建築プラン/判断と履歴タブ行きは契約範囲外＝問いの文言のみ表示）
+    const VALID_TABS = {summary:true, pl:true, market:true, hearing:true};
+    if (rule.tab && VALID_TABS[rule.tab]) {
+      aBtn.style.display = '';
+      aBtn.textContent = rule.action || '詳細を開く';
+      aBtn.onclick = () => { gotoTab(rule.tab); };
+    } else {
+      aBtn.style.display = 'none';
+    }
   }
 
   // なぜこのステップなのか
@@ -3386,8 +2886,7 @@ function applyHashRoute() {
   if (h === 'home') { showView('home', q('[data-view=home]')); return true; }
   if (h === 'newreg') { openNewReg(); return true; }
   if (h === 'list') { openListAll(q('[data-view=list]')); return true; }
-  if (LIST_PRESETS[h]) { openListPreset(h, q('[data-nav="' + h + '"]')); return true; }
-  if (['log','funnel','settings'].includes(h)) { showView(h, q('[data-view=' + h + ']')); return true; }
+  if (h === 'settings') { showView('settings', q('[data-view=settings]')); return true; }
   return false;
 }
 
