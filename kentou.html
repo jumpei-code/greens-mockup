@@ -197,6 +197,21 @@ input,select,textarea{font-family:inherit;font-size:13px}
 .first-est-title{font-size:11px;font-weight:700;color:var(--green);margin-bottom:4px}
 .dup-warning{background:var(--warn-bg);border:1px solid #fcd34d;border-radius:6px;padding:8px 12px;font-size:12px;color:var(--warn-fg);margin-top:6px;line-height:1.6}
 .past-case-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;margin-bottom:8px;background:#fff;flex-wrap:wrap}
+/* ===== 一覧タブ（進行中/過去）・過去行のミュート・資料（📎）添付 ===== */
+.data-table tbody tr.past-row{background:#fafafa}
+.data-table tbody tr.past-row td{color:var(--sub)}
+.data-table tbody tr.past-row .chip{opacity:.65}
+.data-table tbody tr.past-row:hover{background:#f0f1f3}
+.clip-btn{border:1px solid var(--line);background:#fff;border-radius:5px;padding:2px 8px;font-size:13px;line-height:1.3;cursor:pointer;vertical-align:middle}
+.clip-btn:hover{background:var(--green-light);border-color:var(--green-mid)}
+.clip-badge{display:inline-block;background:var(--green-light);color:var(--green);border-radius:10px;padding:1px 7px;font-size:11px;font-weight:700;margin-right:6px;vertical-align:middle;white-space:nowrap}
+.shiryo-box{border:1.5px dashed var(--green-mid);border-radius:8px;padding:12px 14px;background:#fff}
+.shiryo-title{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.shiryo-item{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--body);padding:5px 0;border-bottom:1px dashed var(--line)}
+.shiryo-item:last-child{border-bottom:none}
+.shiryo-del{border:none;background:transparent;color:var(--sub);font-size:11.5px;cursor:pointer;padding:2px 4px}
+.shiryo-del:hover{color:var(--ng-fg)}
+.shiryo-empty{font-size:12px;color:var(--sub)}
 /* ===== Excel再現シート ===== */
 .xl-wrap{overflow-x:auto;margin-top:4px}
 .xl{border-collapse:collapse;font-family:"Meiryo UI",Meiryo,sans-serif;font-size:13px;min-width:1080px;background:#fff}
@@ -500,6 +515,11 @@ input,select,textarea{font-family:inherit;font-size:13px}
         <button class="btn btn-primary" onclick="createNewDeal()">➕ 新規案件登録</button>
       </div>
       <div id="hold-banner-wrap"></div>
+      <!-- 進行中／過去（見送り・完了）のタブ切替（JSのみ・ページ遷移なし） -->
+      <div class="tabs" style="margin-bottom:14px">
+        <button class="tab-btn active" id="list-tab-active" onclick="setListTab('active')">進行中</button>
+        <button class="tab-btn" id="list-tab-past" onclick="setListTab('past')">過去（見送り・完了）</button>
+      </div>
       <div class="filter-bar">
         <input class="search-input" type="text" id="search-input" placeholder="案件名・エリアで検索…" oninput="renderList()">
         <select class="filter-select" id="filter-status" onchange="clearListPreset()">
@@ -524,7 +544,7 @@ input,select,textarea{font-family:inherit;font-size:13px}
             <thead>
               <tr>
                 <th>案件名</th><th>エリア</th><th>ステータス</th><th>次に行うこと</th><th>種別</th>
-                <th>担当</th><th>取得日</th><th>仕入価格</th><th>備考</th>
+                <th>担当</th><th>取得日</th><th>仕入価格</th><th>備考</th><th>資料</th>
               </tr>
             </thead>
             <tbody id="deals-tbody"></tbody>
@@ -701,6 +721,13 @@ input,select,textarea{font-family:inherit;font-size:13px}
                 <td colspan="2"><input type="text" id="pl-min-shikichi" style="width:140px"></td>
               </tr>
             </table>
+
+            <!-- ===== 資料（任意）：画像・PDFの一元管理（一覧の📎・登録・収支のどこから追加しても同じ案件の資料に入る） ===== -->
+            <div class="shiryo-box" style="margin-top:8px">
+              <div class="shiryo-title">📎 資料（任意）｜画像・PDF共通</div>
+              <div id="pl-shiryo-list"></div>
+              <button class="btn btn-secondary btn-sm mt8" onclick="openShiryoPicker(currentDealId)">ファイルを選択（資料を追加）</button>
+            </div>
 
             <!-- ===== 原価〜記名欄 ===== -->
             <table class="xl" style="margin-top:4px">
@@ -1411,6 +1438,9 @@ input,select,textarea{font-family:inherit;font-size:13px}
   </div>
 </div>
 
+<!-- 資料添付用の隠しファイル選択（モック＝ファイル名のみメモリ保持・実アップロードなし） -->
+<input type="file" id="shiryo-file-input" multiple accept="image/*,.pdf" style="display:none" onchange="onShiryoSelected(this)">
+
 <script>
 const TODAY = '2026-07-11';
 const TODAY_DATE = new Date('2026-07-11');
@@ -1420,13 +1450,13 @@ const TODAY_DATE = new Date('2026-07-11');
 const DEALS = [
   {id:1,name:'○○邸新築',area:'世田谷',status:'概算収支作成済み',staff:'田中',type:'戸建て建売',acquiredDate:'2026-06-01',price:null,note:'',holdDate:null,reg:{market:true,pl:true,hearing:false,plan:false}},
   {id:2,name:'△△町土地',area:'杉並',status:'市場調査中',staff:'佐藤',type:'土地',acquiredDate:'2026-06-05',price:null,note:'',holdDate:null,reg:{market:true,pl:false,hearing:false,plan:false}},
-  {id:3,name:'□□2丁目',area:'練馬',status:'買付提出',staff:'鈴木',type:'戸建て建売',acquiredDate:'2026-05-15',price:null,note:'',holdDate:null,reg:{market:true,pl:true,hearing:true,plan:true}},
+  {id:3,name:'□□2丁目',area:'練馬',status:'買付提出',staff:'鈴木',type:'戸建て建売',acquiredDate:'2026-05-15',price:null,note:'',holdDate:null,reg:{market:true,pl:true,hearing:true,plan:true},shiryo:[{name:'物件概要書.pdf'},{name:'測量図.pdf'}]},
   {id:4,name:'××ハイツ跡地',area:'中野',status:'見送り',staff:'田中',type:'土地',acquiredDate:'2026-05-20',price:null,note:'接道条件',holdDate:null,reg:{market:true,pl:false,hearing:false,plan:false}},
   {id:15,name:'大島6丁目土地',area:'江東',status:'販売会社ヒアリング中',staff:'田中',type:'土地',acquiredDate:'2026-07-02',price:null,note:'',holdDate:null,reg:{market:true,pl:true,hearing:true,plan:false}},
-  {id:5,name:'北葛西建売',area:'江戸川',status:'概算収支作成済み',staff:'田中',type:'戸建て建売',acquiredDate:'2026-06-10',price:82800000,note:'',holdDate:null,reg:{market:true,pl:true,hearing:false,plan:false}},
+  {id:5,name:'北葛西建売',area:'江戸川',status:'概算収支作成済み',staff:'田中',type:'戸建て建売',acquiredDate:'2026-06-10',price:82800000,note:'',holdDate:null,reg:{market:true,pl:true,hearing:false,plan:false},shiryo:[{name:'物件概要書.pdf'},{name:'現地写真_南側.jpg'},{name:'公図.pdf'}]},
   {id:6,name:'板橋本町土地',area:'板橋',status:'検討中',staff:'佐藤',type:'土地',acquiredDate:'2026-06-20',price:null,note:'',holdDate:null,reg:{market:false,pl:false,hearing:false,plan:false}},
   {id:7,name:'荒川南千住',area:'荒川',status:'販売会社ヒアリング中',staff:'鈴木',type:'戸建て建売',acquiredDate:'2026-06-08',price:null,note:'',holdDate:null,reg:{market:false,pl:true,hearing:true,plan:false}},
-  {id:8,name:'葛飾立石',area:'葛飾',status:'建築プラン依頼中',staff:'田中',type:'戸建て建売',acquiredDate:'2026-06-03',price:null,note:'',holdDate:null,reg:{market:true,pl:true,hearing:true,plan:true}},
+  {id:8,name:'葛飾立石',area:'葛飾',status:'建築プラン依頼中',staff:'田中',type:'戸建て建売',acquiredDate:'2026-06-03',price:null,note:'',holdDate:null,reg:{market:true,pl:true,hearing:true,plan:true},shiryo:[{name:'建築プラン図面.pdf'}]},
   {id:9,name:'足立梅島',area:'足立',status:'保留',staff:'佐藤',type:'土地',acquiredDate:'2026-05-07',price:null,note:'売主都合で保留',holdDate:'2026-06-06',reg:{market:true,pl:true,hearing:false,plan:false}},
   {id:10,name:'墨田横川',area:'墨田',status:'保留',staff:'鈴木',type:'戸建て建売',acquiredDate:'2026-06-15',price:null,note:'金融機関調整中',holdDate:'2026-06-28',reg:{market:true,pl:false,hearing:false,plan:false}},
   {id:11,name:'品川戸越',area:'品川',status:'契約',staff:'田中',type:'戸建て建売',acquiredDate:'2026-05-01',price:6800,note:'',holdDate:null,reg:{market:true,pl:true,hearing:true,plan:true}},
@@ -1590,6 +1620,7 @@ const LIST_PRESETS = {
 };
 function openListPreset(key, el) {
   listPreset = LIST_PRESETS[key] || null;
+  listTab = 'active'; // プリセットは進行中の案件が対象
   const fs = document.getElementById('filter-status');
   if (fs) fs.value = (listPreset && listPreset.statuses.length === 1) ? listPreset.statuses[0] : '';
   showView('list', el);
@@ -1597,12 +1628,16 @@ function openListPreset(key, el) {
 }
 function openListAll(el) {
   listPreset = null;
+  listTab = 'active';
   const fs = document.getElementById('filter-status');
   if (fs) fs.value = '';
   showView('list', el);
 }
 function clearListPreset() { // ステータス絞り込みを手動変更したらプリセット解除
   listPreset = null;
+  // 見送り・契約を選んだら「過去」タブへ、それ以外なら「進行中」タブへ自動で合わせる
+  const v = ((document.getElementById('filter-status') || {value:''}).value) || '';
+  if (v) listTab = PAST_STATUSES.includes(v) ? 'past' : 'active';
   syncListHeader();
   renderList();
 }
@@ -1620,6 +1655,20 @@ function syncListHeader() {
 
 /* ===== V1 一覧 ===== */
 let currentDealId = null;
+
+/* 一覧タブ：進行中／過去（見送り・完了＝契約） */
+const PAST_STATUSES = ['見送り', '契約'];
+let listTab = 'active'; // 'active' | 'past'
+function setListTab(tab) {
+  listTab = tab;
+  renderList();
+}
+function syncListTabBtns() {
+  const a = document.getElementById('list-tab-active');
+  const p = document.getElementById('list-tab-past');
+  if (a) a.classList.toggle('active', listTab === 'active');
+  if (p) p.classList.toggle('active', listTab === 'past');
+}
 
 function renderHoldBanner() {
   // ログインユーザー（デモ固定＝田中）の担当分のみ表示（他担当の保留は本人の画面に出さない）
@@ -1653,6 +1702,9 @@ function renderList() {
     return da - db;
   });
 
+  syncListTabBtns();
+  // タブ絞り込み：進行中＝終了案件（見送り・契約）以外／過去＝終了案件のみ
+  deals = deals.filter(d => listTab === 'past' ? PAST_STATUSES.includes(d.status) : !PAST_STATUSES.includes(d.status));
   if (listPreset) deals = deals.filter(d => listPreset.statuses.includes(d.status));
   if (kw)      deals = deals.filter(d => d.name.toLowerCase().includes(kw) || d.area.toLowerCase().includes(kw));
   if (fStatus) deals = deals.filter(d => d.status === fStatus);
@@ -1663,15 +1715,19 @@ function renderList() {
   if (!tbody) return;
 
   if (deals.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:32px;color:var(--sub)">該当する案件がありません</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:32px;color:var(--sub)">該当する案件がありません</td></tr>';
   } else {
     tbody.innerHTML = deals.map(d => {
       const hd = holdDays(d);
+      const isPast = PAST_STATUSES.includes(d.status);
+      const pastCls = isPast ? ' past-row' : '';
       const alertCls = hd > 30 ? ' hold-alert' : '';
-      const myCls = d.staff === '田中' ? ' my-row' : '';  // ログインユーザー（デモ固定）の担当案件
+      const myCls = (!isPast && d.staff === '田中') ? ' my-row' : '';  // ログインユーザー（デモ固定）の担当案件（過去タブではグレー優先）
       const holdInfo = hd > 30 ? '<span style="margin-left:6px;font-size:10px;color:var(--warn-fg);font-weight:700">⚠ ' + hd + '日</span>' : '';
       const priceStr = d.price != null ? Math.round(d.price).toLocaleString('ja-JP') + '円' : '—';
-      return '<tr class="' + myCls + alertCls + '" onclick="openDetail(' + d.id + ')">'
+      const sh = d.shiryo || [];
+      const clipBadge = sh.length > 0 ? '<span class="clip-badge" title="資料' + sh.length + '件">📎' + sh.length + '</span>' : '';
+      return '<tr class="' + myCls + alertCls + pastCls + '" onclick="openDetail(' + d.id + ')">'
         + '<td><strong>' + d.name + '</strong>' + holdInfo + '</td>'
         + '<td>' + d.area + '</td>'
         + '<td>' + statusChip(d.status) + '</td>'
@@ -1681,12 +1737,60 @@ function renderList() {
         + '<td>' + d.acquiredDate + '</td>'
         + '<td style="text-align:right">' + priceStr + '</td>'
         + '<td style="color:var(--sub);font-size:12px">' + (d.note || '') + '</td>'
+        + '<td style="white-space:nowrap">' + clipBadge
+        + '<button class="clip-btn" title="資料を追加" onclick="event.stopPropagation();openShiryoPicker(' + d.id + ')">📎</button></td>'
         + '</tr>';
     }).join('');
   }
 
   const pager = document.getElementById('pager-info');
   if (pager) pager.textContent = deals.length + '件 / 全' + DEALS.length + '件';
+}
+
+/* ===== 資料（📎）管理：一覧・登録・収支のどこから追加しても同じ deal.shiryo 配列に一元化 ===== */
+let shiryoTargetId = null;
+function getShiryo(deal) {
+  if (!deal.shiryo) deal.shiryo = [];
+  return deal.shiryo;
+}
+function openShiryoPicker(dealId) {
+  if (dealId === null || dealId === undefined) { showToast('案件を選択してください'); return; }
+  shiryoTargetId = dealId;
+  const inp = document.getElementById('shiryo-file-input');
+  if (inp) { inp.value = ''; inp.click(); }
+}
+function onShiryoSelected(inp) {
+  const deal = DEALS.find(d => d.id === shiryoTargetId);
+  if (!deal || !inp.files || inp.files.length === 0) return;
+  const arr = getShiryo(deal);
+  Array.from(inp.files).forEach(f => arr.push({name: f.name}));
+  showToast('資料を' + inp.files.length + '件追加しました（' + deal.name + '）');
+  inp.value = '';
+  refreshShiryoViews();
+}
+function removeShiryo(dealId, idx) {
+  const deal = DEALS.find(d => d.id === dealId);
+  if (!deal || !deal.shiryo || !deal.shiryo[idx]) return;
+  const removed = deal.shiryo.splice(idx, 1);
+  showToast('資料「' + removed[0].name + '」を削除しました');
+  refreshShiryoViews();
+}
+function refreshShiryoViews() {
+  if (currentView === 'list') renderList();
+  renderShiryoPL();
+}
+function renderShiryoPL() {
+  const list = document.getElementById('pl-shiryo-list');
+  if (!list) return;
+  const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
+  if (!deal) { list.innerHTML = '<div class="shiryo-empty">案件を選択すると資料を添付できます</div>'; return; }
+  const sh = getShiryo(deal);
+  list.innerHTML = sh.length === 0
+    ? '<div class="shiryo-empty">まだ資料がありません（任意）。物件概要書・現地写真・図面などを添付できます。</div>'
+    : sh.map((f, i) =>
+        '<div class="shiryo-item"><span>📄</span><span style="flex:1">' + f.name + '</span>'
+        + '<button class="shiryo-del" title="この資料を削除" onclick="removeShiryo(' + deal.id + ',' + i + ')">✕ 削除</button></div>'
+      ).join('');
 }
 
 /* ===== V3 詳細 ===== */
@@ -1752,6 +1856,7 @@ function openDetail(id) {
 
   setInner('sheet-dup-warning', '');
   calcPL();
+  renderShiryoPL();
   renderHistoryTab(deal);
   // サマリータブをデフォルト表示
   const summaryBtn = document.querySelector('#detail-tabs .tab-btn');
@@ -2267,6 +2372,7 @@ function createNewDeal() {
     status: '未検討', staff: '田中', type: '戸建て建売',
     acquiredDate: TODAY, price: null, note: '', holdDate: null,
     reg: {market:false, pl:false, hearing:false, plan:false},
+    shiryo: [],
   };
   DEALS.push(deal);
   HISTORY.push({dealId: newId, date: TODAY, from: '—', to: '未検討', by: '田中'});
