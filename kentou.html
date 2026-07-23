@@ -292,6 +292,11 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .pl-plan-table td.pl-plan-group{background:#FFFFCC;font-weight:700;font-size:11.5px;overflow-wrap:anywhere}
 .pl-plan-table input{width:100%;min-width:0}
 .pl-market-table tr.market-total td{background:#f0f5f1;font-weight:700}
+.pl-section.pl-collapsed > :not(.pl-section-title){display:none}
+.pl-section-title.pl-sec-toggle{cursor:pointer;user-select:none;display:flex;align-items:center;gap:8px}
+.pl-sec-arrow{font-size:10px;color:var(--sub);width:14px;flex:none}
+.pl-sec-badge{color:#c62828;font-size:11px;font-weight:700}
+.pl-free-note{color:var(--sub);font-size:11px}
 .pl-save-bar{position:fixed;bottom:18px;right:26px;z-index:50}
 .pl-save-bar .btn{box-shadow:0 3px 12px rgba(26,107,58,.35)}
 .pl-market-table .pl-auto{min-width:0}
@@ -1445,7 +1450,7 @@ const SHUSHI_INPUTS = {
   'アパート': ['G3','G4','J4','K4','L4','M4','J5','K5','L5','M5','B6','J6','K6','L6','M6','B7','J7','K7','L7','M7','B8','J8','K8','L8','M8','B9','J9','K9','L9','M9','N14','C16','C18','C19','C20','C21','C22','N20','G21','G22','G24','C25','C26','C27','C28','C29','C30','D33','D34','D35','D36','D37','D38','D39','C40','C41','C42','C43','C47','D45','D46']
 };
 const SHUSHI_META_INPUTS = {
-  '戸建て（建売・土地売り）': ['B1','B3','B4','B5','B10','B11','D8','D9','D10','D11','G4','G5','G6','G7','G8','G9','G10','G11','S6','W6','Z6','S7','W7','Z7','S8','W8','Z8','S9','W9','Z9','S10','W10','Z10','S11','W11','Z11','S17','W17','Z17','S18','W18','Z18','S19','W19','Z19','S20','W20','Z20','S21','W21','Z21','D17','D18','D19','D20','D22','D25','D26','D30','X26','Z26','AB26','X27','Z27','AB27','D41','D42','D43','D44','D45','D46','X32','Z32','AB32','X33','Z33','AB33','X38','Z38','AB38','X39','Z39','AB39'],
+  '戸建て（建売・土地売り）': ['B1','B3','B4','B5','B10','B11','B23','B24','B31','B47','D8','D9','D10','D11','G4','G5','G6','G7','G8','G9','G10','G11','S6','W6','Z6','S7','W7','Z7','S8','W8','Z8','S9','W9','Z9','S10','W10','Z10','S11','W11','Z11','S17','W17','Z17','S18','W18','Z18','S19','W19','Z19','S20','W20','Z20','S21','W21','Z21','D17','D18','D19','D20','D22','D25','D26','D30','X26','Z26','AB26','X27','Z27','AB27','D41','D42','D43','D44','D45','D46','X32','Z32','AB32','X33','Z33','AB33','X38','Z38','AB38','X39','Z39','AB39'],
   '土地転売（業者売り）': ['B1','B3','B4','B5','B10','D8','D9','D10','D11','G4','G5','G6','G7','G8','G9','G10','G11','J6','N6','S6','W6','Z6','J7','N7','S7','W7','Z7','J8','N8','S8','W8','Z8','J9','N9','S9','W9','Z9','J10','N10','S10','W10','Z10','J11','N11','S11','W11','Z11','J17','N17','S17','W17','Z17','J18','N18','S18','W18','Z18','J19','N19','S19','W19','Z19','J20','N20','S20','W20','Z20','J21','N21','S21','W21','Z21','D19','D20','D21','D22','D23','D24','D25','D26','D35','D36','D37','D38','D39'],
   'アパート': ['B1','B3','B4','B5','B10','D8','D9','D10','D11','G4','G6','G7','G8','G9','G10','K4','K5','K6','K7','K8','K9','D19','D20','D21','D22','D25','D26','D27','D28','D29','D30','D41','D42','D43','D44','D45','D46','D47']
 };
@@ -1459,7 +1464,7 @@ const SHUSHI_FORMULAS = {
   '土地転売（業者売り）': ['K2','C6','C7','P6','P7','P8','P9','P10','P11','D16','F16','C17','P17','P18','P19','P20','P21','F19','M24','G25','P25','K26','K27','M30','P31','K32','K33','C40','D40','G46','I46','I48','G50','I50','I54','G56','I56','I60'],
   'アパート': ['K2','O4','O5','C6','O6','C7','O7','O8','O9','J10','L10','O10','K15','P15','D16','F16','K16','C17','K17','F19','K21','P21','K22','K24','G25','K30','K31','K32','C33','C34','C35','C36','C37','C38','C39','C44','C45','C46','C48','D48','G55','I55','I57','G59','I59','I63','G65','I65','I69']
 };
-const SHUSHI_TEXT_CELLS = ['B1','B3','B4','B5','B10','B11','D8','D9','D10','D11','G4','G5','G6','G7','G8','G9','G10','G11','S6','W6','Z6','S7','W7','Z7','S8','W8','Z8','S9','W9','Z9','S10','W10','Z10','S11','W11','Z11','S17','W17','Z17','S18','W18','Z18','S19','W19','Z19','S20','W20','Z20','S21','W21','Z21','D17','D18','D19','D20','D22','D25','D26','D30','D41','D42','D43','D44','D47','X26','Z26','AB26','X27','Z27','AB27','X32','Z32','AB32','X33','Z33','AB33','X38','Z38','AB38','X39','Z39','AB39','K4','K5','K6','K7','K8','K9'];
+const SHUSHI_TEXT_CELLS = ['B1','B3','B4','B5','B10','B11','B23','B24','B31','B47','D8','D9','D10','D11','G4','G5','G6','G7','G8','G9','G10','G11','S6','W6','Z6','S7','W7','Z7','S8','W8','Z8','S9','W9','Z9','S10','W10','Z10','S11','W11','Z11','S17','W17','Z17','S18','W18','Z18','S19','W19','Z19','S20','W20','Z20','S21','W21','Z21','D17','D18','D19','D20','D22','D25','D26','D30','D41','D42','D43','D44','D47','X26','Z26','AB26','X27','Z27','AB27','X32','Z32','AB32','X33','Z33','AB33','X38','Z38','AB38','X39','Z39','AB39','K4','K5','K6','K7','K8','K9'];
 const SHUSHI_SAMPLE = {
   '戸建て（建売・土地売り）': {B1:'北葛西建売プロジェクト',B3:'江戸川区北葛西3丁目',B4:'北葛西三丁目100番1',B5:'東西線「西葛西」駅徒歩9分',G2:1,G3:12,B6:118.4,B7:96.8,B8:1.5,B9:0.6,B10:'南側：4.5m公道',D8:'第一種住居地域',D9:'準防火地域',D10:'第二種高度地区',D11:'最低敷地70㎡',I6:1,J6:89800000,N6:112.5,S6:'96.1㎡（4LDK）',W6:'西葛西9分',Z6:'北葛西3丁目',I7:2,J7:86800000,N7:105.2,S7:'93.5㎡（4LDK）',W7:'葛西11分',Z7:'中葛西4丁目',I8:3,J8:92800000,N8:120.6,S8:'101.2㎡（4LDK）',W8:'西葛西7分',Z8:'西葛西6丁目',C16:52000000,D19:'35.82坪',D20:'20万以下は無し',D22:'2年分',I17:1,J17:55800000,N17:115.4,S17:'整形地',W17:'西葛西10分',Z17:'北葛西4丁目',I18:2,J18:59800000,N18:124.1,S18:'角地',W18:'葛西9分',Z18:'中葛西5丁目',G22:36000000,G23:31000000,G24:0,C25:23000000,K26:103000000,U26:10300,X26:'4LDK',Z26:'96.1㎡',AB26:'有',U27:10100,X27:'4LDK',Z27:'93.5㎡',AB27:'有',C30:88000,C31:0,D32:1.5,K32:99000000,U32:9900,X32:'4LDK',Z32:'96.1㎡',AB32:'有',D33:3,U33:9700,X33:'4LDK',Z33:'93.5㎡',AB33:'有',D34:1.4,D35:0.3,D36:2,D37:2,D38:0.4,K38:95000000,U38:9500,X38:'4LDK',Z38:'96.1㎡',AB38:'有',C39:30000,U39:9300,X39:'4LDK',Z39:'93.5㎡',AB39:'有',C41:120000,C42:800000,D42:'50万以下は無し',D43:'あれば項目変更する',D45:3.5,D46:1},
   '土地転売（業者売り）': {B1:'南葛西土地転売',B3:'江戸川区南葛西2丁目',B4:'南葛西二丁目200番8',B5:'東西線「葛西」駅徒歩13分',G3:12,B6:132.4,B7:128.6,B8:2.0,B9:0.6,B10:'東側：5.0m公道',D8:'第一種住居地域',D9:'準防火地域',D10:'第三種高度地区',D11:'最低敷地70㎡',I6:1,J6:142000000,N6:130.4,S6:'125.3㎡（4LDK）',W6:'葛西12分',Z6:'南葛西2丁目',I7:2,J7:136000000,N7:124.8,S7:'118.6㎡（4LDK）',W7:'葛西14分',Z7:'南葛西3丁目',I8:3,J8:148000000,N8:138.1,S8:'131.0㎡（5LDK）',W8:'西葛西15分',Z8:'臨海町1丁目',C16:108000000,D19:'42.35坪',D20:'70万円/1棟',I17:1,J17:118000000,N17:126.4,S17:'整形地',W17:'葛西13分',Z17:'南葛西2丁目',I18:2,J18:123000000,N18:134.2,S18:'角地',W18:'葛西11分',Z18:'南葛西4丁目',I19:3,J19:112000000,N19:121.5,S19:'古家あり',W19:'葛西15分',Z19:'南葛西1丁目',G22:30000000,G23:28000000,C24:0,G24:0,K25:139000000,D27:1.5,D28:3,D29:1.4,D30:0.3,D31:2,K31:132000000,D32:2,D33:0.4,C34:30000,D38:3.5,D39:1},
@@ -1545,7 +1550,8 @@ function shushiColsFor(sheet) {
 }
 function shushiInputHtml(sheet, cell) {
   const val = shushiResolvedValue(sheet, cell);
-  const isText = shushiIsText(cell) || typeof val === 'string';
+  // 空欄でも数値セルは数値入力扱いにする（''をtext扱いにするとカンマ自動整形が効かなくなるため・2026-07-24修正）
+  const isText = shushiIsText(cell) || (typeof val === 'string' && val !== '');
   const cls = isText ? 'shushi-text' : 'shushi-input';
   const inputmode = isText ? '' : ' inputmode="decimal"';
   const value = escHtml(shushiFormatInputValue(val));
@@ -1555,6 +1561,34 @@ function shushiInputHtml(sheet, cell) {
   // Excelの黄色＝「数式を上書きから守る」が目的（7/20永井様メール・7/23確認）。
   // 数式はシステム側に組み込みで誰も触れないため、手入力項目（売上高・瑕疵担保保険）は通常入力欄のまま。
   return '<input type="text" class="' + cls + '" id="' + shushiCellId(cell) + '" data-cell="' + cell + '" value="' + value + '"' + inputmode + ' oninput="shushiOnInput(this)" onkeydown="shushiEnter(event,this)">';
+}
+// セクションの折りたたみ（▽/▷）＋未入力件数バッジ（2026-07-24 中西さん指示。デフォルトは開いた状態）
+const PL_SECTION_COLLAPSED = {}; // タイトル文字列 -> 閉じているか（シート切替・再描画をまたいで維持）
+function setupPlSectionToggles() {
+  document.querySelectorAll('#pl-sheet-grid .pl-section').forEach(sec => {
+    const title = sec.querySelector('.pl-section-title');
+    if (!title || title.dataset.toggleReady) return;
+    title.dataset.toggleReady = '1';
+    const name = title.textContent.trim();
+    title.innerHTML = '<span class="pl-sec-arrow">▽</span><span>' + escHtml(name) + '</span><span class="pl-sec-badge"></span>';
+    title.classList.add('pl-sec-toggle');
+    title.onclick = () => {
+      const closed = sec.classList.toggle('pl-collapsed');
+      PL_SECTION_COLLAPSED[name] = closed;
+      title.querySelector('.pl-sec-arrow').textContent = closed ? '▷' : '▽';
+    };
+    if (PL_SECTION_COLLAPSED[name]) { sec.classList.add('pl-collapsed'); title.querySelector('.pl-sec-arrow').textContent = '▷'; }
+  });
+  updatePlSectionBadges();
+}
+function updatePlSectionBadges() {
+  document.querySelectorAll('#pl-sheet-grid .pl-section').forEach(sec => {
+    const badge = sec.querySelector('.pl-sec-badge');
+    if (!badge) return;
+    let empty = 0;
+    sec.querySelectorAll('input[data-cell], select[data-cell]').forEach(el => { if (String(el.value).trim() === '') empty++; });
+    badge.textContent = empty > 0 ? '未入力 ' + empty + '件' : '';
+  });
 }
 function renderShushiTabs() {
   const el = document.getElementById('pl-sheet-tabs');
@@ -1641,7 +1675,9 @@ function shushiCostSection(sheet) {
   let groupId = -1;
   for (let r = cfg.start; r <= cfg.end; r++) {
     const isSection = !!cfg.sections[r];
-    const item = cfg.sections[r] === 'B' + r ? '' : (labels['B' + r] || labels['D' + r] || '');
+    // フリー項目の行：Excelどおり項目名はB列の入力欄（営業が自由に書く）・「フリー項目」の文字は備考側に表示（2026-07-24 中西さん指示）
+    const freeItem = !labels['B' + r] && labels['D' + r] === 'フリー項目' && SHUSHI_META_INPUTS[sheet].includes('B' + r);
+    const item = cfg.sections[r] === 'B' + r || freeItem ? '' : (labels['B' + r] || labels['D' + r] || '');
     const amountCell = shushiIsInput(sheet, 'C' + r) || shushiIsFormula(sheet, 'C' + r) ? 'C' + r : '';
     const memoCell = shushiIsInput(sheet, 'D' + r) || SHUSHI_META_INPUTS[sheet].includes('D' + r) ? 'D' + r : '';
     // F・G列の隣接ブロック（一種単価・借入金・評価額・路線価・建物評価額・IRR・IRR注記）はExcel上は原価表の右隣にある独立項目
@@ -1651,9 +1687,9 @@ function shushiCostSection(sheet) {
       const label = ['D40','D48'].includes(c) ? '坪単価' : (labels[c] || '');
       return (label ? '<span class="pl-field-label">' + escHtml(label) + '</span>' : '') + shushiCellHtml(sheet, c);
     }).join(' ');
-    if (!isSection && !item && !amountCell && !memoCell && !rateCells) continue;
+    if (!isSection && !item && !freeItem && !amountCell && !memoCell && !rateCells) continue;
     if (isSection) groupId = r;
-    rows.push({group: groupId, section: isSection ? (labels[cfg.sections[r]] || '') : '', isTotal: cfg.sections[r] === 'B' + r, item, amountCell, memoCell, rateCells});
+    rows.push({group: groupId, section: isSection ? (labels[cfg.sections[r]] || '') : '', isTotal: cfg.sections[r] === 'B' + r, item, freeItem, freeRow: r, amountCell, memoCell, rateCells});
   }
   const groupCount = {};
   rows.forEach(row => { groupCount[row.group] = (groupCount[row.group] || 0) + 1; });
@@ -1664,7 +1700,7 @@ function shushiCostSection(sheet) {
       emitted[row.group] = true;
       html += '<td class="pl-cost-cat" rowspan="' + groupCount[row.group] + '">' + escHtml(rows.find(x => x.group === row.group).section) + '</td>';
     }
-    html += '<td>' + escHtml(row.item) + '</td><td class="pl-money-cell">' + shushiCellHtml(sheet, row.amountCell) + '</td><td>' + shushiCellHtml(sheet, row.memoCell) + '</td><td>' + row.rateCells + '</td></tr>';
+    html += '<td>' + (row.freeItem ? shushiCellHtml(sheet, 'B' + row.freeRow) : escHtml(row.item)) + '</td><td class="pl-money-cell">' + shushiCellHtml(sheet, row.amountCell) + '</td><td>' + (row.freeItem ? '<span class="pl-free-note">フリー項目</span>' : shushiCellHtml(sheet, row.memoCell)) + '</td><td>' + row.rateCells + '</td></tr>';
   });
   html += '</tbody></table><div class="pl-cost-note">' + escHtml(labels[noteCell] || '') + '</div></div>';
   return html;
@@ -1753,6 +1789,7 @@ function renderShushiSheet() {
   html += '<div class="pl-save-bar"><button class="btn btn-primary" onclick="registerPL()">✅ 登録</button></div>';
   html += '</div>';
   wrap.innerHTML = html;
+  setupPlSectionToggles();
   calcPL();
 }
 function switchShushiSheet(sheet) {
@@ -1863,6 +1900,7 @@ function calcPL() {
   setText('pl-profit-a', fmt(lastShushiMetrics.profitA)); setText('pl-profit-b', fmt(lastShushiMetrics.profitB)); setText('pl-profit-c', fmt(lastShushiMetrics.profitC)); setText('pl-rate-a', pct(lastShushiMetrics.rateA)); setText('pl-rate-b', pct(lastShushiMetrics.rateB)); setText('pl-rate-c', pct(lastShushiMetrics.rateC)); setText('xl-irr', hasShushiData && isFinite(irr) ? pct(irr) : '—');
   renderFirstDiff(lastShushiMetrics.sellA, lastShushiMetrics.total);
   calcHearing();
+  updatePlSectionBadges();
 }
 function calcNTsubo(fromInput) { if (fromInput && currentDealId !== null) { const deal = DEALS.find(d => d.id === currentDealId); if (deal && deal.reg && !deal.reg.market) registerStep('market'); } calcPL(); }
 function shushiOnInput(el) {
