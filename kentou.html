@@ -24,7 +24,9 @@ input,select,textarea{font-family:inherit;font-size:13px}
 .header-right{display:flex;align-items:center;gap:12px;font-size:12px;opacity:.85}
 .demo-badge{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.4);border-radius:4px;padding:3px 8px;font-size:11px;font-weight:600}
 .app-layout{display:flex;min-height:calc(100vh - 52px)}
-.sidebar{width:200px;flex-shrink:0;background:#fff;border-right:1px solid var(--line);padding:16px 0;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto}
+.sidebar{width:200px;flex-shrink:0;background:#fff;border-right:1px solid var(--line);padding:16px 0;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;display:flex;flex-direction:column}
+.sidebar-main{flex:0 0 auto}
+.sidebar-footer{margin-top:auto;padding-top:10px}
 .sidebar-nav-item{display:flex;align-items:center;gap:10px;padding:11px 20px;cursor:pointer;color:var(--body);font-size:13px;font-weight:500;border-left:3px solid transparent;transition:background .15s,color .15s;user-select:none}
 .sidebar-nav-item:hover{background:var(--green-light);color:var(--green)}
 .sidebar-nav-item.active{background:var(--green-light);color:var(--green);border-left-color:var(--green);font-weight:700}
@@ -35,6 +37,8 @@ input,select,textarea{font-family:inherit;font-size:13px}
 .sidebar-divider{border-top:1px solid var(--line);margin:10px 16px}
 .sidebar-nav-item.sidebar-small{padding:8px 20px;font-size:12px;color:var(--sub)}
 .sidebar-nav-item.sidebar-small .sidebar-icon svg{width:14px;height:14px}
+.field-error{font-size:12px;color:var(--ng-fg);font-weight:700;margin-top:6px;line-height:1.5}
+.field-error:empty{display:none}
 .main-area{flex:1;min-width:0;overflow-x:hidden}
 .view{padding:24px;min-height:calc(100vh - 52px)}
 .view-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
@@ -88,6 +92,10 @@ input,select,textarea{font-family:inherit;font-size:13px}
 .tab-btn{padding:10px 18px;border:none;background:transparent;font-size:13px;font-weight:600;color:var(--sub);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:color .15s,border-color .15s}
 .tab-btn.active{color:var(--green);border-bottom-color:var(--green)}
 .tab-btn:hover{color:var(--ink)}
+#detail-tabs{gap:6px}
+#detail-tabs .tab-btn{font-size:15px;font-weight:800;padding:16px 24px;border-radius:8px 8px 0 0;border-bottom-width:4px;margin-bottom:-2px}
+#detail-tabs .tab-btn.active{background:var(--green-light);color:var(--green);border-bottom-color:var(--green);box-shadow:inset 0 -1px 0 var(--green)}
+#detail-tabs .tab-btn:hover{background:#f6faf7;color:var(--green)}
 .tab-content{padding:20px 0;display:none}
 .tab-content.active{display:block}
 .form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
@@ -171,6 +179,9 @@ input,select,textarea{font-family:inherit;font-size:13px}
 .data-table tbody tr.past-row td{color:var(--sub)}
 .data-table tbody tr.past-row .chip{opacity:.65}
 .data-table tbody tr.past-row:hover{background:#f0f1f3}
+.shiryo-state{display:inline-flex;align-items:center;justify-content:center;min-width:28px;font-size:12px;font-weight:800}
+.shiryo-state.has{color:var(--green)}
+.shiryo-state.none{color:#9ca3af;font-weight:700}
 /* 数字入力の共通ルール：スピナー非表示（全画面共通） */
 input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 input[type=number]{-moz-appearance:textfield;appearance:textfield}
@@ -180,9 +191,19 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .shiryo-item:last-child{border-bottom:none}
 .shiryo-del{border:none;background:transparent;color:var(--sub);font-size:11.5px;cursor:pointer;padding:2px 4px}
 .shiryo-del:hover{color:var(--ng-fg)}
+.shiryo-dl{border:1px solid #b7d9c6;border-radius:6px;background:#fff;color:var(--green);font-size:11.5px;font-weight:700;cursor:pointer;padding:3px 10px;white-space:nowrap}
+.shiryo-dl:hover{background:var(--green-light)}
 .shiryo-empty{font-size:12px;color:var(--sub)}
+.detail-shiryo-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 18px}
+.detail-shiryo-check.is-empty{background:#f3f4f6;border-color:#d1d5db;color:#9ca3af}
+.detail-shiryo-check.is-empty:hover{background:#eef0f2}
+.detail-shiryo-note{font-size:12px;font-weight:700;color:var(--ng-fg);min-height:1.2em}
+.shiryo-modal-list{border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:14px}
+.shiryo-modal-row{display:flex;align-items:center;gap:10px;padding:9px 12px;border-bottom:1px solid var(--line);font-size:13px;color:var(--body)}
+.shiryo-modal-row:last-child{border-bottom:none}
+.shiryo-modal-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* ===== Excel再現シート ===== */
-.xl-wrap{overflow-x:auto;margin-top:4px}
+.xl-wrap{overflow-x:visible;margin-top:4px;min-width:0}
 .xl{border-collapse:collapse;font-family:"Meiryo UI",Meiryo,sans-serif;font-size:13px;min-width:1080px;background:#fff}
 .xl td,.xl th{border:1px solid #b7b7b7;padding:3px 6px;vertical-align:middle;white-space:nowrap}
 .xl .xl-label{color:#1f2937;font-weight:400;white-space:nowrap;min-width:70px}
@@ -197,9 +218,106 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .xl input[type=text]{text-align:left}
 .xl select{text-align:left;cursor:pointer}
 .xl .xl-yellow input{background:#FFFF00;border-color:#c8a000}
+.xl .xl-yellow{background:#FFFF00}
 .xl .xl-sell-hd{background:#FFFFCC;font-weight:700}
 .xl .xl-sell-hd2{background:#FFFFCC}
 .xl .xl-memo{background:#D9E3F3;border:1px solid #9fc2e7;width:100%;padding:2px 5px;font-size:12px;font-family:inherit}
+.xl .xl-empty{background:#fff;color:transparent}
+.xl .xl-formula{font-size:12px;color:#1f2937;background:#fff;text-align:right;min-width:76px}
+.xl .xl-note{font-size:11px;color:var(--sub)}
+.xl input.shushi-input{text-align:right;width:94px}
+.xl input.shushi-text{text-align:left;width:148px}
+.xl select.shushi-input{width:82px}
+.pl-sheet-tabs{display:flex;gap:8px;margin:0 0 10px;overflow-x:auto}
+.pl-sheet-tab{border:1px solid var(--green-mid);background:var(--green-light);color:var(--green);font-size:13px;font-weight:700;padding:8px 16px;cursor:pointer;border-radius:8px;white-space:nowrap;transition:background .15s}
+.pl-sheet-tab.active{background:var(--green);border-color:var(--green);color:#fff}
+.pl-excel-shell{display:block;min-width:0}
+.pl-sheet-sections{display:flex;flex-direction:column;gap:14px;max-width:100%}
+.pl-section{background:#fff;border:1px solid var(--line);border-radius:8px;padding:14px;min-width:0}
+.pl-section-title{font-size:14px;font-weight:800;color:var(--ink);margin-bottom:10px}
+.pl-two-col{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+.pl-finance-layout{display:grid;grid-template-columns:minmax(590px,1fr) minmax(360px,420px);gap:14px;align-items:start}
+.pl-field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 14px;align-content:start}
+.pl-field-grid.pl-grid-left{grid-template-columns:1.2fr minmax(0,1fr)}
+.pl-field{display:grid;grid-template-columns:minmax(48px,max-content) minmax(0,1fr);gap:8px;align-items:center;min-width:0;min-height:26px}
+.pl-field-wide{grid-column:1/-1}
+.pl-field-label{font-size:11px;color:var(--sub);font-weight:700;line-height:1.3}
+.pl-field>.pl-field-label{white-space:nowrap}
+.pl-unit{flex:none;font-size:11px;color:var(--sub);font-weight:600}
+.pl-field-grid.pl-eval-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.pl-eval-grid .pl-field{grid-template-columns:92px minmax(0,1fr)}
+.pl-field-grid.pl-prop-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.pl-field-w2{grid-column:span 2}
+.pl-eval-note{margin-top:8px;font-size:11px;font-weight:700;color:var(--sub)}
+.pl-field-value{flex:1;min-width:0;display:flex;align-items:center;gap:6px;flex-wrap:nowrap}
+.pl-field input.shushi-input{text-align:right}
+.pl-auto{display:inline-block;min-width:110px;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pl-tsubo-auto{display:inline-block;flex:none;background:#f3f4f6;border-radius:4px;padding:2px 7px;font-size:11px;color:var(--sub);text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pl-profit-card{background:#fff;border:1px solid var(--green-mid);border-radius:8px;padding:14px 16px;box-shadow:0 4px 14px rgba(26,107,58,.12)}
+.pl-profit-card-title{font-size:13px;font-weight:800;color:var(--green);margin-bottom:4px}
+.pl-profit-card-basis{font-size:11px;color:var(--sub);margin-bottom:10px}
+.pl-profit-main{font-size:30px;line-height:1.15;font-weight:900;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:0}
+.pl-profit-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.pl-profit-grid div{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px}
+.pl-profit-grid span{display:block;font-size:11px;color:var(--sub);margin-bottom:3px}
+.pl-profit-grid strong{font-size:18px;color:var(--ink);font-variant-numeric:tabular-nums}
+.pl-photo-box{margin-top:12px;border:1px solid var(--line);background:#fff;border-radius:8px;padding:12px}
+.pl-photo-title{font-size:13px;font-weight:800;color:var(--ink);margin-bottom:8px}
+.pl-photo-grid{display:grid;grid-template-columns:repeat(4,minmax(120px,1fr));gap:8px}
+.pl-photo-item{height:86px;border:1px solid #dfe5ea;background:#edf1f4;border-radius:6px;overflow:hidden;display:flex;align-items:center;justify-content:center;color:var(--sub);font-size:12px}
+.pl-photo-item img{width:100%;height:100%;object-fit:cover;display:block}
+.pl-cost-table,.pl-market-table,.pl-sell-table,.pl-irr-table,.pl-stamp-table{width:100%;border-collapse:collapse;font-size:12.5px;table-layout:fixed}
+.pl-cost-table th,.pl-cost-table td,.pl-market-table th,.pl-market-table td,.pl-sell-table th,.pl-sell-table td,.pl-irr-table td,.pl-stamp-table td{border:1px solid #b7b7b7;padding:5px 6px;vertical-align:middle;word-break:normal;overflow-wrap:anywhere}
+.pl-cost-table th,.pl-market-table th,.pl-sell-table th{background:#f8f8f8;color:var(--sub);font-size:11px;font-weight:700;text-align:left}
+.pl-money-cell,.pl-money-cell input,.pl-money-cell .pl-auto,.pl-sell-table td,.pl-irr-table td:last-child{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.pl-cost-table input,.pl-sell-table input,.pl-market-table input{font-variant-numeric:tabular-nums}
+.pl-cost-table .pl-auto,.pl-irr-table .pl-auto{min-width:0;max-width:100%;white-space:normal;overflow-wrap:anywhere}
+.pl-irr-table td:first-child{width:68%}
+.pl-irr-table td:last-child{width:32%}
+.pl-cost-section td{background:#e2efda;font-weight:800;color:#1f2937}
+.pl-cost-table td.pl-cost-cat{background:#e2efda;font-weight:800;color:#1f2937;vertical-align:middle}
+.pl-cost-note{font-size:11px;color:var(--sub);margin-top:8px}
+.pl-side-stack{display:flex;flex-direction:column;gap:12px;min-width:0}
+.pl-sell-stack{display:grid;grid-template-columns:1fr;gap:10px}
+.pl-sell-card{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff;min-width:0}
+.pl-sell-card-title{background:#FFFFCC;font-weight:800;padding:7px 9px;font-size:12.5px;color:#1f2937;border-bottom:1px solid #d6d3a2}
+.pl-sell-card-title.pl-sell-basis{background:#ffe9a0;border-bottom-color:#dfc06a}
+.pl-basis-chip{float:right;background:var(--green);color:#fff;font-size:10px;font-weight:700;padding:1px 8px;border-radius:9px;line-height:1.6}
+.pl-sell-card-body{padding:8px}
+.pl-sell-table th{width:38%}
+.pl-sell-table td{width:62%}
+.pl-plan-table{width:100%;border-collapse:collapse;font-size:12.5px;table-layout:fixed}
+.pl-plan-table th,.pl-plan-table td{border:1px solid #b7b7b7;padding:5px 6px;vertical-align:middle}
+.pl-plan-table th{background:#f8f8f8;color:var(--sub);font-size:11px;font-weight:700;text-align:left}
+.pl-plan-table td.pl-plan-group{background:#FFFFCC;font-weight:700;font-size:11.5px;overflow-wrap:anywhere}
+.pl-plan-table input{width:100%;min-width:0}
+.pl-market-table tr.market-total td{background:#f0f5f1;font-weight:700}
+.pl-save-bar{position:fixed;bottom:18px;right:26px;z-index:50}
+.pl-save-bar .btn{box-shadow:0 3px 12px rgba(26,107,58,.35)}
+.pl-market-table .pl-auto{min-width:0}
+.pl-with-unit{display:flex;align-items:center;gap:4px;min-width:0}
+.pl-with-unit input{flex:1;min-width:0}
+.pl-irr-table td:first-child{font-weight:700;color:var(--sub)}
+.pl-irr-table{background:#fff}
+.pl-irr-note-row td{background:#f8f8f8;color:var(--sub);font-size:11.5px;text-align:left;white-space:normal}
+.pl-market-stack{display:grid;grid-template-columns:1fr;gap:14px}
+.pl-market-title{font-size:13px;font-weight:800;color:var(--ink);margin:0 0 8px}
+.pl-market-table th,.pl-market-table td{white-space:normal}
+.pl-market-table .market-no{width:44px;text-align:center;white-space:nowrap}
+.pl-market-table .market-price{width:124px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.pl-market-table .market-area{width:88px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.pl-market-table .market-tsubo{width:120px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.pl-market-table .market-feature{width:136px}
+.pl-market-table .market-station{width:94px}
+.pl-market-table .market-address{width:auto;min-width:150px}
+.pl-sheet-sections input[type=text],.pl-sheet-sections select{background:#D9E3F3;border:1px solid #9fc2e7;border-radius:0;padding:2px 5px;font-size:13px;font-family:"Meiryo UI",Meiryo,sans-serif}
+.xl input.shushi-input,.xl input.shushi-text,.xl select.shushi-input{width:100%;min-width:0}
+.pl-field input.shushi-input,.pl-field input.shushi-text,.pl-field select.shushi-input,.pl-cost-table input,.pl-cost-table select,.pl-market-table input,.pl-sell-table input,.pl-irr-table input{width:100%;min-width:0}
+@media (max-width: 980px){
+  .pl-two-col,.pl-finance-layout,.pl-market-stack,.pl-sell-stack{grid-template-columns:1fr}
+  .pl-field-grid,.pl-field-grid.pl-grid-left,.pl-field-grid.pl-eval-grid,.pl-field-grid.pl-prop-grid{grid-template-columns:1fr}
+  .pl-field-w2{grid-column:auto}
+}
 .stamp-tbl{border-collapse:collapse;margin-left:auto;margin-right:8px}
 .stamp-tbl td{border:1px solid #999;width:64px;text-align:center;font-size:11px;padding:2px 0;background:#fff}
 .stamp-tbl td.sq{height:64px}
@@ -228,6 +346,9 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
   .sidebar-badge{display:none}
   .view{padding:16px 10px}
   .pl-layout{grid-template-columns:1fr}
+  .pl-excel-shell{grid-template-columns:1fr}
+  .pl-profit-card{position:static;grid-column:auto;grid-row:auto}
+  .pl-photo-grid{grid-template-columns:repeat(2,minmax(120px,1fr))}
   .market-grid{grid-template-columns:1fr}
   .hearing-grid{grid-template-columns:1fr}
 }
@@ -244,8 +365,8 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .home-see-all{color:var(--green);font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap}
 .home-see-all:hover{text-decoration:underline}
 .home-deal-list{display:grid;grid-template-columns:1fr;gap:14px}
-.home-deal-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;box-shadow:0 1px 4px rgba(0,0,0,.06);display:grid;grid-template-columns:38px 112px minmax(0,1fr) minmax(240px,330px);gap:16px;align-items:center;transition:border-color .15s,box-shadow .15s,transform .15s}
-.home-deal-card:hover{border-color:var(--green-mid);box-shadow:0 4px 14px rgba(26,107,58,.13);transform:translateY(-1px)}
+.home-deal-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;box-shadow:0 1px 4px rgba(0,0,0,.06);display:grid;grid-template-columns:38px 112px minmax(0,1fr) minmax(240px,330px);gap:16px;align-items:center;transition:border-color .15s,box-shadow .15s,transform .15s,background .15s;cursor:pointer}
+.home-deal-card:hover{border-color:var(--green-mid);box-shadow:0 6px 18px rgba(26,107,58,.16);transform:translateY(-1px);background:#fbfefc}
 .home-deal-num{width:32px;height:32px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;font-variant-numeric:tabular-nums}
 .home-thumb{width:112px;height:78px;border-radius:8px;background:#edf1f4;border:1px solid #dfe5ea;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#8b98a6;flex-shrink:0}
 .home-thumb img{width:100%;height:100%;object-fit:cover;display:block}
@@ -267,9 +388,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .home-card-side{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
 .home-card-q-label{font-size:11px;font-weight:800;color:var(--sub)}
 .home-card-question{font-size:13px;font-weight:700;color:var(--ink);line-height:1.55;background:var(--green-light);border-radius:7px;padding:9px 11px;width:100%}
-.home-card-open-btn{display:inline-flex;align-items:center;justify-content:center;min-width:112px;padding:10px 18px;border:none;border-radius:6px;background:#1f6f43;color:#fff;font-size:13px;font-weight:800;cursor:pointer;text-align:center;transition:opacity .15s,transform .15s}
-.home-card-open-btn:hover{opacity:.9}
-.home-card-open-btn:active{transform:translateY(1px)}
 .summary-2col{display:grid;grid-template-columns:1fr 300px;gap:22px}
 .summary-2col-right{border-left:1px solid var(--line);padding-left:22px}
 .sum-block-title{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:10px}
@@ -375,32 +493,36 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 
 <div class="app-layout">
   <nav class="sidebar" id="sidebar">
-    <div class="sidebar-section">メニュー</div>
-    <div class="sidebar-nav-item active" data-view="home" onclick="showView('home',this)">
-      <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
-      <span class="sidebar-label">ホーム</span>
+    <div class="sidebar-main">
+      <div class="sidebar-section">メニュー</div>
+      <div class="sidebar-nav-item active" data-view="home" onclick="showView('home',this)">
+        <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+        <span class="sidebar-label">ホーム</span>
+      </div>
+      <div class="sidebar-nav-item" data-view="newreg" onclick="openNewReg(this)">
+        <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9l7 7v9a2 2 0 0 1-2 2z"/><path d="M14 3v7h7"/></svg></span>
+        <span class="sidebar-label">案件登録</span>
+      </div>
+      <div class="sidebar-nav-item" data-view="list" onclick="openListAll(this)">
+        <span class="sidebar-icon"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></span>
+        <span class="sidebar-label">案件一覧</span>
+        <span class="sidebar-badge" id="sidebar-badge-hold" style="display:none">!</span>
+      </div>
+      <div class="sidebar-nav-item" data-view="settings" onclick="showView('settings',this)">
+        <span class="sidebar-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+        <span class="sidebar-label">設定</span>
+      </div>
     </div>
-    <div class="sidebar-nav-item" data-view="newreg" onclick="openNewReg(this)">
-      <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9l7 7v9a2 2 0 0 1-2 2z"/><path d="M14 3v7h7"/></svg></span>
-      <span class="sidebar-label">案件登録</span>
-    </div>
-    <div class="sidebar-nav-item" data-view="list" onclick="openListAll(this)">
-      <span class="sidebar-icon"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></span>
-      <span class="sidebar-label">案件一覧</span>
-      <span class="sidebar-badge" id="sidebar-badge-hold" style="display:none">!</span>
-    </div>
-    <div class="sidebar-nav-item" data-view="settings" onclick="showView('settings',this)">
-      <span class="sidebar-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
-      <span class="sidebar-label">設定</span>
-    </div>
-    <div class="sidebar-divider"></div>
-    <div class="sidebar-nav-item sidebar-small" onclick="showToast('操作ガイドを表示します（本実装で対応）')">
-      <span class="sidebar-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
-      <span class="sidebar-label">ヘルプ</span>
-    </div>
-    <div class="sidebar-nav-item sidebar-small" onclick="showToast('ログアウトします（デモのため動作しません）')">
-      <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span>
-      <span class="sidebar-label">ログアウト</span>
+    <div class="sidebar-footer">
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-nav-item sidebar-small" onclick="showToast('操作ガイドを表示します（本実装で対応）')">
+        <span class="sidebar-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+        <span class="sidebar-label">ヘルプ</span>
+      </div>
+      <div class="sidebar-nav-item sidebar-small" onclick="showToast('ログアウトします（デモのため動作しません）')">
+        <span class="sidebar-icon"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span>
+        <span class="sidebar-label">ログアウト</span>
+      </div>
     </div>
   </nav>
 
@@ -455,7 +577,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
         </select>
         <select class="filter-select" id="filter-type" onchange="renderList()">
           <option value="">すべての種別</option>
-          <option>戸建て建売</option><option>土地</option>
+          <option>戸建て建売</option><option>土地</option><option>アパート</option>
         </select>
       </div>
       <div class="card">
@@ -504,11 +626,12 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
             <label class="form-label">駅距離（徒歩分）</label>
             <input class="form-input" type="text" id="nr-eki" inputmode="numeric" placeholder="例：8" oninput="numFormat(this)" onkeydown="nrEnter(event,'nr-submit-btn')">
           </div>
-          <!-- 資料（任意）＝収支・一覧と同じ deal.shiryo に一元保存（登録・見送りの確定時に案件へ移る） -->
+          <!-- 資料（必須）＝収支・一覧と同じ deal.shiryo に一元保存（登録・見送りの確定時に案件へ移る） -->
           <div class="shiryo-box mt12">
-            <div class="shiryo-title">📎 資料（任意）｜画像・PDF共通</div>
+            <div class="shiryo-title">📎 資料（必須）｜画像・PDF共通</div>
             <div id="newreg-shiryo-list"></div>
             <button class="btn btn-secondary btn-sm mt8" onclick="openShiryoPickerNewreg()">ファイルを選択（資料を追加）</button>
+            <div class="field-error" id="newreg-shiryo-error"></div>
           </div>
           <div class="flex gap8 mt16" style="justify-content:flex-end">
             <button class="btn btn-ghost" onclick="openMiokuriModal()">検討しない</button>
@@ -532,14 +655,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
         <span class="help-wrap"><button class="help-btn" onclick="toggleHelp(this)" title="このシートの説明">？</button><div class="help-pop help-pop-float" style="display:none;right:0;left:auto">お使いの雛型と同じ配置・同じ計算式です（水色のセル＝入力、白のセル＝自動計算）。「登録」を押すとステップが自動で進み、最初の登録の内容は「初回の想定」として記録されます。</div></span>
       </div>
       <div class="info-grid" id="detail-info-grid"></div>
-      <!-- 資料バー：案件を開いてすぐ見える位置に資料一覧＋追加ボタン（deal.shiryo＝収支シート内の資料枠と同じ保管場所） -->
-      <div class="card mb16" id="detail-shiryo-bar">
-        <div class="card-body" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 18px">
-          <span style="font-weight:700;color:var(--ink);font-size:13px;white-space:nowrap">📎 資料</span>
-          <span id="detail-shiryo-names" style="flex:1;font-size:12.5px;color:var(--body);min-width:200px">—</span>
-          <button class="btn btn-secondary btn-sm" onclick="openShiryoPicker(currentDealId)">📎 資料を追加</button>
-        </div>
-      </div>
       <div class="card">
         <div class="card-header" style="padding:0 18px">
           <div class="tabs" id="detail-tabs" style="border-bottom:none;flex:1">
@@ -549,6 +664,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
             <button class="tab-btn" onclick="switchTab('hearing',this)">ヒアリング</button>
           </div>
         </div>
+        <!-- 資料は画面下部の「物件写真・資料」ブロックのみ（上部バーは2026-07-23指示で削除） -->
         <div class="card-body">
 
           <!-- サマリータブ（判断ナビ） -->
@@ -608,551 +724,37 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
               <div class="first-est-title">初回想定との差分</div>
               <div id="first-est-rows">—</div>
             </div>
-            <div class="xl-wrap">
-            <table class="xl">
-              <!-- ===== 1. 物件名・区画数・作成日 ===== -->
-              <tr>
-                <td class="xl-label xl-bold">物件名</td>
-                <td colspan="2"><input type="text" id="pl-name" style="width:280px" oninput="syncDealName()" placeholder="例：北葛西建売プロジェクト"></td>
-                <td class="xl-label" style="text-align:right">区画数</td>
-                <td class="xl-yellow"><input type="number" id="pl-kukaku" value="3" oninput="calcPL()" style="width:50px;background:#FFFF00;border-color:#c8a000"></td>
-                <td class="xl-label">作成日：2026-07-11</td>
-              </tr>
-              <!-- ===== 2. 物件情報・取引情報 ===== -->
-              <tr><td class="xl-band" colspan="6">物件情報・取引情報</td></tr>
-              <tr>
-                <td class="xl-label">所在地</td>
-                <td colspan="2"><input type="text" id="pl-address" style="width:280px" oninput="syncDealAddress()" placeholder="例：江戸川区北葛西3丁目"></td>
-                <td class="xl-label">プロジェクト期間</td>
-                <td colspan="2">
-                  <select id="pl-months" onchange="calcPL()" style="width:90px">
-                    <option value="12" selected>12ヶ月</option>
-                    <option value="18">18ヶ月</option>
-                    <option value="24">24ヶ月</option>
-                  </select>
-                </td>
-              </tr>
-              <tr>
-                <td class="xl-label">地番</td>
-                <td colspan="2"><input type="text" id="pl-chiban" style="width:280px"></td>
-                <td class="xl-label">仕入契約日</td>
-                <td colspan="2"><input type="date" id="pl-keiyaku-date" style="width:140px"></td>
-              </tr>
-              <tr>
-                <td class="xl-label">交通</td>
-                <td colspan="2"><input type="text" id="pl-kotsu" style="width:280px" placeholder="例：東西線 葛西駅 徒歩8分"></td>
-                <td class="xl-label">仕入決済日</td>
-                <td colspan="2"><input type="date" id="pl-kessei-date" style="width:140px"></td>
-              </tr>
-              <tr>
-                <td class="xl-label">地積（㎡→坪）</td>
-                <td><input type="number" id="pl-menseki" value="47" oninput="calcPL()" style="width:80px"></td>
-                <td class="xl-auto" id="xl-tsubo">—</td>
-                <td class="xl-label">売主</td>
-                <td colspan="2"><input type="text" id="pl-urinushi" style="width:140px"></td>
-              </tr>
-              <tr>
-                <td class="xl-label">建物面積（㎡→坪）</td>
-                <td><input type="number" id="pl-tatemono" value="0" oninput="calcPL()" style="width:80px"></td>
-                <td class="xl-auto" id="xl-tatemono-tsubo">—</td>
-                <td class="xl-label">仲介会社（仕入）</td>
-                <td colspan="2"><input type="text" id="pl-cyukai1" style="width:140px"></td>
-              </tr>
-              <tr>
-                <td class="xl-label">容積率（%）</td>
-                <td><input type="number" id="pl-yoseki" value="200" oninput="calcPL()" style="width:80px"></td>
-                <td class="xl-label">建蔽率（%）　<input type="number" id="pl-kenpei" value="60" style="width:60px"></td>
-                <td class="xl-label">売却契約日</td>
-                <td colspan="2"><input type="date" id="pl-baibai-date" style="width:140px"></td>
-              </tr>
-              <tr>
-                <td class="xl-label">道路（方向）</td>
-                <td><input type="text" id="pl-road1" style="width:130px" placeholder="例：南4m公道"></td>
-                <td class="xl-label">道路（幅員）　<input type="text" id="pl-road2" style="width:80px"></td>
-                <td class="xl-label">売却決済日</td>
-                <td colspan="2"><input type="date" id="pl-baibai-kessei" style="width:140px"></td>
-              </tr>
-              <tr>
-                <td class="xl-label">用途地域</td>
-                <td colspan="2"><input type="text" id="pl-yoto" style="width:280px" placeholder="例：第一種低層住居専用地域"></td>
-                <td class="xl-label">買主</td>
-                <td colspan="2"><input type="text" id="pl-kainushi" style="width:140px"></td>
-              </tr>
-              <tr>
-                <td class="xl-label">防火指定</td>
-                <td colspan="2"><input type="text" id="pl-bouka" style="width:280px"></td>
-                <td class="xl-label">仲介会社（売却）</td>
-                <td colspan="2"><input type="text" id="pl-cyukai2" style="width:140px"></td>
-              </tr>
-              <tr>
-                <td class="xl-label">高度地区</td>
-                <td colspan="2"><input type="text" id="pl-kodo" style="width:280px"></td>
-                <td class="xl-label">最低敷地（㎡）</td>
-                <td colspan="2"><input type="text" id="pl-min-shikichi" style="width:140px"></td>
-              </tr>
-            </table>
 
-            <!-- ===== 資料（任意）：画像・PDFの一元管理（一覧の📎・登録・収支のどこから追加しても同じ案件の資料に入る） ===== -->
+            <div class="pl-sheet-tabs" id="pl-sheet-tabs"></div>
+
+            <div class="pl-excel-shell">
+              <div class="xl-wrap">
+                <div id="pl-sheet-grid"></div>
+              </div>
+            </div>
+
+            <div class="pl-photo-box">
+              <div class="pl-photo-title">物件写真</div>
+              <div class="pl-photo-grid" id="pl-photo-grid"></div>
+              <button class="btn btn-secondary btn-sm mt8" onclick="openShiryoPicker(currentDealId)">写真・資料を追加</button>
+            </div>
+
             <div class="shiryo-box" style="margin-top:8px">
               <div class="shiryo-title">📎 資料（任意）｜画像・PDF共通</div>
               <div id="pl-shiryo-list"></div>
               <button class="btn btn-secondary btn-sm mt8" onclick="openShiryoPicker(currentDealId)">ファイルを選択（資料を追加）</button>
             </div>
 
-            <!-- ===== 原価〜記名欄 ===== -->
-            <table class="xl" style="margin-top:4px">
-              <!-- ===== 4. 仕入れ原価 ===== -->
-              <tr><td class="xl-sec xl-bold" colspan="4">仕入れ原価</td>
-                <td class="xl-label" style="font-size:11px">金額（円）</td>
-                <td class="xl-label" style="font-size:11px">備考・根拠メモ</td>
-                <td colspan="2" class="xl-label" style="font-size:11px">一種単価など</td>
-                <td colspan="3" class="xl-label" style="font-size:11px">評価額・借入</td>
-              </tr>
-              <tr>
-                <td class="xl-label" colspan="4">土地仕入原価</td>
-                <td><input type="number" id="pl-land" value="40000000" oninput="calcPL()" style="width:120px"></td>
-                <td class="xl-auto" id="xl-land-tsubotanka">（坪単価 —）</td>
-                <td colspan="2" class="xl-auto" id="xl-isshu">（一種単価 —）</td>
-                <td class="xl-label" style="font-size:11px">借入金（仕入×90%）</td>
-                <td class="xl-auto" colspan="2" id="xl-loan">—</td>
-              </tr>
-              <tr>
-                <td class="xl-label" colspan="4">仲介手数料</td>
-                <td class="xl-auto" id="c-broker">—</td>
-                <td style="font-size:11px;color:var(--sub)">(仕入×3%+60,000)×1.1</td>
-                <td colspan="2"></td>
-                <td class="xl-label" style="font-size:11px">路線価</td>
-                <td><input type="number" id="pl-rosenka" value="38000000" oninput="calcPL()" style="width:110px"></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td class="xl-label" colspan="4">業務委託手数料</td>
-                <td><input type="number" id="c-gyomu" value="0" oninput="calcPL()" style="width:120px"></td>
-                <td><input type="text" class="xl-memo" placeholder=""></td>
-                <td colspan="2"></td>
-                <td class="xl-label" style="font-size:11px">固定資産税路線価</td>
-                <td><input type="number" id="pl-krosenka" value="30000000" oninput="calcPL()" style="width:110px"></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td class="xl-label" colspan="4">解体整地費用</td>
-                <td><input type="number" id="c-kaisetsu" value="0" oninput="calcPL()" style="width:120px"></td>
-                <td><input type="text" class="xl-memo" placeholder="0坪"></td>
-                <td colspan="2"></td>
-                <td class="xl-label" style="font-size:11px">建物評価額</td>
-                <td><input type="number" id="pl-beval" value="0" oninput="calcPL()" style="width:110px"></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td class="xl-label" colspan="4">ライフライン引き込み</td>
-                <td><input type="number" id="c-lifeline" value="0" oninput="calcPL()" style="width:120px"></td>
-                <td><input type="text" class="xl-memo" placeholder=""></td>
-                <td colspan="5"></td>
-              </tr>
-              <tr>
-                <td class="xl-label" colspan="4">譲渡承諾料</td>
-                <td><input type="number" id="c-jouto" value="0" oninput="calcPL()" style="width:120px"></td>
-                <td><input type="text" class="xl-memo" placeholder=""></td>
-                <td colspan="5"></td>
-              </tr>
-              <tr>
-                <td class="xl-label" colspan="4">測量費用</td>
-                <td><input type="number" id="c-survey" value="150000" oninput="calcPL()" style="width:120px"></td>
-                <td><input type="text" class="xl-memo" placeholder=""></td>
-                <td colspan="5"></td>
-              </tr>
-              <tr>
-                <td class="xl-label" colspan="4">立退き費用</td>
-                <td><input type="number" id="c-tachisoi" value="0" oninput="calcPL()" style="width:120px"></td>
-                <td><input type="text" class="xl-memo" placeholder="2年分"></td>
-                <td colspan="5"></td>
-              </tr>
-              <tr>
-                <td class="xl-label" colspan="4">その他</td>
-                <td><input type="number" id="c-other1" value="0" oninput="calcPL()" style="width:120px"></td>
-                <td><input type="text" class="xl-memo" placeholder=""></td>
-                <td colspan="5"></td>
-              </tr>
-              <!-- ===== 5. 建物原価 ===== -->
-              <tr><td class="xl-sec xl-bold" colspan="11">建物原価</td></tr>
-              <tr>
-                <td class="xl-label" colspan="4">建築費</td>
-                <td><input type="number" id="pl-build" value="24000000" oninput="calcPL()" style="width:120px"></td>
-                <td class="xl-auto" id="xl-build-tsubo">（延床坪単価 —）</td>
-                <td colspan="2"></td>
-                <td class="xl-label" style="font-size:11px">IRR（年率）</td>
-                <td class="xl-auto xl-bold" id="xl-irr" colspan="2">—</td>
-              </tr>
-              <tr>
-                <td class="xl-label" colspan="4">設計費用</td>
-                <td><input type="number" id="c-sekkei" value="0" oninput="calcPL()" style="width:120px"></td>
-                <td><input type="text" class="xl-memo" placeholder=""></td>
-                <td colspan="2"></td>
-                <td colspan="3" class="xl-irr-note">上記IRRは10%以上を目指す</td>
-              </tr>
-              <tr>
-                <td class="xl-label" colspan="4">地盤改良</td>
-                <td><input type="number" id="c-jiban" value="0" oninput="calcPL()" style="width:120px"></td>
-                <td><input type="text" class="xl-memo" placeholder=""></td>
-                <td colspan="5"></td>
-              </tr>
-              <tr>
-                <td class="xl-label" colspan="4">インフラ費用（改修）</td>
-                <td><input type="number" id="c-infra" value="0" oninput="calcPL()" style="width:120px"></td>
-                <td><input type="text" class="xl-memo" placeholder=""></td>
-                <td colspan="5"></td>
-              </tr>
-              <tr>
-                <td class="xl-label" colspan="4">外構費用</td>
-                <td><input type="number" id="c-gaiko" value="0" oninput="calcPL()" style="width:120px"></td>
-                <td><input type="text" class="xl-memo" placeholder=""></td>
-                <td colspan="5"></td>
-              </tr>
-              <tr>
-                <td class="xl-label" colspan="4">瑕疵担保保険</td>
-                <td><input type="number" id="c-kashi" value="88000" oninput="calcPL()" style="width:120px"></td>
-                <td><input type="text" class="xl-memo" placeholder=""></td>
-                <td colspan="5"></td>
-              </tr>
-              <!-- ===== 6. 租税公課 ===== -->
-              <tr><td class="xl-sec xl-bold" colspan="4">租税公課</td>
-                <td class="xl-label" style="font-size:11px">金額（円）</td>
-                <td class="xl-label" style="font-size:11px">料率</td>
-                <td colspan="5"></td>
-              </tr>
-              <tr>
-                <td class="xl-label" colspan="4">取得税（土地）</td>
-                <td class="xl-auto" id="c-tax-land">—</td>
-                <td style="font-size:11px;color:var(--sub)">固都路線価×1.5%</td>
-                <td colspan="5"></td>
-              </tr>
-              <tr>
-                <td class="xl-label" colspan="4">取得税（建物）</td>
-                <td class="xl-auto" id="c-tax-build">—</td>
-                <td style="font-size:11px;color:var(--sub)">建物評価額×3%</td>
-                <td colspan="5"></td>
-              </tr>
-              <tr>
-                <td class="xl-label" colspan="4">固定資産税</td>
-                <td class="xl-auto" id="c-kotei">—</td>
-                <td style="font-size:11px;color:var(--sub)">固都路線価×1.4%</td>
-                <td colspan="5"></td>
-              </tr>
-              <tr>
-                <td class="xl-label" colspan="4">都市計画税</td>
-                <td class="xl-auto" id="c-toshikei">—</td>
-                <td style="font-size:11px;color:var(--sub)">固都路線価×0.3%</td>
-                <td colspan="5"></td>
-              </tr>
-              <tr>
-                <td class="xl-label" colspan="4">登録免許税（土地）</td>
-                <td class="xl-auto" id="c-touroku-land">—</td>
-                <td style="font-size:11px;color:var(--sub)">固都路線価×2%</td>
-                <td colspan="5"></td>
-              </tr>
-              <tr>
-                <td class="xl-label" colspan="4">登録免許税（建物）</td>
-                <td class="xl-auto" id="c-touroku-build">—</td>
-                <td style="font-size:11px;color:var(--sub)">建物評価額×2%</td>
-                <td colspan="5"></td>
-              </tr>
-              <tr>
-                <td class="xl-label" colspan="4">抵当権</td>
-                <td class="xl-auto" id="c-teito">—</td>
-                <td style="font-size:11px;color:var(--sub)">借入金×0.4%</td>
-                <td colspan="5"></td>
-              </tr>
-              <tr>
-                <td class="xl-label" colspan="4">印紙税</td>
-                <td class="xl-auto">30,000</td>
-                <td style="font-size:11px;color:var(--sub)">固定</td>
-                <td colspan="5"></td>
-              </tr>
-              <!-- ===== 7. 販売管理費 ===== -->
-              <tr><td class="xl-sec xl-bold" colspan="11">販売管理費</td></tr>
-              <tr>
-                <td class="xl-label" colspan="4">司法書士報酬</td>
-                <td><input type="number" id="c-shihou" value="100000" oninput="calcPL()" style="width:120px"></td>
-                <td><input type="text" class="xl-memo" placeholder=""></td>
-                <td colspan="5"></td>
-              </tr>
-              <tr>
-                <td class="xl-label" colspan="4">予備費</td>
-                <td><input type="number" id="c-yobihi" value="500000" oninput="calcPL()" style="width:120px"></td>
-                <td style="font-size:11px;color:var(--sub)">50万以下は無し</td>
-                <td colspan="5"></td>
-              </tr>
-              <tr>
-                <td class="xl-label" colspan="4">その他</td>
-                <td><input type="number" id="c-other2" value="0" oninput="calcPL()" style="width:120px"></td>
-                <td><input type="text" class="xl-memo" placeholder=""></td>
-                <td colspan="5"></td>
-              </tr>
-              <tr>
-                <td class="xl-label" colspan="4">販売手数料</td>
-                <td class="xl-auto" id="c-sell-fee">—</td>
-                <td style="font-size:11px;color:var(--sub)">(売上①×3%+60,000)×1.1</td>
-                <td colspan="5"></td>
-              </tr>
-              <!-- ===== 8. 営業外費用 ===== -->
-              <tr><td class="xl-sec xl-bold" colspan="11">営業外費用</td></tr>
-              <tr>
-                <td class="xl-label" colspan="4">借入金利</td>
-                <td class="xl-auto" id="c-interest">—</td>
-                <td style="font-size:11px;color:var(--sub)">借入金×3.5%/12×期間</td>
-                <td colspan="5"></td>
-              </tr>
-              <tr>
-                <td class="xl-label" colspan="4">事務手数料</td>
-                <td class="xl-auto" id="c-jimuf">—</td>
-                <td style="font-size:11px;color:var(--sub)">借入金×1%</td>
-                <td colspan="5"></td>
-              </tr>
-              <tr>
-                <td class="xl-label" colspan="4">その他</td>
-                <td><input type="number" id="c-other3" value="0" oninput="calcPL()" style="width:120px"></td>
-                <td><input type="text" class="xl-memo" placeholder=""></td>
-                <td colspan="5"></td>
-              </tr>
-              <!-- ===== 9. 合計 ===== -->
-              <tr style="background:#f0f0f0">
-                <td class="xl-bold" colspan="4">原価合計</td>
-                <td class="xl-num xl-bold" id="c-total">—</td>
-                <td style="font-size:11px;color:var(--sub)">(本システムでは全項目を自動集計します)</td>
-                <td colspan="5"></td>
-              </tr>
-              <tr>
-                <td colspan="4" style="font-size:11px;color:var(--sub)">(参考) 利益率10%確保の仕入上限</td>
-                <td class="xl-auto" id="xl-max-land" colspan="2" style="font-size:11px;color:var(--sub)">—</td>
-                <td colspan="5"></td>
-              </tr>
-            </table>
-
-            <!-- ===== 3a. 新築 販売在庫（近隣）＝独立ブロック ===== -->
-            <table class="xl" style="margin-top:14px">
-              <tr><td class="xl-band" colspan="7">新築 販売在庫（近隣）</td></tr>
-              <tr>
-                <td class="xl-colhd">No</td>
-                <td class="xl-colhd">価格（円）</td>
-                <td class="xl-colhd">土地面積（㎡）</td>
-                <td class="xl-colhd">坪単価（自動）</td>
-                <td class="xl-colhd">延床（間取）</td>
-                <td class="xl-colhd">駅距離</td>
-                <td class="xl-colhd">住所</td>
-              </tr>
-              <tr>
-                <td class="xl-num" style="color:var(--sub);font-size:11px">1</td>
-                <td><input type="number" class="n-price" id="sc-price-1" value="82000000" oninput="calcNTsubo(true)" style="width:110px"></td>
-                <td><input type="number" class="n-area" id="sc-area-1" value="108" oninput="calcNTsubo(true)" style="width:80px"></td>
-                <td class="xl-auto" id="sc-tsubo-1">—</td>
-                <td><input type="text" id="sc-madori-1" value="4LDK" style="width:80px"></td>
-                <td><input type="text" id="sc-eki-1" value="徒歩7分" style="width:80px"></td>
-                <td><input type="text" id="sc-addr-1" value="江戸川区北葛西3丁目" style="width:190px"></td>
-              </tr>
-              <tr>
-                <td class="xl-num" style="color:var(--sub);font-size:11px">2</td>
-                <td><input type="number" class="n-price" id="sc-price-2" value="79800000" oninput="calcNTsubo(true)" style="width:110px"></td>
-                <td><input type="number" class="n-area" id="sc-area-2" value="95" oninput="calcNTsubo(true)" style="width:80px"></td>
-                <td class="xl-auto" id="sc-tsubo-2">—</td>
-                <td><input type="text" id="sc-madori-2" value="4LDK" style="width:80px"></td>
-                <td><input type="text" id="sc-eki-2" value="徒歩10分" style="width:80px"></td>
-                <td><input type="text" id="sc-addr-2" value="江戸川区西葛西7丁目" style="width:190px"></td>
-              </tr>
-              <tr>
-                <td class="xl-num" style="color:var(--sub);font-size:11px">3</td>
-                <td><input type="number" class="n-price" id="sc-price-3" value="84800000" oninput="calcNTsubo(true)" style="width:110px"></td>
-                <td><input type="number" class="n-area" id="sc-area-3" value="112" oninput="calcNTsubo(true)" style="width:80px"></td>
-                <td class="xl-auto" id="sc-tsubo-3">—</td>
-                <td><input type="text" id="sc-madori-3" value="4LDK" style="width:80px"></td>
-                <td><input type="text" id="sc-eki-3" value="徒歩5分" style="width:80px"></td>
-                <td><input type="text" id="sc-addr-3" value="江戸川区中葛西4丁目" style="width:190px"></td>
-              </tr>
-              <tr>
-                <td class="xl-num" style="color:var(--sub);font-size:11px">4</td>
-                <td><input type="number" class="n-price" id="sc-price-4" oninput="calcNTsubo(true)" style="width:110px"></td>
-                <td><input type="number" class="n-area" id="sc-area-4" oninput="calcNTsubo(true)" style="width:80px"></td>
-                <td class="xl-auto" id="sc-tsubo-4">—</td>
-                <td><input type="text" id="sc-madori-4" style="width:80px"></td>
-                <td><input type="text" id="sc-eki-4" style="width:80px"></td>
-                <td><input type="text" id="sc-addr-4" style="width:190px"></td>
-              </tr>
-              <tr>
-                <td class="xl-num" style="color:var(--sub);font-size:11px">5</td>
-                <td><input type="number" class="n-price" id="sc-price-5" oninput="calcNTsubo(true)" style="width:110px"></td>
-                <td><input type="number" class="n-area" id="sc-area-5" oninput="calcNTsubo(true)" style="width:80px"></td>
-                <td class="xl-auto" id="sc-tsubo-5">—</td>
-                <td><input type="text" id="sc-madori-5" style="width:80px"></td>
-                <td><input type="text" id="sc-eki-5" style="width:80px"></td>
-                <td><input type="text" id="sc-addr-5" style="width:190px"></td>
-              </tr>
-              <tr>
-                <td class="xl-num" style="color:var(--sub);font-size:11px">6</td>
-                <td><input type="number" class="n-price" id="sc-price-6" oninput="calcNTsubo(true)" style="width:110px"></td>
-                <td><input type="number" class="n-area" id="sc-area-6" oninput="calcNTsubo(true)" style="width:80px"></td>
-                <td class="xl-auto" id="sc-tsubo-6">—</td>
-                <td><input type="text" id="sc-madori-6" style="width:80px"></td>
-                <td><input type="text" id="sc-eki-6" style="width:80px"></td>
-                <td><input type="text" id="sc-addr-6" style="width:190px"></td>
-              </tr>
-            </table>
-
-            <!-- ===== 3b. 土地 販売在庫（近隣）＝独立ブロック ===== -->
-            <table class="xl" style="margin-top:14px">
-              <tr><td class="xl-band" colspan="7">土地 販売在庫（近隣）</td></tr>
-              <tr>
-                <td class="xl-colhd">No</td>
-                <td class="xl-colhd">価格（円）</td>
-                <td class="xl-colhd">土地面積（㎡）</td>
-                <td class="xl-colhd">坪単価（自動）</td>
-                <td class="xl-colhd">延床（間取）</td>
-                <td class="xl-colhd">駅距離</td>
-                <td class="xl-colhd">住所</td>
-              </tr>
-              <tr>
-                <td class="xl-num" style="color:var(--sub);font-size:11px">1</td>
-                <td><input type="number" class="n-price" id="tc-price-1" value="32000000" oninput="calcNTsubo(true)" style="width:110px"></td>
-                <td><input type="number" class="n-area" id="tc-area-1" value="95" oninput="calcNTsubo(true)" style="width:80px"></td>
-                <td class="xl-auto" id="tc-tsubo-1">—</td>
-                <td><input type="text" id="tc-madori-1" value="—" style="width:80px"></td>
-                <td><input type="text" id="tc-eki-1" value="徒歩8分" style="width:80px"></td>
-                <td><input type="text" id="tc-addr-1" value="江戸川区北葛西4丁目" style="width:190px"></td>
-              </tr>
-              <tr>
-                <td class="xl-num" style="color:var(--sub);font-size:11px">2</td>
-                <td><input type="number" class="n-price" id="tc-price-2" value="35000000" oninput="calcNTsubo(true)" style="width:110px"></td>
-                <td><input type="number" class="n-area" id="tc-area-2" value="105" oninput="calcNTsubo(true)" style="width:80px"></td>
-                <td class="xl-auto" id="tc-tsubo-2">—</td>
-                <td><input type="text" id="tc-madori-2" value="—" style="width:80px"></td>
-                <td><input type="text" id="tc-eki-2" value="徒歩6分" style="width:80px"></td>
-                <td><input type="text" id="tc-addr-2" value="江戸川区西葛西5丁目" style="width:190px"></td>
-              </tr>
-              <tr>
-                <td class="xl-num" style="color:var(--sub);font-size:11px">3</td>
-                <td><input type="number" class="n-price" id="tc-price-3" oninput="calcNTsubo(true)" style="width:110px"></td>
-                <td><input type="number" class="n-area" id="tc-area-3" oninput="calcNTsubo(true)" style="width:80px"></td>
-                <td class="xl-auto" id="tc-tsubo-3">—</td>
-                <td><input type="text" id="tc-madori-3" style="width:80px"></td>
-                <td><input type="text" id="tc-eki-3" style="width:80px"></td>
-                <td><input type="text" id="tc-addr-3" style="width:190px"></td>
-              </tr>
-              <tr>
-                <td class="xl-num" style="color:var(--sub);font-size:11px">4</td>
-                <td><input type="number" class="n-price" id="tc-price-4" oninput="calcNTsubo(true)" style="width:110px"></td>
-                <td><input type="number" class="n-area" id="tc-area-4" oninput="calcNTsubo(true)" style="width:80px"></td>
-                <td class="xl-auto" id="tc-tsubo-4">—</td>
-                <td><input type="text" id="tc-madori-4" style="width:80px"></td>
-                <td><input type="text" id="tc-eki-4" style="width:80px"></td>
-                <td><input type="text" id="tc-addr-4" style="width:190px"></td>
-              </tr>
-              <tr>
-                <td class="xl-num" style="color:var(--sub);font-size:11px">5</td>
-                <td><input type="number" class="n-price" id="tc-price-5" oninput="calcNTsubo(true)" style="width:110px"></td>
-                <td><input type="number" class="n-area" id="tc-area-5" oninput="calcNTsubo(true)" style="width:80px"></td>
-                <td class="xl-auto" id="tc-tsubo-5">—</td>
-                <td><input type="text" id="tc-madori-5" style="width:80px"></td>
-                <td><input type="text" id="tc-eki-5" style="width:80px"></td>
-                <td><input type="text" id="tc-addr-5" style="width:190px"></td>
-              </tr>
-            </table>
-
-            <!-- 事例呼び出し -->
             <div style="margin:10px 0">
               <button class="btn btn-secondary btn-sm" onclick="loadPastCases()">🔍 過去の事例をエリアから呼び出す</button><button class="help-btn" onclick="toggleHelp(this)" title="この機能の説明">？</button><div class="help-pop" style="display:none"><strong>「過去の事例をエリアから呼び出す」とは</strong><br>市場調査で入力いただいた近隣の事例（販売在庫・成約）は、案件ごとに使い捨てにせず、全社で蓄積されます。似たエリアの案件をご検討の際、過去に登録された事例を呼び出して、在庫比較表にそのまま追加できます。入力した情報が、次の調査の手間を減らします。</div>
               <div id="past-cases-pl" style="margin-top:8px"></div>
             </div>
 
-            <!-- ===== 販売想定〜押印欄 ===== -->
-            <table class="xl" style="margin-top:14px">
-              <!-- ===== 10. 販売想定①②③ ===== -->
-              <tr>
-                <td class="xl-sell-hd xl-bold" colspan="11">販売想定①〜③</td>
-              </tr>
-              <tr>
-                <td class="xl-label" style="font-size:11px">区分</td>
-                <td class="xl-sell-hd2 xl-bold" colspan="2">販売想定①（出値価格）</td>
-                <td class="xl-label" style="font-size:11px">利益率</td>
-                <td class="xl-sell-hd2 xl-bold" colspan="2">販売想定②（着地前後価格）</td>
-                <td class="xl-label" style="font-size:11px">利益率</td>
-                <td class="xl-sell-hd2 xl-bold" colspan="2">販売想定③（下限価格）</td>
-                <td class="xl-label" style="font-size:11px">利益率</td>
-                <td></td>
-              </tr>
-              <tr>
-                <td class="xl-label">売上高</td>
-                <td colspan="2"><input type="number" id="pl-sell-a" value="82800000" oninput="calcPL()" style="width:110px"></td>
-                <td class="xl-auto" id="pl-rate-a">—</td>
-                <td colspan="2"><input type="number" id="pl-sell-b" value="79800000" oninput="calcPL()" style="width:110px"></td>
-                <td class="xl-auto" id="pl-rate-b">—</td>
-                <td colspan="2"><input type="number" id="pl-sell-c" value="77800000" oninput="calcPL()" style="width:110px"></td>
-                <td class="xl-auto" id="pl-rate-c">—</td>
-                <td></td>
-              </tr>
-              <tr>
-                <td class="xl-label">原価合計</td>
-                <td class="xl-auto" colspan="2" id="xl-cost-copy-a">—</td>
-                <td></td>
-                <td class="xl-auto" colspan="2" id="xl-cost-copy-b">—</td>
-                <td></td>
-                <td class="xl-auto" colspan="2" id="xl-cost-copy-c">—</td>
-                <td colspan="2"></td>
-              </tr>
-              <tr>
-                <td class="xl-label">総利益</td>
-                <td class="xl-auto xl-bold" colspan="2" id="pl-profit-a">—</td>
-                <td></td>
-                <td class="xl-auto xl-bold" colspan="2" id="pl-profit-b">—</td>
-                <td></td>
-                <td class="xl-auto xl-bold" colspan="2" id="pl-profit-c">—</td>
-                <td colspan="2"></td>
-              </tr>
-              <!-- 販売価格の設定根拠（雛型にない行のため控えめに追加） -->
-              <tr>
-                <td class="xl-label" style="font-size:11px">販売価格の設定根拠</td>
-                <td colspan="10"><input type="text" id="pl-price-basis" placeholder="例：近隣成約が坪230万円・販売中の競合が7,980万円のため" style="width:98%;min-width:420px"></td>
-              </tr>
-              <!-- 販売計画 -->
-              <tr>
-                <td class="xl-sell-hd xl-bold">販売計画</td>
-                <td class="xl-label" style="font-size:11px">価格（円/棟）</td>
-                <td class="xl-label" style="font-size:11px">間取り</td>
-                <td class="xl-label" style="font-size:11px">延床（㎡）</td>
-                <td class="xl-label" style="font-size:11px">車庫</td>
-                <td colspan="6"></td>
-              </tr>
-              <tr>
-                <td class="xl-label" style="font-size:11px">販売計画①（出値）</td>
-                <td><input type="number" id="pp-price-a" style="width:100px"></td>
-                <td><input type="text" id="pp-madori-a" value="4LDK" style="width:60px"></td>
-                <td><input type="number" id="pp-menseki-a" style="width:60px"></td>
-                <td><input type="text" id="pp-garage-a" style="width:60px"></td>
-                <td colspan="6"></td>
-              </tr>
-              <tr>
-                <td class="xl-label" style="font-size:11px">販売計画②（着地）</td>
-                <td><input type="number" id="pp-price-b" style="width:100px"></td>
-                <td><input type="text" id="pp-madori-b" style="width:60px"></td>
-                <td><input type="number" id="pp-menseki-b" style="width:60px"></td>
-                <td><input type="text" id="pp-garage-b" style="width:60px"></td>
-                <td colspan="6"></td>
-              </tr>
-              <tr>
-                <td class="xl-label" style="font-size:11px">販売計画③（下限）</td>
-                <td><input type="number" id="pp-price-c" style="width:100px"></td>
-                <td><input type="text" id="pp-madori-c" style="width:60px"></td>
-                <td><input type="number" id="pp-menseki-c" style="width:60px"></td>
-                <td><input type="text" id="pp-garage-c" style="width:60px"></td>
-                <td colspan="6"></td>
-              </tr>
-              <!-- ===== 11. 押印欄 ===== -->
-              <tr>
-                <td colspan="11" style="border:none;background:#fff;padding:12px 4px 4px">
-                  <table class="stamp-tbl">
-                    <tr><td>社長</td><td>上長</td><td>担当</td></tr>
-                    <tr><td class="sq"></td><td class="sq"></td><td class="sq"></td></tr>
-                  </table>
-                </td>
-              </tr>
-            </table>
+            <div id="pl-legacy-metrics" style="display:none">
+              <span id="c-total"></span><span id="pl-sell-a"></span><span id="pl-sell-b"></span><span id="pl-sell-c"></span>
+              <span id="pl-rate-a"></span><span id="pl-rate-b"></span><span id="pl-rate-c"></span>
+              <span id="pl-profit-a"></span><span id="pl-profit-b"></span><span id="pl-profit-c"></span>
+              <span id="xl-irr"></span><input type="hidden" id="pl-price-basis" value="">
             </div>
           </div>
 
@@ -1258,10 +860,24 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
       <option>立地・接道・形状などの物件条件</option>
       <option>その他</option>
     </select>
-    <input class="form-input" id="miokuri-free" type="text" placeholder="補足メモ（任意・自由記入）" style="width:100%;margin-bottom:14px">
+    <label class="form-label" for="miokuri-free">見送り理由</label>
+    <input class="form-input" id="miokuri-free" type="text" placeholder="見送り理由を記入してください" style="width:100%;margin-top:4px">
+    <div class="field-error" id="miokuri-free-error" style="margin-bottom:14px"></div>
     <div class="modal-btns">
       <button class="btn btn-ghost" onclick="closeMiokuriModal()">戻る</button>
       <button class="btn btn-primary" onclick="miokuriSubmit()">見送りとして保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 資料一覧モーダル（詳細上部の「資料を確認」から開く） -->
+<div id="shiryo-list-modal" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <div class="modal-title">資料一覧</div>
+    <div class="modal-text" id="shiryo-list-modal-text">この案件に添付されている資料です。</div>
+    <div id="shiryo-list-modal-body" class="shiryo-modal-list"></div>
+    <div class="modal-btns">
+      <button class="btn btn-ghost" onclick="closeShiryoListModal()">閉じる</button>
     </div>
   </div>
 </div>
@@ -1282,6 +898,8 @@ const DEALS = [
   {id:4,name:'××ハイツ跡地',area:'中野',status:'見送り',staff:'田中',type:'土地',photo:'photos/land2.jpg',acquiredDate:'2026-05-20',price:null,note:'接道条件',holdDate:null,reg:{market:true,pl:false,hearing:false,plan:false}},
   {id:15,name:'大島6丁目土地',area:'江東',status:'販売会社ヒアリング中',staff:'田中',type:'土地',photo:'photos/land3.jpg',acquiredDate:'2026-07-02',price:null,note:'',holdDate:null,reg:{market:true,pl:true,hearing:true,plan:false}},
   {id:5,name:'北葛西建売',area:'江戸川',status:'概算収支作成済み',staff:'田中',type:'戸建て建売',photo:'photos/house1.jpg',acquiredDate:'2026-06-10',price:82800000,note:'',holdDate:null,reg:{market:true,pl:true,hearing:false,plan:false},shiryo:[{name:'物件概要書.pdf'},{name:'現地写真_南側.jpg'},{name:'公図.pdf'}]},
+  {id:16,name:'船堀アパート計画',area:'江戸川',status:'概算収支作成済み',staff:'佐藤',type:'アパート',photo:'photos/apt1.jpg',acquiredDate:'2026-06-18',price:null,note:'',holdDate:null,reg:{market:true,pl:true,hearing:false,plan:false},shiryo:[{name:'物件概要書.pdf'},{name:'レントロール.xlsx'}]},
+  {id:17,name:'南葛西土地転売',area:'江戸川',status:'概算収支作成済み',staff:'鈴木',type:'土地',photo:'photos/land2.jpg',acquiredDate:'2026-06-25',price:null,note:'',holdDate:null,reg:{market:true,pl:true,hearing:false,plan:false},shiryo:[{name:'物件概要書.pdf'}]},
   {id:6,name:'板橋本町土地',area:'板橋',status:'検討中',staff:'佐藤',type:'土地',photo:'photos/land4.jpg',acquiredDate:'2026-06-20',price:null,note:'',holdDate:null,reg:{market:false,pl:false,hearing:false,plan:false}},
   {id:7,name:'荒川南千住',area:'荒川',status:'販売会社ヒアリング中',staff:'鈴木',type:'戸建て建売',photo:'photos/house2.jpg',acquiredDate:'2026-06-08',price:null,note:'',holdDate:null,reg:{market:false,pl:true,hearing:true,plan:false}},
   {id:8,name:'葛飾立石',area:'葛飾',status:'建築プラン依頼中',staff:'田中',type:'戸建て建売',photo:'photos/house1.jpg',acquiredDate:'2026-06-03',price:null,note:'',holdDate:null,reg:{market:true,pl:true,hearing:true,plan:true},shiryo:[{name:'建築プラン図面.pdf'}]},
@@ -1388,9 +1006,18 @@ function showToast(msg) {
   setTimeout(() => {t.classList.remove('show'); setTimeout(() => t.remove(), 300);}, 2500);
 }
 function gv(id) {
+  if (typeof OLD_ID_CELL !== 'undefined' && OLD_ID_CELL[id]) {
+    const m = SHUSHI_SUMMARY[activeShushiSheet] || {};
+    const cell = OLD_ID_CELL[id] === '__sellA' ? m.sellA
+      : OLD_ID_CELL[id] === '__sellB' ? m.sellB
+      : OLD_ID_CELL[id] === '__sellC' ? m.sellC
+      : OLD_ID_CELL[id];
+    if (cell) return shushiNum(shushiCells[cell] !== undefined ? shushiCells[cell] : shushiRawValue(cell));
+  }
   const el = document.getElementById(id);
   if (!el) return 0;
-  const n = parseFloat(el.value);
+  const raw = ('value' in el) ? el.value : el.textContent;
+  const n = parseFloat(String(raw || '').replace(/,/g,''));
   return (isFinite(n) && !isNaN(n)) ? n : 0;
 }
 function setText(id, val) {
@@ -1536,7 +1163,7 @@ function renderList() {
         + '<td>' + d.acquiredDate + '</td>'
         + '<td style="text-align:right">' + priceStr + '</td>'
         + '<td style="color:var(--sub);font-size:12px">' + (d.note || '') + '</td>'
-        + '<td style="text-align:center;color:var(--sub)">' + (sh.length > 0 ? '<span title="資料あり">📎</span>' : '-') + '</td>'
+        + '<td style="text-align:center">' + (sh.length > 0 ? '<span class="shiryo-state has" title="資料あり">有</span>' : '<span class="shiryo-state none" title="資料なし">無</span>') + '</td>'
         + '</tr>';
     }).join('');
   }
@@ -1557,9 +1184,13 @@ function listDealCellHtml(deal, holdInfo) {
 
 /* ===== 資料（📎）管理：登録・収支・詳細のどこから追加しても同じ deal.shiryo 配列に一元化 ===== */
 let shiryoTargetId = null; // 数値＝案件ID／'__newreg__'＝新規登録画面の一時添付
+let shiryoEmptyNoteTimer = null;
 function getShiryo(deal) {
   if (!deal.shiryo) deal.shiryo = [];
   return deal.shiryo;
+}
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 function openShiryoPicker(dealId) {
   if (dealId === null || dealId === undefined) { showToast('案件を選択してください'); return; }
@@ -1578,6 +1209,8 @@ function onShiryoSelected(inp) {
     Array.from(inp.files).forEach(f => newregShiryo.push({name: f.name}));
     showToast('資料を' + inp.files.length + '件添付しました（登録時に案件へ保存されます）');
     inp.value = '';
+    const err = document.getElementById('newreg-shiryo-error');
+    if (err) err.textContent = '';
     renderShiryoNewreg();
     return;
   }
@@ -1596,28 +1229,86 @@ function removeShiryo(dealId, idx) {
   showToast('資料「' + removed[0].name + '」を削除しました');
   refreshShiryoViews();
 }
+function downloadShiryo(dealId, idx) {
+  const deal = DEALS.find(d => d.id === dealId);
+  if (!deal || !deal.shiryo || !deal.shiryo[idx]) return;
+  showToast('資料「' + deal.shiryo[idx].name + '」をダウンロードします（本実装では実ファイルが保存されます）');
+}
 function refreshShiryoViews() {
   if (currentView === 'list') renderList();
   renderShiryoPL();
   renderShiryoDetail();
+  renderShiryoListModal();
 }
 /* 詳細画面上部の資料バー（開いてすぐ見える位置） */
 function renderShiryoDetail() {
-  const names = document.getElementById('detail-shiryo-names');
-  if (!names) return;
+  const btn = document.getElementById('detail-shiryo-check-btn');
+  if (!btn) return;
   const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
-  if (!deal) { names.textContent = '—'; return; }
+  if (!deal) {
+    btn.textContent = '📄 資料を確認';
+    btn.classList.add('is-empty');
+    return;
+  }
   const sh = getShiryo(deal);
-  names.textContent = sh.length === 0
-    ? 'まだ資料がありません（画像・PDFをこの案件にまとめて保管できます）'
-    : sh.map(f => f.name).join('・') + '（' + sh.length + '件）';
+  btn.textContent = sh.length === 0 ? '📄 資料を確認' : '📄 資料を確認（' + sh.length + '）';
+  btn.classList.toggle('is-empty', sh.length === 0);
+}
+function showShiryoEmptyNote() {
+  const note = document.getElementById('detail-shiryo-empty-note');
+  if (!note) return;
+  note.textContent = '資料がありません。';
+  if (shiryoEmptyNoteTimer) clearTimeout(shiryoEmptyNoteTimer);
+  shiryoEmptyNoteTimer = setTimeout(() => {
+    note.textContent = '';
+    shiryoEmptyNoteTimer = null;
+  }, 3000);
+}
+function openShiryoListModal() {
+  const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
+  if (!deal || getShiryo(deal).length === 0) {
+    closeShiryoListModal();
+    showShiryoEmptyNote();
+    return;
+  }
+  renderShiryoListModal();
+  const modal = document.getElementById('shiryo-list-modal');
+  if (modal) modal.style.display = 'flex';
+}
+function closeShiryoListModal() {
+  const modal = document.getElementById('shiryo-list-modal');
+  if (modal) modal.style.display = 'none';
+}
+function renderShiryoListModal() {
+  const body = document.getElementById('shiryo-list-modal-body');
+  const text = document.getElementById('shiryo-list-modal-text');
+  const modal = document.getElementById('shiryo-list-modal');
+  if (!body) return;
+  const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
+  if (!deal) {
+    body.innerHTML = '<div class="shiryo-modal-row">案件を選択してください。</div>';
+    return;
+  }
+  const sh = getShiryo(deal);
+  if (text) text.textContent = deal.name + ' の資料です。';
+  if (sh.length === 0) {
+    body.innerHTML = '<div class="shiryo-modal-row">資料がありません。</div>';
+    if (modal && modal.style.display !== 'none') closeShiryoListModal();
+    return;
+  }
+  body.innerHTML = sh.map((f, i) => {
+    const name = escapeHtml(f.name);
+    return '<div class="shiryo-modal-row"><span>📄</span><span class="shiryo-modal-name" title="' + name + '">' + name + '</span>'
+    + '<button class="shiryo-dl" title="この資料をダウンロード" onclick="downloadShiryo(' + deal.id + ',' + i + ')">⬇ ダウンロード</button>'
+    + '<button class="shiryo-del" title="この資料を削除" onclick="removeShiryo(' + deal.id + ',' + i + ')">✕ 削除</button></div>'
+  }).join('');
 }
 /* 新規登録画面の資料枠（一時添付 newregShiryo を表示） */
 function renderShiryoNewreg() {
   const list = document.getElementById('newreg-shiryo-list');
   if (!list) return;
   list.innerHTML = newregShiryo.length === 0
-    ? '<div class="shiryo-empty">まだ資料がありません（任意）。物件概要書・現地写真・図面などを添付できます。</div>'
+    ? '<div class="shiryo-empty">まだ資料がありません。物件概要書・現地写真・図面などを添付してください。</div>'
     : newregShiryo.map((f, i) =>
         '<div class="shiryo-item"><span>📄</span><span style="flex:1">' + f.name + '</span>'
         + '<button class="shiryo-del" title="この資料を削除" onclick="removeShiryoNewreg(' + i + ')">✕ 削除</button></div>'
@@ -1645,6 +1336,7 @@ function renderShiryoPL() {
 
 /* ===== V3 詳細 ===== */
 function openDetail(id) {
+  persistCurrentShushiState();
   currentDealId = id;
   setHash('deal' + id);
   const deal = DEALS.find(d => d.id === id);
@@ -1660,7 +1352,6 @@ function openDetail(id) {
   if (grid) {
     grid.innerHTML =
       '<div class="info-item"><div class="info-item-label">案件名</div><div class="info-item-val">' + deal.name + '</div></div>'
-      + '<div class="info-item"><div class="info-item-label">ステータス</div><div class="info-item-val">' + statusChip(deal.status) + '</div></div>'
       + '<div class="info-item"><div class="info-item-label">種別</div><div class="info-item-val">' + deal.type + '</div></div>'
       + '<div class="info-item"><div class="info-item-label">担当</div><div class="info-item-val">' + deal.staff + '</div></div>'
       + '<div class="info-item"><div class="info-item-label">取得日</div><div class="info-item-val">' + deal.acquiredDate + '</div></div>';
@@ -1704,7 +1395,8 @@ function openDetail(id) {
   }
 
   setInner('sheet-dup-warning', '');
-  calcPL();
+  setShushiSheetByDeal(deal);
+  renderPLPhotos();
   renderShiryoPL();
   renderShiryoDetail();
   // サマリータブをデフォルト表示
@@ -1716,197 +1408,486 @@ function openDetail(id) {
 function sv(id, val) {
   const el = document.getElementById(id);
   if (el) el.value = val;
-}
-
-/* ===== 近隣在庫テーブル（Excelシート内のID形式） ===== */
-function calcNTsubo(fromInput) {
-  // 新築6件
-  for (let i = 1; i <= 6; i++) {
-    const pEl = document.getElementById('sc-price-' + i);
-    const aEl = document.getElementById('sc-area-' + i);
-    const tEl = document.getElementById('sc-tsubo-' + i);
-    if (!pEl || !aEl || !tEl) continue;
-    const p = parseFloat(pEl.value);
-    const a = parseFloat(aEl.value);
-    if (isFinite(p) && !isNaN(p) && p > 0 && isFinite(a) && !isNaN(a) && a > 0) {
-      const tsubo = a / 3.30579;
-      tEl.textContent = Math.round(p / tsubo).toLocaleString('ja-JP') + '円/坪';
-    } else {
-      tEl.textContent = '—';
-    }
-  }
-  // 土地5件
-  for (let i = 1; i <= 5; i++) {
-    const pEl = document.getElementById('tc-price-' + i);
-    const aEl = document.getElementById('tc-area-' + i);
-    const tEl = document.getElementById('tc-tsubo-' + i);
-    if (!pEl || !aEl || !tEl) continue;
-    const p = parseFloat(pEl.value);
-    const a = parseFloat(aEl.value);
-    if (isFinite(p) && !isNaN(p) && p > 0 && isFinite(a) && !isNaN(a) && a > 0) {
-      const tsubo = a / 3.30579;
-      tEl.textContent = Math.round(p / tsubo).toLocaleString('ja-JP') + '円/坪';
-    } else {
-      tEl.textContent = '—';
-    }
-  }
-  // 在庫比較表にユーザーが価格を入力したら、市場調査を自動で登録扱いにする
-  // （fromInput＝入力イベント経由のみ。画面表示時の再計算では発火しない）
-  if (fromInput && currentDealId !== null) {
-    const deal = DEALS.find(d => d.id === currentDealId);
-    if (deal && deal.reg && !deal.reg.market) {
-      let any = false;
-      for (let i = 1; i <= 6 && !any; i++) {
-        const el = document.getElementById('sc-price-' + i);
-        if (el && parseFloat(el.value) > 0) any = true;
-      }
-      for (let i = 1; i <= 5 && !any; i++) {
-        const el = document.getElementById('tc-price-' + i);
-        if (el && parseFloat(el.value) > 0) any = true;
-      }
-      if (any) registerStep('market');
-    }
+  else if (typeof OLD_ID_CELL !== 'undefined' && OLD_ID_CELL[id]) {
+    const m = SHUSHI_SUMMARY[activeShushiSheet] || {};
+    const cell = OLD_ID_CELL[id] === '__sellA' ? m.sellA
+      : OLD_ID_CELL[id] === '__sellB' ? m.sellB
+      : OLD_ID_CELL[id] === '__sellC' ? m.sellC
+      : OLD_ID_CELL[id];
+    const cel = cell ? document.getElementById(shushiCellId(cell)) : null;
+    if (cel && 'value' in cel) cel.value = val;
   }
 }
 
-/* ===== 収支計算（円単位） ===== */
+
+/* ===== 完成版Excel 3シート対応：収支シート描画・計算 ===== */
+const SHUSHI_SHEETS = ['戸建て（建売・土地売り）','土地転売（業者売り）','アパート'];
+let activeShushiSheet = SHUSHI_SHEETS[0];
+let shushiCells = {};
+let lastShushiMetrics = {sellA:0,sellB:0,sellC:0,total:0,profitA:0,profitB:0,profitC:0,rateA:0,rateB:0,rateC:0,irr:0,basis:'販売想定②基準'};
+
+const SHUSHI_COLS = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB','AC','AD'];
+const SHUSHI_LABELS = {
+  '戸建て（建売・土地売り）': {
+    A1:'物件名：',F2:'区画数',K2:'作成日',A3:'所在地',F3:'プロジェクト期間',I3:'新築　販売在庫（近隣）',A4:'地番',F4:'仕入契約日',A5:'交通',F5:'仕入決済日',J5:'価格',N5:'土地面積',P5:'坪単価',S5:'延床面積（間取）',W5:'駅距離',Z5:'住所',A6:'地積',D6:'実測入れる（SB後）',F6:'売主',A7:'建物面積',D7:'建物延床入れる',F7:'仲介会社',A8:'容積率',C8:'用途地域',F8:'売却契約日',A9:'建蔽率',C9:'防火指定',F9:'売却決済日',A10:'道路',C10:'高度地区',F10:'買主',C11:'その他',F11:'仲介会社',A14:'仕入れ原価',I14:'土地　販売在庫（近隣）',C15:'金　額',D15:'備　考',F15:'一種単価',A16:'土地原価',B16:'土地仕入原価',J16:'価格',N16:'土地面積',P16:'坪単価',S16:'特徴',W16:'駅距離',Z16:'住所',B17:'仲介手数料',B18:'業務委託手数料',F18:'借 入 金',B19:'解体整地費用',B20:'測量費用',B21:'譲渡承諾料',B22:'立退き費用',D23:'フリー項目',D24:'フリー項目',F22:'路線価',F23:'固定資産税路線価',A25:'建物原価',B25:'建築費',F24:'建物評価額',F25:'IRR',F28:'上記IRRは10％以上を目指す',B26:'設計費用',B27:'地盤改良',B28:'インフラ費用（改修）',B29:'外構費用',I25:'販売想定①',L25:'坪',O25:'円',P25:'利益率',T25:'販売計画',U25:'価格',X25:'間取',Z25:'延床',AB25:'車庫',AC25:'出値価格',I26:'売上高',I27:'原価合計',I28:'総利益',B30:'瑕疵担保保険',D31:'フリー項目',A32:'租税公課',I31:'販売想定②',L31:'坪',O31:'円',P31:'利益率',T31:'販売計画',U31:'価格',X31:'間取',Z31:'延床',AB31:'車庫',AC31:'着地前後価格',I32:'売上高',B32:'取 得 税(土地)',E32:'％',I33:'原価合計',B33:'取 得 税(建物)',E33:'％',I34:'総利益',B34:'固定資産税',E34:'％',B35:'都市計画税',E35:'％',B36:'登録免許税(土地）',E36:'％',B37:'登録免許税（建物）',E37:'％',I37:'販売想定③',L37:'坪',O37:'円',P37:'利益率',T37:'販売計画',U37:'価格',X37:'間取',Z37:'延床',AB37:'車庫',AC37:'下限価格',B38:'抵当権',E38:'％',I38:'売上高',B39:'印  紙  税',I39:'原価合計',I40:'総利益',A41:'販売管理費',B41:'司法書士報酬',B42:'予備費',B43:'その他',B44:'販売手数料',A45:'営業外費用',B45:'借入金利',E45:'％',B46:'事務手数料',E46:'%',D47:'フリー項目',B48:'合　計',F48:'←原価合計は必ず手計算すること',F53:'上記IRRは10％以上を目指す',D54:'事業期間12ヶ月',F54:'IRR',D58:'事業期間18ヶ月',F58:'IRR',D64:'事業期間24ヶ月',F64:'IRR',I60:'社長',M60:'上長',Q60:'担当'
+  },
+  '土地転売（業者売り）': {
+    A1:'物件名：',K2:'作成日',A3:'所在地',F3:'プロジェクト期間',I3:'新築　販売在庫（近隣）',A4:'地番',F4:'仕入契約日',A5:'交通',F5:'仕入決済日',J5:'価格',N5:'土地面積',P5:'坪単価',S5:'延床面積（間取）',W5:'駅距離',Z5:'住所',A6:'地積',F6:'売主',A7:'実測',F7:'仲介会社',A8:'容積率',C8:'用途地域',F8:'売却契約日',A9:'建蔽率',C9:'防火指定',F9:'売却決済日',A10:'道路',C10:'高度地区',F10:'買主',C11:'その他',F11:'仲介会社',A14:'仕入れ原価',I14:'土地　販売在庫（近隣）',C15:'金　額',D15:'備　考',F15:'一種単価',A16:'土地原価',B16:'土地仕入原価',J16:'価格',N16:'土地面積',P16:'坪単価',S16:'特徴',W16:'駅距離',Z16:'住所',B17:'仲介手数料',B18:'業務委託手数料',F18:'借 入 金',B19:'解体整地費用',B20:'地盤改良費用',B21:'譲渡承諾料',F21:'評価額',B22:'立退き費用',F22:'路線価',B23:'測量費用',F23:'固定資産税路線価',A24:'建物原価',B24:'建築費',F24:'建物評価額',I24:'販売想定①',L24:'坪',O24:'円',P24:'利益率',B25:'インフラ費用（改修）',F25:'IRR',I25:'売上高',U25:'出値価格',B26:'設計費用',I26:'原価合計',A27:'租税公課',B27:'取 得 税(土地)',E27:'％',I27:'総利益',B28:'取 得 税(建物)',E28:'％',F28:'上記IRRは10％以上を目指す',B29:'固定資産税',E29:'％',B30:'都市計画税',E30:'％',I30:'販売想定②',L30:'坪',O30:'円',P30:'利益率',B31:'登録免許税(土地）',E31:'％',I31:'売上高',U31:'着地前後価格',B32:'登録免許税（建物）',E32:'％',I32:'原価合計',B33:'抵当権',E33:'％',I33:'総利益',B34:'印  紙  税',A35:'販売管理費',B35:'司法書士報酬',B36:'予備費',B37:'販売手数料',A38:'営業外費用',B38:'借入金利',E38:'％',B39:'事務手数料',E39:'%',B40:'合　計',F40:'←原価合計は必ず手計算すること',F44:'上記IRRは10％以上を目指す',D46:'事業期間12ヶ月',F46:'IRR',D50:'事業期間18ヶ月',F50:'IRR',D56:'事業期間24ヶ月',F56:'IRR',I36:'社長',L36:'部長',P36:'担当'
+  },
+  'アパート': {
+    A1:'物件名：',K2:'作成日',A3:'所在地',F3:'プロジェクト期間',I3:'タイプ',J3:'面積',K3:'間取',L3:'戸数',M3:'賃料',O3:'合計',A4:'地番',F4:'総戸数',I4:'A',A5:'交通',I5:'B',A6:'実測面積',D6:'実測入れる（SB後）',F6:'契約日',I6:'C',A7:'建物専有面積',D7:'建物専有面積入れる',F7:'決済日',I7:'D',A8:'容積率',C8:'用途地域',F8:'売主',I8:'E',A9:'建蔽率',C9:'防火指定',F9:'仲介会社',I9:'F',A10:'道路',C10:'高度地区',F10:'仲介会社',I10:'合計',C11:'検査済証',A14:'仕入れ原価',I14:'販売想定①',L14:'利回り',P14:'利益率',C15:'金　額',D15:'備　考',F15:'一種単価',I15:'売上高',U15:'出値価格',A16:'土地原価',B16:'土地仕入原価',I16:'原価合計',B17:'仲介手数料',I17:'総利益',B18:'業務委託手数料',F18:'借 入 金',B19:'解体整地費用',B20:'測量費用',F20:'評価額',I20:'販売想定②',L20:'利回り',P20:'利益率',B21:'譲渡承諾料',F21:'路線価',I21:'売上高',U21:'着地前後価格',B22:'立退き費用',F22:'固定資産税路線価',I22:'原価合計',F24:'建物評価額',I24:'総利益',A25:'建物原価',B25:'建築費',F25:'IRR',B26:'設計費用',B27:'地盤改良',B28:'インフラ費用（改修）',B29:'外構費用',I29:'年間賃料収入（想定）',B30:'瑕疵担保保険',F30:'上記IRRは10％以上を目指す',I30:'月額賃料',I31:'年額賃料',I32:'坪単価',A33:'租税公課',B33:'取 得 税(土地)',E33:'％',B34:'取 得 税(建物)',E34:'％',B35:'固定資産税',E35:'％',B36:'都市計画税',E36:'％',B37:'登録免許税(土地）',E37:'％',B38:'登録免許税（建物）',E38:'％',B39:'抵当権',E39:'％',B40:'印  紙  税',A41:'販売管理費',B41:'司法書士報酬',B42:'予備費',B43:'その他',B44:'販売手数料',A45:'営業外費用',B45:'借入金利',E45:'％',B46:'事務手数料',E46:'%',B48:'合　計',F48:'←原価合計は必ず手計算すること',F53:'上記IRRは10％以上を目指す',D55:'事業期間12ヶ月',F55:'IRR',D59:'事業期間18ヶ月',F59:'IRR',D65:'事業期間24ヶ月',F65:'IRR',I43:'社長',L43:'部長',P43:'担当'
+  }
+};
+
+const SHUSHI_INPUTS = {
+  '戸建て（建売・土地売り）': ['G2','G3','B6','B7','B8','B9','I6','J6','N6','I7','J7','N7','I8','J8','N8','I9','J9','N9','I10','J10','N10','I11','J11','N11','C16','C18','C19','C20','C21','C22','C23','C24','I17','J17','N17','I18','J18','N18','I19','J19','N19','I20','J20','N20','I21','J21','N21','G22','G23','G24','C25','C26','C27','C28','C29','K26','U26','U27','C30','C31','D32','K32','U32','U33','D33','D34','D35','D36','D37','D38','K38','U38','U39','C39','C41','C42','C43','C47','D45','D46'],
+  '土地転売（業者売り）': ['G3','B6','B7','B8','B9','I6','I7','I8','I9','I10','I11','C16','C18','C19','C20','C21','C22','C23','I17','I18','I19','I20','I21','G22','G23','C24','G24','K25','C25','C26','C27','D27','C28','D28','C29','D29','C30','D30','C31','D31','K31','C32','D32','C33','D33','C34','C35','C36','C37','C38','D38','C39','D39'],
+  'アパート': ['G3','G4','J4','K4','L4','M4','J5','K5','L5','M5','B6','J6','K6','L6','M6','B7','J7','K7','L7','M7','B8','J8','K8','L8','M8','B9','J9','K9','L9','M9','N14','C16','C18','C19','C20','C21','C22','N20','G21','G22','G24','C25','C26','C27','C28','C29','C30','D33','D34','D35','D36','D37','D38','D39','C40','C41','C42','C43','C47','D45','D46']
+};
+const SHUSHI_META_INPUTS = {
+  '戸建て（建売・土地売り）': ['B1','B3','B4','B5','B10','B11','D8','D9','D10','D11','G4','G5','G6','G7','G8','G9','G10','G11','S6','W6','Z6','S7','W7','Z7','S8','W8','Z8','S9','W9','Z9','S10','W10','Z10','S11','W11','Z11','S17','W17','Z17','S18','W18','Z18','S19','W19','Z19','S20','W20','Z20','S21','W21','Z21','D17','D18','D19','D20','D22','D25','D26','D30','X26','Z26','AB26','X27','Z27','AB27','D41','D42','D43','D44','D45','D46','X32','Z32','AB32','X33','Z33','AB33','X38','Z38','AB38','X39','Z39','AB39'],
+  '土地転売（業者売り）': ['B1','B3','B4','B5','B10','D8','D9','D10','D11','G4','G5','G6','G7','G8','G9','G10','G11','J6','N6','S6','W6','Z6','J7','N7','S7','W7','Z7','J8','N8','S8','W8','Z8','J9','N9','S9','W9','Z9','J10','N10','S10','W10','Z10','J11','N11','S11','W11','Z11','J17','N17','S17','W17','Z17','J18','N18','S18','W18','Z18','J19','N19','S19','W19','Z19','J20','N20','S20','W20','Z20','J21','N21','S21','W21','Z21','D19','D20','D21','D22','D23','D24','D25','D26','D35','D36','D37','D38','D39'],
+  'アパート': ['B1','B3','B4','B5','B10','D8','D9','D10','D11','G4','G6','G7','G8','G9','G10','K4','K5','K6','K7','K8','K9','D19','D20','D21','D22','D25','D26','D27','D28','D29','D30','D41','D42','D43','D44','D45','D46','D47']
+};
+const SHUSHI_YELLOW = {
+  '戸建て（建売・土地売り）': ['F19','M25','K26','P26','K27','K28','C30','M31','C32','K32','P32','C33','K33','C34','K34','C35','C36','C37','M37','C38','K38','P38','K39','K40','C44','C45','C46'],
+  '土地転売（業者売り）': ['F19','M24','K25','P25','K26','K27','M30','K31','P31','K32','K33'],
+  'アパート': ['I10','J10','L10','O10','K15','P15','K16','K17','F19','K21','P21','K22','K24','K30','K31','K32','C33','C34','C35','C36','C37','C38','C39','C44','C45','C46']
+};
+const SHUSHI_FORMULAS = {
+  '戸建て（建売・土地売り）': ['K2','C6','C7','P6','P7','P8','P9','P10','P11','D16','F16','C17','P17','P18','F19','P19','P20','P21','D25','G25','M25','P26','K27','K28','M31','C32','P32','C33','K33','C34','K34','C35','C36','C37','M37','C38','P38','K39','K40','C44','C45','C46','C48','D48','G54','I54','I56','G58','I58','I62','G64','I64','I68'],
+  '土地転売（業者売り）': ['K2','C6','C7','P6','P7','P8','P9','P10','P11','D16','F16','C17','P17','P18','P19','P20','P21','F19','M24','G25','P25','K26','K27','M30','P31','K32','K33','C40','D40','G46','I46','I48','G50','I50','I54','G56','I56','I60'],
+  'アパート': ['K2','O4','O5','C6','O6','C7','O7','O8','O9','J10','L10','O10','K15','P15','D16','F16','K16','C17','K17','F19','K21','P21','K22','K24','G25','K30','K31','K32','C33','C34','C35','C36','C37','C38','C39','C44','C45','C46','C48','D48','G55','I55','I57','G59','I59','I63','G65','I65','I69']
+};
+const SHUSHI_TEXT_CELLS = ['B1','B3','B4','B5','B10','B11','D8','D9','D10','D11','G4','G5','G6','G7','G8','G9','G10','G11','S6','W6','Z6','S7','W7','Z7','S8','W8','Z8','S9','W9','Z9','S10','W10','Z10','S11','W11','Z11','S17','W17','Z17','S18','W18','Z18','S19','W19','Z19','S20','W20','Z20','S21','W21','Z21','D17','D18','D19','D20','D22','D25','D26','D30','D41','D42','D43','D44','D47','X26','Z26','AB26','X27','Z27','AB27','X32','Z32','AB32','X33','Z33','AB33','X38','Z38','AB38','X39','Z39','AB39','K4','K5','K6','K7','K8','K9'];
+const SHUSHI_SAMPLE = {
+  '戸建て（建売・土地売り）': {B1:'北葛西建売プロジェクト',B3:'江戸川区北葛西3丁目',B4:'北葛西三丁目100番1',B5:'東西線「西葛西」駅徒歩9分',G2:1,G3:12,B6:118.4,B7:96.8,B8:1.5,B9:0.6,B10:'南側：4.5m公道',D8:'第一種住居地域',D9:'準防火地域',D10:'第二種高度地区',D11:'最低敷地70㎡',I6:1,J6:89800000,N6:112.5,S6:'96.1㎡（4LDK）',W6:'西葛西9分',Z6:'北葛西3丁目',I7:2,J7:86800000,N7:105.2,S7:'93.5㎡（4LDK）',W7:'葛西11分',Z7:'中葛西4丁目',I8:3,J8:92800000,N8:120.6,S8:'101.2㎡（4LDK）',W8:'西葛西7分',Z8:'西葛西6丁目',C16:52000000,D19:'35.82坪',D20:'20万以下は無し',D22:'2年分',I17:1,J17:55800000,N17:115.4,S17:'整形地',W17:'西葛西10分',Z17:'北葛西4丁目',I18:2,J18:59800000,N18:124.1,S18:'角地',W18:'葛西9分',Z18:'中葛西5丁目',G22:36000000,G23:31000000,G24:0,C25:23000000,K26:103000000,U26:10300,X26:'4LDK',Z26:'96.1㎡',AB26:'有',U27:10100,X27:'4LDK',Z27:'93.5㎡',AB27:'有',C30:88000,C31:0,D32:1.5,K32:99000000,U32:9900,X32:'4LDK',Z32:'96.1㎡',AB32:'有',D33:3,U33:9700,X33:'4LDK',Z33:'93.5㎡',AB33:'有',D34:1.4,D35:0.3,D36:2,D37:2,D38:0.4,K38:95000000,U38:9500,X38:'4LDK',Z38:'96.1㎡',AB38:'有',C39:30000,U39:9300,X39:'4LDK',Z39:'93.5㎡',AB39:'有',C41:120000,C42:800000,D42:'50万以下は無し',D43:'あれば項目変更する',D45:3.5,D46:1},
+  '土地転売（業者売り）': {B1:'南葛西土地転売',B3:'江戸川区南葛西2丁目',B4:'南葛西二丁目200番8',B5:'東西線「葛西」駅徒歩13分',G3:12,B6:132.4,B7:128.6,B8:2.0,B9:0.6,B10:'東側：5.0m公道',D8:'第一種住居地域',D9:'準防火地域',D10:'第三種高度地区',D11:'最低敷地70㎡',I6:1,J6:142000000,N6:130.4,S6:'125.3㎡（4LDK）',W6:'葛西12分',Z6:'南葛西2丁目',I7:2,J7:136000000,N7:124.8,S7:'118.6㎡（4LDK）',W7:'葛西14分',Z7:'南葛西3丁目',I8:3,J8:148000000,N8:138.1,S8:'131.0㎡（5LDK）',W8:'西葛西15分',Z8:'臨海町1丁目',C16:108000000,D19:'42.35坪',D20:'70万円/1棟',I17:1,J17:118000000,N17:126.4,S17:'整形地',W17:'葛西13分',Z17:'南葛西2丁目',I18:2,J18:123000000,N18:134.2,S18:'角地',W18:'葛西11分',Z18:'南葛西4丁目',I19:3,J19:112000000,N19:121.5,S19:'古家あり',W19:'葛西15分',Z19:'南葛西1丁目',G22:30000000,G23:28000000,C24:0,G24:0,K25:139000000,D27:1.5,D28:3,D29:1.4,D30:0.3,D31:2,K31:132000000,D32:2,D33:0.4,C34:30000,D38:3.5,D39:1},
+  'アパート': {B1:'船堀アパート計画',B3:'江戸川区船堀5丁目',B4:'船堀五丁目300番2',B5:'都営新宿線「船堀」駅徒歩8分',G3:18,G4:12,B6:142.2,B7:218.4,B8:1.5,B9:0.6,B10:'北側：約4.0m',D8:'準工業地域',D9:'準防火地域',D10:'第三種高度地区',D11:'検査済証あり',J4:22.5,K4:'1K',L4:2,M4:86000,J5:25.1,K5:'1DK',L5:2,M5:98000,J6:31.4,K6:'1LDK',L6:2,M6:124000,J7:22.5,K7:'1K',L7:2,M7:84000,J8:25.1,K8:'1DK',L8:2,M8:96000,J9:31.4,K9:'1LDK',L9:2,M9:118000,N14:6,C16:62000000,D19:'45.30坪',D20:'20万以下は無し',D22:'2年分',C19:2800000,N20:6.5,G21:42000000,G22:38000000,G24:0,C25:68000000,D33:1.5,D34:3,D35:1.4,D36:0.3,D37:2,D38:2,D39:0.4,C40:30000,C41:250000,D45:2.7,D46:1}
+};
+const SHUSHI_SUMMARY = {
+  '戸建て（建売・土地売り）': {basis:'販売想定②基準', sell:'K32', total:'C48', profit:'K34', rate:'P32', irr:'G25', sellA:'K26', sellB:'K32', sellC:'K38', profitA:'K28', profitB:'K34', profitC:'K40', rateA:'P26', rateB:'P32', rateC:'P38'},
+  '土地転売（業者売り）': {basis:'販売想定①基準', sell:'K25', total:'C40', profit:'K27', rate:'P25', irr:'G25', sellA:'K25', sellB:'K31', sellC:null, profitA:'K27', profitB:'K33', profitC:null, rateA:'P25', rateB:'P31', rateC:null},
+  'アパート': {basis:'販売想定①基準', sell:'K15', total:'C48', profit:'K17', rate:'P15', irr:'G25', sellA:'K15', sellB:'K21', sellC:null, profitA:'K17', profitB:'K24', profitC:null, rateA:'P15', rateB:'P21', rateC:null}
+};
+const SHUSHI_SAMPLE_DEAL_IDS = [5, 16, 17];
+const OLD_ID_CELL = {'pl-land':'C16','pl-build':'C25','pl-menseki':'B6','pl-yoseki':'B8','pl-tatemono':'B7','pl-krosenka':'G23','pl-beval':'G24','pl-rosenka':'G22','pl-months':'G3','pl-kukaku':'G2','pl-name':'B1','pl-address':'B3','pl-yoto':'D8','pl-kotsu':'B5','pl-sell-a':'__sellA','pl-sell-b':'__sellB','pl-sell-c':'__sellC'};
+const SHUSHI_STATE = {}; // dealId -> sheet -> cell -> user input
+
+function shushiCellId(cell) { return 'shushi-' + cell.replace(/[^A-Z0-9]/g, ''); }
+function shushiIsInput(sheet, cell) { return SHUSHI_INPUTS[sheet].includes(cell) || SHUSHI_META_INPUTS[sheet].includes(cell); }
+function shushiIsFormula(sheet, cell) { return SHUSHI_FORMULAS[sheet].includes(cell); }
+function shushiIsText(cell) { return SHUSHI_TEXT_CELLS.includes(cell); }
+function escHtml(v) { return String(v === undefined || v === null ? '' : v).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+function shushiDeal() { return currentDealId !== null ? DEALS.find(d => d.id === currentDealId) : null; }
+function shushiStateFor(dealId, sheet) {
+  if (dealId === null || dealId === undefined) return null;
+  if (!SHUSHI_STATE[dealId]) SHUSHI_STATE[dealId] = {};
+  if (!SHUSHI_STATE[dealId][sheet]) SHUSHI_STATE[dealId][sheet] = {};
+  return SHUSHI_STATE[dealId][sheet];
+}
+function shushiPersistCell(el) {
+  const deal = shushiDeal();
+  if (!deal || !el || !el.dataset || !el.dataset.cell) return;
+  const st = shushiStateFor(deal.id, activeShushiSheet);
+  if (st) st[el.dataset.cell] = el.value;
+}
+function persistCurrentShushiState() {
+  const deal = shushiDeal();
+  const grid = document.getElementById('pl-sheet-grid');
+  if (!deal || !grid) return;
+  const st = shushiStateFor(deal.id, activeShushiSheet);
+  if (!st) return;
+  grid.querySelectorAll('input[data-cell],select[data-cell]').forEach(el => { st[el.dataset.cell] = el.value; });
+}
+function shushiRegisteredValue(sheet, cell, deal) {
+  if (!deal) return undefined;
+  if (cell === 'B1') return deal.name === '（新規案件）' ? '' : deal.name;
+  if (cell === 'B3') return deal.address || '';
+  if (cell === 'B4') return deal.chiban || '';
+  if (cell === 'B5') return deal.ekitoho ? (/^[0-9０-９,，.]+$/.test(String(deal.ekitoho)) ? '徒歩' + deal.ekitoho + '分' : String(deal.ekitoho)) : '';
+  if (cell === 'B6' && deal.menseki) return deal.menseki;
+  return undefined;
+}
+// Excel原本に明記されている定型の備考・税率等＝全案件の初期値として表示（2026-07-23 中西さん指示。物件固有の坪数メモは対象外）
+const SHUSHI_CELL_DEFAULTS = {
+  '戸建て（建売・土地売り）': {D20:'20万以下は無し', D22:'2年分', D42:'50万以下は無し', D43:'あれば項目変更する',
+    D32:1.5, D33:3, D34:1.4, D35:0.3, D36:2, D37:2, D38:0.4, D45:3.5, D46:1},
+  '土地転売（業者売り）': {D20:'70万円/1棟', D22:'2年分', D23:'20万以下は無し', D36:'50万以下は無し',
+    D27:1.5, D28:3, D29:1.4, D30:0.3, D31:2, D32:2, D33:0.4, D38:3.5, D39:1},
+  'アパート': {D20:'20万以下は無し', D22:'2年分', D42:'50万以下は無し', D43:'あれば項目変更する',
+    D33:1.5, D34:3, D35:1.4, D36:0.3, D37:2, D38:2, D39:0.4, D45:2.7, D46:1}
+};
+function shushiResolvedValue(sheet, cell) {
+  const deal = shushiDeal();
+  const st = deal ? shushiStateFor(deal.id, sheet) : null;
+  if (st && Object.prototype.hasOwnProperty.call(st, cell)) return st[cell];
+  if (deal && SHUSHI_SAMPLE_DEAL_IDS.includes(deal.id) && Object.prototype.hasOwnProperty.call(SHUSHI_SAMPLE[sheet], cell)) return SHUSHI_SAMPLE[sheet][cell];
+  const reg = shushiRegisteredValue(sheet, cell, deal);
+  if (reg !== undefined) return reg;
+  if (Object.prototype.hasOwnProperty.call(SHUSHI_CELL_DEFAULTS[sheet] || {}, cell)) return SHUSHI_CELL_DEFAULTS[sheet][cell];
+  return '';
+}
+function shushiFormatInputValue(val) {
+  if (val === undefined || val === null || val === '') return '';
+  if (typeof val === 'number' && Number.isInteger(val) && Math.abs(val) >= 1000) return val.toLocaleString('ja-JP');
+  return String(val);
+}
+function shushiRowsFor(sheet) {
+  const labels = SHUSHI_LABELS[sheet];
+  const cells = new Set(Object.keys(labels).concat(SHUSHI_INPUTS[sheet], SHUSHI_META_INPUTS[sheet], SHUSHI_FORMULAS[sheet]));
+  return Array.from(cells).map(c => parseInt(c.match(/\d+/)[0], 10)).filter(n => n <= 69).sort((a,b) => a-b).filter((r,i,a) => a.indexOf(r) === i);
+}
+function shushiColsFor(sheet) {
+  const labels = SHUSHI_LABELS[sheet];
+  const cells = new Set(Object.keys(labels).concat(SHUSHI_INPUTS[sheet], SHUSHI_META_INPUTS[sheet], SHUSHI_FORMULAS[sheet]));
+  return SHUSHI_COLS.filter(col => Array.from(cells).some(cell => cell === col + cell.match(/\d+$/)?.[0] || cell.startsWith(col) && cell.slice(col.length).match(/^\d+$/)));
+}
+function shushiInputHtml(sheet, cell) {
+  const val = shushiResolvedValue(sheet, cell);
+  const isText = shushiIsText(cell) || typeof val === 'string';
+  const cls = isText ? 'shushi-text' : 'shushi-input';
+  const inputmode = isText ? '' : ' inputmode="decimal"';
+  const value = escHtml(shushiFormatInputValue(val));
+  if (cell === 'G3') {
+    return '<select class="shushi-input" id="' + shushiCellId(cell) + '" data-cell="' + cell + '" onchange="shushiPersistCell(this);calcPL()"><option value=""></option><option value="12"' + (String(val) === '12' ? ' selected' : '') + '>12ヶ月</option><option value="18"' + (String(val) === '18' ? ' selected' : '') + '>18ヶ月</option><option value="24"' + (String(val) === '24' ? ' selected' : '') + '>24ヶ月</option></select>';
+  }
+  // Excelの黄色＝「数式を上書きから守る」が目的（7/20永井様メール・7/23確認）。
+  // 数式はシステム側に組み込みで誰も触れないため、手入力項目（売上高・瑕疵担保保険）は通常入力欄のまま。
+  return '<input type="text" class="' + cls + '" id="' + shushiCellId(cell) + '" data-cell="' + cell + '" value="' + value + '"' + inputmode + ' oninput="shushiOnInput(this)" onkeydown="shushiEnter(event,this)">';
+}
+function renderShushiTabs() {
+  const el = document.getElementById('pl-sheet-tabs');
+  if (!el) return;
+  el.innerHTML = SHUSHI_SHEETS.map(name => '<button class="pl-sheet-tab' + (name === activeShushiSheet ? ' active' : '') + '" onclick="switchShushiSheet(\'' + name + '\')">' + name + '</button>').join('');
+}
+function shushiCellHtml(sheet, cell) {
+  if (!cell) return '';
+  if (shushiIsInput(sheet, cell)) return shushiInputHtml(sheet, cell);
+  if (shushiIsFormula(sheet, cell)) {
+    const cls = ['C6','C7'].includes(cell) ? 'pl-tsubo-auto' : 'pl-auto';
+    return '<span class="' + cls + '" id="' + shushiCellId(cell) + '" data-cell="' + cell + '">—</span>';
+  }
+  return '<span>' + escHtml(shushiResolvedValue(sheet, cell)) + '</span>';
+}
+function shushiFieldHtml(sheet, labelCell, valueCell, extraCells, wide, unit) {
+  const labels = SHUSHI_LABELS[sheet];
+  const label = labels[labelCell] || labelCell;
+  const extras = (extraCells || []).map(c => shushiCellHtml(sheet, c)).join('');
+  const wideCls = wide === 'w2' ? ' pl-field-w2' : wide ? ' pl-field-wide' : '';
+  return '<div class="pl-field' + wideCls + '"><div class="pl-field-label">' + escHtml(label) + '</div><div class="pl-field-value">' + shushiCellHtml(sheet, valueCell) + (unit ? '<span class="pl-unit">' + escHtml(unit) + '</span>' : '') + extras + '</div></div>';
+}
+function shushiPropertySection(sheet) {
+  const isApart = sheet === 'アパート';
+  // 3列グリッド（6行）：詰め込みすぎず入力欄の幅を確保しつつ、左右バランスと縦幅短縮を両立（2026-07-24 見直し）
+  // 道路2行目（B11）はExcel原本で戸建てのみ存在（土地転売・アパートにはない）
+  // ※一種単価・借入金・評価額・IRR＝「評価額・借入金・IRR」／仕入契約日〜仲介会社＝「取引概要」へ移動済み
+  const fields = isApart
+    ? [
+        ['A1','B1'],['F3','G3'],['F4','G4'],
+        ['A3','B3'],['A5','B5'],['A4','B4'],
+        ['A6','B6',['C6'],null,'㎡'],['A7','B7',['C7'],null,'㎡'],['A8','B8'],
+        ['A9','B9'],['A10','B10'],['C8','D8'],
+        ['C9','D9'],['C10','D10'],['C11','D11'],
+        ['K2','K2']
+      ]
+    : sheet === '土地転売（業者売り）'
+      ? [
+          ['A1','B1'],['F3','G3'],['K2','K2'],
+          ['A3','B3'],['A5','B5'],['A4','B4'],
+          ['A6','B6',['C6'],null,'㎡'],['A7','B7',['C7'],null,'㎡'],['A8','B8'],
+          ['A9','B9'],['A10','B10'],['C8','D8'],
+          ['C9','D9'],['C10','D10'],['C11','D11']
+        ]
+      : [
+          ['A1','B1'],['F3','G3'],['F2','G2'],
+          ['A3','B3'],['A5','B5'],['A4','B4'],
+          ['A6','B6',['C6'],null,'㎡'],['A7','B7',['C7'],null,'㎡'],['A8','B8'],
+          ['A9','B9'],['A10','B10'],['A10','B11'],
+          ['C8','D8'],['C9','D9'],['C10','D10'],
+          ['C11','D11'],['K2','K2']
+        ];
+  return '<section class="pl-section"><div class="pl-section-title">物件情報</div><div class="pl-field-grid pl-prop-grid">' + fields.map(r => shushiFieldHtml(sheet, r[0], r[1], r[2], r[3], r[4])).join('') + '</div></section>';
+}
+// Excelで原価表の右隣にある縦ブロック（一種単価〜上記IRRは10％以上を目指す）＝独立セクション（2026-07-24 中西さん指示で原価と販売想定の下へ）
+function shushiEvalSection(sheet) {
+  const isApart = sheet === 'アパート';
+  const fields = isApart
+    ? [['F15','F16'],['F18','F19'],['F21','G21'],['F22','G22'],['F24','G24'],['F25','G25']]
+    : [['F15','F16'],['F18','F19'],['F22','G22'],['F23','G23'],['F24','G24'],['F25','G25']];
+  const noteCell = isApart ? 'F30' : 'F28';
+  const note = SHUSHI_LABELS[sheet][noteCell] || '';
+  return '<section class="pl-section"><div class="pl-section-title">評価額・借入金・IRR</div><div class="pl-field-grid pl-eval-grid">' + fields.map(r => shushiFieldHtml(sheet, r[0], r[1])).join('') + '</div>' + (note ? '<div class="pl-eval-note">' + escHtml(note) + '</div>' : '') + '</section>';
+}
+// 仕入契約日〜仲介会社（取引の相手・日付）＝「取引概要」セクションとして担当の上に表示（2026-07-24 中西さん指示）
+function shushiTorihikiSection(sheet) {
+  const fields = sheet === 'アパート'
+    ? [['F6','G6'],['F7','G7'],['F8','G8'],['F9','G9'],['F10','G10']]
+    : [['F4','G4'],['F5','G5'],['F6','G6'],['F7','G7'],['F8','G8'],['F9','G9'],['F10','G10'],['F11','G11']];
+  return '<section class="pl-section"><div class="pl-section-title">取引概要</div><div class="pl-field-grid pl-eval-grid">' + fields.map(r => shushiFieldHtml(sheet, r[0], r[1])).join('') + '</div></section>';
+}
+function shushiCostRows(sheet) {
+  if (sheet === '土地転売（業者売り）') return {start:16,end:40,sections:{16:'A16',24:'A24',27:'A27',35:'A35',38:'A38',40:'B40'}};
+  if (sheet === 'アパート') return {start:16,end:48,sections:{16:'A16',25:'A25',33:'A33',41:'A41',45:'A45',48:'B48'}};
+  return {start:16,end:48,sections:{16:'A16',25:'A25',32:'A32',41:'A41',45:'A45',48:'B48'}};
+}
+function shushiCostSection(sheet) {
+  const labels = SHUSHI_LABELS[sheet];
+  const cfg = shushiCostRows(sheet);
+  const noteCell = sheet === '土地転売（業者売り）' ? 'F40' : 'F48';
+  let html = '<div><table class="pl-cost-table"><colgroup><col style="width:11%"><col style="width:21%"><col style="width:20%"><col style="width:24%"><col style="width:24%"></colgroup><thead><tr><th>分類</th><th>項目</th><th>' + escHtml(labels.C15 || '金　額') + '</th><th>' + escHtml(labels.D15 || '備　考') + '</th><th>率％・自動</th></tr></thead><tbody>';
+  // 分類列はExcelと同じく縦結合＝各分類（土地原価〜営業外費用）の全行にまたがる1セル（2026-07-23 中西さん指示）
+  const rows = [];
+  let groupId = -1;
+  for (let r = cfg.start; r <= cfg.end; r++) {
+    const isSection = !!cfg.sections[r];
+    const item = cfg.sections[r] === 'B' + r ? '' : (labels['B' + r] || labels['D' + r] || '');
+    const amountCell = shushiIsInput(sheet, 'C' + r) || shushiIsFormula(sheet, 'C' + r) ? 'C' + r : '';
+    const memoCell = shushiIsInput(sheet, 'D' + r) || SHUSHI_META_INPUTS[sheet].includes('D' + r) ? 'D' + r : '';
+    // F・G列の隣接ブロック（一種単価・借入金・評価額・路線価・建物評価額・IRR・IRR注記）はExcel上は原価表の右隣にある独立項目
+    // ＝物件情報ブロック・IRRブロックに表示済みのため、率％・自動列には出さない（2026-07-24 中西さん指摘・Excel再確認済み）
+    const sideCells = ['F15','F16','F18','F19','F20','F21','F22','F23','F24','F25','F28','F30','G21','G22','G23','G24','G25'];
+    const rateCells = ((shushiIsFormula(sheet, 'D' + r) && !memoCell) ? ['D' + r] : []).concat(['E' + r,'F' + r,'G' + r]).filter(c => c !== noteCell && !sideCells.includes(c) && (labels[c] || shushiIsInput(sheet, c) || shushiIsFormula(sheet, c))).map(c => {
+      const label = ['D40','D48'].includes(c) ? '坪単価' : (labels[c] || '');
+      return (label ? '<span class="pl-field-label">' + escHtml(label) + '</span>' : '') + shushiCellHtml(sheet, c);
+    }).join(' ');
+    if (!isSection && !item && !amountCell && !memoCell && !rateCells) continue;
+    if (isSection) groupId = r;
+    rows.push({group: groupId, section: isSection ? (labels[cfg.sections[r]] || '') : '', isTotal: cfg.sections[r] === 'B' + r, item, amountCell, memoCell, rateCells});
+  }
+  const groupCount = {};
+  rows.forEach(row => { groupCount[row.group] = (groupCount[row.group] || 0) + 1; });
+  const emitted = {};
+  rows.forEach(row => {
+    html += '<tr' + (row.isTotal ? ' class="pl-cost-section"' : '') + '>';
+    if (!emitted[row.group]) {
+      emitted[row.group] = true;
+      html += '<td class="pl-cost-cat" rowspan="' + groupCount[row.group] + '">' + escHtml(rows.find(x => x.group === row.group).section) + '</td>';
+    }
+    html += '<td>' + escHtml(row.item) + '</td><td class="pl-money-cell">' + shushiCellHtml(sheet, row.amountCell) + '</td><td>' + shushiCellHtml(sheet, row.memoCell) + '</td><td>' + row.rateCells + '</td></tr>';
+  });
+  html += '</tbody></table><div class="pl-cost-note">' + escHtml(labels[noteCell] || '') + '</div></div>';
+  return html;
+}
+function shushiSellCard(sheet, titleCell, cells, isBasis) {
+  const labels = SHUSHI_LABELS[sheet];
+  const aliasCell = titleCell === 'I25' ? 'AC25' : titleCell === 'I31' ? 'AC31' : titleCell === 'I37' ? 'AC37' : titleCell === 'I24' ? 'U25' : titleCell === 'I30' ? 'U31' : titleCell === 'I14' ? 'U15' : titleCell === 'I20' ? 'U21' : '';
+  const alias = aliasCell && labels[aliasCell] ? '｜' + labels[aliasCell] : '';
+  return '<div class="pl-sell-card"><div class="pl-sell-card-title' + (isBasis ? ' pl-sell-basis' : '') + '">' + escHtml((labels[titleCell] || titleCell) + alias) + (isBasis ? '<span class="pl-basis-chip">判定基準</span>' : '') + '</div><div class="pl-sell-card-body"><table class="pl-sell-table"><tbody>' + cells.map(row => '<tr><th>' + escHtml(labels[row[0]] || row[0]) + '</th><td class="pl-money-cell">' + (row[2] ? '<span class="pl-with-unit">' + shushiCellHtml(sheet, row[1]) + '<span class="pl-unit">' + escHtml(row[2]) + '</span></span>' : shushiCellHtml(sheet, row[1])) + '</td></tr>').join('') + '</tbody></table></div></div>';
+}
+// 戸建てのみ：販売計画（価格・間取・延床・車庫×想定①②③×各2行）を販売想定カードから分離した独立カード（2026-07-24 中西さん指示）
+function shushiPlanCard(sheet) {
+  const labels = SHUSHI_LABELS[sheet];
+  const groups = [['I25','AC25',[26,27]],['I31','AC31',[32,33]],['I37','AC37',[38,39]]];
+  let body = '';
+  groups.forEach(g => {
+    g[2].forEach((r, i) => {
+      body += '<tr>' + (i === 0 ? '<td class="pl-plan-group" rowspan="' + g[2].length + '">' + escHtml((labels[g[0]] || '') + '｜' + (labels[g[1]] || '')) + '</td>' : '')
+        + '<td class="pl-money-cell">' + shushiCellHtml(sheet, 'U' + r) + '</td><td>' + shushiCellHtml(sheet, 'X' + r) + '</td><td>' + shushiCellHtml(sheet, 'Z' + r) + '</td><td>' + shushiCellHtml(sheet, 'AB' + r) + '</td></tr>';
+    });
+  });
+  return '<div class="pl-sell-card"><div class="pl-sell-card-title">' + escHtml(labels.T25 || '販売計画') + '</div><div class="pl-sell-card-body"><table class="pl-plan-table"><colgroup><col style="width:27%"><col style="width:21%"><col style="width:17%"><col style="width:21%"><col style="width:14%"></colgroup><thead><tr><th></th><th>' + escHtml((labels.U25 || '価格') + '（万円）') + '</th><th>' + escHtml(labels.X25 || '間取') + '</th><th>' + escHtml(labels.Z25 || '延床') + '</th><th>' + escHtml(labels.AB25 || '車庫') + '</th></tr></thead><tbody>' + body + '</tbody></table></div></div>';
+}
+function shushiSalesSection(sheet) {
+  const m = SHUSHI_SUMMARY[sheet];
+  const cards = sheet === '戸建て（建売・土地売り）'
+    ? [
+      shushiSellCard(sheet,'I25',[['I26','K26'],['I27','K27'],['I28','K28'],['P25','P26'],['L25','M25']]),
+      shushiSellCard(sheet,'I31',[['I32','K32'],['I33','K33'],['I34','K34'],['P31','P32'],['L31','M31']],true),
+      shushiSellCard(sheet,'I37',[['I38','K38'],['I39','K39'],['I40','K40'],['P37','P38'],['L37','M37']]),
+      shushiPlanCard(sheet)
+    ]
+    : sheet === '土地転売（業者売り）'
+      ? [shushiSellCard(sheet,'I24',[['I25','K25'],['I26','K26'],['I27','K27'],['P24','P25'],['L24','M24']],true), shushiSellCard(sheet,'I30',[['I31','K31'],['I32','K32'],['I33','K33'],['P30','P31'],['L30','M30']])]
+      : [shushiSellCard(sheet,'I14',[['I15','K15'],['I16','K16'],['I17','K17'],['P14','P15'],['L14','N14','％']],true), shushiSellCard(sheet,'I20',[['I21','K21'],['I22','K22'],['I24','K24'],['P20','P21'],['L20','N20','％']])];
+  const irrRows = sheet === '土地転売（業者売り）'
+    ? [['D46','G46','I46','I48'],['D50','G50','I50','I54'],['D56','G56','I56','I60']]
+    : sheet === 'アパート'
+      ? [['D55','G55','I55','I57'],['D59','G59','I59','I63'],['D65','G65','I65','I69']]
+      : [['D54','G54','I54','I56'],['D58','G58','I58','I62'],['D64','G64','I64','I68']];
+  const labels = SHUSHI_LABELS[sheet];
+  const irrNote = labels[sheet === '土地転売（業者売り）' ? 'F44' : sheet === 'アパート' ? 'F53' : 'F53'] || '';
+  return '<div class="pl-side-stack"><aside class="pl-profit-card" aria-label="利益サマリー"><div class="pl-profit-card-title">収支想定</div><div class="pl-profit-card-basis" id="pl-profit-basis">—</div><div class="pl-profit-main" id="pl-profit-main">—</div><div class="pl-profit-grid"><div><span>利益率</span><strong id="pl-profit-rate">—</strong></div><div><span>表示用IRR</span><strong id="pl-profit-irr">—</strong></div></div></aside><div class="pl-sell-stack">' + cards.join('') + '</div><table class="pl-irr-table"><tbody><tr class="pl-irr-note-row"><td colspan="2">' + escHtml(irrNote) + '</td></tr>' + irrRows.map(r => '<tr><td>' + escHtml(labels[r[0]] || '') + '</td><td>' + shushiCellHtml(sheet, r[1]) + '</td></tr>').join('') + '</tbody></table></div>';
+}
+function shushiMarketTable(sheet, titleCell, rows, cols) {
+  const labels = SHUSHI_LABELS[sheet];
+  const classByCol = {I:'market-no',J:'market-price',N:'market-area',P:'market-tsubo',S:'market-feature',W:'market-station',Z:'market-address',M:'market-price',O:'market-price'};
+  const header = cols.map(c => '<th class="' + (classByCol[c.col] || '') + '">' + escHtml(c.header || (c.col === 'I' ? 'No.' : (labels[c.label] || c.label))) + '</th>').join('');
+  // I列はExcelにラベルがあればそれを使う（アパートのタイプA〜F・合計行など）。合計行は強調表示
+  const body = rows.map((r, idx) => {
+    const isTotal = labels['I' + r] === '合計';
+    return '<tr' + (isTotal ? ' class="market-total"' : '') + '>' + cols.map(c => {
+      const value = c.col === 'I' ? escHtml(labels['I' + r] !== undefined ? labels['I' + r] : String(idx + 1)) : shushiCellHtml(sheet, c.col + r);
+      return '<td class="' + (classByCol[c.col] || '') + '">' + value + '</td>';
+    }).join('') + '</tr>';
+  }).join('');
+  const title = titleCell ? '<div class="pl-market-title">' + escHtml(labels[titleCell] || titleCell) + '</div>' : '';
+  return '<div>' + title + '<table class="pl-market-table"><thead><tr>' + header + '</tr></thead><tbody>' + body + '</tbody></table></div>';
+}
+function shushiMarketSection(sheet) {
+  if (sheet === 'アパート') {
+    const rent = shushiMarketTable(sheet, null, [4,5,6,7,8,9,10], [{label:'I3',col:'I',header:SHUSHI_LABELS[sheet]['I3'] || 'タイプ'},{label:'J3',col:'J'},{label:'K3',col:'K'},{label:'L3',col:'L'},{label:'M3',col:'M'},{label:'O3',col:'O'}]);
+    const income = '<div><div class="pl-market-title">' + escHtml(SHUSHI_LABELS[sheet].I29) + '</div><table class="pl-market-table"><tbody><tr><th>' + escHtml(SHUSHI_LABELS[sheet].I30) + '</th><td>' + shushiCellHtml(sheet,'K30') + '</td></tr><tr><th>' + escHtml(SHUSHI_LABELS[sheet].I31) + '</th><td>' + shushiCellHtml(sheet,'K31') + '</td></tr><tr><th>' + escHtml(SHUSHI_LABELS[sheet].I32) + '</th><td>' + shushiCellHtml(sheet,'K32') + '</td></tr></tbody></table></div>';
+    return '<section class="pl-section"><div class="pl-section-title">レントロール・年間賃料</div><div class="pl-market-stack">' + rent + income + '</div></section>';
+  }
+  // 市場調査の列構成は戸建て・土地転売とも共通（2026-07-23 中西さん指示＝Excelでは土地転売のみ3列だが6列に統一）
+  const colsNew = [{label:'I3',col:'I'},{label:'J5',col:'J'},{label:'N5',col:'N'},{label:'P5',col:'P'},{label:'S5',col:'S'},{label:'W5',col:'W'},{label:'Z5',col:'Z'}];
+  const colsLand = [{label:'I14',col:'I'},{label:'J16',col:'J'},{label:'N16',col:'N'},{label:'P16',col:'P'},{label:'S16',col:'S'},{label:'W16',col:'W'},{label:'Z16',col:'Z'}];
+  // セクション名は詳細タブ「市場調査」との名称重複を避けて「販売在庫（近隣）」（2026-07-24 レビュー反映）
+  return '<section class="pl-section"><div class="pl-section-title">販売在庫（近隣）</div><div class="pl-market-stack">' + shushiMarketTable(sheet,'I3',[6,7,8,9,10,11],colsNew) + shushiMarketTable(sheet,'I14',[17,18,19,20,21],colsLand) + '</div></section>';
+}
+// 担当欄（社長/上長/担当）：Excelには存在するが画面では非表示。Excel出力機能の実装時にこのセル位置（戸建てI60/M60/Q60・土地転売I36/L36/P36・アパートI43/L43/P43）へ挿入する。
+function renderShushiSheet() {
+  renderShushiTabs();
+  const wrap = document.getElementById('pl-sheet-grid');
+  if (!wrap) return;
+  const sheet = activeShushiSheet;
+  let html = '<div class="pl-sheet-sections">';
+  html += shushiPropertySection(sheet);
+  html += '<section class="pl-section"><div class="pl-section-title">原価と販売想定</div><div class="pl-finance-layout">' + shushiCostSection(sheet) + shushiSalesSection(sheet) + '</div></section>';
+  html += shushiEvalSection(sheet);
+  html += shushiMarketSection(sheet);
+  html += shushiTorihikiSection(sheet);
+  // 担当（社長/上長/担当のハンコ欄）は画面では非表示＝Excel出力時にのみ挿入する（2026-07-24 中西さん指示）
+  // 画面下部からも保存できる追従バー（収支タブは縦約3000px＝上部の登録ボタンまで戻らせない）
+  html += '<div class="pl-save-bar"><button class="btn btn-primary" onclick="registerPL()">✅ 登録</button></div>';
+  html += '</div>';
+  wrap.innerHTML = html;
+  calcPL();
+}
+function switchShushiSheet(sheet) {
+  persistCurrentShushiState();
+  activeShushiSheet = sheet;
+  renderShushiSheet();
+}
+function setShushiSheetByDeal(deal) {
+  if (!deal) activeShushiSheet = SHUSHI_SHEETS[0];
+  else if ((deal.type || '').includes('アパート')) activeShushiSheet = 'アパート';
+  else if ((deal.type || '').includes('土地') && !(deal.type || '').includes('戸建て')) activeShushiSheet = '土地転売（業者売り）';
+  else activeShushiSheet = '戸建て（建売・土地売り）';
+  renderShushiSheet();
+}
+function applyDealShushiOverrides() {
+  calcPL();
+}
+function shushiRawValue(cell) {
+  const el = document.getElementById(shushiCellId(cell));
+  if (!el) return undefined;
+  if ('value' in el) return el.value;
+  return el.textContent;
+}
+function shushiNum(v) {
+  if (v === undefined || v === null || v === '') return 0;
+  const n = parseFloat(String(v).replace(/[０-９．－，]/g, ch => ({'０':'0','１':'1','２':'2','３':'3','４':'4','５':'5','６':'6','７':'7','８':'8','９':'9','．':'.','－':'-','，':','}[ch] || ch)).replace(/,/g,''));
+  return isFinite(n) && !isNaN(n) ? n : 0;
+}
+function n(c, cell) { return shushiNum(c[cell]); }
+function sumCells(c, col, start, end) { let t = 0; for (let r = start; r <= end; r++) t += n(c, col + r); return t; }
+function calcIrrExcel(sell, cost, months) { if (!sell || sell <= 0 || !cost || cost <= 0 || !months || months <= 0) return NaN; return months === 12 ? sell / cost - 1 : Math.pow(sell / cost, 12 / months) - 1; }
+function displayIrr(months, r12, r18, r24) { if (months === 12) return r12; if (months === 18) return r18; if (months === 24) return r24; return '該当なし'; }
+function fmtCell(cell, val) {
+  if (cell === 'K2') return String(val || '');
+  if (val === '該当なし') return val;
+  if (!isFinite(val) || isNaN(val)) return '—';
+  if (/^G\d+$/.test(cell) || ['P15','P21','P25','P26','P31','P32','P38'].includes(cell)) return pct(val);
+  if (['C6','C7'].includes(cell)) return (Math.round(val * 10) / 10).toLocaleString('ja-JP') + '坪';
+  if (['D40','D48'].includes(cell)) return Math.round(val).toLocaleString('ja-JP') + '円/坪';
+  if (['D16','F16','D25','M24','M25','M30','M31','M37','K32'].includes(cell)) return Math.round(val).toLocaleString('ja-JP');
+  return fmt(val);
+}
+function shushiCollectCells() {
+  const sheet = activeShushiSheet;
+  const deal = shushiDeal();
+  const c = (deal && SHUSHI_SAMPLE_DEAL_IDS.includes(deal.id)) ? Object.assign({}, SHUSHI_SAMPLE[sheet]) : {};
+  SHUSHI_INPUTS[sheet].concat(SHUSHI_META_INPUTS[sheet]).forEach(cell => {
+    const raw = shushiRawValue(cell);
+    if (raw !== undefined) c[cell] = raw;
+  });
+  return c;
+}
+function shushiSetFormula(c, cell, val) {
+  c[cell] = val;
+  document.querySelectorAll('[data-cell="' + cell + '"]').forEach(el => {
+    if ('value' in el) el.value = fmtCell(cell, val);
+    else el.textContent = fmtCell(cell, val);
+  });
+}
+function calcKodateCells(c) {
+  c.K2 = TODAY; c.C6 = n(c,'B6') * 0.3025; c.C7 = n(c,'B7') * 0.3025;
+  [6,7,8,9,10,11].forEach(r => c['P'+r] = n(c,'J'+r) / n(c,'N'+r));
+  c.D16 = n(c,'C16') / n(c,'C6'); c.F16 = n(c,'C16') / n(c,'C6') / n(c,'B8');
+  // 手数料の固定加算(+6万/+12万)は、元金額の未入力時に固定分だけ表示されるのを防ぐため0とする（Excelとの意図的な差・2026-07-23中西さん指示）
+  c.C17 = n(c,'C16') > 0 ? (n(c,'C16') * 0.03 + 60000) * 1.1 : 0;
+  [17,18,19,20,21].forEach(r => c['P'+r] = n(c,'J'+r) / n(c,'N'+r));
+  c.F19 = n(c,'C16') * 0.9; c.D25 = n(c,'C25') / n(c,'C7'); c.M25 = (n(c,'K26') - n(c,'C25')) / n(c,'C6'); c.M31 = (n(c,'K32') - n(c,'C25')) / n(c,'C6'); c.M37 = (n(c,'K38') - n(c,'C25')) / n(c,'C6');
+  c.C32 = n(c,'G23') * (n(c,'D32') / 100); c.C33 = n(c,'G24') * 0.03; c.C34 = n(c,'G23') * 0.014; c.C35 = n(c,'G23') * 0.003; c.C36 = n(c,'G23') * 0.02; c.C37 = n(c,'G24') * 0.02; c.C38 = n(c,'F19') * (n(c,'D38') / 100); c.C44 = n(c,'K26') > 0 ? (n(c,'K26') * 0.03 + 60000) * 1.1 : 0; c.C45 = (n(c,'F19') * (n(c,'D45') / 100) / 12) * n(c,'G3'); c.C46 = n(c,'F19') * (n(c,'D46') / 100);
+  c.C48 = sumCells(c,'C',16,47); c.D48 = n(c,'C48') / n(c,'C7');
+  c.K27 = n(c,'C48'); c.K28 = n(c,'K26') - n(c,'K27'); c.P26 = n(c,'K28') / n(c,'K26'); c.K33 = n(c,'C48'); c.K34 = n(c,'K32') - n(c,'K33'); c.P32 = n(c,'K34') / n(c,'K32'); c.K39 = n(c,'C48'); c.K40 = n(c,'K38') - n(c,'K39'); c.P38 = n(c,'K40') / n(c,'K38');
+  c.I54 = -sumCells(c,'C',16,47); c.I56 = n(c,'K32'); c.G54 = calcIrrExcel(n(c,'I56'), -n(c,'I54'), 12); c.I58 = -n(c,'C48'); c.I62 = n(c,'K32'); c.G58 = calcIrrExcel(n(c,'I62'), -n(c,'I58'), 18); c.I64 = n(c,'I54'); c.I68 = n(c,'K32'); c.G64 = calcIrrExcel(n(c,'I68'), -n(c,'I64'), 24); c.G25 = displayIrr(n(c,'G3'), c.G54, c.G58, c.G64);
+}
+function calcTochiCells(c) {
+  c.K2 = TODAY; c.C6 = n(c,'B6') * 0.3025; c.C7 = n(c,'B7') * 0.3025; c.D16 = n(c,'C16') / n(c,'C6'); c.F16 = n(c,'C16') / n(c,'C7') / n(c,'B8'); c.C17 = n(c,'C16') > 0 ? (n(c,'C16') * 0.03 + 120000) * 1.1 : 0; c.F19 = n(c,'C16') * 0.9;
+  [6,7,8,9,10,11].forEach(r => c['P'+r] = n(c,'J'+r) / n(c,'N'+r)); [17,18,19,20,21].forEach(r => c['P'+r] = n(c,'J'+r) / n(c,'N'+r));
+  c.C40 = sumCells(c,'C',16,39); c.D40 = n(c,'C40') / n(c,'C6'); c.M24 = n(c,'K25') / n(c,'C6'); c.K26 = n(c,'C40'); c.K27 = n(c,'K25') - n(c,'K26'); c.P25 = n(c,'K27') / n(c,'K25'); c.M30 = n(c,'K31') / n(c,'C6'); c.K32 = n(c,'C40'); c.K33 = n(c,'K31') - n(c,'K32'); c.P31 = n(c,'K33') / n(c,'K31');
+  c.I46 = -sumCells(c,'C',8,39); c.I48 = n(c,'K25'); c.G46 = calcIrrExcel(n(c,'I48'), -n(c,'I46'), 12); c.I50 = -n(c,'C40'); c.I54 = n(c,'I48'); c.G50 = calcIrrExcel(n(c,'I54'), -n(c,'I50'), 18); c.I56 = n(c,'I46'); c.I60 = n(c,'I48'); c.G56 = calcIrrExcel(n(c,'I60'), -n(c,'I56'), 24); c.G25 = displayIrr(n(c,'G3'), c.G46, c.G50, c.G56);
+}
+function calcApartCells(c) {
+  c.K2 = TODAY; [4,5,6,7,8,9].forEach(r => c['O'+r] = n(c,'M'+r) * n(c,'L'+r)); c.C6 = n(c,'B6') * 0.3025; c.C7 = n(c,'B7') * 0.3025; c.J10 = [4,5,6,7,8,9].reduce((t,r) => t + n(c,'J'+r) * n(c,'L'+r),0); c.L10 = [4,5,6,7,8,9].reduce((t,r) => t + n(c,'L'+r),0); c.O10 = [4,5,6,7,8,9].reduce((t,r) => t + n(c,'O'+r),0);
+  c.K30 = n(c,'O10'); c.K31 = n(c,'K30') * 12; c.K32 = n(c,'K30') / n(c,'C7');
+  // 利回りは％数値で入力（6＝6%）＝Excelの0.06と等価。他の％欄（1.5=1.5%）と入力ルールを統一（2026-07-24 レビュー反映）
+  c.K15 = n(c,'K31') / (n(c,'N14') / 100); c.K21 = n(c,'K31') / (n(c,'N20') / 100); c.D16 = n(c,'C16') / n(c,'C6'); c.F16 = n(c,'C16') / n(c,'C7') / n(c,'B8'); c.C17 = n(c,'C16') > 0 ? (n(c,'C16') * 0.03 + 120000) * 1.1 : 0; c.F19 = n(c,'C16') * 0.9;
+  c.C33 = n(c,'G22') * (n(c,'D33') / 100); c.C34 = n(c,'G24') * (n(c,'D34') / 100); c.C35 = n(c,'G22') * 0.014; c.C36 = n(c,'G24') * 0.003; c.C37 = n(c,'G22') * 0.02; c.C38 = n(c,'G24') * (n(c,'D38') / 100); c.C39 = n(c,'F19') * (n(c,'D39') / 100); c.C44 = n(c,'K15') * 0.03 * 1.1; c.C45 = (n(c,'F19') * (n(c,'D45') / 100) / 12) * n(c,'G3'); c.C46 = n(c,'F19') * 0.01;
+  c.C48 = sumCells(c,'C',16,47); c.D48 = n(c,'C48') / n(c,'C6'); c.K16 = n(c,'C48'); c.K17 = n(c,'K15') - n(c,'K16'); c.P15 = n(c,'K17') / n(c,'K15'); c.K22 = n(c,'C48'); c.K24 = n(c,'K21') - n(c,'K22'); c.P21 = n(c,'K24') / n(c,'K21');
+  c.I55 = -sumCells(c,'C',8,47); c.I57 = n(c,'K15'); c.G55 = calcIrrExcel(n(c,'I57'), -n(c,'I55'), 12); c.I59 = -sumCells(c,'C',8,47); c.I63 = n(c,'I57'); c.G59 = calcIrrExcel(n(c,'I63'), -n(c,'I59'), 18); c.I65 = n(c,'I55'); c.I69 = n(c,'I63'); c.G65 = calcIrrExcel(n(c,'I69'), -n(c,'I65'), 24); c.G25 = displayIrr(n(c,'G3'), c.G55, c.G59, c.G65);
+}
 function calcPL() {
-  const land     = gv('pl-land');
-  const build    = gv('pl-build');
-  const menseki  = gv('pl-menseki');
-  const yoseki   = gv('pl-yoseki');
-  const tatemono = gv('pl-tatemono');
-  const mSel     = document.getElementById('pl-months');
-  const months   = mSel ? (parseFloat(mSel.value) || 12) : 12;
-  const sellA    = gv('pl-sell-a');
-  const sellB    = gv('pl-sell-b');
-  const sellC    = gv('pl-sell-c');
-  const krosenka = gv('pl-krosenka');
-  const beval    = gv('pl-beval');
-
-  // 自動計算
-  const loan      = Math.round(land * 0.9);
-  const broker    = Math.round((land * 0.03 + 60000) * 1.1);
-  const interest  = Math.round(loan * 0.035 / 12 * months);
-  const jimuf     = Math.round(loan * 0.01);
-  const sellFee   = Math.round((sellA * 0.03 + 60000) * 1.1);
-  const taxLand   = Math.round(krosenka * 0.015);
-  const taxBuild  = Math.round(beval * 0.03);
-  const kotei     = Math.round(krosenka * 0.014);
-  const toshikei  = Math.round(krosenka * 0.003);
-  const tourokuL  = Math.round(krosenka * 0.02);
-  const tourokuB  = Math.round(beval * 0.02);
-  const teito     = Math.round(loan * 0.004);
-  const inshi     = 30000;
-
-  // 表示
-  setText('c-broker',      fmt(broker));
-  setText('c-interest',    fmt(interest));
-  setText('c-jimuf',       fmt(jimuf));
-  setText('c-sell-fee',    fmt(sellFee));
-  setText('c-tax-land',    fmt(taxLand));
-  setText('c-tax-build',   fmt(taxBuild));
-  setText('c-kotei',       fmt(kotei));
-  setText('c-toshikei',    fmt(toshikei));
-  setText('c-touroku-land',fmt(tourokuL));
-  setText('c-touroku-build',fmt(tourokuB));
-  setText('c-teito',       fmt(teito));
-  setText('xl-loan',       fmt(loan));
-
-  // 坪換算
-  if (menseki > 0) {
-    const tsubo = menseki * 0.3025;
-    setText('xl-tsubo', tsubo.toFixed(2) + '坪');
-    if (land > 0) {
-      const tsubotanka = Math.round(land / tsubo);
-      setText('xl-land-tsubotanka', '坪単価 ' + tsubotanka.toLocaleString('ja-JP') + '円');
-      if (yoseki > 0) {
-        const isshu = Math.round(tsubotanka / (yoseki / 100));
-        setText('xl-isshu', '一種単価 ' + isshu.toLocaleString('ja-JP') + '円');
-      } else {
-        setText('xl-isshu', '—');
-      }
-    } else {
-      setText('xl-land-tsubotanka', '—');
-      setText('xl-isshu', '—');
-    }
-  } else {
-    setText('xl-tsubo', '—');
-    setText('xl-land-tsubotanka', '—');
-    setText('xl-isshu', '—');
-  }
-
-  // 建物面積の坪換算・建物坪単価
-  if (tatemono > 0) {
-    setText('xl-tatemono-tsubo', (tatemono * 0.3025).toFixed(2) + '坪');
-  } else {
-    setText('xl-tatemono-tsubo', '—');
-  }
-  if (tatemono > 0 && build > 0) {
-    const tsuboT = tatemono * 0.3025;
-    const tsuboBuild = Math.round(build / tsuboT);
-    setText('xl-build-tsubo', '延床坪単価 ' + tsuboBuild.toLocaleString('ja-JP') + '円');
-  } else {
-    setText('xl-build-tsubo', '—');
-  }
-
-  // 入力項目の合計
-  const manual = gv('c-kaisetsu') + gv('c-survey') + gv('c-sekkei') + gv('c-jiban')
-               + gv('c-gaiko') + gv('c-kashi') + gv('c-shihou') + gv('c-yobihi')
-               + gv('c-gyomu') + gv('c-lifeline') + gv('c-jouto') + gv('c-tachisoi')
-               + gv('c-infra') + gv('c-other1') + gv('c-other2') + gv('c-other3');
-
-  const total = land + build + broker
-              + manual
-              + taxLand + taxBuild + kotei + toshikei + tourokuL + tourokuB + teito + inshi
-              + sellFee + interest + jimuf;
-
-  setText('c-total', fmt(total));
-
-  // 原価コピー列
-  setText('xl-cost-copy-a', fmt(total));
-  setText('xl-cost-copy-b', fmt(total));
-  setText('xl-cost-copy-c', fmt(total));
-
-  // 販売想定
-  calcSellRow('pl-profit-a', 'pl-rate-a', sellA, total);
-  calcSellRow('pl-profit-b', 'pl-rate-b', sellB, total);
-  calcSellRow('pl-profit-c', 'pl-rate-c', sellC, total);
-
-  // IRR
-  const irr = calcIRR(sellB, total, months);  // 雛型のIRR計算は販売想定②（K32）ベース
-  setText('xl-irr', (sellB > 0 && total > 0) ? pct(irr) : '—');
-
-  // 仕入上限逆算（利益率10%確保）
-  if (sellA > 0) {
-    const targetTotal = sellA * 0.90;
-    const othersWL = build + broker + manual + interest + sellFee
-                   + taxLand + taxBuild + kotei + toshikei + tourokuL + tourokuB + teito + inshi + jimuf;
-    const maxLand = Math.max(0, targetTotal - othersWL);
-    setText('xl-max-land', fmt(maxLand) + '円');
-  } else {
-    setText('xl-max-land', '—');
-  }
-
-  // 近隣坪単価更新
-  calcNTsubo();
-
-  // 初回想定との差分
-  lastTotal = total;
-  renderFirstDiff(sellA, total);
-
-  // ヒアリング比較サマリー（販売想定②の変更を反映）
+  const sheet = activeShushiSheet;
+  const grid = document.getElementById('pl-sheet-grid');
+  if (!grid) return;
+  const c = shushiCollectCells();
+  if (sheet === '戸建て（建売・土地売り）') calcKodateCells(c);
+  else if (sheet === '土地転売（業者売り）') calcTochiCells(c);
+  else calcApartCells(c);
+  shushiCells = c;
+  SHUSHI_FORMULAS[sheet].forEach(cell => shushiSetFormula(c, cell, c[cell]));
+  const m = SHUSHI_SUMMARY[sheet];
+  const sell = n(c, m.sell), total = n(c, m.total), profit = n(c, m.profit), rate = n(c, m.rate), irr = c[m.irr] === '該当なし' ? NaN : n(c, m.irr);
+  const hasShushiData = sell > 0 && total > 0;
+  lastShushiMetrics = {sellA:n(c,m.sellA),sellB:n(c,m.sellB),sellC:m.sellC?n(c,m.sellC):0,total:n(c,m.total),profitA:n(c,m.profitA),profitB:n(c,m.profitB),profitC:m.profitC?n(c,m.profitC):0,rateA:n(c,m.rateA),rateB:n(c,m.rateB),rateC:m.rateC?n(c,m.rateC):0,irr:irr,basis:m.basis};
+  lastTotal = lastShushiMetrics.total;
+  setText('pl-profit-basis', m.basis);
+  setText('pl-profit-main', hasShushiData ? fmt(profit) + '円' : '—');
+  setText('pl-profit-rate', hasShushiData ? pct(rate) : '—');
+  setText('pl-profit-irr', hasShushiData && isFinite(irr) ? pct(irr) : '—');
+  setText('c-total', fmt(lastShushiMetrics.total)); setText('pl-sell-a', fmt(lastShushiMetrics.sellA)); setText('pl-sell-b', fmt(lastShushiMetrics.sellB)); setText('pl-sell-c', fmt(lastShushiMetrics.sellC));
+  setText('pl-profit-a', fmt(lastShushiMetrics.profitA)); setText('pl-profit-b', fmt(lastShushiMetrics.profitB)); setText('pl-profit-c', fmt(lastShushiMetrics.profitC)); setText('pl-rate-a', pct(lastShushiMetrics.rateA)); setText('pl-rate-b', pct(lastShushiMetrics.rateB)); setText('pl-rate-c', pct(lastShushiMetrics.rateC)); setText('xl-irr', hasShushiData && isFinite(irr) ? pct(irr) : '—');
+  renderFirstDiff(lastShushiMetrics.sellA, lastShushiMetrics.total);
   calcHearing();
 }
-
-function calcSellRow(profitId, rateId, sell, total) {
-  const profit = sell - total;
-  const rate   = sell > 0 ? profit / sell : 0;
-  const pEl = document.getElementById(profitId);
-  const rEl = document.getElementById(rateId);
-  if (pEl) pEl.textContent = (sell > 0 && total > 0) ? fmt(profit) : '—';
-  if (rEl) rEl.textContent = (sell > 0 && total > 0) ? pct(rate) : '—';
+function calcNTsubo(fromInput) { if (fromInput && currentDealId !== null) { const deal = DEALS.find(d => d.id === currentDealId); if (deal && deal.reg && !deal.reg.market) registerStep('market'); } calcPL(); }
+function shushiOnInput(el) {
+  el.value = el.value.replace(/[０-９．－，]/g, ch => ({'０':'0','１':'1','２':'2','３':'3','４':'4','５':'5','６':'6','７':'7','８':'8','９':'9','．':'.','－':'-','，':','}[ch] || ch));
+  if (el.inputMode === 'decimal') {
+    const raw = el.value.replace(/,/g,'');
+    if (/^-?\d+(\.\d+)?$/.test(raw) && Math.abs(parseFloat(raw)) >= 1000 && !raw.includes('.')) el.value = parseFloat(raw).toLocaleString('ja-JP');
+  }
+  shushiPersistCell(el);
+  calcPL();
 }
+function shushiEnter(e, el) {
+  if (e.key !== 'Enter') return;
+  e.preventDefault();
+  const inputs = Array.from(document.querySelectorAll('#pl-sheet-grid input, #pl-sheet-grid select')).filter(x => !x.disabled);
+  const idx = inputs.indexOf(el);
+  if (idx >= 0 && inputs[idx + 1]) inputs[idx + 1].focus();
+}
+function renderPLPhotos() {
+  const el = document.getElementById('pl-photo-grid'); if (!el) return;
+  const deal = currentDealId !== null ? DEALS.find(d => d.id === currentDealId) : null;
+  if (deal && deal.photo) el.innerHTML = '<div class="pl-photo-item"><img src="' + deal.photo + '" alt="' + deal.name + '"></div><div class="pl-photo-item">追加写真</div><div class="pl-photo-item">図面</div><div class="pl-photo-item">現地メモ</div>';
+  else el.innerHTML = '<div class="pl-photo-item">写真未登録</div><div class="pl-photo-item">追加写真</div><div class="pl-photo-item">図面</div><div class="pl-photo-item">現地メモ</div>';
+}
+function calcSellRow(profitId, rateId, sell, total) { setText(profitId, sell > 0 && total > 0 ? fmt(sell - total) : '—'); setText(rateId, sell > 0 && total > 0 ? pct((sell - total) / sell) : '—'); }
 
 /* ===== 初回想定の保持（案件別）＝収支「登録」の初回実行時に自動記録 ===== */
 const FIRST_EST = {};   // dealId -> {sell, cost, date}
@@ -2014,8 +1995,7 @@ function registerHearing() {
   const total = lastTotal;
   if (sellB > 0 && total > 0) {
     const rate = (sellB - total) / sellB;
-    const mSel = document.getElementById('pl-months');
-    const months = mSel ? (parseFloat(mSel.value) || 12) : 12;
+    const months = gv('pl-months') || 12;
     const irr = calcIRR(sellB, total, months);
     if (rate < 0.08 || irr < 0.10) {
       openGateModal(rate, irr);
@@ -2136,6 +2116,8 @@ function openNewReg(el) {
   ['nr-name','nr-address','nr-chiban','nr-menseki','nr-eki'].forEach(id => sv(id, ''));
   newregShiryo = [];
   renderShiryoNewreg();
+  const err = document.getElementById('newreg-shiryo-error');
+  if (err) err.textContent = '';
   showView('newreg', el || document.querySelector('[data-view=newreg]'));
   const first = document.getElementById('nr-name');
   if (first) first.focus();
@@ -2187,6 +2169,12 @@ function buildNewDealFromForm(status) {
 
 /* 「登録」＝案件を作成して収支シートへ（既存フローに接続） */
 function createNewDeal() {
+  const err = document.getElementById('newreg-shiryo-error');
+  if (newregShiryo.length === 0) {
+    if (err) err.textContent = '資料を添付してください';
+    return;
+  }
+  if (err) err.textContent = '';
   const deal = buildNewDealFromForm('未検討');
   HISTORY.push({dealId: deal.id, date: TODAY, from: '—', to: '未検討', by: '田中'});
   openDetail(deal.id);
@@ -2207,6 +2195,8 @@ function openMiokuriModal() {
   const sel = document.getElementById('miokuri-class');
   if (sel) sel.selectedIndex = 0;
   sv('miokuri-free', '');
+  const err = document.getElementById('miokuri-free-error');
+  if (err) err.textContent = '';
   modal.style.display = 'flex';
 }
 function closeMiokuriModal() {
@@ -2216,7 +2206,13 @@ function closeMiokuriModal() {
 function miokuriSubmit() {
   const cls = (document.getElementById('miokuri-class') || {value:'その他'}).value;
   const free = (gvs('miokuri-free') || '').trim();
-  const reason = free ? cls + '：' + free : cls;
+  const err = document.getElementById('miokuri-free-error');
+  if (!free) {
+    if (err) err.textContent = '見送り理由を記入してください';
+    return;
+  }
+  if (err) err.textContent = '';
+  const reason = cls + '：' + free;
   const deal = buildNewDealFromForm('見送り');
   deal.note = reason;
   HISTORY.push({dealId: deal.id, date: TODAY, from: '—', to: '見送り', by: '田中', reason: reason});
@@ -2278,7 +2274,7 @@ function hasNameOverlap(input, dealName) {
 function checkDuplicateSheet() {
   const box = document.getElementById('sheet-dup-warning');
   if (!box) return;
-  const addr = ((document.getElementById('pl-address') || {value:''}).value || '').trim();
+  const addr = String(shushiRawValue('B3') || '').trim();
   if (addr.length < 2) { box.innerHTML = ''; return; }
   const hits = DEALS.filter(d => {
     if (d.id === currentDealId) return false;
@@ -2325,21 +2321,28 @@ function loadPastCases() {
 function addPastCase(i) {
   const c = PAST_CASES[i];
   if (!c) return;
-  // 新しいExcelシートの入力欄（sc-price-N / tc-price-N）に空き行を探して追加
-  const prefix = c.kind === 'tc' ? 'tc' : 'sc';
-  const maxRows = c.kind === 'tc' ? 5 : 6;
+  if (activeShushiSheet === 'アパート') {
+    showToast('アパートシートはレントロール入力のため、販売在庫表への追加はありません');
+    return;
+  }
+  const priceCol = 'J';
+  const areaCol = 'N';
+  const featureCol = 'S';
+  const stationCol = 'W';
+  const addrCol = 'Z';
+  const rows = c.kind === 'tc' ? [17,18,19,20,21] : [6,7,8,9,10,11];
   let added = false;
-  for (let n = 1; n <= maxRows; n++) {
-    const pEl = document.getElementById(prefix + '-price-' + n);
-    if (pEl && (!pEl.value || parseFloat(pEl.value) === 0)) {
+  for (const row of rows) {
+    const pEl = document.getElementById(shushiCellId(priceCol + row));
+    if (pEl && (!pEl.value || shushiNum(pEl.value) === 0)) {
       pEl.value = c.price;
-      const aEl = document.getElementById(prefix + '-area-' + n);
+      const aEl = document.getElementById(shushiCellId(areaCol + row));
       if (aEl) aEl.value = c.area;
-      const mEl = document.getElementById(prefix + '-madori-' + n);
+      const mEl = document.getElementById(shushiCellId(featureCol + row));
       if (mEl) mEl.value = c.madori;
-      const eEl = document.getElementById(prefix + '-eki-' + n);
+      const eEl = document.getElementById(shushiCellId(stationCol + row));
       if (eEl) eEl.value = '徒歩' + c.eki;
-      const adEl = document.getElementById(prefix + '-addr-' + n);
+      const adEl = document.getElementById(shushiCellId(addrCol + row));
       if (adEl) adEl.value = c.addr;
       calcNTsubo();
       added = true;
@@ -2650,7 +2653,7 @@ function renderHomeCards(items, startIndex) {
     const deal = item.deal || item;
     const score = item.score || 0;
     const action = HOME_ACTION_TEXT[deal.status] || '次の判断に必要な情報を確認する';
-    return '<article class="home-deal-card">'
+    return '<article class="home-deal-card" onclick="openDetail(' + deal.id + ')" tabindex="0" onkeydown="homeCardKey(event,' + deal.id + ')">'
       + '<div class="home-deal-num">' + (startIndex + i) + '</div>'
       + homeThumbHtml(deal)
       + '<div class="home-card-main">'
@@ -2668,10 +2671,15 @@ function renderHomeCards(items, startIndex) {
       + '<div class="home-card-side">'
       + '<div class="home-card-q-label">次に考えること</div>'
       + '<div class="home-card-question">' + action + '</div>'
-      + '<button class="home-card-open-btn" onclick="openDetail(' + deal.id + ')">開始する</button>'
       + '</div>'
       + '</article>';
   }).join('');
+}
+
+function homeCardKey(e, id) {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  e.preventDefault();
+  openDetail(id);
 }
 
 function renderHome() {
@@ -2864,6 +2872,8 @@ function applyHashRoute() {
   window.addEventListener('hashchange', applyHashRoute);
   if (!applyHashRoute()) showView('home', document.querySelector('[data-view=home]'));
   renderHoldBanner();
+  renderShushiSheet();
+  renderPLPhotos();
   calcPL();
 })();
 </script>
