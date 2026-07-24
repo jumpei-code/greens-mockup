@@ -358,13 +358,15 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .pl-market-table .market-feature{width:136px}
 .pl-market-table .market-station{width:94px}
 .pl-market-table .market-address{width:auto;min-width:150px}
-.pl-sheet-sections input[type=text],.pl-sheet-sections select{background:#D9E3F3;border:1px solid #9fc2e7;border-radius:0;padding:2px 5px;font-size:13px;font-family:"Meiryo UI",Meiryo,sans-serif}
+/* 入力セルの水色は廃止＝全セル同じ白い見た目（2026-07-24 中西さん指示。計算式セルは自動計算のまま＝式は変更不可） */
+.pl-sheet-sections input[type=text],.pl-sheet-sections select{background:#fff;border:1px solid #c8cdd3;border-radius:0;padding:2px 5px;font-size:13px;font-family:"Meiryo UI",Meiryo,sans-serif}
+.pl-sheet-sections input[type=text]:focus,.pl-sheet-sections select:focus{border-color:var(--green);outline:none;box-shadow:0 0 0 2px var(--green-light)}
 /* フリー項目行の入力欄＝任意入力（未入力でも問題ない）の合図として薄グレー（2026-07-24 中西さん指示） */
 .pl-sheet-sections .pl-free-row input[type=text]{background:#f3f4f6;border-color:#d1d5db}
 /* 道路＝1マスを点線で左右分割（2026-07-24 中西さん指示・横幅は増やさない） */
 .pl-road-pair{display:flex;flex:1;min-width:0}
 .pl-road-pair input{flex:1 1 50%;min-width:0}
-.pl-road-pair input:first-child{border-right:1px dashed #9fc2e7}
+.pl-road-pair input:first-child{border-right:1px dashed #b7b7b7}
 .pl-road-pair input:last-child{border-left:none}
 .xl input.shushi-input,.xl input.shushi-text,.xl select.shushi-input{width:100%;min-width:0}
 .pl-field input.shushi-input,.pl-field input.shushi-text,.pl-field select.shushi-input,.pl-cost-table input,.pl-cost-table select,.pl-market-table input,.pl-sell-table input,.pl-irr-table input{width:100%;min-width:0}
@@ -725,7 +727,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
       </div>
       <!-- 収支想定はシート切替ボタン右横の1行コンパクト表示へ移動（2026-07-24 中西さん指示） -->
       <div class="xl-toolbar" id="pl-top-toolbar" style="display:none">
-        <span class="help-wrap"><button class="help-btn" onclick="toggleHelp(this)" title="このシートの説明">？</button><div class="help-pop help-pop-float" style="display:none;right:0;left:auto">お使いの雛型と同じ配置・同じ計算式です（水色のセル＝入力、白のセル＝自動計算）。「登録」を押すとステップが自動で進み、最初の登録の内容は「初回の想定」として記録されます。</div></span>
+        <span class="help-wrap"><button class="help-btn" onclick="toggleHelp(this)" title="このシートの説明">？</button><div class="help-pop help-pop-float" style="display:none;right:0;left:auto">お使いの雛型と同じ配置・同じ計算式です（枠のあるセル＝入力、枠のない数字＝自動計算で式は変更できません）。「登録」を押すとステップが自動で進み、最初の登録の内容は「初回の想定」として記録されます。</div></span>
       </div>
       <!-- 詳細ヘッダー＝物件名・住所・種別チップ（キマール参考デザイン・2026-07-24 中西さん指示） -->
       <div class="deal-header" id="detail-header"></div>
