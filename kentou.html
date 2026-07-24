@@ -355,6 +355,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .pl-with-unit input{flex:1;min-width:0}
 .pl-irr-table td:first-child{font-weight:700;color:var(--sub)}
 .pl-irr-table{background:#fff}
+.pl-irr-wrap{max-width:420px;margin-top:12px}
 .pl-irr-note-row td{background:#f8f8f8;color:var(--sub);font-size:11.5px;text-align:left;white-space:normal}
 .pl-market-stack{display:grid;grid-template-columns:1fr;gap:14px}
 .pl-market-title{font-size:13px;font-weight:800;color:var(--ink);margin:0 0 8px}
@@ -1966,29 +1967,24 @@ function shushiPropertySection(sheet) {
 // Excelで原価表の右隣にある縦ブロック（一種単価〜IRR）＋期間別IRR表＝原価セクションの右列
 // （2026-07-24 中西さん指示：販売想定を独立させ、この評価ブロックを右列へ置き換え）
 // 単位表示（2026-07-24 中西さん指示）：一種単価＝円/坪・路線価/固定資産税路線価＝円/㎡入力＋右に自動坪換算・借入金/建物評価額＝円
-function shushiEvalField(sheet, labelCell, valueCell, unit, tsubo) {
+// help＝ラベル横の？ボタンに格納する注記（IRRの「10％以上を目指す」等・2026-07-24 中西さん指示）
+function shushiEvalField(sheet, labelCell, valueCell, unit, tsubo, help) {
   const label = (SHUSHI_LABELS[sheet][labelCell] || labelCell).replace(/[：:]\s*$/, '');
   return '<div class="pl-field"><div class="pl-field-label">' + escHtml(label) + '</div><div class="pl-field-value">' + shushiCellHtml(sheet, valueCell)
     + (unit ? '<span class="pl-unit">' + escHtml(unit) + '</span>' : '')
     + (tsubo ? '<span class="pl-tsubo-auto" data-tsubo-of="' + valueCell + '">—</span>' : '')
+    + (help ? '<span class="help-wrap" style="margin-left:4px"><button class="help-btn" onclick="toggleHelp(this)" title="この項目の目安">？</button><div class="help-pop help-pop-float" style="display:none">' + escHtml(help) + '</div></span>' : '')
     + '</div></div>';
 }
 function shushiEvalSideBlock(sheet) {
   const isApart = sheet === 'アパート';
-  // [ラベル, 値セル, 単位, 坪換算表示]
+  // Excel注記「上記IRRは10％以上を目指す」はIRRに対するコメント＝IRR横の？ボタンに格納（2026-07-24 中西さん指示）
+  const irrHelp = 'IRRは10％以上を目指す';
+  // [ラベル, 値セル, 単位, 坪換算表示, ？ボタン注記]
   const fields = isApart
-    ? [['F15','F16','円/坪'],['F18','F19','円'],['F21','G21','円/㎡',true],['F22','G22','円/㎡',true],['F24','G24','円'],['F25','G25']]
-    : [['F15','F16','円/坪'],['F18','F19','円'],['F22','G22','円/㎡',true],['F23','G23','円/㎡',true],['F24','G24','円'],['F25','G25']];
-  const labels = SHUSHI_LABELS[sheet];
-  const irrRows = sheet === '土地転売（業者売り）'
-    ? [['D46','G46'],['D50','G50'],['D56','G56']]
-    : isApart
-      ? [['D55','G55'],['D59','G59'],['D65','G65']]
-      : [['D54','G54'],['D58','G58'],['D64','G64']];
-  // 注記「上記IRRは10％以上を目指す」はExcelでは評価ブロック脇（F28/F30）と期間別IRR表（F44/F53）の2箇所にあるが、
-  // 本レイアウトでは両者が隣接するため1回のみ表示（文言は全シート同一を確認済み）
-  const irrNote = labels[sheet === '土地転売（業者売り）' ? 'F44' : 'F53'] || '';
-  return '<div class="pl-side-stack pl-eval-side"><div class="pl-market-title">評価額・借入金・IRR</div><div class="pl-field-grid pl-eval-grid">' + fields.map(r => shushiEvalField(sheet, r[0], r[1], r[2], r[3])).join('') + '</div><table class="pl-irr-table"><tbody><tr class="pl-irr-note-row"><td colspan="2">' + escHtml(irrNote) + '</td></tr>' + irrRows.map(r => '<tr><td>' + escHtml(labels[r[0]] || '') + '</td><td>' + shushiCellHtml(sheet, r[1]) + '</td></tr>').join('') + '</tbody></table></div>';
+    ? [['F15','F16','円/坪'],['F18','F19','円'],['F21','G21','円/㎡',true],['F22','G22','円/㎡',true],['F24','G24','円'],['F25','G25',null,false,irrHelp]]
+    : [['F15','F16','円/坪'],['F18','F19','円'],['F22','G22','円/㎡',true],['F23','G23','円/㎡',true],['F24','G24','円'],['F25','G25',null,false,irrHelp]];
+  return '<div class="pl-side-stack pl-eval-side"><div class="pl-market-title">評価額・借入金・IRR</div><div class="pl-field-grid pl-eval-grid">' + fields.map(r => shushiEvalField(sheet, r[0], r[1], r[2], r[3], r[4])).join('') + '</div></div>';
 }
 // 仕入契約日〜仲介会社（取引の相手・日付）＝「取引概要」セクションとして担当の上に表示（2026-07-24 中西さん指示）
 function shushiTorihikiSection(sheet) {
@@ -2084,8 +2080,15 @@ function shushiSellPlanSection(sheet) {
     : sheet === '土地転売（業者売り）'
       ? [shushiSellCard(sheet,'I24',[['I25','K25'],['I26','K26'],['I27','K27'],['P24','P25'],['L24','M24']],true), shushiSellCard(sheet,'I30',[['I31','K31'],['I32','K32'],['I33','K33'],['P30','P31'],['L30','M30']])]
       : [shushiSellCard(sheet,'I14',[['I15','K15'],['I16','K16'],['I17','K17'],['P14','P15'],['L14','N14','％']],true), shushiSellCard(sheet,'I20',[['I21','K21'],['I22','K22'],['I24','K24'],['P20','P21'],['L20','N20','％']])];
-  // 期間別IRR表は「評価額・借入金・IRR」（原価セクション右列）へ移動済み。収支想定カードは右上（#pl-top-toolbar）へ移動済み
-  return '<section class="pl-section"><div class="pl-section-title">販売想定・計画</div><div class="pl-sell-stack">' + cards.join('') + '</div></section>';
+  // 事業期間12〜24ヶ月のIRR表＝販売計画に属するため販売想定・計画セクションの下部に表示（2026-07-24 中西さん指示）
+  const labels = SHUSHI_LABELS[sheet];
+  const irrRows = sheet === '土地転売（業者売り）'
+    ? [['D46','G46'],['D50','G50'],['D56','G56']]
+    : sheet === 'アパート'
+      ? [['D55','G55'],['D59','G59'],['D65','G65']]
+      : [['D54','G54'],['D58','G58'],['D64','G64']];
+  const irrTable = '<div class="pl-irr-wrap"><table class="pl-irr-table"><tbody>' + irrRows.map(r => '<tr><td>' + escHtml(labels[r[0]] || '') + '</td><td>' + shushiCellHtml(sheet, r[1]) + '</td></tr>').join('') + '</tbody></table></div>';
+  return '<section class="pl-section"><div class="pl-section-title">販売想定・計画</div><div class="pl-sell-stack">' + cards.join('') + '</div>' + irrTable + '</section>';
 }
 function shushiMarketTable(sheet, titleCell, rows, cols) {
   const labels = SHUSHI_LABELS[sheet];
