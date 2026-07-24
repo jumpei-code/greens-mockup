@@ -92,9 +92,9 @@ input,select,textarea{font-family:inherit;font-size:13px}
 .tab-btn{padding:10px 18px;border:none;background:transparent;font-size:13px;font-weight:600;color:var(--sub);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:color .15s,border-color .15s}
 .tab-btn.active{color:var(--green);border-bottom-color:var(--green)}
 .tab-btn:hover{color:var(--ink)}
-/* 詳細タブ＝丸囲みのセグメントボタン（キマール参考デザイン・2026-07-24 中西さん指示） */
-#detail-tabs{display:inline-flex;flex:none;max-width:100%;overflow-x:auto;border:1.5px solid var(--green-mid);border-radius:999px;background:#fff;gap:0}
-#detail-tabs .tab-btn{font-size:14px;font-weight:700;color:var(--green);padding:10px 28px;border-bottom:none;margin-bottom:0;border-right:1.5px solid var(--green-mid);border-radius:0}
+/* 詳細タブ＝丸囲みのセグメントボタン・横幅は枠いっぱい（キマール参考デザイン・2026-07-24 中西さん指示） */
+#detail-tabs{display:flex;width:100%;max-width:100%;overflow-x:auto;border:1.5px solid var(--green-mid);border-radius:999px;background:#fff;gap:0}
+#detail-tabs .tab-btn{flex:1;text-align:center;font-size:14px;font-weight:700;color:var(--green);padding:10px 12px;border-bottom:none;margin-bottom:0;border-right:1.5px solid var(--green-mid);border-radius:0}
 #detail-tabs .tab-btn:first-child{border-radius:999px 0 0 999px}
 #detail-tabs .tab-btn:last-child{border-right:none;border-radius:0 999px 999px 0}
 #detail-tabs .tab-btn.active{background:var(--green);color:#fff;border-radius:999px}
@@ -711,8 +711,8 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
       <div class="card">
         <div class="card-header" style="border-bottom:1px solid var(--line)">
           <div id="detail-tabs">
-            <button class="tab-btn" onclick="switchTab('shiryo',this)">物件資料</button>
             <button class="tab-btn" onclick="switchTab('summary',this)">サマリー</button>
+            <button class="tab-btn" onclick="switchTab('shiryo',this)">物件資料</button>
             <button class="tab-btn" onclick="switchTab('pl',this)">収支</button>
             <button class="tab-btn" onclick="switchTab('market',this)">市場調査</button>
             <button class="tab-btn" onclick="switchTab('hearing',this)">ヒアリング</button>
@@ -1839,6 +1839,13 @@ function shushiCostRows(sheet) {
   if (sheet === 'アパート') return {start:16,end:48,sections:{16:'A16',25:'A25',33:'A33',41:'A41',45:'A45',48:'B48'}};
   return {start:16,end:48,sections:{16:'A16',25:'A25',32:'A32',41:'A41',45:'A45',48:'B48'}};
 }
+// 原価表の備考列＝入力セルにせず固定テキスト表示（2026-07-24 中西さん指示・フリー項目の表記と同様）。
+// 率など計算に使う値（取得税率D32等）は span の textContent 経由で従来どおり計算に読み込まれる（shushiRawValue が textContent を返す）
+function shushiMemoTextHtml(sheet, cell) {
+  if (!cell) return '';
+  const text = shushiFormatInputValue(shushiResolvedValue(sheet, cell));
+  return '<span class="pl-free-note" id="' + shushiCellId(cell) + '" data-cell="' + cell + '">' + escHtml(text) + '</span>';
+}
 function shushiCostSection(sheet) {
   const labels = SHUSHI_LABELS[sheet];
   const cfg = shushiCostRows(sheet);
@@ -1874,7 +1881,7 @@ function shushiCostSection(sheet) {
       emitted[row.group] = true;
       html += '<td class="pl-cost-cat" rowspan="' + groupCount[row.group] + '">' + escHtml(rows.find(x => x.group === row.group).section) + '</td>';
     }
-    html += '<td>' + (row.freeItem ? shushiCellHtml(sheet, 'B' + row.freeRow) : escHtml(row.item)) + '</td><td class="pl-money-cell">' + shushiCellHtml(sheet, row.amountCell) + '</td><td class="pl-memo-cell">' + (row.freeItem ? '<span class="pl-free-note">フリー項目</span>' : shushiCellHtml(sheet, row.memoCell)) + '</td><td>' + row.rateCells + '</td></tr>';
+    html += '<td>' + (row.freeItem ? shushiCellHtml(sheet, 'B' + row.freeRow) : escHtml(row.item)) + '</td><td class="pl-money-cell">' + shushiCellHtml(sheet, row.amountCell) + '</td><td class="pl-memo-cell">' + (row.freeItem ? '<span class="pl-free-note">フリー項目</span>' : shushiMemoTextHtml(sheet, row.memoCell)) + '</td><td>' + row.rateCells + '</td></tr>';
   });
   html += '</tbody></table><div class="pl-cost-note">' + escHtml(labels[noteCell] || '') + '</div></div>';
   return html;
