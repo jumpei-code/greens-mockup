@@ -94,9 +94,11 @@ input,select,textarea{font-family:inherit;font-size:13px}
 .tab-btn:hover{color:var(--ink)}
 /* 詳細タブ＝丸囲みのセグメントボタン・横幅は枠いっぱい（キマール参考デザイン・2026-07-24 中西さん指示） */
 #detail-tabs{display:flex;width:100%;max-width:100%;overflow-x:auto;border:1.5px solid var(--green-mid);border-radius:999px;background:#fff;gap:0}
-#detail-tabs .tab-btn{flex:1;text-align:center;font-size:14px;font-weight:700;color:var(--green);padding:10px 12px;border-bottom:none;margin-bottom:0;border-right:1.5px solid var(--green-mid);border-radius:0}
+/* 縦の区切り線はborderでなく疑似要素＝activeの丸め（border-radius）でも隣の線が消えない（2026-07-24 不具合修正） */
+#detail-tabs .tab-btn{position:relative;flex:1;text-align:center;font-size:14px;font-weight:700;color:var(--green);padding:10px 12px;border-bottom:none;margin-bottom:0;border-radius:0}
+#detail-tabs .tab-btn:not(:last-child)::after{content:"";position:absolute;right:0;top:0;bottom:0;width:1.5px;background:var(--green-mid)}
 #detail-tabs .tab-btn:first-child{border-radius:999px 0 0 999px}
-#detail-tabs .tab-btn:last-child{border-right:none;border-radius:0 999px 999px 0}
+#detail-tabs .tab-btn:last-child{border-radius:0 999px 999px 0}
 #detail-tabs .tab-btn.active{background:var(--green);color:#fff;border-radius:999px}
 #detail-tabs .tab-btn:hover{background:var(--green-light);color:var(--green)}
 #detail-tabs .tab-btn.active:hover{background:var(--green);color:#fff}
@@ -1942,8 +1944,10 @@ function shushiMarketSection(sheet) {
     return '<section class="pl-section"><div class="pl-section-title">レントロール・年間賃料</div><div class="pl-market-stack">' + rent + income + '</div></section>';
   }
   // 市場調査の列構成は戸建て・土地転売とも共通（2026-07-23 中西さん指示＝Excelでは土地転売のみ3列だが6列に統一）
-  const colsNew = [{label:'I3',col:'I'},{label:'J5',col:'J'},{label:'N5',col:'N'},{label:'P5',col:'P'},{label:'S5',col:'S'},{label:'W5',col:'W'},{label:'Z5',col:'Z'}];
-  const colsLand = [{label:'I14',col:'I'},{label:'J16',col:'J'},{label:'N16',col:'N'},{label:'P16',col:'P'},{label:'S16',col:'S'},{label:'W16',col:'W'},{label:'Z16',col:'Z'}];
+  // 土地面積は㎡入力＝見出しに（㎡）を付ける（2026-07-24 中西さん指示・坪単価は㎡→坪換算で算出）
+  const lbl = SHUSHI_LABELS[sheet];
+  const colsNew = [{label:'I3',col:'I'},{label:'J5',col:'J'},{label:'N5',col:'N',header:(lbl.N5 || '土地面積') + '（㎡）'},{label:'P5',col:'P'},{label:'S5',col:'S'},{label:'W5',col:'W'},{label:'Z5',col:'Z'}];
+  const colsLand = [{label:'I14',col:'I'},{label:'J16',col:'J'},{label:'N16',col:'N',header:(lbl.N16 || '土地面積') + '（㎡）'},{label:'P16',col:'P'},{label:'S16',col:'S'},{label:'W16',col:'W'},{label:'Z16',col:'Z'}];
   // セクション名は詳細タブ「市場調査」との名称重複を避けて「販売在庫（近隣）」（2026-07-24 レビュー反映）
   return '<section class="pl-section"><div class="pl-section-title">販売在庫（近隣）</div><div class="pl-market-stack">' + shushiMarketTable(sheet,'I3',[6,7,8,9,10,11],colsNew) + shushiMarketTable(sheet,'I14',[17,18,19,20,21],colsLand) + '</div></section>';
 }
@@ -2002,7 +2006,9 @@ function fmtCell(cell, val) {
   if (cell === 'K2') return String(val || '');
   if (val === '該当なし') return val;
   if (!isFinite(val) || isNaN(val)) return '—';
-  if (/^G\d+$/.test(cell) || ['P15','P21','P25','P26','P31','P32','P38'].includes(cell)) return pct(val);
+  // P15/P21はアパートのみ利益率（戸建て・土地転売では販売在庫の坪単価行と同名のため、シートで振り分ける）
+  const pctCells = activeShushiSheet === 'アパート' ? ['P15','P21'] : ['P25','P26','P31','P32','P38'];
+  if (/^G\d+$/.test(cell) || pctCells.includes(cell)) return pct(val);
   if (['C6','C7'].includes(cell)) return (Math.round(val * 10) / 10).toLocaleString('ja-JP') + '坪';
   if (['D40','D48'].includes(cell)) return Math.round(val).toLocaleString('ja-JP') + '円/坪';
   if (['D16','F16','D25','M24','M25','M30','M31','M37','K32'].includes(cell)) return Math.round(val).toLocaleString('ja-JP');
@@ -2027,11 +2033,12 @@ function shushiSetFormula(c, cell, val) {
 }
 function calcKodateCells(c) {
   c.K2 = TODAY; c.C6 = n(c,'B6') * 0.3025; c.C7 = n(c,'B7') * 0.3025;
-  [6,7,8,9,10,11].forEach(r => c['P'+r] = n(c,'J'+r) / n(c,'N'+r));
+  // 販売在庫の土地面積は㎡入力＝坪単価は㎡→坪換算（×0.3025）で算出（2026-07-24 中西さん指示・Excelの直割りJ/Nとの意図的な差）
+  [6,7,8,9,10,11].forEach(r => c['P'+r] = n(c,'J'+r) / (n(c,'N'+r) * 0.3025));
   c.D16 = n(c,'C16') / n(c,'C6'); c.F16 = n(c,'C16') / n(c,'C6') / n(c,'B8');
   // 手数料の固定加算(+6万/+12万)は、元金額の未入力時に固定分だけ表示されるのを防ぐため0とする（Excelとの意図的な差・2026-07-23中西さん指示）
   c.C17 = n(c,'C16') > 0 ? (n(c,'C16') * 0.03 + 60000) * 1.1 : 0;
-  [17,18,19,20,21].forEach(r => c['P'+r] = n(c,'J'+r) / n(c,'N'+r));
+  [17,18,19,20,21].forEach(r => c['P'+r] = n(c,'J'+r) / (n(c,'N'+r) * 0.3025));
   c.F19 = n(c,'C16') * 0.9; c.D25 = n(c,'C25') / n(c,'C7'); c.M25 = (n(c,'K26') - n(c,'C25')) / n(c,'C6'); c.M31 = (n(c,'K32') - n(c,'C25')) / n(c,'C6'); c.M37 = (n(c,'K38') - n(c,'C25')) / n(c,'C6');
   c.C32 = n(c,'G23') * (n(c,'D32') / 100); c.C33 = n(c,'G24') * 0.03; c.C34 = n(c,'G23') * 0.014; c.C35 = n(c,'G23') * 0.003; c.C36 = n(c,'G23') * 0.02; c.C37 = n(c,'G24') * 0.02; c.C38 = n(c,'F19') * (n(c,'D38') / 100); c.C44 = n(c,'K26') > 0 ? (n(c,'K26') * 0.03 + 60000) * 1.1 : 0; c.C45 = (n(c,'F19') * (n(c,'D45') / 100) / 12) * n(c,'G3'); c.C46 = n(c,'F19') * (n(c,'D46') / 100);
   c.C48 = sumCells(c,'C',16,47); c.D48 = n(c,'C48') / n(c,'C7');
@@ -2040,7 +2047,8 @@ function calcKodateCells(c) {
 }
 function calcTochiCells(c) {
   c.K2 = TODAY; c.C6 = n(c,'B6') * 0.3025; c.C7 = n(c,'B7') * 0.3025; c.D16 = n(c,'C16') / n(c,'C6'); c.F16 = n(c,'C16') / n(c,'C7') / n(c,'B8'); c.C17 = n(c,'C16') > 0 ? (n(c,'C16') * 0.03 + 120000) * 1.1 : 0; c.F19 = n(c,'C16') * 0.9;
-  [6,7,8,9,10,11].forEach(r => c['P'+r] = n(c,'J'+r) / n(c,'N'+r)); [17,18,19,20,21].forEach(r => c['P'+r] = n(c,'J'+r) / n(c,'N'+r));
+  // 販売在庫の土地面積は㎡入力＝坪単価は㎡→坪換算（×0.3025）で算出（2026-07-24 中西さん指示）
+  [6,7,8,9,10,11].forEach(r => c['P'+r] = n(c,'J'+r) / (n(c,'N'+r) * 0.3025)); [17,18,19,20,21].forEach(r => c['P'+r] = n(c,'J'+r) / (n(c,'N'+r) * 0.3025));
   c.C40 = sumCells(c,'C',16,39); c.D40 = n(c,'C40') / n(c,'C6'); c.M24 = n(c,'K25') / n(c,'C6'); c.K26 = n(c,'C40'); c.K27 = n(c,'K25') - n(c,'K26'); c.P25 = n(c,'K27') / n(c,'K25'); c.M30 = n(c,'K31') / n(c,'C6'); c.K32 = n(c,'C40'); c.K33 = n(c,'K31') - n(c,'K32'); c.P31 = n(c,'K33') / n(c,'K31');
   c.I46 = -sumCells(c,'C',8,39); c.I48 = n(c,'K25'); c.G46 = calcIrrExcel(n(c,'I48'), -n(c,'I46'), 12); c.I50 = -n(c,'C40'); c.I54 = n(c,'I48'); c.G50 = calcIrrExcel(n(c,'I54'), -n(c,'I50'), 18); c.I56 = n(c,'I46'); c.I60 = n(c,'I48'); c.G56 = calcIrrExcel(n(c,'I60'), -n(c,'I56'), 24); c.G25 = displayIrr(n(c,'G3'), c.G46, c.G50, c.G56);
 }
