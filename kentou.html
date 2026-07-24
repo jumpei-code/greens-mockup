@@ -282,7 +282,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .pl-plan-card{grid-column:1/-1}
 .pl-eval-side .pl-field-grid.pl-eval-grid{grid-template-columns:1fr}
 .pl-sell-card{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff;min-width:0}
-.pl-sell-card-title{background:var(--green-light);font-weight:800;padding:7px 9px;font-size:12.5px;color:#1f2937;border-bottom:1px solid var(--green-mid)}
+.pl-sell-card-title{background:#e2efda;font-weight:800;padding:7px 9px;font-size:12.5px;color:#1f2937;border-bottom:1px solid #b7b7b7}
 .pl-basis-chip{float:right;background:#6b7280;color:#fff;font-size:10px;font-weight:700;padding:1px 8px;border-radius:9px;line-height:1.6}
 .pl-sell-card-body{padding:8px}
 .pl-sell-table th{width:38%}
@@ -290,7 +290,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .pl-plan-table{width:100%;border-collapse:collapse;font-size:12.5px;table-layout:fixed}
 .pl-plan-table th,.pl-plan-table td{border:1px solid #b7b7b7;padding:5px 6px;vertical-align:middle}
 .pl-plan-table th{background:#f8f8f8;color:var(--sub);font-size:11px;font-weight:700;text-align:left}
-.pl-plan-table td.pl-plan-group{background:var(--green-light);font-weight:700;font-size:11.5px;overflow-wrap:anywhere}
+.pl-plan-table td.pl-plan-group{background:#e2efda;font-weight:700;font-size:11.5px;overflow-wrap:anywhere}
 .pl-plan-table input{width:100%;min-width:0}
 .pl-market-table tr.market-total td{background:#f0f5f1;font-weight:700}
 .pl-section.pl-collapsed > :not(.pl-section-title){display:none}
@@ -298,6 +298,9 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .pl-sec-arrow{font-size:10px;color:var(--sub);width:14px;flex:none}
 .pl-sec-badge{color:#c62828;font-size:11px;font-weight:700}
 .pl-free-note{color:var(--sub);font-size:11px}
+.pl-hidden{display:none!important}
+.pl-road-add{flex:none;width:22px;height:22px;border:1px solid var(--green-mid);background:var(--green-light);color:var(--green);font-weight:700;border-radius:4px;cursor:pointer;line-height:1;font-size:14px;padding:0}
+.pl-road-add:hover{background:var(--green);color:#fff}
 .pl-action-bar{display:flex;gap:14px;justify-content:center;padding:20px 0 8px}
 .pl-action-btn{font-size:15px;padding:13px 52px;font-weight:700}
 .pl-market-table .pl-auto{min-width:0}
@@ -317,6 +320,8 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .pl-market-table .market-station{width:94px}
 .pl-market-table .market-address{width:auto;min-width:150px}
 .pl-sheet-sections input[type=text],.pl-sheet-sections select{background:#D9E3F3;border:1px solid #9fc2e7;border-radius:0;padding:2px 5px;font-size:13px;font-family:"Meiryo UI",Meiryo,sans-serif}
+/* フリー項目行の入力欄＝任意入力（未入力でも問題ない）の合図として薄グレー（2026-07-24 中西さん指示） */
+.pl-sheet-sections .pl-free-row input[type=text]{background:#f3f4f6;border-color:#d1d5db}
 .xl input.shushi-input,.xl input.shushi-text,.xl select.shushi-input{width:100%;min-width:0}
 .pl-field input.shushi-input,.pl-field input.shushi-text,.pl-field select.shushi-input,.pl-cost-table input,.pl-cost-table select,.pl-market-table input,.pl-sell-table input,.pl-irr-table input{width:100%;min-width:0}
 @media (max-width: 980px){
@@ -1608,6 +1613,7 @@ function updatePlSectionBadges() {
     // 備考欄（pl-memo-cell）とフリー項目の行（pl-free-row）は任意項目のため未入力カウントから除外（2026-07-24 中西さん指示）
     sec.querySelectorAll('input[data-cell], select[data-cell]').forEach(el => {
       if (el.closest('.pl-memo-cell') || el.closest('.pl-free-row')) return;
+      if (el.closest('.pl-hidden')) return; // 非表示の道路2行目などはカウントしない
       if (String(el.value).trim() === '') empty++;
     });
     badge.textContent = empty > 0 ? '未入力 ' + empty + '件' : '';
@@ -1636,10 +1642,24 @@ function shushiFieldHtml(sheet, labelCell, valueCell, extraCells, wide, unit) {
   const wideCls = wide === 'w2' ? ' pl-field-w2' : wide ? ' pl-field-wide' : '';
   return '<div class="pl-field' + wideCls + '"><div class="pl-field-label">' + escHtml(label) + '</div><div class="pl-field-value">' + shushiCellHtml(sheet, valueCell) + (unit ? '<span class="pl-unit">' + escHtml(unit) + '</span>' : '') + extras + '</div></div>';
 }
+// 道路（戸建てのみ2行目B11あり）：通常は1行表示＋「＋」ボタンで2行目を追加（2026-07-24 中西さん指示）
+// B11に値があるときは最初から2行目を表示（値を隠さない）
+function shushiRoadFields(sheet) {
+  const label = SHUSHI_LABELS[sheet]['A10'] || '道路';
+  const has2 = String(shushiResolvedValue(sheet, 'B11') ?? '') !== '';
+  return '<div class="pl-field"><div class="pl-field-label">' + escHtml(label) + '</div><div class="pl-field-value">' + shushiCellHtml(sheet, 'B10') + '<button type="button" class="pl-road-add' + (has2 ? ' pl-hidden' : '') + '" onclick="plShowRoad2(this)" aria-label="道路を追加" title="道路を追加">＋</button></div></div>'
+    + '<div class="pl-field pl-road2-wrap' + (has2 ? '' : ' pl-hidden') + '"><div class="pl-field-label">' + escHtml(label) + '</div><div class="pl-field-value">' + shushiCellHtml(sheet, 'B11') + '</div></div>';
+}
+function plShowRoad2(btn) {
+  const wrap = document.querySelector('#pl-sheet-grid .pl-road2-wrap');
+  if (wrap) { wrap.classList.remove('pl-hidden'); const inp = wrap.querySelector('input'); if (inp) inp.focus(); }
+  btn.classList.add('pl-hidden');
+  updatePlSectionBadges();
+}
 function shushiPropertySection(sheet) {
   const isApart = sheet === 'アパート';
   // 3列グリッド（6行）：詰め込みすぎず入力欄の幅を確保しつつ、左右バランスと縦幅短縮を両立（2026-07-24 見直し）
-  // 道路2行目（B11）はExcel原本で戸建てのみ存在（土地転売・アパートにはない）
+  // 道路2行目（B11）はExcel原本で戸建てのみ存在（土地転売・アパートにはない）＝ROADマーカーで＋ボタン付き表示
   // ※一種単価・借入金・評価額・IRR＝「評価額・借入金・IRR」／仕入契約日〜仲介会社＝「取引概要」へ移動済み
   const fields = isApart
     ? [
@@ -1662,11 +1682,11 @@ function shushiPropertySection(sheet) {
           ['A1','B1'],['F3','G3'],['F2','G2'],
           ['A3','B3'],['A5','B5'],['A4','B4'],
           ['A6','B6',['C6'],null,'㎡'],['A7','B7',['C7'],null,'㎡'],['A8','B8'],
-          ['A9','B9'],['A10','B10'],['A10','B11'],
+          ['A9','B9'],'ROAD',
           ['C8','D8'],['C9','D9'],['C10','D10'],
           ['C11','D11'],['K2','K2']
         ];
-  return '<section class="pl-section"><div class="pl-section-title">物件情報</div><div class="pl-field-grid pl-prop-grid">' + fields.map(r => shushiFieldHtml(sheet, r[0], r[1], r[2], r[3], r[4])).join('') + '</div></section>';
+  return '<section class="pl-section"><div class="pl-section-title">物件情報</div><div class="pl-field-grid pl-prop-grid">' + fields.map(r => r === 'ROAD' ? shushiRoadFields(sheet) : shushiFieldHtml(sheet, r[0], r[1], r[2], r[3], r[4])).join('') + '</div></section>';
 }
 // Excelで原価表の右隣にある縦ブロック（一種単価〜IRR）＋期間別IRR表＝原価セクションの右列
 // （2026-07-24 中西さん指示：販売想定を独立させ、この評価ブロックを右列へ置き換え）
