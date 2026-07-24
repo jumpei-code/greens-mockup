@@ -338,6 +338,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .pl-sec-arrow{font-size:10px;color:var(--sub);width:14px;flex:none}
 .pl-sec-badge{color:#c62828;font-size:11px;font-weight:700}
 .pl-free-note{color:var(--sub);font-size:11px}
+.pl-memo-num{display:block;text-align:right;font-variant-numeric:tabular-nums}
 .nr-strategy-wrap{display:flex;gap:8px;flex-wrap:wrap}
 .nr-strategy-btn{border:1.5px solid var(--green-mid);background:#fff;color:var(--green);font-size:13px;font-weight:700;padding:8px 16px;border-radius:999px;cursor:pointer;transition:background .15s}
 .nr-strategy-btn:hover{background:var(--green-light)}
@@ -360,16 +361,16 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .pl-market-table .market-feature{width:136px}
 .pl-market-table .market-station{width:94px}
 .pl-market-table .market-address{width:auto;min-width:150px}
-/* 入力セルは枠線・背景なし＝セルへ直接書き込む見た目（2026-07-24 中西さん指示「四角の枠線すら不要」。自動算出セルのみ変更不可のまま） */
-.pl-sheet-sections input[type=text],.pl-sheet-sections select{background:transparent;border:none;border-radius:0;padding:2px 5px;font-size:13px;font-family:"Meiryo UI",Meiryo,sans-serif}
+/* 入力セル＝フリー項目と同じ薄グレー背景のみ・枠なし（2026-07-24 中西さん指示「入力できる箇所はこのグレー背景だけを追加」。自動算出セルは変更不可のまま） */
+.pl-sheet-sections input[type=text],.pl-sheet-sections select{background:#f3f4f6;border:none;border-radius:0;padding:2px 5px;font-size:13px;font-family:"Meiryo UI",Meiryo,sans-serif}
 .pl-sheet-sections input[type=text]:focus,.pl-sheet-sections select:focus{outline:none;box-shadow:0 0 0 2px var(--green-mid);background:#fff}
-/* フリー項目行の入力欄＝任意入力（未入力でも問題ない）の合図として薄グレー（2026-07-24 中西さん指示） */
-.pl-sheet-sections .pl-free-row input[type=text]{background:#f3f4f6}
+/* 物件情報・評価額・借入金・IRRの2ブロックのみ入力枠を復活（2026-07-24 中西さん指示） */
+.pl-prop-grid input[type=text],.pl-prop-grid select,.pl-eval-side input[type=text]{background:#fff;border:1px solid #c8cdd3}
 /* 道路＝1マスを点線で左右分割（2026-07-24 中西さん指示・横幅は増やさない） */
 .pl-road-pair{display:flex;flex:1;min-width:0}
 .pl-road-pair input{flex:1 1 50%;min-width:0}
-.pl-road-pair input:first-child{border-right:1px dashed #b7b7b7}
-.pl-road-pair input:last-child{border-left:none}
+.pl-prop-grid .pl-road-pair input:first-child{border-right:1px dashed #b7b7b7}
+.pl-prop-grid .pl-road-pair input:last-child{border-left:none}
 .xl input.shushi-input,.xl input.shushi-text,.xl select.shushi-input{width:100%;min-width:0}
 .pl-field input.shushi-input,.pl-field input.shushi-text,.pl-field select.shushi-input,.pl-cost-table input,.pl-cost-table select,.pl-market-table input,.pl-sell-table input,.pl-irr-table input{width:100%;min-width:0}
 @media (max-width: 980px){
@@ -635,8 +636,8 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
         <input class="search-input" type="text" id="search-input" placeholder="案件名・エリアで検索…" oninput="renderList()">
         <select class="filter-select" id="filter-status" onchange="onStatusFilterChange()">
           <option value="">すべてのステータス</option>
-          <option>未検討</option><option>検討中</option><option>市場調査中</option>
-          <option>概算収支作成済み</option><option>販売会社ヒアリング中</option>
+          <option>未検討</option><option>検討中</option><option>概算収支作成済み</option>
+          <option>市場調査中</option><option>販売会社ヒアリング中</option>
           <option>建築プラン依頼中</option><option>買付検討中</option><option>買付提出</option>
           <option>保留</option><option>見送り</option><option>契約</option>
         </select>
@@ -729,7 +730,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
       </div>
       <!-- 収支想定はシート切替ボタン右横の1行コンパクト表示へ移動（2026-07-24 中西さん指示） -->
       <div class="xl-toolbar" id="pl-top-toolbar" style="display:none">
-        <span class="help-wrap"><button class="help-btn" onclick="toggleHelp(this)" title="このシートの説明">？</button><div class="help-pop help-pop-float" style="display:none;right:0;left:auto">お使いの雛型と同じ配置・同じ計算式です（セルは直接入力・追記できます。原価合計など自動計算の項目のみ変更できません）。「登録」を押すとステップが自動で進み、最初の登録の内容は「初回の想定」として記録されます。</div></span>
+        <span class="help-wrap"><button class="help-btn" onclick="toggleHelp(this)" title="このシートの説明">？</button><div class="help-pop help-pop-float" style="display:none;right:0;left:auto">お使いの雛型と同じ配置・同じ計算式です（グレーのセル＝入力できる箇所。原価合計など自動計算の項目は変更できません）。「登録」を押すとステップが自動で進み、最初の登録の内容は「初回の想定」として記録されます。</div></span>
       </div>
       <!-- 詳細ヘッダー＝物件名・住所・種別チップ（キマール参考デザイン・2026-07-24 中西さん指示） -->
       <div class="deal-header" id="detail-header"></div>
@@ -738,9 +739,10 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
           <div id="detail-tabs">
             <button class="tab-btn" onclick="switchTab('summary',this)">サマリー</button>
             <button class="tab-btn" onclick="switchTab('shiryo',this)">物件資料</button>
-            <button class="tab-btn" onclick="switchTab('pl',this)">収支</button>
+            <button class="tab-btn" onclick="switchTab('pl',this)">収支計算</button>
             <button class="tab-btn" onclick="switchTab('market',this)">市場調査</button>
             <button class="tab-btn" onclick="switchTab('hearing',this)">ヒアリング</button>
+            <button class="tab-btn" onclick="switchTab('archplan',this)">建築プラン</button>
           </div>
         </div>
         <div class="card-body">
@@ -856,7 +858,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
           <!-- 市場調査タブ -->
           <div id="tab-market" class="tab-content">
             <div class="form-section-title">市場調査</div>
-            <div style="font-size:12.5px;color:var(--sub);margin-bottom:12px">※ 近隣の販売在庫・成約事例は、収支タブの在庫比較表に入力します（お使いの雛型と同じ位置です）。在庫比較表に価格を入力すると、市場調査は自動で登録されます。</div>
+            <div style="font-size:12.5px;color:var(--sub);margin-bottom:12px">※ 近隣の販売在庫・成約事例は、収支計算タブの「販売在庫（近隣）」に入力します（お使いの雛型と同じ位置です）。価格を入力すると、市場調査は自動で登録されます。</div>
             <div class="form-section-title">調査メモ</div>
             <textarea class="form-textarea" style="min-height:120px" placeholder="競合状況・需要動向・特記事項など自由記入"></textarea>
             <div class="flex gap8 mt12">
@@ -899,6 +901,41 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
             <textarea class="hearing-note" id="hearing-other" placeholder="顧客層・競合との差別化・懸案事項など自由記入" style="width:100%"></textarea>
             <div class="flex gap8 mt16">
               <button class="btn btn-primary btn-sm" onclick="registerHearing()">登録</button>
+            </div>
+          </div>
+
+          <!-- 建築プランタブ（2026-07-24 中西さん指示で追加・ヒアリングと同じ3社比較の型） -->
+          <div id="tab-archplan" class="tab-content">
+            <div class="form-section-title">建築プラン依頼（3社比較）</div>
+            <div class="notice mb12">建築会社への依頼と回答（建築費）を記録し、概算収支の建築費と比較します。</div>
+            <div class="hearing-cards">
+              <div class="hearing-card">
+                <div class="hearing-card-title">建築会社1</div>
+                <div class="form-group"><label class="form-label">建築会社名</label><input class="form-input" type="text" id="ap-name-1"></div>
+                <div class="form-group"><label class="form-label">依頼日</label><input class="form-input" type="date" id="ap-date-1"></div>
+                <div class="form-group"><label class="form-label">回答日</label><input class="form-input" type="date" id="ap-ans-1"></div>
+                <div class="form-group"><label class="form-label">回答建築費（円）</label><input class="form-input" type="number" id="ap-cost-1" style="text-align:right"></div>
+                <div class="form-group"><label class="form-label">コメント</label><textarea class="hearing-note" id="ap-comment-1"></textarea></div>
+              </div>
+              <div class="hearing-card">
+                <div class="hearing-card-title">建築会社2</div>
+                <div class="form-group"><label class="form-label">建築会社名</label><input class="form-input" type="text" id="ap-name-2"></div>
+                <div class="form-group"><label class="form-label">依頼日</label><input class="form-input" type="date" id="ap-date-2"></div>
+                <div class="form-group"><label class="form-label">回答日</label><input class="form-input" type="date" id="ap-ans-2"></div>
+                <div class="form-group"><label class="form-label">回答建築費（円）</label><input class="form-input" type="number" id="ap-cost-2" style="text-align:right"></div>
+                <div class="form-group"><label class="form-label">コメント</label><textarea class="hearing-note" id="ap-comment-2"></textarea></div>
+              </div>
+              <div class="hearing-card">
+                <div class="hearing-card-title">建築会社3</div>
+                <div class="form-group"><label class="form-label">建築会社名</label><input class="form-input" type="text" id="ap-name-3"></div>
+                <div class="form-group"><label class="form-label">依頼日</label><input class="form-input" type="date" id="ap-date-3"></div>
+                <div class="form-group"><label class="form-label">回答日</label><input class="form-input" type="date" id="ap-ans-3"></div>
+                <div class="form-group"><label class="form-label">回答建築費（円）</label><input class="form-input" type="number" id="ap-cost-3" style="text-align:right"></div>
+                <div class="form-group"><label class="form-label">コメント</label><textarea class="hearing-note" id="ap-comment-3"></textarea></div>
+              </div>
+            </div>
+            <div class="flex gap8 mt16">
+              <button class="btn btn-primary btn-sm" onclick="registerStep('plan')">登録</button>
             </div>
           </div>
 
@@ -1147,9 +1184,9 @@ function toLabel(h) {
 /* 一覧「次に行うこと」列＝ステータス連動の短句マップ（要件14節の9列準拠） */
 const NEXT_LIST_LABEL = {
   '未検討': '情報の整理',
-  '検討中': '市場調査へ',
-  '市場調査中': '収支作成へ',
-  '概算収支作成済み': '販売会社ヒアリング',
+  '検討中': '収支作成へ',
+  '概算収支作成済み': '市場調査へ',
+  '市場調査中': '販売会社ヒアリング',
   '販売会社ヒアリング中': '回答の登録',
   '建築プラン依頼中': '回答待ち・確認',
   '買付検討中': '買付判断',
@@ -1635,6 +1672,9 @@ function openDetail(id) {
     sv('hearing-other','');
   }
 
+  // 建築プランタブの入力欄をリセット（案件間で値が残らないように）
+  for (let i = 1; i <= 3; i++) { sv('ap-name-' + i, ''); sv('ap-date-' + i, ''); sv('ap-ans-' + i, ''); sv('ap-cost-' + i, ''); sv('ap-comment-' + i, ''); }
+
   setInner('sheet-dup-warning', '');
   setShushiSheetByDeal(deal);
   renderDetailHeader();
@@ -1930,7 +1970,9 @@ function shushiCostRows(sheet) {
 function shushiMemoTextHtml(sheet, cell) {
   if (!cell) return '';
   const text = shushiFormatInputValue(shushiResolvedValue(sheet, cell));
-  return '<span class="pl-free-note" id="' + shushiCellId(cell) + '" data-cell="' + cell + '">' + escHtml(text) + '</span>';
+  // 数値のみの備考（税率1.5等）は右寄せ表示（2026-07-24 中西さん指示）
+  const isNum = text !== '' && /^-?[0-9][0-9,]*\.?[0-9]*$/.test(text);
+  return '<span class="pl-free-note' + (isNum ? ' pl-memo-num' : '') + '" id="' + shushiCellId(cell) + '" data-cell="' + cell + '">' + escHtml(text) + '</span>';
 }
 function shushiCostSection(sheet) {
   const labels = SHUSHI_LABELS[sheet];
@@ -2199,11 +2241,12 @@ const FIRST_EST = {};   // dealId -> {sell, cost, date}
 let lastTotal = 0;      // calcPL()が更新する現在の総原価
 
 /* ===== 「登録」共通：deal.regのフラグを立て、対応ステータスまで自動昇格（昇格のみ・後退なし） ===== */
-const STATUS_ORDER = ['未検討','検討中','市場調査中','概算収支作成済み','販売会社ヒアリング中','建築プラン依頼中','買付検討中','買付提出','契約'];
+// 収支計算→市場調査の順（2026-07-24 中西さん指示でステップ2・3を入れ替え＝収支を先に作ってから相場で裏取りする流れ）
+const STATUS_ORDER = ['未検討','検討中','概算収支作成済み','市場調査中','販売会社ヒアリング中','建築プラン依頼中','買付検討中','買付提出','契約'];
 
 // ステップバー6段のラベル（仮）＝一元管理・設定ビューから変更可能（in-memory）
 // 名称はお打ち合わせで御社の呼び方に合わせて確定する前提。ステータス11種・ファネル集計は不変更
-const STEP_LABELS = ['案件登録','市場調査','販売価格・収支','販売会社ヒアリング','建築プラン依頼','買付判断'];
+const STEP_LABELS = ['案件登録','収支計算','市場調査','販売会社ヒアリング','建築プラン依頼','買付判断'];
 
 const REG_STEPS = {
   market:  {label:'市場調査',   status:'市場調査中'},
@@ -2362,7 +2405,7 @@ function calcHearing() {
     const sign = diff > 0 ? '＋' : diff < 0 ? '−' : '±';
     txt += '　想定販売価格②（着地前後）との差額：' + sign + fmt(Math.abs(diff)) + '円';
   } else {
-    txt += '　（収支タブの販売想定②が未入力のため差額は計算できません）';
+    txt += '　（収支計算タブの販売想定②が未入力のため差額は計算できません）';
   }
   box.textContent = txt;
 }
@@ -2663,7 +2706,7 @@ function addPastCase(i) {
       break;
     }
   }
-  showToast(added ? '事例を収支タブの在庫比較表に追加しました' : '空き行がありません。既存の行を上書きしてください');
+  showToast(added ? '事例を収支計算タブの販売在庫（近隣）に追加しました' : '空き行がありません。既存の行を上書きしてください');
 }
 
 /* ===== 入力はみ出しポップ（枠に収まらないときだけ全文表示） ===== */
@@ -2734,29 +2777,29 @@ const NEXT_RULES = {
     theme: '基本情報の整理',
   },
   '検討中': {
-    question: 'この物件のエリアの相場を把握しましょう。近隣の販売在庫を収支シートに入力しましょう。',
-    action:   '収支シートで近隣在庫を入力する',
-    tab:      'pl',
-    why: [
-      '相場把握なしに販売価格を設定すると、想定が大きく外れるリスクがあります。',
-      '近隣在庫の坪単価を入力すると、自動で坪単価が計算されます。',
-      '市場データが揃うと、概算収支の精度が上がります。',
-    ],
-    theme: '市場相場の確認',
-  },
-  '市場調査中': {
-    question: '近隣データが揃ったら、概算収支を作成しましょう。販売想定①に出値価格を入力しましょう。',
+    question: '物件情報が揃ったら、概算収支を作成しましょう。販売想定①に出値価格を入力しましょう。',
     action:   '概算収支を入力する',
     tab:      'pl',
     why: [
-      '市場データをもとに販売価格の根拠を作ることが、次のステップへの準備になります。',
+      '先に収支の想定を置くことで、検討に値する案件かを早く見極められます。',
       '収支シートの販売想定①に出値価格を入力すると、利益率が自動計算されます。',
       '利益率が規定値（10%）を上回るかどうかを確認しましょう。',
     ],
     theme: '概算収支の作成',
   },
   '概算収支作成済み': {
-    question: '概算収支が出たら、販売会社に価格感をヒアリングしましょう。',
+    question: '概算収支が出たら、エリアの相場を確認しましょう。近隣の販売在庫を収支シートに入力しましょう。',
+    action:   '近隣在庫を入力する',
+    tab:      'pl',
+    why: [
+      '想定した出値が相場とずれていないかを、近隣の販売在庫で裏取りできます。',
+      '近隣在庫の価格と土地面積（㎡）を入力すると、坪単価が自動計算されます。',
+      '市場データが揃うと、概算収支の精度が上がります。',
+    ],
+    theme: '市場相場の確認',
+  },
+  '市場調査中': {
+    question: '相場の裏取りができたら、販売会社に価格感をヒアリングしましょう。',
     action:   'ヒアリングを開始する',
     tab:      'hearing',
     why: [
@@ -2849,9 +2892,9 @@ const NEXT_RULES = {
    文言は要件定義で貴社の判断基準をお伺いして作り込む（評価・判定はしない） */
 const JUDGE_HINTS = {
   '未検討': ['情報の入手経路と入手日を残しておくと、後からスピード感を振り返れます。','同じエリアの過去案件があれば、先に目を通すと検討が速くなります。'],
-  '検討中': ['相場を見る前に収支を作ると、希望的な数字になりやすくなります。まず近隣の販売在庫からが安全です。','駅距離・面積が近い事例を選ぶと、価格の目安がぶれにくくなります。'],
-  '市場調査中': ['販売在庫だけでなく、成約事例も1件は確認しておくと出値の根拠が強くなります。','調査した理由（なぜこの事例を参考にしたか）を一言残すと、後の判断材料になります。'],
-  '概算収支作成済み': ['利益率が基準値に近い案件は、販売会社ヒアリングで価格の確度を上げると判断しやすくなります。','ヒアリングは3社の回答を比較し、中央値を目安にすると根拠が客観的になります。','伸ばすか見送るかは、価格の確度が上がってから判断すると迷いが減ります。'],
+  '検討中': ['まず販売想定と原価を仮置きすると、検討に値する案件かを早く見極められます。','出値は次のステップ（市場調査）で近隣在庫と突き合わせて裏取りする前提で、仮の数字でかまいません。'],
+  '概算収支作成済み': ['想定した出値が相場とずれていないか、近隣の販売在庫で裏取りします。','駅距離・面積が近い事例を選ぶと、価格の目安がぶれにくくなります。'],
+  '市場調査中': ['販売在庫だけでなく、成約事例も1件は確認しておくと出値の根拠が強くなります。','利益率が基準値に近い案件は、販売会社ヒアリングで価格の確度を上げると判断しやすくなります。','ヒアリングは3社の回答を比較し、中央値を目安にすると根拠が客観的になります。'],
   '販売会社ヒアリング中': ['回答価格が想定と大きく違う場合は、差の理由（立地評価・間取り・時期）を確認しておくと次に活きます。','3社の回答が揃う前でも、大きく下振れした時点で見送り判断を検討できます。'],
   '建築プラン依頼中': ['建築費の回答が出たら、概算との差を収支に反映してから買付判断に進みます。','プランが入らない場合は、見送り理由として記録しておくと類似案件で役立ちます。'],
   '買付検討中': ['買付価格は、規定利益を確保できる仕入上限の範囲内かを最終確認します。','競合がいる場合は、価格以外の条件（決済時期・契約条件）も判断材料になります。'],
@@ -3018,10 +3061,10 @@ function renderSummaryTab(deal) {
   // ラベルはSTEP_LABELS（設定ビューで変更可能）から取得＝一元管理
   const STEPS = [
     {label:STEP_LABELS[0], statuses:['未検討','検討中'],                reg:null,      tab:'pl'},
-    {label:STEP_LABELS[1], statuses:['市場調査中'],                     reg:'market',  tab:'market'},
-    {label:STEP_LABELS[2], statuses:['概算収支作成済み'],               reg:'pl',      tab:'pl'},
+    {label:STEP_LABELS[1], statuses:['概算収支作成済み'],               reg:'pl',      tab:'pl'},      // 収支計算＝ステップ2（2026-07-24 順序入れ替え）
+    {label:STEP_LABELS[2], statuses:['市場調査中'],                     reg:'market',  tab:'market'},  // 市場調査＝ステップ3
     {label:STEP_LABELS[3], statuses:['販売会社ヒアリング中'],           reg:'hearing', tab:'hearing'},
-    {label:STEP_LABELS[4], statuses:['建築プラン依頼中'],               reg:'plan',    tab:null},  // 建築プランタブは契約範囲外＝クリック遷移なし（ラベルは維持）
+    {label:STEP_LABELS[4], statuses:['建築プラン依頼中'],               reg:'plan',    tab:'archplan'},
     {label:STEP_LABELS[5], statuses:['買付検討中','買付提出','契約'],   reg:null,      tab:null},  // 判断と履歴タブは契約範囲外＝クリック遷移なし（ラベルは維持）
   ];
   const curIdx = STATUS_ORDER.indexOf(deal.status);
@@ -3078,7 +3121,7 @@ function renderSummaryTab(deal) {
   if (qEl)  qEl.textContent  = rule.question  || '—';
   if (aBtn) {
     // 遷移先タブが現存するものだけボタンを表示（旧・建築プラン/判断と履歴タブ行きは契約範囲外＝問いの文言のみ表示）
-    const VALID_TABS = {summary:true, pl:true, market:true, hearing:true};
+    const VALID_TABS = {summary:true, pl:true, market:true, hearing:true, archplan:true};
     if (rule.tab && VALID_TABS[rule.tab]) {
       aBtn.style.display = '';
       aBtn.textContent = rule.action || '詳細を開く';
@@ -3119,7 +3162,7 @@ function renderSummaryTab(deal) {
         + '<div class="summary-num-card"><div class="summary-num-label">利益率（②）</div><div class="summary-num-val">' + rate.toFixed(1) + '<small style="font-size:14px">%</small></div><div class="summary-num-note">基準：10%目指し・最低8%</div></div>'
         + '<div style="grid-column:1/-1;font-size:11.5px;color:var(--sub);margin-top:2px">（参考）①出値：' + refA + '　③下限：' + refC + '　規定利益（10%）との差額：' + kiteiStr + '　※仕入れ判断は販売想定②（着地前後）を基準とします</div>';
     } else {
-      nums3El.innerHTML = '<div style="grid-column:1/-1;color:var(--sub);font-size:13px;padding:8px 0">収支未作成　—　収支タブから入力すると数字が表示されます。</div>';
+      nums3El.innerHTML = '<div style="grid-column:1/-1;color:var(--sub);font-size:13px;padding:8px 0">収支未作成　—　収支計算タブから入力すると数字が表示されます。</div>';
     }
   }
 
