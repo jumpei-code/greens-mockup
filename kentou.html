@@ -389,13 +389,13 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .xl-toolbar{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center}
 #pl-top-toolbar{justify-content:flex-end;align-items:flex-start}
 .pl-sheet-tabs{align-items:center}
-/* 収支想定＝最重要のため大きめ・緑枠強調（2026-07-24 中西さん指示） */
-.pl-profit-inline{margin-left:auto;display:flex;align-items:center;gap:14px;background:#fff;border:2px solid var(--green);border-radius:10px;padding:8px 18px;box-shadow:0 4px 14px rgba(26,107,58,.18);white-space:nowrap}
-.pl-pi-title{font-size:13px;font-weight:900;color:var(--green)}
-.pl-pi-basis{font-size:11px;color:var(--sub)}
-.pl-pi-main{font-size:23px;font-weight:900;color:var(--ink);font-variant-numeric:tabular-nums}
-.pl-pi-kv{font-size:12px;color:var(--sub)}
-.pl-pi-kv strong{font-size:14px;color:var(--ink);font-variant-numeric:tabular-nums}
+/* 収支想定＝最重要のため大きめ・緑枠強調（2026-07-24 中西さん指示・同日「もう少し大きく」で再拡大） */
+.pl-profit-inline{margin-left:auto;display:flex;align-items:center;gap:18px;background:#fff;border:2px solid var(--green);border-radius:12px;padding:14px 26px;box-shadow:0 4px 14px rgba(26,107,58,.18);white-space:nowrap}
+.pl-pi-title{font-size:16px;font-weight:900;color:var(--green)}
+.pl-pi-basis{font-size:13px;color:var(--sub)}
+.pl-pi-main{font-size:30px;font-weight:900;color:var(--ink);font-variant-numeric:tabular-nums}
+.pl-pi-kv{font-size:13px;color:var(--sub)}
+.pl-pi-kv strong{font-size:17px;color:var(--ink);font-variant-numeric:tabular-nums}
 .xl-irr-note{font-size:11px;color:var(--sub);font-style:italic}
 .past-case-info{font-size:13px;color:var(--body)}
 .past-case-meta{font-size:11px;color:var(--sub);margin-top:2px}
@@ -734,7 +734,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
       <!-- 詳細ヘッダー＝物件名・住所・種別チップ（キマール参考デザイン・2026-07-24 中西さん指示） -->
       <div class="deal-header" id="detail-header"></div>
       <div class="card">
-        <div class="card-header" style="border-bottom:1px solid var(--line)">
+        <div class="card-header" style="border-bottom:none">
           <div id="detail-tabs">
             <button class="tab-btn" onclick="switchTab('summary',this)">サマリー</button>
             <button class="tab-btn" onclick="switchTab('shiryo',this)">物件資料</button>
