@@ -1870,7 +1870,7 @@ function shushiInputHtml(sheet, cell) {
   }
   // Excelの黄色＝「数式を上書きから守る」が目的（7/20永井様メール・7/23確認）。
   // 数式はシステム側に組み込みで誰も触れないため、手入力項目（売上高・瑕疵担保保険）は通常入力欄のまま。
-  return '<input type="text" class="' + cls + '" id="' + shushiCellId(cell) + '" data-cell="' + cell + '" value="' + value + '"' + inputmode + ' oninput="shushiOnInput(this)" onkeydown="shushiEnter(event,this)">';
+  return '<input type="text" class="' + cls + '" id="' + shushiCellId(cell) + '" data-cell="' + cell + '" value="' + value + '"' + inputmode + ' oninput="shushiOnInput(this)" onkeydown="shushiEnter(event,this)" oncompositionstart="this.dataset.ime=\'1\'" oncompositionend="delete this.dataset.ime;shushiOnInput(this)">';
 }
 // セクションの折りたたみ（▽/▷）＋未入力件数バッジ（2026-07-24 中西さん指示。デフォルトは開いた状態）
 const PL_SECTION_COLLAPSED = {}; // タイトル文字列 -> 閉じているか（シート切替・再描画をまたいで維持）
@@ -2274,6 +2274,8 @@ function updateRosenkaTsubo() {
 }
 function calcNTsubo(fromInput) { if (fromInput && currentDealId !== null) { const deal = DEALS.find(d => d.id === currentDealId); if (deal && deal.reg && !deal.reg.market) registerStep('market'); } calcPL(); }
 function shushiOnInput(el) {
+  // 日本語入力の変換中は処理しない（変換中の書き換えはIMEの二重入力・文字化けの原因）。確定時（compositionend）にまとめて処理
+  if (el.dataset.ime) return;
   el.value = el.value.replace(/[０-９．－，]/g, ch => ({'０':'0','１':'1','２':'2','３':'3','４':'4','５':'5','６':'6','７':'7','８':'8','９':'9','．':'.','－':'-','，':','}[ch] || ch));
   if (el.inputMode === 'decimal') {
     const raw = el.value.replace(/,/g,'');
@@ -2284,6 +2286,8 @@ function shushiOnInput(el) {
 }
 function shushiEnter(e, el) {
   if (e.key !== 'Enter') return;
+  // 日本語入力の変換確定Enterでは移動しない（isComposing/229＝IME変換中。未確定文字が次セルへ持ち越される不具合の修正・2026-07-24）
+  if (e.isComposing || e.keyCode === 229) return;
   e.preventDefault();
   const inputs = Array.from(document.querySelectorAll('#pl-sheet-grid input, #pl-sheet-grid select')).filter(x => !x.disabled);
   const idx = inputs.indexOf(el);
@@ -2595,6 +2599,8 @@ function numVal(id) {
 /* 数字入力の共通ルール：Enterで次の項目へ移動 */
 function nrEnter(e, nextId) {
   if (e.key !== 'Enter') return;
+  // 日本語入力の変換確定Enterでは移動しない（IME対応・2026-07-24）
+  if (e.isComposing || e.keyCode === 229) return;
   e.preventDefault();
   const next = document.getElementById(nextId);
   if (next) next.focus();
