@@ -627,10 +627,11 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
         <button class="btn btn-primary" onclick="openNewReg()">新規案件登録</button>
       </div>
       <div id="hold-banner-wrap"></div>
-      <!-- 進行中／実績（見送り・契約済みの終了案件）のタブ切替（JSのみ・ページ遷移なし） -->
-      <div class="tabs" style="margin-bottom:14px">
-        <button class="tab-btn active" id="list-tab-active" onclick="setListTab('active')">進行中</button>
-        <button class="tab-btn" id="list-tab-past" onclick="setListTab('past')">実績</button>
+      <!-- 進行中／過去（見送り・契約済みの終了案件）のタブ切替（JSのみ・ページ遷移なし）
+           ボタンはシート切替（戸建て等）と同じデザイン・「実績」→「過去」（2026-07-24 中西さん指示） -->
+      <div class="pl-sheet-tabs" style="margin-bottom:14px">
+        <button class="pl-sheet-tab active" id="list-tab-active" onclick="setListTab('active')">進行中</button>
+        <button class="pl-sheet-tab" id="list-tab-past" onclick="setListTab('past')">過去</button>
       </div>
       <div class="filter-bar">
         <input class="search-input" type="text" id="search-input" placeholder="案件名・エリアで検索…" oninput="renderList()">
@@ -730,7 +731,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
       </div>
       <!-- 収支想定はシート切替ボタン右横の1行コンパクト表示へ移動（2026-07-24 中西さん指示） -->
       <div class="xl-toolbar" id="pl-top-toolbar" style="display:none">
-        <span class="help-wrap"><button class="help-btn" onclick="toggleHelp(this)" title="このシートの説明">？</button><div class="help-pop help-pop-float" style="display:none;right:0;left:auto">お使いの雛型と同じ配置・同じ計算式です（グレーのセル＝入力できる箇所。原価合計など自動計算の項目は変更できません）。「登録」を押すとステップが自動で進み、最初の登録の内容は「初回の想定」として記録されます。</div></span>
+        <span class="help-wrap"><button class="help-btn" onclick="toggleHelp(this)" title="このシートの説明">？</button><div class="help-pop help-pop-float" style="display:none;right:0;left:auto">お使いの雛型と同じ配置・同じ計算式です（グレーのセル＝入力できる箇所。原価合計など自動計算の項目は変更できません）。「保存」を押すとステップが自動で進み、最初の保存の内容は「初回の想定」として記録されます。</div></span>
       </div>
       <!-- 詳細ヘッダー＝物件名・住所・種別チップ（キマール参考デザイン・2026-07-24 中西さん指示） -->
       <div class="deal-header" id="detail-header"></div>
@@ -841,7 +842,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 
             <!-- 登録・共有URLコピー＝収支タブの最下部に大きく表示（2026-07-24 中西さん指示。Excel出力ボタンは共有URLコピーに変更） -->
             <div class="pl-action-bar">
-              <button class="btn btn-primary pl-action-btn" onclick="registerPL()">登録</button>
+              <button class="btn btn-primary pl-action-btn" onclick="registerPL()">保存</button>
               <button class="btn btn-secondary pl-action-btn" onclick="copyShareUrl()">共有URLコピー</button>
             </div>
 
@@ -1010,6 +1011,19 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
     <div id="shiryo-list-modal-body" class="shiryo-modal-list"></div>
     <div class="modal-btns">
       <button class="btn btn-ghost" onclick="closeShiryoListModal()">閉じる</button>
+    </div>
+  </div>
+</div>
+
+<!-- 収支の未保存ガード＝保存せずに移動しようとしたときの確認（2026-07-24 中西さん指示） -->
+<div id="unsaved-modal" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <div class="modal-title">保存されていない編集があります</div>
+    <div class="modal-text">今回の編集は保存されていません。保存しますか？</div>
+    <div class="modal-btns">
+      <button class="btn btn-ghost" onclick="unsavedCancel()">キャンセル</button>
+      <button class="btn btn-secondary" onclick="unsavedDiscard()">保存せずに移動</button>
+      <button class="btn btn-primary" onclick="unsavedSave()">保存して移動</button>
     </div>
   </div>
 </div>
@@ -1217,6 +1231,14 @@ function copyShareUrlFallback(text, done) {
   document.body.removeChild(ta);
 }
 function showView(name, el) {
+  // 収支計算タブで未保存の編集があれば、別画面への移動前に確認（detail内の遷移は switchTab 側でガード）
+  if (name !== 'detail' && typeof plGuardActive === 'function' && plGuardActive()) {
+    guardPlNav(() => doShowView(name, el));
+    return;
+  }
+  doShowView(name, el);
+}
+function doShowView(name, el) {
   setHash(name);
   document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
   const viewEl = document.getElementById('view-' + name);
@@ -1623,6 +1645,7 @@ function closeStrategyModal() {
 function openDetail(id) {
   persistCurrentShushiState();
   currentDealId = id;
+  plDirty = false; // 案件を開き直したら未保存フラグをリセット
   setHash('deal' + id);
   const deal = DEALS.find(d => d.id === id);
   if (!deal) return;
@@ -1774,6 +1797,7 @@ function shushiPersistCell(el) {
   if (!deal || !el || !el.dataset || !el.dataset.cell) return;
   const st = shushiStateFor(deal.id, activeShushiSheet);
   if (st) st[el.dataset.cell] = el.value;
+  plDirty = true; // 未保存ガード用（「保存」で解除・2026-07-24 中西さん指示）
 }
 function persistCurrentShushiState() {
   const deal = shushiDeal();
@@ -2273,7 +2297,8 @@ function registerStep(kind, extraNote) {
     promoted = true;
   }
   refreshAfterReg(deal);
-  showToast(step.label + 'を登録しました'
+  // 収支は「保存」ボタン名に合わせた文言（2026-07-24 中西さん指示）
+  showToast(step.label + 'を' + (kind === 'pl' ? '保存' : '登録') + 'しました'
     + (promoted ? '（ステップを「' + step.status + '」に進めました）' : '')
     + (extraNote || ''));
 }
@@ -2322,6 +2347,7 @@ function registerPL() {
   }
   if (deal) LAST_REG_PRICE[currentDealId] = { a: sellA, b: sellB2 };
   registerStep('pl', firstNote);
+  plDirty = false; // 保存完了＝未保存ガードを解除
 }
 
 /* ===== 規定利益の関所：ヒアリング登録の直前チェック（評価はしない・事実と問いのみ） ===== */
@@ -2433,7 +2459,42 @@ function diffLine(label, first, now) {
 }
 
 /* ===== タブ ===== */
+/* ===== 収支の未保存ガード（2026-07-24 中西さん指示）＝収支計算タブで編集後、保存せずに移動しようとしたら確認ポップ ===== */
+let plDirty = false;      // 収支セルの編集があってから「保存」されるまで true
+let pendingNav = null;    // 確認ポップで保留中の移動処理
+function plGuardActive() {
+  return plDirty && currentView === 'detail' && currentDealId !== null
+    && !!document.getElementById('tab-pl') && document.getElementById('tab-pl').classList.contains('active');
+}
+function guardPlNav(proceed) {
+  pendingNav = proceed;
+  const m = document.getElementById('unsaved-modal');
+  if (m) m.style.display = 'flex'; else { pendingNav = null; proceed(); }
+}
+function unsavedSave() {
+  document.getElementById('unsaved-modal').style.display = 'none';
+  registerPL(); // 保存（plDirty は registerPL 内で解除）
+  const f = pendingNav; pendingNav = null; if (f) f();
+}
+function unsavedDiscard() {
+  document.getElementById('unsaved-modal').style.display = 'none';
+  plDirty = false; // 今回の編集は「保存」としては記録しない（入力値自体はシートに残る）
+  const f = pendingNav; pendingNav = null; if (f) f();
+}
+function unsavedCancel() {
+  document.getElementById('unsaved-modal').style.display = 'none';
+  pendingNav = null;
+}
+// ブラウザの戻る・閉じる＝ブラウザ標準の確認ダイアログで警告（文言はブラウザ固定）
+window.addEventListener('beforeunload', e => {
+  if (plGuardActive()) { e.preventDefault(); e.returnValue = ''; }
+});
+
 function switchTab(name, el) {
+  if (name !== 'pl' && plGuardActive()) { guardPlNav(() => doSwitchTab(name, el)); return; }
+  doSwitchTab(name, el);
+}
+function doSwitchTab(name, el) {
   if (currentDealId !== null) setHash('deal' + currentDealId + '-' + name);
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
