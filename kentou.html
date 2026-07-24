@@ -117,9 +117,6 @@ input,select,textarea{font-family:inherit;font-size:13px}
 .shiryo-layout{display:grid;grid-template-columns:340px minmax(0,1fr);gap:18px;align-items:start}
 .shiryo-photo{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#edf1f4;min-height:220px;display:flex;align-items:center;justify-content:center;color:var(--sub);font-size:12px}
 .shiryo-photo img{width:100%;height:100%;object-fit:cover;display:block}
-.shiryo-map-box{margin-top:12px;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff}
-.shiryo-map-box iframe{width:100%;height:300px;border:0;display:block}
-.shiryo-map-caption{font-size:11px;color:var(--sub);padding:6px 10px;border-top:1px solid var(--line)}
 .shiryo-upload{border:1px solid var(--line);border-radius:8px;background:#fff;padding:22px;text-align:center;color:var(--sub);font-size:13px;margin-bottom:14px;line-height:1.9}
 .shiryo-upload.dragover{border-color:var(--green);background:var(--green-light)}
 .shiryo-table{width:100%;border-collapse:collapse;font-size:13px;background:#fff}
@@ -753,12 +750,9 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
           <!-- 物件資料タブ（キマール参考：左＝トップ画像・地図／右＝アップロード・資料一覧）2026-07-24 中西さん指示 -->
           <div id="tab-shiryo" class="tab-content">
             <div class="shiryo-layout">
+              <!-- 地図は一旦不要（2026-07-24 中西さん指示で削除。必要になれば復活可） -->
               <div>
                 <div class="shiryo-photo" id="shiryo-top-photo"></div>
-                <div class="shiryo-map-box" id="shiryo-map-box">
-                  <iframe id="shiryo-map" title="所在地の地図" loading="lazy"></iframe>
-                  <div class="shiryo-map-caption">地図（OpenStreetMap・モックでは概略位置を表示）</div>
-                </div>
               </div>
               <div>
                 <div class="shiryo-upload" id="shiryo-dropzone" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="shiryoDrop(event,this)">
@@ -1518,10 +1512,8 @@ function renderShiryoPL() {
     : sh.map(f => '<div class="shiryo-item"><span style="flex:1">' + f.name + '</span></div>').join('');
 }
 
-/* ===== 物件資料タブ（キマール参考デザイン・2026-07-24 中西さん指示） ===== */
-// 地図の概略位置：サンプル3案件＋保留サンプルは町丁目レベル、その他はエリア（区）レベル
-const DEAL_GEO = {5:[35.6690,139.8600],17:[35.6530,139.8750],16:[35.6870,139.8710],9:[35.7770,139.7950]};
-const AREA_GEO = {'世田谷':[35.6466,139.6532],'杉並':[35.6994,139.6364],'練馬':[35.7357,139.6516],'中野':[35.7074,139.6638],'江東':[35.6730,139.8173],'江戸川':[35.7069,139.8683],'板橋':[35.7512,139.7093],'荒川':[35.7361,139.7834],'葛飾':[35.7434,139.8470],'足立':[35.7750,139.8047],'墨田':[35.7107,139.8016],'品川':[35.6092,139.7302],'目黒':[35.6414,139.6982],'北':[35.7528,139.7336]};
+/* ===== 物件資料タブ（キマール参考デザイン・2026-07-24 中西さん指示） =====
+   地図表示は2026-07-24 中西さん指示で削除（一旦不要） */
 function renderShiryoTab() {
   const photoBox = document.getElementById('shiryo-top-photo');
   const listBody = document.getElementById('shiryo-tab-list');
@@ -1529,19 +1521,6 @@ function renderShiryoTab() {
   const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
   if (!deal) { photoBox.innerHTML = '写真未登録'; listBody.innerHTML = ''; return; }
   photoBox.innerHTML = deal.photo ? '<img src="' + deal.photo + '" alt="' + escapeHtml(deal.name) + '">' : '写真未登録';
-  const mapBox = document.getElementById('shiryo-map-box');
-  const geo = DEAL_GEO[deal.id] || AREA_GEO[deal.area];
-  if (mapBox) {
-    if (geo) {
-      const lat = geo[0], lon = geo[1];
-      const src = 'https://www.openstreetmap.org/export/embed.html?bbox=' + (lon - 0.01) + '%2C' + (lat - 0.006) + '%2C' + (lon + 0.01) + '%2C' + (lat + 0.006) + '&layer=mapnik&marker=' + lat + '%2C' + lon;
-      const iframe = document.getElementById('shiryo-map');
-      if (iframe && iframe.getAttribute('src') !== src) iframe.setAttribute('src', src);
-      mapBox.style.display = '';
-    } else {
-      mapBox.style.display = 'none';
-    }
-  }
   const sh = getShiryo(deal);
   const isImg = n => /\.(jpe?g|png|gif|webp)$/i.test(n);
   if (!deal.shiryoTopName) { const first = sh.find(f => isImg(f.name)); if (first) deal.shiryoTopName = first.name; }
@@ -1770,9 +1749,9 @@ const SHUSHI_FORMULAS = {
 };
 const SHUSHI_TEXT_CELLS = ['B1','B3','B4','B5','B10','B11','B23','B24','B31','B47','D8','D9','D10','D11','G4','G5','G6','G7','G8','G9','G10','G11','S6','W6','Z6','S7','W7','Z7','S8','W8','Z8','S9','W9','Z9','S10','W10','Z10','S11','W11','Z11','S17','W17','Z17','S18','W18','Z18','S19','W19','Z19','S20','W20','Z20','S21','W21','Z21','D17','D18','D19','D20','D22','D25','D26','D30','D41','D42','D43','D44','D47','X26','Z26','AB26','X27','Z27','AB27','X32','Z32','AB32','X33','Z33','AB33','X38','Z38','AB38','X39','Z39','AB39','K4','K5','K6','K7','K8','K9'];
 const SHUSHI_SAMPLE = {
-  '戸建て（建売・土地売り）': {B1:'北葛西建売プロジェクト',B3:'江戸川区北葛西3丁目',B4:'北葛西三丁目100番1',B5:'東西線「西葛西」駅徒歩9分',G2:1,G3:12,B6:118.4,B7:96.8,B8:1.5,B9:0.6,B10:'南側：4.5m公道',D8:'第一種住居地域',D9:'準防火地域',D10:'第二種高度地区',D11:'最低敷地70㎡',I6:1,J6:89800000,N6:112.5,S6:'96.1㎡（4LDK）',W6:'西葛西9分',Z6:'北葛西3丁目',I7:2,J7:86800000,N7:105.2,S7:'93.5㎡（4LDK）',W7:'葛西11分',Z7:'中葛西4丁目',I8:3,J8:92800000,N8:120.6,S8:'101.2㎡（4LDK）',W8:'西葛西7分',Z8:'西葛西6丁目',C16:52000000,D19:'35.82坪',D20:'20万以下は無し',D22:'2年分',I17:1,J17:55800000,N17:115.4,S17:'整形地',W17:'西葛西10分',Z17:'北葛西4丁目',I18:2,J18:59800000,N18:124.1,S18:'角地',W18:'葛西9分',Z18:'中葛西5丁目',G22:300000,G23:260000,G24:0,C25:23000000,K26:103000000,U26:10300,X26:'4LDK',Z26:'96.1㎡',AB26:'有',U27:10100,X27:'4LDK',Z27:'93.5㎡',AB27:'有',C30:88000,C31:0,D32:1.5,K32:99000000,U32:9900,X32:'4LDK',Z32:'96.1㎡',AB32:'有',D33:3,U33:9700,X33:'4LDK',Z33:'93.5㎡',AB33:'有',D34:1.4,D35:0.3,D36:2,D37:2,D38:0.4,K38:95000000,U38:9500,X38:'4LDK',Z38:'96.1㎡',AB38:'有',C39:30000,U39:9300,X39:'4LDK',Z39:'93.5㎡',AB39:'有',C41:120000,C42:800000,D42:'50万以下は無し',D43:'あれば項目変更する',D45:3.5,D46:1},
-  '土地転売（業者売り）': {B1:'南葛西土地転売',B3:'江戸川区南葛西2丁目',B4:'南葛西二丁目200番8',B5:'東西線「葛西」駅徒歩13分',G3:12,B6:132.4,B7:128.6,B8:2.0,B9:0.6,B10:'東側：5.0m公道',D8:'第一種住居地域',D9:'準防火地域',D10:'第三種高度地区',D11:'最低敷地70㎡',I6:1,J6:142000000,N6:130.4,S6:'125.3㎡（4LDK）',W6:'葛西12分',Z6:'南葛西2丁目',I7:2,J7:136000000,N7:124.8,S7:'118.6㎡（4LDK）',W7:'葛西14分',Z7:'南葛西3丁目',I8:3,J8:148000000,N8:138.1,S8:'131.0㎡（5LDK）',W8:'西葛西15分',Z8:'臨海町1丁目',C16:108000000,D19:'42.35坪',D20:'70万円/1棟',I17:1,J17:118000000,N17:126.4,S17:'整形地',W17:'葛西13分',Z17:'南葛西2丁目',I18:2,J18:123000000,N18:134.2,S18:'角地',W18:'葛西11分',Z18:'南葛西4丁目',I19:3,J19:112000000,N19:121.5,S19:'古家あり',W19:'葛西15分',Z19:'南葛西1丁目',G22:225000,G23:210000,C24:0,G24:0,K25:139000000,D27:1.5,D28:3,D29:1.4,D30:0.3,D31:2,K31:132000000,D32:2,D33:0.4,C34:30000,D38:3.5,D39:1},
-  'アパート': {B1:'船堀アパート計画',B3:'江戸川区船堀5丁目',B4:'船堀五丁目300番2',B5:'都営新宿線「船堀」駅徒歩8分',G3:18,G4:12,B6:142.2,B7:218.4,B8:1.5,B9:0.6,B10:'北側：約4.0m',D8:'準工業地域',D9:'準防火地域',D10:'第三種高度地区',D11:'検査済証あり',J4:22.5,K4:'1K',L4:2,M4:86000,J5:25.1,K5:'1DK',L5:2,M5:98000,J6:31.4,K6:'1LDK',L6:2,M6:124000,J7:22.5,K7:'1K',L7:2,M7:84000,J8:25.1,K8:'1DK',L8:2,M8:96000,J9:31.4,K9:'1LDK',L9:2,M9:118000,N14:6,C16:62000000,D19:'45.30坪',D20:'20万以下は無し',D22:'2年分',C19:2800000,N20:6.5,G21:295000,G22:265000,G24:0,C25:68000000,D33:1.5,D34:3,D35:1.4,D36:0.3,D37:2,D38:2,D39:0.4,C40:30000,C41:250000,D45:2.7,D46:1}
+  '戸建て（建売・土地売り）': {B1:'北葛西建売プロジェクト',B3:'江戸川区北葛西3丁目',B4:'北葛西三丁目100番1',B5:'東西線「西葛西」駅徒歩9分',G2:1,G3:12,B6:118.4,B7:96.8,B8:150,B9:60,B10:'南側：4.5m公道',D8:'第一種住居地域',D9:'準防火地域',D10:'第二種高度地区',D11:'最低敷地70㎡',I6:1,J6:89800000,N6:112.5,S6:'96.1㎡（4LDK）',W6:'西葛西9分',Z6:'北葛西3丁目',I7:2,J7:86800000,N7:105.2,S7:'93.5㎡（4LDK）',W7:'葛西11分',Z7:'中葛西4丁目',I8:3,J8:92800000,N8:120.6,S8:'101.2㎡（4LDK）',W8:'西葛西7分',Z8:'西葛西6丁目',C16:52000000,D19:'35.82坪',D20:'20万以下は無し',D22:'2年分',I17:1,J17:55800000,N17:115.4,S17:'整形地',W17:'西葛西10分',Z17:'北葛西4丁目',I18:2,J18:59800000,N18:124.1,S18:'角地',W18:'葛西9分',Z18:'中葛西5丁目',G22:300000,G23:260000,G24:0,C25:23000000,K26:103000000,U26:10300,X26:'4LDK',Z26:'96.1㎡',AB26:'有',U27:10100,X27:'4LDK',Z27:'93.5㎡',AB27:'有',C30:88000,C31:0,D32:1.5,K32:99000000,U32:9900,X32:'4LDK',Z32:'96.1㎡',AB32:'有',D33:3,U33:9700,X33:'4LDK',Z33:'93.5㎡',AB33:'有',D34:1.4,D35:0.3,D36:2,D37:2,D38:0.4,K38:95000000,U38:9500,X38:'4LDK',Z38:'96.1㎡',AB38:'有',C39:30000,U39:9300,X39:'4LDK',Z39:'93.5㎡',AB39:'有',C41:120000,C42:800000,D42:'50万以下は無し',D43:'あれば項目変更する',D45:3.5,D46:1},
+  '土地転売（業者売り）': {B1:'南葛西土地転売',B3:'江戸川区南葛西2丁目',B4:'南葛西二丁目200番8',B5:'東西線「葛西」駅徒歩13分',G3:12,B6:132.4,B7:128.6,B8:200,B9:60,B10:'東側：5.0m公道',D8:'第一種住居地域',D9:'準防火地域',D10:'第三種高度地区',D11:'最低敷地70㎡',I6:1,J6:142000000,N6:130.4,S6:'125.3㎡（4LDK）',W6:'葛西12分',Z6:'南葛西2丁目',I7:2,J7:136000000,N7:124.8,S7:'118.6㎡（4LDK）',W7:'葛西14分',Z7:'南葛西3丁目',I8:3,J8:148000000,N8:138.1,S8:'131.0㎡（5LDK）',W8:'西葛西15分',Z8:'臨海町1丁目',C16:108000000,D19:'42.35坪',D20:'70万円/1棟',I17:1,J17:118000000,N17:126.4,S17:'整形地',W17:'葛西13分',Z17:'南葛西2丁目',I18:2,J18:123000000,N18:134.2,S18:'角地',W18:'葛西11分',Z18:'南葛西4丁目',I19:3,J19:112000000,N19:121.5,S19:'古家あり',W19:'葛西15分',Z19:'南葛西1丁目',G22:225000,G23:210000,C24:0,G24:0,K25:139000000,D27:1.5,D28:3,D29:1.4,D30:0.3,D31:2,K31:132000000,D32:2,D33:0.4,C34:30000,D38:3.5,D39:1},
+  'アパート': {B1:'船堀アパート計画',B3:'江戸川区船堀5丁目',B4:'船堀五丁目300番2',B5:'都営新宿線「船堀」駅徒歩8分',G3:18,G4:12,B6:142.2,B7:218.4,B8:150,B9:60,B10:'北側：約4.0m',D8:'準工業地域',D9:'準防火地域',D10:'第三種高度地区',D11:'検査済証あり',J4:22.5,K4:'1K',L4:2,M4:86000,J5:25.1,K5:'1DK',L5:2,M5:98000,J6:31.4,K6:'1LDK',L6:2,M6:124000,J7:22.5,K7:'1K',L7:2,M7:84000,J8:25.1,K8:'1DK',L8:2,M8:96000,J9:31.4,K9:'1LDK',L9:2,M9:118000,N14:6,C16:62000000,D19:'45.30坪',D20:'20万以下は無し',D22:'2年分',C19:2800000,N20:6.5,G21:295000,G22:265000,G24:0,C25:68000000,D33:1.5,D34:3,D35:1.4,D36:0.3,D37:2,D38:2,D39:0.4,C40:30000,C41:250000,D45:2.7,D46:1}
 };
 const SHUSHI_SUMMARY = {
   '戸建て（建売・土地売り）': {basis:'販売想定②基準', sell:'K32', total:'C48', profit:'K34', rate:'P32', irr:'G25', sellA:'K26', sellB:'K32', sellC:'K38', profitA:'K28', profitB:'K34', profitC:'K40', rateA:'P26', rateB:'P32', rateC:'P38'},
@@ -2199,7 +2178,7 @@ function calcKodateCells(c) {
   c.K2 = TODAY; c.C6 = n(c,'B6') * 0.3025; c.C7 = n(c,'B7') * 0.3025;
   // 販売在庫の土地面積は㎡入力＝坪単価は㎡→坪換算（×0.3025）で算出（2026-07-24 中西さん指示・Excelの直割りJ/Nとの意図的な差）
   [6,7,8,9,10,11].forEach(r => c['P'+r] = n(c,'J'+r) / (n(c,'N'+r) * 0.3025));
-  c.D16 = n(c,'C16') / n(c,'C6'); c.F16 = n(c,'C16') / n(c,'C6') / n(c,'B8');
+  c.D16 = n(c,'C16') / n(c,'C6'); c.F16 = n(c,'C16') / n(c,'C6') / (n(c,'B8') / 100); // 容積率は%数値入力（150=150%）2026-07-24
   // 手数料の固定加算(+6万/+12万)は、元金額の未入力時に固定分だけ表示されるのを防ぐため0とする（Excelとの意図的な差・2026-07-23中西さん指示）
   c.C17 = n(c,'C16') > 0 ? (n(c,'C16') * 0.03 + 60000) * 1.1 : 0;
   [17,18,19,20,21].forEach(r => c['P'+r] = n(c,'J'+r) / (n(c,'N'+r) * 0.3025));
@@ -2214,7 +2193,7 @@ function calcKodateCells(c) {
   c.I54 = -sumCells(c,'C',16,47); c.I56 = n(c,'K32'); c.G54 = calcIrrExcel(n(c,'I56'), -n(c,'I54'), 12); c.I58 = -n(c,'C48'); c.I62 = n(c,'K32'); c.G58 = calcIrrExcel(n(c,'I62'), -n(c,'I58'), 18); c.I64 = n(c,'I54'); c.I68 = n(c,'K32'); c.G64 = calcIrrExcel(n(c,'I68'), -n(c,'I64'), 24); c.G25 = displayIrr(n(c,'G3'), c.G54, c.G58, c.G64);
 }
 function calcTochiCells(c) {
-  c.K2 = TODAY; c.C6 = n(c,'B6') * 0.3025; c.C7 = n(c,'B7') * 0.3025; c.D16 = n(c,'C16') / n(c,'C6'); c.F16 = n(c,'C16') / n(c,'C7') / n(c,'B8'); c.C17 = n(c,'C16') > 0 ? (n(c,'C16') * 0.03 + 120000) * 1.1 : 0; c.F19 = n(c,'C16') * 0.9;
+  c.K2 = TODAY; c.C6 = n(c,'B6') * 0.3025; c.C7 = n(c,'B7') * 0.3025; c.D16 = n(c,'C16') / n(c,'C6'); c.F16 = n(c,'C16') / n(c,'C7') / (n(c,'B8') / 100); c.C17 = n(c,'C16') > 0 ? (n(c,'C16') * 0.03 + 120000) * 1.1 : 0; c.F19 = n(c,'C16') * 0.9;
   // 販売在庫の土地面積は㎡入力＝坪単価は㎡→坪換算（×0.3025）で算出（2026-07-24 中西さん指示）
   [6,7,8,9,10,11].forEach(r => c['P'+r] = n(c,'J'+r) / (n(c,'N'+r) * 0.3025)); [17,18,19,20,21].forEach(r => c['P'+r] = n(c,'J'+r) / (n(c,'N'+r) * 0.3025));
   c.C40 = sumCells(c,'C',16,39); c.D40 = n(c,'C40') / n(c,'C6'); c.M24 = n(c,'K25') / n(c,'C6'); c.K26 = n(c,'C40'); c.K27 = n(c,'K25') - n(c,'K26'); c.P25 = n(c,'K27') / n(c,'K25'); c.M30 = n(c,'K31') / n(c,'C6'); c.K32 = n(c,'C40'); c.K33 = n(c,'K31') - n(c,'K32'); c.P31 = n(c,'K33') / n(c,'K31');
@@ -2224,7 +2203,7 @@ function calcApartCells(c) {
   c.K2 = TODAY; [4,5,6,7,8,9].forEach(r => c['O'+r] = n(c,'M'+r) * n(c,'L'+r)); c.C6 = n(c,'B6') * 0.3025; c.C7 = n(c,'B7') * 0.3025; c.J10 = [4,5,6,7,8,9].reduce((t,r) => t + n(c,'J'+r) * n(c,'L'+r),0); c.L10 = [4,5,6,7,8,9].reduce((t,r) => t + n(c,'L'+r),0); c.O10 = [4,5,6,7,8,9].reduce((t,r) => t + n(c,'O'+r),0);
   c.K30 = n(c,'O10'); c.K31 = n(c,'K30') * 12; c.K32 = n(c,'K30') / n(c,'C7');
   // 利回りは％数値で入力（6＝6%）＝Excelの0.06と等価。他の％欄（1.5=1.5%）と入力ルールを統一（2026-07-24 レビュー反映）
-  c.K15 = n(c,'K31') / (n(c,'N14') / 100); c.K21 = n(c,'K31') / (n(c,'N20') / 100); c.D16 = n(c,'C16') / n(c,'C6'); c.F16 = n(c,'C16') / n(c,'C7') / n(c,'B8'); c.C17 = n(c,'C16') > 0 ? (n(c,'C16') * 0.03 + 120000) * 1.1 : 0; c.F19 = n(c,'C16') * 0.9;
+  c.K15 = n(c,'K31') / (n(c,'N14') / 100); c.K21 = n(c,'K31') / (n(c,'N20') / 100); c.D16 = n(c,'C16') / n(c,'C6'); c.F16 = n(c,'C16') / n(c,'C7') / (n(c,'B8') / 100); c.C17 = n(c,'C16') > 0 ? (n(c,'C16') * 0.03 + 120000) * 1.1 : 0; c.F19 = n(c,'C16') * 0.9;
   // 固定資産税路線価G22は㎡単価入力＝地積B6を掛けて評価額（総額）に換算して税計算（2026-07-24 中西さん指示・Excelの総額直書きとの意図的な差分）
   const hyokaA = n(c,'G22') * n(c,'B6');
   c.C33 = hyokaA * (n(c,'D33') / 100); c.C34 = n(c,'G24') * (n(c,'D34') / 100); c.C35 = hyokaA * 0.014; c.C36 = n(c,'G24') * 0.003; c.C37 = hyokaA * 0.02; c.C38 = n(c,'G24') * (n(c,'D38') / 100); c.C39 = n(c,'F19') * (n(c,'D39') / 100); c.C44 = n(c,'K15') * 0.03 * 1.1; c.C45 = (n(c,'F19') * (n(c,'D45') / 100) / 12) * n(c,'G3'); c.C46 = n(c,'F19') * 0.01;
