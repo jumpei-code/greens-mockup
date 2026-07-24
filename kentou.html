@@ -297,8 +297,8 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .pl-sec-arrow{font-size:10px;color:var(--sub);width:14px;flex:none}
 .pl-sec-badge{color:#c62828;font-size:11px;font-weight:700}
 .pl-free-note{color:var(--sub);font-size:11px}
-.pl-save-bar{position:fixed;bottom:18px;right:26px;z-index:50}
-.pl-save-bar .btn{box-shadow:0 3px 12px rgba(26,107,58,.35)}
+.pl-action-bar{display:flex;gap:14px;justify-content:center;padding:20px 0 8px}
+.pl-action-btn{font-size:15px;padding:13px 52px;font-weight:700}
 .pl-market-table .pl-auto{min-width:0}
 .pl-with-unit{display:flex;align-items:center;gap:4px;min-width:0}
 .pl-with-unit input{flex:1;min-width:0}
@@ -653,10 +653,8 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
         <span>›</span>
         <span id="detail-breadcrumb-name">—</span>
       </div>
-      <!-- 収支の操作ボタン（収支タブ表示中のみ）＝ページ左上・物件情報（取得日）の上 -->
+      <!-- 収支の説明ヘルプ（登録・Excel出力ボタンは最下部へ移動＝2026-07-24 中西さん指示） -->
       <div class="xl-toolbar" id="pl-top-toolbar" style="display:none">
-        <button class="btn btn-primary btn-sm" onclick="registerPL()">登録</button>
-        <button class="btn btn-secondary btn-sm" onclick="showToast('お使いの雛型と同じ配置で.xlsxを出力します（本実装で対応）')">Excel出力</button>
         <span class="help-wrap"><button class="help-btn" onclick="toggleHelp(this)" title="このシートの説明">？</button><div class="help-pop help-pop-float" style="display:none;right:0;left:auto">お使いの雛型と同じ配置・同じ計算式です（水色のセル＝入力、白のセル＝自動計算）。「登録」を押すとステップが自動で進み、最初の登録の内容は「初回の想定」として記録されます。</div></span>
       </div>
       <div class="info-grid" id="detail-info-grid"></div>
@@ -738,22 +736,21 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
               </div>
             </div>
 
+            <!-- 物件写真と資料は1ブロックに統一（2026-07-24 中西さん指示） -->
             <div class="pl-photo-box">
-              <div class="pl-photo-title">物件写真</div>
+              <div class="pl-photo-title">物件写真・資料</div>
               <div class="pl-photo-grid" id="pl-photo-grid"></div>
+              <div id="pl-shiryo-list" class="mt8"></div>
               <button class="btn btn-secondary btn-sm mt8" onclick="openShiryoPicker(currentDealId)">写真・資料を追加</button>
             </div>
 
-            <div class="shiryo-box" style="margin-top:8px">
-              <div class="shiryo-title">資料（任意）｜画像・PDF共通</div>
-              <div id="pl-shiryo-list"></div>
-              <button class="btn btn-secondary btn-sm mt8" onclick="openShiryoPicker(currentDealId)">ファイルを選択（資料を追加）</button>
+            <!-- 登録・Excel出力＝収支タブの最下部に大きく表示（2026-07-24 中西さん指示） -->
+            <div class="pl-action-bar">
+              <button class="btn btn-primary pl-action-btn" onclick="registerPL()">登録</button>
+              <button class="btn btn-secondary pl-action-btn" onclick="showToast('お使いの雛型と同じ配置で.xlsxを出力します（本実装で対応）')">Excel出力</button>
             </div>
 
-            <div style="margin:10px 0">
-              <button class="btn btn-secondary btn-sm" onclick="loadPastCases()">過去の事例をエリアから呼び出す</button><button class="help-btn" onclick="toggleHelp(this)" title="この機能の説明">？</button><div class="help-pop" style="display:none"><strong>「過去の事例をエリアから呼び出す」とは</strong><br>市場調査で入力いただいた近隣の事例（販売在庫・成約）は、案件ごとに使い捨てにせず、全社で蓄積されます。似たエリアの案件をご検討の際、過去に登録された事例を呼び出して、在庫比較表にそのまま追加できます。入力した情報が、次の調査の手間を減らします。</div>
-              <div id="past-cases-pl" style="margin-top:8px"></div>
-            </div>
+            <!-- 「過去の事例をエリアから呼び出す」ボタンは一旦削除（2026-07-24 中西さん指示。機能自体は本実装の検討項目として保留） -->
 
             <div id="pl-legacy-metrics" style="display:none">
               <span id="c-total"></span><span id="pl-sell-a"></span><span id="pl-sell-b"></span><span id="pl-sell-c"></span>
@@ -1331,12 +1328,10 @@ function renderShiryoPL() {
   const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
   if (!deal) { list.innerHTML = '<div class="shiryo-empty">案件を選択すると資料を添付できます</div>'; return; }
   const sh = getShiryo(deal);
+  // 資料項目内はファイル名のみ表示（2026-07-24 中西さん指示）
   list.innerHTML = sh.length === 0
-    ? '<div class="shiryo-empty">まだ資料がありません（任意）。物件概要書・現地写真・図面などを添付できます。</div>'
-    : sh.map((f, i) =>
-        '<div class="shiryo-item"><span style="flex:1">' + f.name + '</span>'
-        + '<button class="shiryo-del" title="この資料を削除" onclick="removeShiryo(' + deal.id + ',' + i + ')">✕ 削除</button></div>'
-      ).join('');
+    ? '<div class="shiryo-empty">まだ資料がありません。物件概要書・現地写真・図面などを添付できます。</div>'
+    : sh.map(f => '<div class="shiryo-item"><span style="flex:1">' + f.name + '</span></div>').join('');
 }
 
 /* ===== V3 詳細 ===== */
@@ -1789,8 +1784,7 @@ function renderShushiSheet() {
   html += shushiMarketSection(sheet);
   html += shushiTorihikiSection(sheet);
   // 担当（社長/上長/担当のハンコ欄）は画面では非表示＝Excel出力時にのみ挿入する（2026-07-24 中西さん指示）
-  // 画面下部からも保存できる追従バー（収支タブは縦約3000px＝上部の登録ボタンまで戻らせない）
-  html += '<div class="pl-save-bar"><button class="btn btn-primary" onclick="registerPL()">登録</button></div>';
+  // 登録・Excel出力ボタンは収支タブ最下部（物件写真・資料の下）の静的HTML側に配置
   html += '</div>';
   wrap.innerHTML = html;
   setupPlSectionToggles();
