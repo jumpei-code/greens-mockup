@@ -744,10 +744,10 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
               <button class="btn btn-secondary btn-sm mt8" onclick="openShiryoPicker(currentDealId)">写真・資料を追加</button>
             </div>
 
-            <!-- 登録・Excel出力＝収支タブの最下部に大きく表示（2026-07-24 中西さん指示） -->
+            <!-- 登録・共有URLコピー＝収支タブの最下部に大きく表示（2026-07-24 中西さん指示。Excel出力ボタンは共有URLコピーに変更） -->
             <div class="pl-action-bar">
               <button class="btn btn-primary pl-action-btn" onclick="registerPL()">登録</button>
-              <button class="btn btn-secondary pl-action-btn" onclick="showToast('お使いの雛型と同じ配置で.xlsxを出力します（本実装で対応）')">Excel出力</button>
+              <button class="btn btn-secondary pl-action-btn" onclick="copyShareUrl()">共有URLコピー</button>
             </div>
 
             <!-- 「過去の事例をエリアから呼び出す」ボタンは一旦削除（2026-07-24 中西さん指示。機能自体は本実装の検討項目として保留） -->
@@ -1057,6 +1057,23 @@ const NEXT_LIST_LABEL = {
 /* ===== ビュー制御 ===== */
 let currentView = 'home';
 function setHash(h) { try { history.replaceState(null, '', '#' + h); } catch(e) {} }
+// このページ（開いている案件）の共有URLをコピー（2026-07-24 中西さん指示。URLに案件番号が入るため開くと同じ案件が表示される）
+function copyShareUrl() {
+  const url = location.href;
+  const done = () => showToast('このページの共有URLをコピーしました');
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(done, () => copyShareUrlFallback(url, done));
+  } else {
+    copyShareUrlFallback(url, done);
+  }
+}
+function copyShareUrlFallback(text, done) {
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); done(); } catch(e) { showToast('コピーできませんでした。アドレスバーのURLをご利用ください'); }
+  document.body.removeChild(ta);
+}
 function showView(name, el) {
   setHash(name);
   document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
