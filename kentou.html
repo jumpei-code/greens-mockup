@@ -356,6 +356,9 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .pl-irr-table td:first-child{font-weight:700;color:var(--sub)}
 .pl-irr-table{background:#fff}
 .pl-irr-wrap{max-width:420px;margin-top:12px}
+.pl-irr-table td.pl-irr-title{width:26%;background:#e2efda;font-weight:800;color:#1f2937;vertical-align:middle;white-space:normal}
+.pl-irr-table td.pl-irr-period{width:46%;font-weight:700;color:var(--sub);white-space:normal}
+.pl-irr-table td.pl-irr-val{width:28%;text-align:right}
 .pl-irr-note-row td{background:#f8f8f8;color:var(--sub);font-size:11.5px;text-align:left;white-space:normal}
 .pl-market-stack{display:grid;grid-template-columns:1fr;gap:14px}
 .pl-market-title{font-size:13px;font-weight:800;color:var(--ink);margin:0 0 8px}
@@ -2087,7 +2090,8 @@ function shushiSellPlanSection(sheet) {
     : sheet === 'アパート'
       ? [['D55','G55'],['D59','G59'],['D65','G65']]
       : [['D54','G54'],['D58','G58'],['D64','G64']];
-  const irrTable = '<div class="pl-irr-wrap"><table class="pl-irr-table"><tbody>' + irrRows.map(r => '<tr><td>' + escHtml(labels[r[0]] || '') + '</td><td>' + shushiCellHtml(sheet, r[1]) + '</td></tr>').join('') + '</tbody></table></div>';
+  // 一番左に「期間別IRR」の分類セル（縦結合）＝何の表か一目でわかるように（2026-07-24 中西さん指示）
+  const irrTable = '<div class="pl-irr-wrap"><table class="pl-irr-table"><tbody>' + irrRows.map((r, i) => '<tr>' + (i === 0 ? '<td class="pl-irr-title" rowspan="' + irrRows.length + '">期間別IRR</td>' : '') + '<td class="pl-irr-period">' + escHtml(labels[r[0]] || '') + '</td><td class="pl-irr-val">' + shushiCellHtml(sheet, r[1]) + '</td></tr>').join('') + '</tbody></table></div>';
   return '<section class="pl-section"><div class="pl-section-title">販売想定・計画</div><div class="pl-sell-stack">' + cards.join('') + '</div>' + irrTable + '</section>';
 }
 function shushiMarketTable(sheet, titleCell, rows, cols) {
