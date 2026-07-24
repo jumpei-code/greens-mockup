@@ -122,10 +122,16 @@ input,select,textarea{font-family:inherit;font-size:13px}
 .shiryo-table{width:100%;border-collapse:collapse;font-size:13px;background:#fff}
 .shiryo-table th{background:var(--green);color:#fff;font-size:12px;font-weight:700;text-align:left;padding:8px 10px}
 .shiryo-table td{border-bottom:1px solid var(--line);padding:7px 10px;vertical-align:middle}
-.shiryo-table .shiryo-col-top{width:70px;text-align:center}
-.shiryo-table .shiryo-col-op{width:264px;text-align:right;white-space:nowrap}
+.shiryo-table .shiryo-col-top{width:64px;text-align:center}
+.shiryo-table .shiryo-col-op{width:380px;text-align:right}
+.shiryo-op-wrap{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
+.shiryo-cover-chip{display:inline-block;background:var(--green);color:#fff;font-size:10px;font-weight:700;padding:1px 8px;border-radius:4px}
+.shiryo-pdf-cover{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;width:100%;height:100%;min-height:220px;background:#fff;padding:16px;text-align:center}
+.shiryo-pdf-badge{background:#c62828;color:#fff;font-size:13px;font-weight:800;padding:4px 14px;border-radius:4px}
+.shiryo-pdf-name{font-size:13px;font-weight:700;color:var(--ink);overflow-wrap:anywhere}
+.shiryo-pdf-note{font-size:11px;color:var(--sub)}
 .shiryo-empty-cell{color:var(--sub);font-size:12.5px;padding:16px 10px}
-.shiryo-op-btn{border:1px solid var(--green-mid);background:#fff;color:var(--green);font-size:12px;font-weight:700;padding:5px 12px;border-radius:6px;cursor:pointer;margin-left:6px}
+.shiryo-op-btn{border:1px solid var(--green-mid);background:#fff;color:var(--green);font-size:12px;font-weight:700;padding:5px 12px;border-radius:6px;cursor:pointer}
 .shiryo-op-btn:hover{background:var(--green-light)}
 .shiryo-op-del{border-color:#c62828;background:#c62828;color:#fff}
 .shiryo-op-del:hover{background:#a51f1f;border-color:#a51f1f}
@@ -761,7 +767,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
                   <button class="btn btn-primary" onclick="openShiryoPicker(currentDealId)">ファイルをアップロード</button>
                 </div>
                 <table class="shiryo-table">
-                  <thead><tr><th>資料名</th><th class="shiryo-col-top">トップ</th><th class="shiryo-col-op">操作</th></tr></thead>
+                  <thead><tr><th>資料名</th><th class="shiryo-col-top">表紙</th><th class="shiryo-col-op">操作</th></tr></thead>
                   <tbody id="shiryo-tab-list"></tbody>
                 </table>
               </div>
@@ -1512,34 +1518,50 @@ function renderShiryoPL() {
     : sh.map(f => '<div class="shiryo-item"><span style="flex:1">' + f.name + '</span></div>').join('');
 }
 
-/* ===== 物件資料タブ（キマール参考デザイン・2026-07-24 中西さん指示） =====
-   地図表示は2026-07-24 中西さん指示で削除（一旦不要） */
+/* ===== 物件資料タブ（キマール参考デザイン・2026-07-24 中西さん指示) =====
+   地図表示は2026-07-24 中西さん指示で削除（一旦不要）
+   表紙＝「表紙に設定」ボタンで画像またはPDFを選択。PDFは1ページ目を表紙として表示（案b・2026-07-24 中西さん決定） */
+function shiryoIsImg(n) { return /\.(jpe?g|png|gif|webp)$/i.test(n); }
+function shiryoIsPdf(n) { return /\.pdf$/i.test(n); }
 function renderShiryoTab() {
   const photoBox = document.getElementById('shiryo-top-photo');
   const listBody = document.getElementById('shiryo-tab-list');
   if (!photoBox || !listBody) return;
   const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
   if (!deal) { photoBox.innerHTML = '写真未登録'; listBody.innerHTML = ''; return; }
-  photoBox.innerHTML = deal.photo ? '<img src="' + deal.photo + '" alt="' + escapeHtml(deal.name) + '">' : '写真未登録';
   const sh = getShiryo(deal);
-  const isImg = n => /\.(jpe?g|png|gif|webp)$/i.test(n);
-  if (!deal.shiryoTopName) { const first = sh.find(f => isImg(f.name)); if (first) deal.shiryoTopName = first.name; }
+  // 表紙の既定＝最初の画像ファイル。表紙に設定した資料が削除されていたら既定に戻す
+  if (deal.shiryoTopName && !sh.some(f => f.name === deal.shiryoTopName)) deal.shiryoTopName = null;
+  if (!deal.shiryoTopName) { const first = sh.find(f => shiryoIsImg(f.name)); if (first) deal.shiryoTopName = first.name; }
+  // 表紙の表示：PDFなら「1ページ目を表紙化」のプレースホルダー・画像ならサンプル写真
+  if (deal.shiryoTopName && shiryoIsPdf(deal.shiryoTopName)) {
+    photoBox.innerHTML = '<div class="shiryo-pdf-cover"><div class="shiryo-pdf-badge">PDF</div><div class="shiryo-pdf-name">' + escapeHtml(deal.shiryoTopName) + '</div><div class="shiryo-pdf-note">1ページ目を表紙として表示します（本実装で画像化）</div></div>';
+  } else {
+    photoBox.innerHTML = deal.photo ? '<img src="' + deal.photo + '" alt="' + escapeHtml(deal.name) + '">' : '写真未登録';
+  }
   listBody.innerHTML = sh.length === 0
     ? '<tr><td colspan="3" class="shiryo-empty-cell">まだ資料がありません。物件概要書・現地写真・図面などをアップロードできます。</td></tr>'
     : sh.map((f, i) => {
         const name = escapeHtml(f.name);
-        const top = isImg(f.name) ? '<input type="radio" name="shiryo-top-radio"' + (deal.shiryoTopName === f.name ? ' checked' : '') + ' onchange="setShiryoTop(' + deal.id + ',' + i + ')" title="トップ画像にする">' : '';
-        return '<tr><td title="' + name + '">' + name + '</td><td class="shiryo-col-top">' + top + '</td>'
-          + '<td class="shiryo-col-op"><button class="shiryo-op-btn" onclick="previewShiryo(' + deal.id + ',' + i + ')">プレビュー</button>'
+        const isCover = deal.shiryoTopName === f.name;
+        const coverable = (shiryoIsImg(f.name) || shiryoIsPdf(f.name)) && !isCover;
+        return '<tr><td title="' + name + '">' + name + '</td><td class="shiryo-col-top">' + (isCover ? '<span class="shiryo-cover-chip">表紙</span>' : '') + '</td>'
+          + '<td class="shiryo-col-op"><div class="shiryo-op-wrap">'
+          + (coverable ? '<button class="shiryo-op-btn" onclick="setShiryoCover(' + deal.id + ',' + i + ')">表紙に設定</button>' : '')
+          + '<button class="shiryo-op-btn" onclick="previewShiryo(' + deal.id + ',' + i + ')">プレビュー</button>'
           + '<button class="shiryo-op-btn" onclick="downloadShiryo(' + deal.id + ',' + i + ')">ダウンロード</button>'
-          + '<button class="shiryo-op-btn shiryo-op-del" onclick="removeShiryo(' + deal.id + ',' + i + ')">削除</button></td></tr>';
+          + '<button class="shiryo-op-btn shiryo-op-del" onclick="removeShiryo(' + deal.id + ',' + i + ')">削除</button></div></td></tr>';
       }).join('');
 }
-function setShiryoTop(dealId, idx) {
+function setShiryoCover(dealId, idx) {
   const deal = DEALS.find(d => d.id === dealId);
   if (!deal || !getShiryo(deal)[idx]) return;
-  deal.shiryoTopName = getShiryo(deal)[idx].name;
-  showToast('「' + deal.shiryoTopName + '」をトップ画像に設定しました（ホーム・一覧のカード写真に使われます）');
+  const name = getShiryo(deal)[idx].name;
+  deal.shiryoTopName = name;
+  showToast(shiryoIsPdf(name)
+    ? '「' + name + '」の1ページ目を表紙に設定しました'
+    : '「' + name + '」を表紙に設定しました（ホーム・一覧のカード写真に使われます）');
+  renderShiryoTab();
 }
 function previewShiryo(dealId, idx) {
   const deal = DEALS.find(d => d.id === dealId);
