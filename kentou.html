@@ -92,10 +92,42 @@ input,select,textarea{font-family:inherit;font-size:13px}
 .tab-btn{padding:10px 18px;border:none;background:transparent;font-size:13px;font-weight:600;color:var(--sub);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:color .15s,border-color .15s}
 .tab-btn.active{color:var(--green);border-bottom-color:var(--green)}
 .tab-btn:hover{color:var(--ink)}
-#detail-tabs{gap:6px}
-#detail-tabs .tab-btn{font-size:15px;font-weight:800;padding:16px 24px;border-radius:8px 8px 0 0;border-bottom-width:4px;margin-bottom:-2px}
-#detail-tabs .tab-btn.active{background:var(--green-light);color:var(--green);border-bottom-color:var(--green);box-shadow:inset 0 -1px 0 var(--green)}
-#detail-tabs .tab-btn:hover{background:#f6faf7;color:var(--green)}
+/* 詳細タブ＝丸囲みのセグメントボタン（キマール参考デザイン・2026-07-24 中西さん指示） */
+#detail-tabs{display:inline-flex;flex:none;max-width:100%;overflow-x:auto;border:1.5px solid var(--green-mid);border-radius:999px;background:#fff;gap:0}
+#detail-tabs .tab-btn{font-size:14px;font-weight:700;color:var(--green);padding:10px 28px;border-bottom:none;margin-bottom:0;border-right:1.5px solid var(--green-mid);border-radius:0}
+#detail-tabs .tab-btn:first-child{border-radius:999px 0 0 999px}
+#detail-tabs .tab-btn:last-child{border-right:none;border-radius:0 999px 999px 0}
+#detail-tabs .tab-btn.active{background:var(--green);color:#fff;border-radius:999px}
+#detail-tabs .tab-btn:hover{background:var(--green-light);color:var(--green)}
+#detail-tabs .tab-btn.active:hover{background:var(--green);color:#fff}
+/* 詳細ヘッダー＝左上に物件名・住所・種別チップ（キマール参考デザイン・2026-07-24 中西さん指示） */
+.deal-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:16px}
+.deal-title{font-size:24px;font-weight:900;color:var(--ink);margin:0 0 2px;line-height:1.25}
+.deal-addr{font-size:13px;color:var(--sub);margin-bottom:8px}
+.deal-chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.deal-chip{display:inline-block;font-size:11px;font-weight:700;padding:2px 10px;border-radius:4px}
+.deal-chip-type{background:#6b7280;color:#fff}
+.deal-chip-sheet{background:var(--green);color:#fff}
+.deal-header-side{display:flex;gap:14px;font-size:12px;color:var(--sub);white-space:nowrap;padding-top:8px}
+/* 物件資料タブ（キマール参考：左＝トップ画像・地図／右＝アップロード・資料一覧） */
+.shiryo-layout{display:grid;grid-template-columns:340px minmax(0,1fr);gap:18px;align-items:start}
+.shiryo-photo{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#edf1f4;min-height:220px;display:flex;align-items:center;justify-content:center;color:var(--sub);font-size:12px}
+.shiryo-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.shiryo-map-box{margin-top:12px;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff}
+.shiryo-map-box iframe{width:100%;height:300px;border:0;display:block}
+.shiryo-map-caption{font-size:11px;color:var(--sub);padding:6px 10px;border-top:1px solid var(--line)}
+.shiryo-upload{border:1px solid var(--line);border-radius:8px;background:#fff;padding:22px;text-align:center;color:var(--sub);font-size:13px;margin-bottom:14px;line-height:1.9}
+.shiryo-upload.dragover{border-color:var(--green);background:var(--green-light)}
+.shiryo-table{width:100%;border-collapse:collapse;font-size:13px;background:#fff}
+.shiryo-table th{background:var(--green);color:#fff;font-size:12px;font-weight:700;text-align:left;padding:8px 10px}
+.shiryo-table td{border-bottom:1px solid var(--line);padding:7px 10px;vertical-align:middle}
+.shiryo-table .shiryo-col-top{width:70px;text-align:center}
+.shiryo-table .shiryo-col-op{width:264px;text-align:right;white-space:nowrap}
+.shiryo-empty-cell{color:var(--sub);font-size:12.5px;padding:16px 10px}
+.shiryo-op-btn{border:1px solid var(--green-mid);background:#fff;color:var(--green);font-size:12px;font-weight:700;padding:5px 12px;border-radius:6px;cursor:pointer;margin-left:6px}
+.shiryo-op-btn:hover{background:var(--green-light)}
+.shiryo-op-del{border-color:#c62828;background:#c62828;color:#fff}
+.shiryo-op-del:hover{background:#a51f1f;border-color:#a51f1f}
 .tab-content{padding:20px 0;display:none}
 .tab-content.active{display:block}
 .form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
@@ -298,9 +330,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .pl-sec-arrow{font-size:10px;color:var(--sub);width:14px;flex:none}
 .pl-sec-badge{color:#c62828;font-size:11px;font-weight:700}
 .pl-free-note{color:var(--sub);font-size:11px}
-.pl-hidden{display:none!important}
-.pl-road-add{flex:none;width:22px;height:22px;border:1px solid var(--green-mid);background:var(--green-light);color:var(--green);font-weight:700;border-radius:4px;cursor:pointer;line-height:1;font-size:14px;padding:0}
-.pl-road-add:hover{background:var(--green);color:#fff}
 .pl-action-bar{display:flex;gap:14px;justify-content:center;padding:20px 0 8px}
 .pl-action-btn{font-size:15px;padding:13px 52px;font-weight:700}
 .pl-market-table .pl-auto{min-width:0}
@@ -322,12 +351,19 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .pl-sheet-sections input[type=text],.pl-sheet-sections select{background:#D9E3F3;border:1px solid #9fc2e7;border-radius:0;padding:2px 5px;font-size:13px;font-family:"Meiryo UI",Meiryo,sans-serif}
 /* フリー項目行の入力欄＝任意入力（未入力でも問題ない）の合図として薄グレー（2026-07-24 中西さん指示） */
 .pl-sheet-sections .pl-free-row input[type=text]{background:#f3f4f6;border-color:#d1d5db}
+/* 道路＝1マスを点線で左右分割（2026-07-24 中西さん指示・横幅は増やさない） */
+.pl-road-pair{display:flex;flex:1;min-width:0}
+.pl-road-pair input{flex:1 1 50%;min-width:0}
+.pl-road-pair input:first-child{border-right:1px dashed #9fc2e7}
+.pl-road-pair input:last-child{border-left:none}
 .xl input.shushi-input,.xl input.shushi-text,.xl select.shushi-input{width:100%;min-width:0}
 .pl-field input.shushi-input,.pl-field input.shushi-text,.pl-field select.shushi-input,.pl-cost-table input,.pl-cost-table select,.pl-market-table input,.pl-sell-table input,.pl-irr-table input{width:100%;min-width:0}
 @media (max-width: 980px){
   .pl-two-col,.pl-finance-layout,.pl-market-stack,.pl-sell-stack{grid-template-columns:1fr}
   .pl-field-grid,.pl-field-grid.pl-grid-left,.pl-field-grid.pl-eval-grid,.pl-field-grid.pl-prop-grid{grid-template-columns:1fr}
   .pl-field-w2{grid-column:auto}
+  .shiryo-layout{grid-template-columns:1fr}
+  .deal-header{flex-direction:column;gap:6px}
 }
 .stamp-tbl{border-collapse:collapse;margin-left:auto;margin-right:8px}
 .stamp-tbl td{border:1px solid #999;width:64px;text-align:center;font-size:11px;padding:2px 0;background:#fff}
@@ -670,18 +706,43 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
       <div class="xl-toolbar" id="pl-top-toolbar" style="display:none">
         <span class="help-wrap"><button class="help-btn" onclick="toggleHelp(this)" title="このシートの説明">？</button><div class="help-pop help-pop-float" style="display:none;right:0;left:auto">お使いの雛型と同じ配置・同じ計算式です（水色のセル＝入力、白のセル＝自動計算）。「登録」を押すとステップが自動で進み、最初の登録の内容は「初回の想定」として記録されます。</div></span>
       </div>
-      <div class="info-grid" id="detail-info-grid"></div>
+      <!-- 詳細ヘッダー＝物件名・住所・種別チップ（キマール参考デザイン・2026-07-24 中西さん指示） -->
+      <div class="deal-header" id="detail-header"></div>
       <div class="card">
-        <div class="card-header" style="padding:0 18px">
-          <div class="tabs" id="detail-tabs" style="border-bottom:none;flex:1">
+        <div class="card-header" style="border-bottom:1px solid var(--line)">
+          <div id="detail-tabs">
+            <button class="tab-btn" onclick="switchTab('shiryo',this)">物件資料</button>
             <button class="tab-btn" onclick="switchTab('summary',this)">サマリー</button>
             <button class="tab-btn" onclick="switchTab('pl',this)">収支</button>
             <button class="tab-btn" onclick="switchTab('market',this)">市場調査</button>
             <button class="tab-btn" onclick="switchTab('hearing',this)">ヒアリング</button>
           </div>
         </div>
-        <!-- 資料は画面下部の「物件写真・資料」ブロックのみ（上部バーは2026-07-23指示で削除） -->
         <div class="card-body">
+
+          <!-- 物件資料タブ（キマール参考：左＝トップ画像・地図／右＝アップロード・資料一覧）2026-07-24 中西さん指示 -->
+          <div id="tab-shiryo" class="tab-content">
+            <div class="shiryo-layout">
+              <div>
+                <div class="shiryo-photo" id="shiryo-top-photo"></div>
+                <div class="shiryo-map-box" id="shiryo-map-box">
+                  <iframe id="shiryo-map" title="所在地の地図" loading="lazy"></iframe>
+                  <div class="shiryo-map-caption">地図（OpenStreetMap・モックでは概略位置を表示）</div>
+                </div>
+              </div>
+              <div>
+                <div class="shiryo-upload" id="shiryo-dropzone" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="shiryoDrop(event,this)">
+                  <div>アップロードするファイルをドラッグ</div>
+                  <div>または</div>
+                  <button class="btn btn-primary" onclick="openShiryoPicker(currentDealId)">ファイルをアップロード</button>
+                </div>
+                <table class="shiryo-table">
+                  <thead><tr><th>資料名</th><th class="shiryo-col-top">トップ</th><th class="shiryo-col-op">操作</th></tr></thead>
+                  <tbody id="shiryo-tab-list"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
 
           <!-- サマリータブ（判断ナビ） -->
           <div id="tab-summary" class="tab-content">
@@ -749,12 +810,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
               </div>
             </div>
 
-            <!-- 物件写真と資料は1ブロックに統一・サムネイル表示なし＝ファイル名のみ（2026-07-24 中西さん指示） -->
-            <div class="pl-photo-box">
-              <div class="pl-photo-title">物件写真・資料</div>
-              <div id="pl-shiryo-list"></div>
-              <button class="btn btn-secondary btn-sm mt8" onclick="openShiryoPicker(currentDealId)">写真・資料を追加</button>
-            </div>
+            <!-- 物件写真・資料ブロックは「物件資料」タブへ移動（2026-07-24 中西さん指示で収支タブから削除） -->
 
             <!-- 登録・共有URLコピー＝収支タブの最下部に大きく表示（2026-07-24 中西さん指示。Excel出力ボタンは共有URLコピーに変更） -->
             <div class="pl-action-bar">
@@ -1268,6 +1324,7 @@ function downloadShiryo(dealId, idx) {
 function refreshShiryoViews() {
   if (currentView === 'list') renderList();
   renderShiryoPL();
+  renderShiryoTab();
   renderShiryoDetail();
   renderShiryoListModal();
 }
@@ -1363,6 +1420,83 @@ function renderShiryoPL() {
     : sh.map(f => '<div class="shiryo-item"><span style="flex:1">' + f.name + '</span></div>').join('');
 }
 
+/* ===== 物件資料タブ（キマール参考デザイン・2026-07-24 中西さん指示） ===== */
+// 地図の概略位置：サンプル3案件＋保留サンプルは町丁目レベル、その他はエリア（区）レベル
+const DEAL_GEO = {5:[35.6690,139.8600],17:[35.6530,139.8750],16:[35.6870,139.8710],9:[35.7770,139.7950]};
+const AREA_GEO = {'世田谷':[35.6466,139.6532],'杉並':[35.6994,139.6364],'練馬':[35.7357,139.6516],'中野':[35.7074,139.6638],'江東':[35.6730,139.8173],'江戸川':[35.7069,139.8683],'板橋':[35.7512,139.7093],'荒川':[35.7361,139.7834],'葛飾':[35.7434,139.8470],'足立':[35.7750,139.8047],'墨田':[35.7107,139.8016],'品川':[35.6092,139.7302],'目黒':[35.6414,139.6982],'北':[35.7528,139.7336]};
+function renderShiryoTab() {
+  const photoBox = document.getElementById('shiryo-top-photo');
+  const listBody = document.getElementById('shiryo-tab-list');
+  if (!photoBox || !listBody) return;
+  const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
+  if (!deal) { photoBox.innerHTML = '写真未登録'; listBody.innerHTML = ''; return; }
+  photoBox.innerHTML = deal.photo ? '<img src="' + deal.photo + '" alt="' + escapeHtml(deal.name) + '">' : '写真未登録';
+  const mapBox = document.getElementById('shiryo-map-box');
+  const geo = DEAL_GEO[deal.id] || AREA_GEO[deal.area];
+  if (mapBox) {
+    if (geo) {
+      const lat = geo[0], lon = geo[1];
+      const src = 'https://www.openstreetmap.org/export/embed.html?bbox=' + (lon - 0.01) + '%2C' + (lat - 0.006) + '%2C' + (lon + 0.01) + '%2C' + (lat + 0.006) + '&layer=mapnik&marker=' + lat + '%2C' + lon;
+      const iframe = document.getElementById('shiryo-map');
+      if (iframe && iframe.getAttribute('src') !== src) iframe.setAttribute('src', src);
+      mapBox.style.display = '';
+    } else {
+      mapBox.style.display = 'none';
+    }
+  }
+  const sh = getShiryo(deal);
+  const isImg = n => /\.(jpe?g|png|gif|webp)$/i.test(n);
+  if (!deal.shiryoTopName) { const first = sh.find(f => isImg(f.name)); if (first) deal.shiryoTopName = first.name; }
+  listBody.innerHTML = sh.length === 0
+    ? '<tr><td colspan="3" class="shiryo-empty-cell">まだ資料がありません。物件概要書・現地写真・図面などをアップロードできます。</td></tr>'
+    : sh.map((f, i) => {
+        const name = escapeHtml(f.name);
+        const top = isImg(f.name) ? '<input type="radio" name="shiryo-top-radio"' + (deal.shiryoTopName === f.name ? ' checked' : '') + ' onchange="setShiryoTop(' + deal.id + ',' + i + ')" title="トップ画像にする">' : '';
+        return '<tr><td title="' + name + '">' + name + '</td><td class="shiryo-col-top">' + top + '</td>'
+          + '<td class="shiryo-col-op"><button class="shiryo-op-btn" onclick="previewShiryo(' + deal.id + ',' + i + ')">プレビュー</button>'
+          + '<button class="shiryo-op-btn" onclick="downloadShiryo(' + deal.id + ',' + i + ')">ダウンロード</button>'
+          + '<button class="shiryo-op-btn shiryo-op-del" onclick="removeShiryo(' + deal.id + ',' + i + ')">削除</button></td></tr>';
+      }).join('');
+}
+function setShiryoTop(dealId, idx) {
+  const deal = DEALS.find(d => d.id === dealId);
+  if (!deal || !getShiryo(deal)[idx]) return;
+  deal.shiryoTopName = getShiryo(deal)[idx].name;
+  showToast('「' + deal.shiryoTopName + '」をトップ画像に設定しました（ホーム・一覧のカード写真に使われます）');
+}
+function previewShiryo(dealId, idx) {
+  const deal = DEALS.find(d => d.id === dealId);
+  if (!deal || !getShiryo(deal)[idx]) return;
+  showToast('「' + getShiryo(deal)[idx].name + '」をプレビュー表示します（本実装で対応）');
+}
+function shiryoDrop(e, el) {
+  e.preventDefault();
+  el.classList.remove('dragover');
+  if (currentDealId === null) return;
+  const deal = DEALS.find(d => d.id === currentDealId);
+  if (!deal || !e.dataTransfer || !e.dataTransfer.files || e.dataTransfer.files.length === 0) return;
+  const arr = getShiryo(deal);
+  Array.from(e.dataTransfer.files).forEach(f => arr.push({name: f.name}));
+  showToast('資料を' + e.dataTransfer.files.length + '件追加しました（' + deal.name + '）');
+  refreshShiryoViews();
+}
+
+/* 詳細ヘッダー＝左上に物件名・住所・種別チップ（キマール参考デザイン・2026-07-24 中西さん指示）
+   物件名・住所は収支画面が正本（B1/B3）＝未入力時は案件登録の値を表示 */
+function renderDetailHeader() {
+  const el = document.getElementById('detail-header');
+  if (!el) return;
+  const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
+  if (!deal) { el.innerHTML = ''; return; }
+  const name = String(shushiResolvedValue(activeShushiSheet, 'B1') || '').trim() || deal.name;
+  const addr = String(shushiResolvedValue(activeShushiSheet, 'B3') || '').trim() || deal.address || '';
+  const sheetShort = activeShushiSheet.split('（')[0];
+  el.innerHTML = '<div><h1 class="deal-title">' + escapeHtml(name) + '</h1>'
+    + (addr ? '<div class="deal-addr">' + escapeHtml(addr) + '</div>' : '')
+    + '<div class="deal-chips"><span class="deal-chip deal-chip-type">' + escapeHtml(deal.type) + '</span><span class="deal-chip deal-chip-sheet">' + escapeHtml(sheetShort) + '</span>' + statusChip(deal.status) + '</div></div>'
+    + '<div class="deal-header-side"><span>担当：' + escapeHtml(deal.staff) + '</span><span>取得日：' + escapeHtml(deal.acquiredDate || '—') + '</span></div>';
+}
+
 /* ===== V3 詳細 ===== */
 function openDetail(id) {
   persistCurrentShushiState();
@@ -1377,14 +1511,7 @@ function openDetail(id) {
   const bc = document.getElementById('detail-breadcrumb-name');
   if (bc) bc.textContent = deal.name;
 
-  const grid = document.getElementById('detail-info-grid');
-  if (grid) {
-    grid.innerHTML =
-      '<div class="info-item"><div class="info-item-label">案件名</div><div class="info-item-val">' + deal.name + '</div></div>'
-      + '<div class="info-item"><div class="info-item-label">種別</div><div class="info-item-val">' + deal.type + '</div></div>'
-      + '<div class="info-item"><div class="info-item-label">担当</div><div class="info-item-val">' + deal.staff + '</div></div>'
-      + '<div class="info-item"><div class="info-item-label">取得日</div><div class="info-item-val">' + deal.acquiredDate + '</div></div>';
-  }
+  // 詳細ヘッダーはシート確定後（setShushiSheetByDeal 後）に renderDetailHeader で描画
 
   // 収支タブ初期値（円単位）
   if (id === 5) {
@@ -1425,11 +1552,13 @@ function openDetail(id) {
 
   setInner('sheet-dup-warning', '');
   setShushiSheetByDeal(deal);
+  renderDetailHeader();
   renderPLPhotos();
   renderShiryoPL();
+  renderShiryoTab();
   renderShiryoDetail();
-  // サマリータブをデフォルト表示
-  const summaryBtn = document.querySelector('#detail-tabs .tab-btn');
+  // サマリータブをデフォルト表示（先頭タブは物件資料のため onclick で特定する）
+  const summaryBtn = document.querySelector('#detail-tabs .tab-btn[onclick*="summary"]');
   switchTab('summary', summaryBtn);
   renderSummaryTab(deal);
 }
@@ -1613,7 +1742,6 @@ function updatePlSectionBadges() {
     // 備考欄（pl-memo-cell）とフリー項目の行（pl-free-row）は任意項目のため未入力カウントから除外（2026-07-24 中西さん指示）
     sec.querySelectorAll('input[data-cell], select[data-cell]').forEach(el => {
       if (el.closest('.pl-memo-cell') || el.closest('.pl-free-row')) return;
-      if (el.closest('.pl-hidden')) return; // 非表示の道路2行目などはカウントしない
       if (String(el.value).trim() === '') empty++;
     });
     badge.textContent = empty > 0 ? '未入力 ' + empty + '件' : '';
@@ -1642,31 +1770,24 @@ function shushiFieldHtml(sheet, labelCell, valueCell, extraCells, wide, unit) {
   const wideCls = wide === 'w2' ? ' pl-field-w2' : wide ? ' pl-field-wide' : '';
   return '<div class="pl-field' + wideCls + '"><div class="pl-field-label">' + escHtml(label) + '</div><div class="pl-field-value">' + shushiCellHtml(sheet, valueCell) + (unit ? '<span class="pl-unit">' + escHtml(unit) + '</span>' : '') + extras + '</div></div>';
 }
-// 道路（戸建てのみ2行目B11あり）：通常は1行表示＋「＋」ボタンで2行目を追加（2026-07-24 中西さん指示）
-// B11に値があるときは最初から2行目を表示（値を隠さない）
+// 道路（戸建てのみ2つ目B11あり）：1つの入力マスを点線で左右に分割して2本分を収める＝横幅は増やさない
+// （2026-07-24 中西さん指示。同日の「＋ボタンで追加」案は取り消し）
 function shushiRoadFields(sheet) {
   const label = SHUSHI_LABELS[sheet]['A10'] || '道路';
-  const has2 = String(shushiResolvedValue(sheet, 'B11') ?? '') !== '';
-  return '<div class="pl-field"><div class="pl-field-label">' + escHtml(label) + '</div><div class="pl-field-value">' + shushiCellHtml(sheet, 'B10') + '<button type="button" class="pl-road-add' + (has2 ? ' pl-hidden' : '') + '" onclick="plShowRoad2(this)" aria-label="道路を追加" title="道路を追加">＋</button></div></div>'
-    + '<div class="pl-field pl-road2-wrap' + (has2 ? '' : ' pl-hidden') + '"><div class="pl-field-label">' + escHtml(label) + '</div><div class="pl-field-value">' + shushiCellHtml(sheet, 'B11') + '</div></div>';
-}
-function plShowRoad2(btn) {
-  const wrap = document.querySelector('#pl-sheet-grid .pl-road2-wrap');
-  if (wrap) { wrap.classList.remove('pl-hidden'); const inp = wrap.querySelector('input'); if (inp) inp.focus(); }
-  btn.classList.add('pl-hidden');
-  updatePlSectionBadges();
+  return '<div class="pl-field"><div class="pl-field-label">' + escHtml(label) + '</div><div class="pl-field-value"><span class="pl-road-pair">' + shushiCellHtml(sheet, 'B10') + shushiCellHtml(sheet, 'B11') + '</span></div></div>';
 }
 function shushiPropertySection(sheet) {
   const isApart = sheet === 'アパート';
   // 3列グリッド（6行）：詰め込みすぎず入力欄の幅を確保しつつ、左右バランスと縦幅短縮を両立（2026-07-24 見直し）
-  // 道路2行目（B11）はExcel原本で戸建てのみ存在（土地転売・アパートにはない）＝ROADマーカーで＋ボタン付き表示
+  // 道路2行目（B11）はExcel原本で戸建てのみ存在（土地転売・アパートにはない）＝ROADマーカーで点線分割マス表示
+  // 容積率・建蔽率は末尾に%、区画数は末尾に区画の単位を表示（2026-07-24 中西さん指示・値はExcelどおり）
   // ※一種単価・借入金・評価額・IRR＝「評価額・借入金・IRR」／仕入契約日〜仲介会社＝「取引概要」へ移動済み
   const fields = isApart
     ? [
         ['A1','B1'],['F3','G3'],['F4','G4'],
         ['A3','B3'],['A5','B5'],['A4','B4'],
-        ['A6','B6',['C6'],null,'㎡'],['A7','B7',['C7'],null,'㎡'],['A8','B8'],
-        ['A9','B9'],['A10','B10'],['C8','D8'],
+        ['A6','B6',['C6'],null,'㎡'],['A7','B7',['C7'],null,'㎡'],['A8','B8',null,null,'%'],
+        ['A9','B9',null,null,'%'],['A10','B10'],['C8','D8'],
         ['C9','D9'],['C10','D10'],['C11','D11'],
         ['K2','K2']
       ]
@@ -1674,15 +1795,15 @@ function shushiPropertySection(sheet) {
       ? [
           ['A1','B1'],['F3','G3'],['K2','K2'],
           ['A3','B3'],['A5','B5'],['A4','B4'],
-          ['A6','B6',['C6'],null,'㎡'],['A7','B7',['C7'],null,'㎡'],['A8','B8'],
-          ['A9','B9'],['A10','B10'],['C8','D8'],
+          ['A6','B6',['C6'],null,'㎡'],['A7','B7',['C7'],null,'㎡'],['A8','B8',null,null,'%'],
+          ['A9','B9',null,null,'%'],['A10','B10'],['C8','D8'],
           ['C9','D9'],['C10','D10'],['C11','D11']
         ]
       : [
-          ['A1','B1'],['F3','G3'],['F2','G2'],
+          ['A1','B1'],['F3','G3'],['F2','G2',null,null,'区画'],
           ['A3','B3'],['A5','B5'],['A4','B4'],
-          ['A6','B6',['C6'],null,'㎡'],['A7','B7',['C7'],null,'㎡'],['A8','B8'],
-          ['A9','B9'],'ROAD',
+          ['A6','B6',['C6'],null,'㎡'],['A7','B7',['C7'],null,'㎡'],['A8','B8',null,null,'%'],
+          ['A9','B9',null,null,'%'],'ROAD',
           ['C8','D8'],['C9','D9'],['C10','D10'],
           ['C11','D11'],['K2','K2']
         ];
@@ -1843,6 +1964,7 @@ function switchShushiSheet(sheet) {
   persistCurrentShushiState();
   activeShushiSheet = sheet;
   renderShushiSheet();
+  renderDetailHeader(); // ヘッダーのシート種別チップ・物件名（収支正本）を追随
 }
 function setShushiSheetByDeal(deal) {
   if (!deal) activeShushiSheet = SHUSHI_SHEETS[0];
@@ -2016,12 +2138,7 @@ function registerStep(kind, extraNote) {
 }
 
 function refreshAfterReg(deal) {
-  // 詳細ヘッダーのステータスチップ
-  const grid = document.getElementById('detail-info-grid');
-  if (grid) {
-    const items = grid.querySelectorAll('.info-item');
-    if (items[2]) items[2].querySelector('.info-item-val').innerHTML = statusChip(deal.status);
-  }
+  renderDetailHeader(); // ステータスチップ・物件名・住所を最新化
   renderSummaryTab(deal);
   renderHoldBanner();
   if (currentView === 'list') renderList();
@@ -2031,10 +2148,8 @@ function refreshAfterReg(deal) {
 /* タブ移動（サマリーの誘導ボタン・ステップバーの！から使用）
    ※対象外のタブ名（旧・建築プラン/判断と履歴）は何もしない＝安全に無効化 */
 function gotoTab(name) {
-  const tabBtns = document.querySelectorAll('#detail-tabs .tab-btn');
-  const tabMap = {summary:0, pl:1, market:2, hearing:3};
-  const idx = tabMap[name];
-  if (idx !== undefined && tabBtns[idx]) switchTab(name, tabBtns[idx]);
+  const btn = document.querySelector('#detail-tabs .tab-btn[onclick*="\'' + name + '\'"]');
+  if (btn) switchTab(name, btn);
 }
 
 /* 収支タブの「登録」＝初回想定の記録（旧・下書き保存の機能）＋概算収支の登録＋販売価格の判断イベント */
@@ -2187,6 +2302,8 @@ function switchTab(name, el) {
   // 収支の操作ボタン（ページ左上）は収支タブ表示中のみ
   const plTb = document.getElementById('pl-top-toolbar');
   if (plTb) plTb.style.display = (name === 'pl') ? 'flex' : 'none';
+  // 物件資料タブは開くたびに最新の資料一覧・写真・地図を描画
+  if (name === 'shiryo') renderShiryoTab();
   // サマリーに戻ったときは最新状態で再描画（ステータス変更を反映）
   if (name === 'summary' && currentDealId !== null) {
     const d = DEALS.find(x => x.id === currentDealId);
@@ -2264,7 +2381,7 @@ function createNewDeal() {
   HISTORY.push({dealId: deal.id, date: TODAY, from: '—', to: '未検討', by: '田中'});
   openDetail(deal.id);
   // 収支（Excel入力）タブへ直行し、登録画面の入力値をシートへ引き継ぐ
-  const plBtn = document.querySelectorAll('#detail-tabs .tab-btn')[1];
+  const plBtn = document.querySelector('#detail-tabs .tab-btn[onclick*="\'pl\'"]');
   if (plBtn) switchTab('pl', plBtn);
   sv('pl-chiban', deal.chiban || '');
   if (deal.menseki > 0) sv('pl-menseki', deal.menseki);
@@ -2319,11 +2436,7 @@ function syncDealName() {
   deal.name = v || '（新規案件）';
   const bc = document.getElementById('detail-breadcrumb-name');
   if (bc) bc.textContent = deal.name;
-  const grid = document.getElementById('detail-info-grid');
-  if (grid) {
-    const items = grid.querySelectorAll('.info-item');
-    if (items[0]) items[0].querySelector('.info-item-val').textContent = deal.name;
-  }
+  renderDetailHeader();
 }
 
 function syncDealAddress() {
@@ -2334,11 +2447,7 @@ function syncDealAddress() {
   deal.address = addr;
   const m = addr.match(/^(?:.+?[都道府県])?(.+?)[区市]/);
   deal.area = m ? m[1] : addr;
-  const grid = document.getElementById('detail-info-grid');
-  if (grid) {
-    const items = grid.querySelectorAll('.info-item');
-    if (items[1]) items[1].querySelector('.info-item-val').textContent = deal.area || '—';
-  }
+  renderDetailHeader();
   checkDuplicateSheet();
 }
 
