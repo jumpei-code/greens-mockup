@@ -262,7 +262,8 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .xl input.shushi-input{text-align:right;width:94px}
 .xl input.shushi-text{text-align:left;width:148px}
 .xl select.shushi-input{width:82px}
-.pl-sheet-tabs{display:flex;gap:8px;margin:0 0 10px;overflow-x:auto}
+/* 幅が足りないときは収支想定カードがシート切替ボタンの下の行に回り込む（見切れ防止・2026-07-24） */
+.pl-sheet-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
 .pl-sheet-tab{border:1px solid var(--green-mid);background:var(--green-light);color:var(--green);font-size:13px;font-weight:700;padding:8px 16px;cursor:pointer;border-radius:8px;white-space:nowrap;transition:background .15s}
 .pl-sheet-tab.active{background:var(--green);border-color:var(--green);color:#fff}
 .pl-excel-shell{display:block;min-width:0}
@@ -270,7 +271,10 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .pl-section{background:#fff;border:1px solid var(--line);border-radius:8px;padding:14px;min-width:0}
 .pl-section-title{font-size:14px;font-weight:800;color:var(--ink);margin-bottom:10px}
 .pl-two-col{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
-.pl-finance-layout{display:grid;grid-template-columns:minmax(590px,1fr) minmax(360px,420px);gap:14px;align-items:start}
+/* 原価（左）＋評価額・借入金・IRR（右）：幅が足りないときは右列が自動で原価の下に回り込む（2026-07-24 中西さん指示・見切れ防止） */
+.pl-finance-layout{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start}
+.pl-finance-layout > div:first-child{flex:1 1 590px;min-width:0}
+.pl-finance-layout > .pl-eval-side{flex:1 1 360px;max-width:420px;min-width:0}
 .pl-field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 14px;align-content:start}
 .pl-field-grid.pl-grid-left{grid-template-columns:1.2fr minmax(0,1fr)}
 .pl-field{display:grid;grid-template-columns:minmax(48px,max-content) minmax(0,1fr);gap:8px;align-items:center;min-width:0;min-height:26px}
@@ -332,7 +336,11 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .pl-sec-arrow{font-size:10px;color:var(--sub);width:14px;flex:none}
 .pl-sec-badge{color:#c62828;font-size:11px;font-weight:700}
 .pl-free-note{color:var(--sub);font-size:11px}
-.pl-action-bar{display:flex;gap:14px;justify-content:center;padding:20px 0 8px}
+.nr-strategy-wrap{display:flex;gap:8px;flex-wrap:wrap}
+.nr-strategy-btn{border:1.5px solid var(--green-mid);background:#fff;color:var(--green);font-size:13px;font-weight:700;padding:8px 16px;border-radius:999px;cursor:pointer;transition:background .15s}
+.nr-strategy-btn:hover{background:var(--green-light)}
+.nr-strategy-btn.active{background:var(--green);border-color:var(--green);color:#fff}
+.pl-action-bar{display:flex;gap:14px;justify-content:flex-end;padding:20px 0 8px}
 .pl-action-btn{font-size:15px;padding:13px 52px;font-weight:700}
 .pl-market-table .pl-auto{min-width:0}
 .pl-with-unit{display:flex;align-items:center;gap:4px;min-width:0}
@@ -361,7 +369,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .xl input.shushi-input,.xl input.shushi-text,.xl select.shushi-input{width:100%;min-width:0}
 .pl-field input.shushi-input,.pl-field input.shushi-text,.pl-field select.shushi-input,.pl-cost-table input,.pl-cost-table select,.pl-market-table input,.pl-sell-table input,.pl-irr-table input{width:100%;min-width:0}
 @media (max-width: 980px){
-  .pl-two-col,.pl-finance-layout,.pl-market-stack,.pl-sell-stack{grid-template-columns:1fr}
+  .pl-two-col,.pl-market-stack,.pl-sell-stack{grid-template-columns:1fr}
   .pl-field-grid,.pl-field-grid.pl-grid-left,.pl-field-grid.pl-eval-grid,.pl-field-grid.pl-prop-grid{grid-template-columns:1fr}
   .pl-field-w2{grid-column:auto}
   .shiryo-layout{grid-template-columns:1fr}
@@ -377,12 +385,13 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .xl-toolbar{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center}
 #pl-top-toolbar{justify-content:flex-end;align-items:flex-start}
 .pl-sheet-tabs{align-items:center}
-.pl-profit-inline{margin-left:auto;display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--green-mid);border-radius:8px;padding:5px 14px;box-shadow:0 2px 8px rgba(26,107,58,.10);white-space:nowrap}
-.pl-pi-title{font-size:11px;font-weight:800;color:var(--green)}
-.pl-pi-basis{font-size:10px;color:var(--sub)}
-.pl-pi-main{font-size:17px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums}
-.pl-pi-kv{font-size:11px;color:var(--sub)}
-.pl-pi-kv strong{font-size:12.5px;color:var(--ink);font-variant-numeric:tabular-nums}
+/* 収支想定＝最重要のため大きめ・緑枠強調（2026-07-24 中西さん指示） */
+.pl-profit-inline{margin-left:auto;display:flex;align-items:center;gap:14px;background:#fff;border:2px solid var(--green);border-radius:10px;padding:8px 18px;box-shadow:0 4px 14px rgba(26,107,58,.18);white-space:nowrap}
+.pl-pi-title{font-size:13px;font-weight:900;color:var(--green)}
+.pl-pi-basis{font-size:11px;color:var(--sub)}
+.pl-pi-main{font-size:23px;font-weight:900;color:var(--ink);font-variant-numeric:tabular-nums}
+.pl-pi-kv{font-size:12px;color:var(--sub)}
+.pl-pi-kv strong{font-size:14px;color:var(--ink);font-variant-numeric:tabular-nums}
 .xl-irr-note{font-size:11px;color:var(--sub);font-style:italic}
 .past-case-info{font-size:13px;color:var(--body)}
 .past-case-meta{font-size:11px;color:var(--sub);margin-top:2px}
@@ -681,6 +690,16 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
           <div class="form-group mb12">
             <label class="form-label">駅距離（徒歩分）</label>
             <input class="form-input" type="text" id="nr-eki" inputmode="numeric" placeholder="例：8" oninput="numFormat(this)" onkeydown="nrEnter(event,'nr-submit-btn')">
+          </div>
+          <!-- 仕入れ形態＝どういう形での仕入れを検討するか（複数選択可・詳細ヘッダーのチップと収支シート初期選択に反映）2026-07-24 中西さん指示 -->
+          <div class="form-group mb12">
+            <label class="form-label">仕入れ形態（検討する形・複数選択可）</label>
+            <div class="nr-strategy-wrap" id="nr-strategy-wrap">
+              <button type="button" class="nr-strategy-btn active" data-strategy="戸建て建売" onclick="toggleNrStrategy(this)">戸建て建売</button>
+              <button type="button" class="nr-strategy-btn" data-strategy="戸建て土地売り" onclick="toggleNrStrategy(this)">戸建て土地売り</button>
+              <button type="button" class="nr-strategy-btn" data-strategy="土地転売" onclick="toggleNrStrategy(this)">土地転売</button>
+              <button type="button" class="nr-strategy-btn" data-strategy="アパート" onclick="toggleNrStrategy(this)">アパート</button>
+            </div>
           </div>
           <!-- 資料（必須）＝収支・一覧と同じ deal.shiryo に一元保存（登録・見送りの確定時に案件へ移る） -->
           <div class="shiryo-box mt12">
@@ -1483,7 +1502,17 @@ function shiryoDrop(e, el) {
   refreshShiryoViews();
 }
 
-/* 詳細ヘッダー＝左上に物件名・住所・種別チップ（キマール参考デザイン・2026-07-24 中西さん指示）
+/* 仕入れ形態（どういう形での仕入れを検討しているか）＝物件登録時に複数選択し、ヘッダーのチップと収支シートの初期選択に使う（2026-07-24 中西さん指示） */
+const STRATEGY_OPTIONS = ['戸建て建売', '戸建て土地売り', '土地転売', 'アパート'];
+function dealStrategies(deal) {
+  if (deal && Array.isArray(deal.strategies) && deal.strategies.length) return deal.strategies;
+  // 既存サンプル案件は種別から導出（表記重複を避け、仕入れ形態の語彙に統一）
+  const t = (deal && deal.type) || '';
+  if (t.includes('アパート')) return ['アパート'];
+  if (t.includes('土地') && !t.includes('戸建て')) return ['土地転売'];
+  return ['戸建て建売'];
+}
+/* 詳細ヘッダー＝左上に物件名・住所・仕入れ形態チップ（キマール参考デザイン・2026-07-24 中西さん指示）
    物件名・住所は収支画面が正本（B1/B3）＝未入力時は案件登録の値を表示 */
 function renderDetailHeader() {
   const el = document.getElementById('detail-header');
@@ -1492,10 +1521,10 @@ function renderDetailHeader() {
   if (!deal) { el.innerHTML = ''; return; }
   const name = String(shushiResolvedValue(activeShushiSheet, 'B1') || '').trim() || deal.name;
   const addr = String(shushiResolvedValue(activeShushiSheet, 'B3') || '').trim() || deal.address || '';
-  const sheetShort = activeShushiSheet.split('（')[0];
+  const chips = dealStrategies(deal).map(s => '<span class="deal-chip deal-chip-sheet">' + escapeHtml(s) + '</span>').join('');
   el.innerHTML = '<div><h1 class="deal-title">' + escapeHtml(name) + '</h1>'
     + (addr ? '<div class="deal-addr">' + escapeHtml(addr) + '</div>' : '')
-    + '<div class="deal-chips"><span class="deal-chip deal-chip-type">' + escapeHtml(deal.type) + '</span><span class="deal-chip deal-chip-sheet">' + escapeHtml(sheetShort) + '</span>' + statusChip(deal.status) + '</div></div>'
+    + '<div class="deal-chips">' + chips + statusChip(deal.status) + '</div></div>'
     + '<div class="deal-header-side"><span>担当：' + escapeHtml(deal.staff) + '</span><span>取得日：' + escapeHtml(deal.acquiredDate || '—') + '</span></div>';
 }
 
@@ -1754,7 +1783,7 @@ function renderShushiTabs() {
   if (!el) return;
   // 収支想定（最重要）＝シート切替ボタンの右横に縦幅最小の1行表示（2026-07-24 中西さん指示）
   el.innerHTML = SHUSHI_SHEETS.map(name => '<button class="pl-sheet-tab' + (name === activeShushiSheet ? ' active' : '') + '" onclick="switchShushiSheet(\'' + name + '\')">' + name + '</button>').join('')
-    + '<div class="pl-profit-inline" aria-label="収支想定"><span class="pl-pi-title">収支想定</span><span class="pl-pi-basis" id="pl-profit-basis">—</span><strong class="pl-pi-main" id="pl-profit-main">—</strong><span class="pl-pi-kv">利益率 <strong id="pl-profit-rate">—</strong></span><span class="pl-pi-kv">表示用IRR <strong id="pl-profit-irr">—</strong></span></div>';
+    + '<div class="pl-profit-inline" aria-label="収支想定"><span class="pl-pi-title">収支想定</span><span class="pl-pi-basis" id="pl-profit-basis">—</span><strong class="pl-pi-main" id="pl-profit-main">—</strong><span class="pl-pi-kv">利益率 <strong id="pl-profit-rate">—</strong></span><span class="pl-pi-kv">IRR <strong id="pl-profit-irr">—</strong></span></div>';
 }
 function shushiCellHtml(sheet, cell) {
   if (!cell) return '';
@@ -1767,7 +1796,8 @@ function shushiCellHtml(sheet, cell) {
 }
 function shushiFieldHtml(sheet, labelCell, valueCell, extraCells, wide, unit) {
   const labels = SHUSHI_LABELS[sheet];
-  const label = labels[labelCell] || labelCell;
+  // 表示上のみ末尾の「：」を除去（Excel原本ラベルは「物件名：」だが画面では不要・2026-07-24 中西さん指示）
+  const label = (labels[labelCell] || labelCell).replace(/[：:]\s*$/, '');
   const extras = (extraCells || []).map(c => shushiCellHtml(sheet, c)).join('');
   const wideCls = wide === 'w2' ? ' pl-field-w2' : wide ? ' pl-field-wide' : '';
   return '<div class="pl-field' + wideCls + '"><div class="pl-field-label">' + escHtml(label) + '</div><div class="pl-field-value">' + shushiCellHtml(sheet, valueCell) + (unit ? '<span class="pl-unit">' + escHtml(unit) + '</span>' : '') + extras + '</div></div>';
@@ -1978,10 +2008,9 @@ function switchShushiSheet(sheet) {
   renderDetailHeader(); // ヘッダーのシート種別チップ・物件名（収支正本）を追随
 }
 function setShushiSheetByDeal(deal) {
-  if (!deal) activeShushiSheet = SHUSHI_SHEETS[0];
-  else if ((deal.type || '').includes('アパート')) activeShushiSheet = 'アパート';
-  else if ((deal.type || '').includes('土地') && !(deal.type || '').includes('戸建て')) activeShushiSheet = '土地転売（業者売り）';
-  else activeShushiSheet = '戸建て（建売・土地売り）';
+  // 仕入れ形態の先頭（戸建て建売・戸建て土地売り→戸建てシート／土地転売／アパート）で初期シートを決める
+  const s = deal ? dealStrategies(deal)[0] : null;
+  activeShushiSheet = s === 'アパート' ? 'アパート' : s === '土地転売' ? '土地転売（業者売り）' : SHUSHI_SHEETS[0];
   renderShushiSheet();
 }
 function applyDealShushiOverrides() {
@@ -2328,10 +2357,26 @@ function switchTab(name, el) {
 
 /* ===== 新規案件登録（専用画面）＝5項目入力→「登録」で収支シートへ／「検討しない」で見送り記録 ===== */
 let newregShiryo = []; // 登録前の一時添付（登録/見送りの確定時に案件の shiryo へ移す）
+let newregStrategies = ['戸建て建売']; // 仕入れ形態の選択（既定＝戸建て建売・1つ以上必須）
+
+function toggleNrStrategy(btn) {
+  const s = btn.dataset.strategy;
+  const i = newregStrategies.indexOf(s);
+  if (i >= 0) {
+    if (newregStrategies.length === 1) { showToast('仕入れ形態は1つ以上選択してください'); return; }
+    newregStrategies.splice(i, 1);
+    btn.classList.remove('active');
+  } else {
+    newregStrategies.push(s);
+    btn.classList.add('active');
+  }
+}
 
 function openNewReg(el) {
   ['nr-name','nr-address','nr-chiban','nr-menseki','nr-eki'].forEach(id => sv(id, ''));
   newregShiryo = [];
+  newregStrategies = ['戸建て建売'];
+  document.querySelectorAll('#nr-strategy-wrap .nr-strategy-btn').forEach(b => b.classList.toggle('active', b.dataset.strategy === '戸建て建売'));
   renderShiryoNewreg();
   const err = document.getElementById('newreg-shiryo-error');
   if (err) err.textContent = '';
@@ -2369,12 +2414,18 @@ function buildNewDealFromForm(status) {
   const newId = DEALS.length ? Math.max(...DEALS.map(d => d.id)) + 1 : 1;
   const addr = (gvs('nr-address') || '').trim();
   const m = addr.match(/^(?:.+?[都道府県])?(.+?)[区市]/);
+  // 仕入れ形態は定義順（STRATEGY_OPTIONS）に正規化。先頭が主形態＝一覧の種別・初期シート・写真の既定に使う
+  const strategies = STRATEGY_OPTIONS.filter(s => newregStrategies.includes(s));
+  const primary = strategies[0] || '戸建て建売';
   const deal = {
     id: newId, name: (gvs('nr-name') || '').trim() || '（新規案件）',
     area: m ? m[1] : addr, address: addr,
     chiban: (gvs('nr-chiban') || '').trim(),
     menseki: numVal('nr-menseki'), ekitoho: numVal('nr-eki'),
-    status: status, staff: '田中', type: '戸建て建売', photo: 'photos/house1.jpg',
+    status: status, staff: '田中',
+    type: primary === 'アパート' ? 'アパート' : primary === '土地転売' ? '土地' : '戸建て建売',
+    strategies: strategies,
+    photo: primary === 'アパート' ? 'photos/apt1.jpg' : primary === '土地転売' ? 'photos/land1.jpg' : 'photos/house1.jpg',
     acquiredDate: TODAY, price: null, note: '', holdDate: null,
     reg: {market:false, pl:false, hearing:false, plan:false},
     shiryo: newregShiryo,
