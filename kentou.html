@@ -313,7 +313,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .pl-prop-row-last .pl-prop-vstack.pl-pc2{flex:205 1 205px;min-width:0}
 .pl-prop-row-last .pl-prop-vstack.pl-pc3{flex:282 1 282px;min-width:0}
 .pl-prop-wrap{display:flex;align-items:flex-start;flex-wrap:wrap;justify-content:flex-start;gap:8px 0}
-.pl-prop-main{display:flex;align-items:flex-start;gap:0 12px;flex:1 1 480px;min-width:0}
+.pl-prop-main{display:flex;align-items:flex-start;gap:0 16px;flex:1 1 480px;min-width:0}
 .pl-prop-col{display:flex;flex-direction:column;gap:8px;min-width:0}
 .pl-prop-col .pl-field{display:flex;align-items:center;gap:7px;min-height:26px;min-width:0}
 .pl-prop-col .pl-field>.pl-field-label{min-width:52px;flex:none}
@@ -331,8 +331,8 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
   .pl-pcol2 .pl-field-value input.shushi-input,.pl-pcol2 .pl-field-value input.shushi-text{width:76px}
   .pl-pcol1{max-width:380px}
   .pl-pcol3{max-width:260px}
-  .pl-prop-main{justify-content:space-between}
 }
+.pl-prop-divider{display:none}
 .pl-prop-eval.pl-eval-row{display:flex;flex-direction:row;flex-wrap:wrap;justify-content:flex-start;align-items:center;gap:8px 28px;width:100%;
   border-left:none;border-top:1.5px dashed #d1d5db;margin-left:0;padding-left:0;margin-top:10px;padding-top:12px}
 .pl-prop-eval.pl-eval-row .pl-field{display:flex;align-items:center;gap:8px;min-height:26px}
@@ -354,6 +354,13 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .pl-prop-section .pl-tsubo-auto{background:none;padding:0;font-weight:400;text-align:left;color:#4b5563;font-size:14.5px}
 .pl-field-w2{grid-column:span 2}
 .pl-eval-note{margin-top:8px;font-size:11px;font-weight:700;color:var(--sub)}
+@media (min-width:1280px){
+  .pl-prop-wrap{column-gap:16px;justify-content:space-between}
+  .pl-prop-main{display:contents}
+  .pl-prop-divider{display:block;flex:none;width:0;align-self:stretch;border-left:1.5px dashed #d1d5db}
+  .pl-prop-eval{border-left:none;margin-left:0;padding-left:0}
+  .pl-prop-wrap.pl-eval-wrapped .pl-prop-divider{display:none}
+}
 .pl-field-value{flex:1;min-width:0;display:flex;align-items:center;gap:6px;flex-wrap:nowrap}
 .pl-field input.shushi-input{text-align:right}
 .pl-auto{display:inline-block;min-width:110px;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -2065,7 +2072,7 @@ function shushiPropertySection(sheet) {
   const colHtml = (items, cls, noPW) => '<div class="pl-prop-col ' + cls + '">' + items.map(r => F(r, noPW)).join('') + '</div>';
   return '<section class="pl-section pl-prop-section"><div class="pl-prop-wrap"><div class="pl-prop-main">'
     + colHtml(col1, 'pl-pcol1') + colHtml(col2, 'pl-pcol2', true) + colHtml(col3, 'pl-pcol3')
-    + '</div>' + shushiPropEvalBlock(sheet) + '</div></section>';
+    + '</div><div class="pl-prop-divider" aria-hidden="true"></div>' + shushiPropEvalBlock(sheet) + '</div></section>';
 }
 function shushiEvalField(sheet, labelCell, valueCell, unit, tsubo, help) {
   const label = (SHUSHI_LABELS[sheet][labelCell] || labelCell).replace(/[：:]\s*$/, '');
@@ -2580,10 +2587,12 @@ function calcPL() {
 }
 function updateEvalLayout() {
   document.querySelectorAll('#pl-sheet-grid .pl-prop-wrap').forEach(wrap => {
-    const main = wrap.querySelector('.pl-prop-main'), ev = wrap.querySelector('.pl-prop-eval');
-    if (!main || !ev) return;
+    const ref = wrap.querySelector('.pl-pcol1') || wrap.querySelector('.pl-prop-main'), ev = wrap.querySelector('.pl-prop-eval');
+    if (!ref || !ev) return;
     ev.classList.remove('pl-eval-row');
-    if (ev.offsetTop > main.offsetTop + 5) ev.classList.add('pl-eval-row');
+    const wrapped = ev.offsetTop > ref.offsetTop + 5;
+    if (wrapped) ev.classList.add('pl-eval-row');
+    wrap.classList.toggle('pl-eval-wrapped', wrapped);
   });
 }
 let evalLayoutTimer = null;
