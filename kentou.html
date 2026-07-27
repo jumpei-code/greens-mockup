@@ -329,10 +329,14 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .pl-pcol2 .pl-field-value .pl-tsubo-auto{width:70px;flex:none;text-align:left;margin-left:8px}
 @media (min-width:1280px){
   .pl-pcol2 .pl-field-value input.shushi-input,.pl-pcol2 .pl-field-value input.shushi-text{width:76px}
-  .pl-pcol1{max-width:380px}
-  .pl-pcol3{max-width:260px}
+  .pl-pcol1{max-width:520px}
+  .pl-pcol3{max-width:350px}
+}
+@media (min-width:1440px){
+  .pl-pcol2 .pl-field-value input.shushi-input,.pl-pcol2 .pl-field-value input.shushi-text{width:96px}
 }
 .pl-prop-divider{display:none}
+.pl-prop-tail{display:none}
 .pl-prop-eval.pl-eval-row{display:flex;flex-direction:row;flex-wrap:wrap;justify-content:flex-start;align-items:center;gap:8px 28px;width:100%;
   border-left:none;border-top:1.5px dashed #d1d5db;margin-left:0;padding-left:0;margin-top:10px;padding-top:12px}
 .pl-prop-eval.pl-eval-row .pl-field{display:flex;align-items:center;gap:8px;min-height:26px}
@@ -359,7 +363,12 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
   .pl-prop-main{display:contents}
   .pl-prop-divider{display:block;flex:none;width:0;align-self:stretch;border-left:1.5px dashed #d1d5db}
   .pl-prop-eval{border-left:none;margin-left:0;padding-left:0}
-  .pl-prop-wrap.pl-eval-wrapped .pl-prop-divider{display:none}
+  .pl-prop-tail{display:block;flex:none;width:0}
+  .pl-prop-wrap.pl-eval-wrapped .pl-prop-divider,.pl-prop-wrap.pl-eval-wrapped .pl-prop-tail{display:none}
+}
+@media (min-width:1440px){
+  .pl-prop-eval .pl-field-value input.shushi-input,.pl-prop-eval .pl-field-value input.shushi-text{width:128px}
+  .pl-prop-eval .pl-field-value>.pl-auto{width:128px;min-width:128px}
 }
 .pl-field-value{flex:1;min-width:0;display:flex;align-items:center;gap:6px;flex-wrap:nowrap}
 .pl-field input.shushi-input{text-align:right}
@@ -2072,7 +2081,8 @@ function shushiPropertySection(sheet) {
   const colHtml = (items, cls, noPW) => '<div class="pl-prop-col ' + cls + '">' + items.map(r => F(r, noPW)).join('') + '</div>';
   return '<section class="pl-section pl-prop-section"><div class="pl-prop-wrap"><div class="pl-prop-main">'
     + colHtml(col1, 'pl-pcol1') + colHtml(col2, 'pl-pcol2', true) + colHtml(col3, 'pl-pcol3')
-    + '</div><div class="pl-prop-divider" aria-hidden="true"></div>' + shushiPropEvalBlock(sheet) + '</div></section>';
+    + '</div><div class="pl-prop-divider" aria-hidden="true"></div>' + shushiPropEvalBlock(sheet)
+    + '<div class="pl-prop-tail" aria-hidden="true"></div></div></section>';
 }
 function shushiEvalField(sheet, labelCell, valueCell, unit, tsubo, help) {
   const label = (SHUSHI_LABELS[sheet][labelCell] || labelCell).replace(/[：:]\s*$/, '');
