@@ -17,12 +17,10 @@
 body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;font-size:14px;color:var(--body);background:var(--bg);min-height:100vh}
 button{cursor:pointer;font-family:inherit;font-size:13px}
 input,select,textarea{font-family:inherit;font-size:13px}
-/* 最上部バー＝白背景に緑のGREENSロゴのみ・細幅（2026-07-24 永井様指示・正規ロゴ使用） */
 .header{display:flex;align-items:center;background:#fff;padding:0 16px;height:36px;position:sticky;top:0;z-index:100;border-bottom:1px solid var(--line)}
 .header-logo{display:flex;align-items:center}
 .header-logo img{height:20px;width:auto;display:block}
 .app-layout{display:flex;min-height:calc(100vh - 36px)}
-/* サイドバーを細く＝本文（右側）の幅を確保（2026-07-24 中西さん指示） */
 .sidebar{width:158px;flex-shrink:0;background:#fff;border-right:1px solid var(--line);padding:16px 0;position:sticky;top:36px;height:calc(100vh - 36px);overflow-y:auto;display:flex;flex-direction:column}
 .sidebar-main{flex:0 0 auto}
 .sidebar-footer{margin-top:auto;padding-top:10px}
@@ -91,9 +89,7 @@ input,select,textarea{font-family:inherit;font-size:13px}
 .tab-btn{padding:10px 18px;border:none;background:transparent;font-size:13px;font-weight:600;color:var(--sub);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:color .15s,border-color .15s}
 .tab-btn.active{color:var(--green);border-bottom-color:var(--green)}
 .tab-btn:hover{color:var(--ink)}
-/* 詳細タブ＝丸囲みのセグメントボタン・横幅は枠いっぱい（キマール参考デザイン・2026-07-24 中西さん指示） */
 #detail-tabs{display:flex;width:100%;max-width:100%;overflow-x:auto;border:1.5px solid var(--green-mid);border-radius:999px;background:#fff;gap:0}
-/* 縦の区切り線はborderでなく疑似要素＝activeの丸め（border-radius）でも隣の線が消えない（2026-07-24 不具合修正） */
 #detail-tabs .tab-btn{position:relative;flex:1;text-align:center;font-size:14px;font-weight:700;color:var(--green);padding:10px 12px;border-bottom:none;margin-bottom:0;border-radius:0}
 #detail-tabs .tab-btn:not(:last-child)::after{content:"";position:absolute;right:0;top:0;bottom:0;width:1.5px;background:var(--green-mid)}
 #detail-tabs .tab-btn:first-child{border-radius:999px 0 0 999px}
@@ -101,21 +97,22 @@ input,select,textarea{font-family:inherit;font-size:13px}
 #detail-tabs .tab-btn.active{background:var(--green);color:#fff;border-radius:999px}
 #detail-tabs .tab-btn:hover{background:var(--green-light);color:var(--green)}
 #detail-tabs .tab-btn.active:hover{background:var(--green);color:#fff}
-/* 詳細ヘッダー＝左上に物件名・住所・種別チップ（キマール参考デザイン・2026-07-24 中西さん指示） */
 .deal-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:16px}
 .deal-title{font-size:24px;font-weight:900;color:var(--ink);margin:0 0 2px;line-height:1.25}
 .deal-addr{font-size:13px;color:var(--sub);margin-bottom:8px}
 .deal-chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.deal-chip{display:inline-block;font-size:11px;font-weight:700;padding:2px 10px;border-radius:4px}
+.deal-chip{display:inline-block;font-size:13px;font-weight:700;padding:5px 14px;border-radius:5px}
 .deal-chip-type{background:#6b7280;color:#fff}
-/* 仕入れ形態チップ＝クリックで収支フォーマット切替。アクティブ（表示中）＝塗り・非アクティブ＝薄地（2026-07-25 中西さん指示） */
 .deal-chip-sheet{cursor:pointer;border:1px solid var(--green);background:var(--green-light);color:var(--green);font-family:inherit;line-height:1.4}
 .deal-chip-sheet:hover{background:#fff}
 .deal-chip-sheet.active{background:var(--green);color:#fff}
 .deal-header-side{display:flex;flex-direction:column;align-items:flex-end;gap:3px;font-size:12px;color:var(--sub);white-space:nowrap;padding-top:8px}
-.deal-chip-edit{border:1px solid var(--green-mid);background:#fff;color:var(--green);font-size:11px;font-weight:700;padding:1px 10px;border-radius:4px;cursor:pointer}
-.deal-chip-edit:hover{background:var(--green-light)}
-/* 物件資料タブ（キマール参考：左＝トップ画像・地図／右＝アップロード・資料一覧） */
+.deal-side-status{margin-top:5px}
+.deal-staff{display:flex;align-items:center;gap:7px}
+.staff-avatar{width:26px;height:26px;border-radius:50%;object-fit:cover;flex:none;border:1px solid var(--line);background:#fff}
+.staff-avatar-initial{display:inline-flex;align-items:center;justify-content:center;background:var(--green-light);color:var(--green);font-size:12px;font-weight:700}
+.deal-chip-edit{border:1px solid #c8cdd3;background:#f3f4f6;color:var(--sub);font-size:13px;font-weight:700;padding:4px 14px;border-radius:5px;cursor:pointer}
+.deal-chip-edit:hover{background:#e5e7eb;color:var(--body)}
 .shiryo-layout{display:grid;grid-template-columns:340px minmax(0,1fr);gap:18px;align-items:start}
 .shiryo-photo{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#edf1f4;min-height:220px;display:flex;align-items:center;justify-content:center;color:var(--sub);font-size:12px}
 .shiryo-photo img{width:100%;height:100%;object-fit:cover;display:block}
@@ -142,6 +139,11 @@ input,select,textarea{font-family:inherit;font-size:13px}
 .form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
 .form-group{display:flex;flex-direction:column;gap:4px}
 .form-label{font-size:12px;font-weight:600;color:var(--sub)}
+.form-hint{font-size:11px;color:var(--sub);line-height:1.5}
+.form-subgroup{display:grid;grid-template-columns:1fr 1fr 104px;gap:10px;border:1px solid var(--line);border-radius:6px;padding:10px}
+.form-sub{display:flex;flex-direction:column;gap:4px;min-width:0}
+.form-sublabel{font-size:11px;color:var(--sub)}
+@media (max-width:520px){.form-subgroup{grid-template-columns:1fr}}
 .form-input{border:1px solid var(--line);border-radius:6px;padding:8px 10px;background:#fff;color:var(--body);transition:border-color .15s}
 .form-input:focus{outline:none;border-color:var(--green-2)}
 .form-textarea{border:1px solid var(--line);border-radius:6px;padding:8px 10px;background:#fff;color:var(--body);resize:vertical;min-height:70px;width:100%}
@@ -215,7 +217,6 @@ input,select,textarea{font-family:inherit;font-size:13px}
 .first-est-title{font-size:11px;font-weight:700;color:var(--green);margin-bottom:4px}
 .dup-warning{background:var(--warn-bg);border:1px solid #fcd34d;border-radius:6px;padding:8px 12px;font-size:12px;color:var(--warn-fg);margin-top:6px;line-height:1.6}
 .past-case-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;margin-bottom:8px;background:#fff;flex-wrap:wrap}
-/* ===== 一覧タブ（進行中/実績）・実績行のミュート・資料添付 ===== */
 .data-table tbody tr.past-row{background:#fafafa}
 .data-table tbody tr.past-row td{color:var(--sub)}
 .data-table tbody tr.past-row .chip{opacity:.65}
@@ -223,7 +224,6 @@ input,select,textarea{font-family:inherit;font-size:13px}
 .shiryo-state{display:inline-flex;align-items:center;justify-content:center;min-width:28px;font-size:12px;font-weight:800}
 .shiryo-state.has{color:var(--green)}
 .shiryo-state.none{color:#9ca3af;font-weight:700}
-/* 数字入力の共通ルール：スピナー非表示（全画面共通） */
 input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .shiryo-box{border:1.5px dashed var(--green-mid);border-radius:8px;padding:12px 14px;background:#fff}
@@ -243,7 +243,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .shiryo-modal-row{display:flex;align-items:center;gap:10px;padding:9px 12px;border-bottom:1px solid var(--line);font-size:13px;color:var(--body)}
 .shiryo-modal-row:last-child{border-bottom:none}
 .shiryo-modal-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-/* ===== Excel再現シート ===== */
 .xl-wrap{overflow-x:visible;margin-top:4px;min-width:0}
 .xl{border-collapse:collapse;font-family:"Meiryo UI",Meiryo,sans-serif;font-size:13px;min-width:1080px;background:#fff}
 .xl td,.xl th{border:1px solid #b7b7b7;padding:3px 6px;vertical-align:middle;white-space:nowrap}
@@ -269,7 +268,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .xl input.shushi-input{text-align:right;width:94px}
 .xl input.shushi-text{text-align:left;width:148px}
 .xl select.shushi-input{width:82px}
-/* 幅が足りないときは収支想定カードがシート切替ボタンの下の行に回り込む（見切れ防止・2026-07-24） */
 .pl-sheet-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
 .pl-sheet-tab{border:1px solid var(--green-mid);background:var(--green-light);color:var(--green);font-size:13px;font-weight:700;padding:8px 16px;cursor:pointer;border-radius:8px;white-space:nowrap;transition:background .15s}
 .pl-sheet-tab.active{background:var(--green);border-color:var(--green);color:#fff}
@@ -278,18 +276,14 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .pl-section{background:#fff;border:1px solid var(--line);border-radius:8px;padding:14px;min-width:0}
 .pl-section-title{font-size:14px;font-weight:800;color:var(--ink);margin-bottom:10px}
 .pl-two-col{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
-/* 原価（左）＋評価額・借入金・IRR（右）：幅が足りないときは右列が自動で原価の下に回り込む（2026-07-24 中西さん指示・見切れ防止） */
 .pl-finance-layout{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start}
 .pl-finance-layout > div:first-child{flex:1 1 590px;min-width:0}
 .pl-finance-layout > .pl-eval-side{flex:1 1 360px;max-width:420px;min-width:0}
-/* 原価表＋販売想定①②（縦）＋販売計画①②（縦）を横並び、下に期間別IRR＋IRR（2026-07-24 中西さん指示） */
 .pl-cost-layout{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
 .pl-cost-tablewrap{flex:476 1 476px;min-width:0}
 .pl-sell-vstack{display:flex;flex-direction:column;gap:12px;flex:268 1 268px;min-width:0}
 .pl-sell-vstack.pl-plan-vstack{flex:336 1 336px}
-/* 販売想定カードのラベル（原価合計（円）・坪単価（円/坪）等）は改行させない（2026-07-24 中西さん指示） */
 .pl-cost-layout .pl-sell-table th{white-space:nowrap}
-/* IRR行＝合計・坪単価の下に2セル（左IRR・右値）。合計と同じ緑で強調（2026-07-24 中西さん指示） */
 .pl-cost-irr-row td:not(.pl-cost-irr-blank){background:#e2efda;font-weight:800;color:#1f2937}
 .pl-cost-irr-blank{background:transparent;border:none}
 .pl-cost-irr-label{text-align:right}
@@ -307,55 +301,57 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .pl-unit{flex:none;font-size:11px;color:var(--sub);font-weight:600}
 .pl-field-grid.pl-eval-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
 .pl-eval-grid .pl-field{grid-template-columns:92px minmax(0,1fr)}
-/* 物件情報＝タイトルなし常時表示・行ごとにまとまりを組んで整然配置（2026-07-24 中西さん指示：所在地の下に地番／地積の隣に建物面積／容積率と建蔽率は横並び） */
 .pl-prop-section{margin-top:2px}
 .pl-prop-row{display:flex;align-items:center;gap:0 22px;margin-bottom:8px}
 .pl-prop-row:last-child{margin-bottom:0}
 .pl-prop-row .pl-field{display:flex;align-items:center;gap:7px;min-height:26px;min-width:0}
 .pl-prop-row .pl-field>.pl-field-label{min-width:52px}
-/* 列固定で縦軸を揃える（pc1/2/3＝1〜3列目、pc12＝交通の2列分）＝左の物件情報はゆったり広めに */
 .pl-pc1{flex:266 1 266px;min-width:0}
 .pl-pc2{flex:205 1 205px;min-width:0}
 .pl-pc3{flex:282 1 282px;min-width:0}
 .pl-pc12{flex:472 1 472px;min-width:0}
 .pl-prop-row-last .pl-prop-vstack.pl-pc2{flex:205 1 205px;min-width:0}
 .pl-prop-row-last .pl-prop-vstack.pl-pc3{flex:282 1 282px;min-width:0}
-/* 物件情報＝左に基本情報（広め）、右端に寄せて点線区切りで評価額系5項目を縦並び（2026-07-24 中西さん指示） */
-/* 評価5項目は右端に詰めず、物件情報のすぐ右（左寄り）に配置（2026-07-24 中西さん指示） */
-/* 物件情報も画面幅に追従（2026-07-25 中西さん指示）：main＝下限685px（交通が切れない幅）から画面に合わせてgrowで広がる・eval＝固定。広い画面では横並びで広がり、狭い画面では評価額ブロックが下へ折返す。旧max-width上限は撤廃 */
 .pl-prop-wrap{display:flex;align-items:flex-start;flex-wrap:wrap;justify-content:flex-start;gap:8px 0}
-.pl-prop-main{display:flex;align-items:flex-start;gap:0 18px;flex:1 1 685px;min-width:0}
-/* 列ごとの縦スタック（2026-07-25 中西さん指示）：1列目=最長・2列目=最短（数値5桁）・3列目=中 */
+.pl-prop-main{display:flex;align-items:flex-start;gap:0 12px;flex:1 1 480px;min-width:0}
 .pl-prop-col{display:flex;flex-direction:column;gap:8px;min-width:0}
 .pl-prop-col .pl-field{display:flex;align-items:center;gap:7px;min-height:26px;min-width:0}
 .pl-prop-col .pl-field>.pl-field-label{min-width:52px;flex:none}
-.pl-pcol1{flex:6 1 0;min-width:150px}
+.pl-pcol1{flex:6 1 0;min-width:104px}
+.pl-pcol1 .pl-field-value{min-width:0}
+.pl-pcol1 .pl-field-value input.shushi-input,.pl-pcol1 .pl-field-value input.shushi-text{min-width:0;width:100%}
 .pl-pcol2{flex:none}
-.pl-pcol3{flex:4 1 0;min-width:178px}
-/* 2列目＝数値入力は10000（5桁）が入るギリギリの56pxで固定＝列全体を最短化（2026-07-25 中西さん指示） */
+.pl-pcol3{flex:4 1 0;min-width:128px}
+.pl-pcol3 .pl-field-value{min-width:0}
+.pl-pcol3 .pl-field-value input.shushi-input,.pl-pcol3 .pl-field-value input.shushi-text,.pl-pcol3 .pl-field-value select.shushi-input{min-width:0;width:100%}
 .pl-pcol2 .pl-field-value{flex:none;gap:4px}
 .pl-pcol2 .pl-field-value input.shushi-input,.pl-pcol2 .pl-field-value input.shushi-text{width:56px;flex:none}
-/* 坪自動計算は固定幅で確保＝値の桁数（1000坪台「1,000.0坪」まで）で列幅が変わらずズレない（2026-07-25 中西さん指示・路線価側と同じ手法） */
-/* margin-left＝自動計算結果は入力＋単位から少し離して境目を分かりやすく（2026-07-25 中西さん指示） */
-.pl-pcol2 .pl-field-value .pl-tsubo-auto{width:64px;flex:none;text-align:left;margin-left:12px}
-.pl-prop-eval{border-left:1.5px dashed #d1d5db;margin-left:44px;padding-left:34px;display:flex;flex-direction:column;gap:8px;flex:none}
-.pl-prop-eval .pl-field{display:flex;align-items:center;gap:8px;min-height:26px}
-.pl-prop-eval .pl-field>.pl-field-label{min-width:92px;flex:none}
+.pl-pcol2 .pl-field-value .pl-tsubo-auto{width:70px;flex:none;text-align:left;margin-left:8px}
+@media (min-width:1280px){
+  .pl-pcol2 .pl-field-value input.shushi-input,.pl-pcol2 .pl-field-value input.shushi-text{width:76px}
+  .pl-pcol1{max-width:380px}
+  .pl-pcol3{max-width:260px}
+  .pl-prop-main{justify-content:space-between}
+}
+.pl-prop-eval.pl-eval-row{display:flex;flex-direction:row;flex-wrap:wrap;justify-content:flex-start;align-items:center;gap:8px 28px;width:100%;
+  border-left:none;border-top:1.5px dashed #d1d5db;margin-left:0;padding-left:0;margin-top:10px;padding-top:12px}
+.pl-prop-eval.pl-eval-row .pl-field{display:flex;align-items:center;gap:8px;min-height:26px}
+.pl-prop-eval .pl-eval-break{display:none}
+.pl-prop-eval.pl-eval-row .pl-eval-break{display:block;flex-basis:100%;width:100%;height:0;margin:0}
+.pl-prop-eval{border-left:1.5px dashed #d1d5db;margin-left:16px;padding-left:16px;display:flex;flex-direction:column;gap:8px;flex:none}
+.pl-prop-eval{display:grid;grid-template-columns:max-content max-content;grid-auto-rows:26px;align-items:center;gap:8px 8px}
+.pl-prop-eval .pl-field{display:contents}
+.pl-prop-eval .pl-field>.pl-field-label{white-space:nowrap}
 .pl-prop-eval .pl-field-value{display:flex;align-items:center;gap:5px}
-/* 入力欄は最大 100,000,000（1億）がギリギリ入る幅に統一・極力短く（2026-07-24 中西さん指示）。既存の width:100% に勝つよう詳細度を上げる */
 .pl-prop-eval .pl-field-value input.shushi-input,.pl-prop-eval .pl-field-value input.shushi-text{width:96px;flex:none;text-align:right;font-variant-numeric:tabular-nums}
-/* 自動計算値（一種単価など）も入力欄と同じ96px幅・同じ余白で右寄せ＝右5項目の数字を縦に揃える（2026-07-24 中西さん指示。base .pl-auto の min-width:110 を上書き） */
 .pl-prop-eval .pl-field-value>.pl-auto{display:inline-block;width:96px;min-width:96px;padding:0 5px;flex:none;text-align:right;font-variant-numeric:tabular-nums}
 .pl-prop-eval .pl-unit{font-size:10.5px}
-/* 坪換算は入力テキストと同じ13px（2026-07-24 中西さん指示・小さすぎ解消） */
-.pl-prop-eval .pl-tsubo-auto{background:none;padding:0;font-weight:600;color:var(--sub);width:auto;font-size:13px;margin-left:12px}
-/* IRRを原価の右上（見出しの右・枠外）に単独表示（2026-07-24 中西さん指示） */
+.pl-prop-eval .pl-tsubo-auto{background:none;padding:0;font-weight:400;color:#4b5563;width:auto;font-size:14.5px;margin-left:12px}
 .pl-cost-head{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:10px;flex-wrap:wrap}
 .pl-cost-head>.pl-section-title{margin-bottom:0}
 .pl-cost-irr .pl-field{display:flex;align-items:center;gap:8px}
 .pl-cost-irr .pl-field-label{font-size:13px;font-weight:800;color:var(--ink)}
-/* 坪換算は入力の㎡（.pl-unit）と同じ見た目＝背景・箱なしの小さめ単位表示（2026-07-24 中西さん指示） */
-.pl-prop-section .pl-tsubo-auto{background:none;padding:0;font-weight:600;text-align:left;color:var(--sub);font-size:13px}
+.pl-prop-section .pl-tsubo-auto{background:none;padding:0;font-weight:400;text-align:left;color:#4b5563;font-size:14.5px}
 .pl-field-w2{grid-column:span 2}
 .pl-eval-note{margin-top:8px;font-size:11px;font-weight:700;color:var(--sub)}
 .pl-field-value{flex:1;min-width:0;display:flex;align-items:center;gap:6px;flex-wrap:nowrap}
@@ -390,7 +386,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .pl-sell-stack{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px}
 .pl-plan-card{grid-column:1/-1}
 .pl-eval-side .pl-field-grid.pl-eval-grid{grid-template-columns:1fr}
-/* 路線価の坪換算表示は固定幅で確保＝入力中にセル幅が変わらない（想定最大：100万円台/㎡→坪換算7桁・2026-07-24 中西さん指示） */
 .pl-eval-side .pl-tsubo-auto{width:100px;flex:none;text-align:right}
 .pl-sell-card{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff;min-width:0}
 .pl-sell-card-title{background:#e2efda;font-weight:800;padding:7px 9px;font-size:12.5px;color:#1f2937;border-bottom:1px solid #b7b7b7}
@@ -412,13 +407,10 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .pl-sec-badge{color:#c62828;font-size:11px;font-weight:700}
 .pl-free-note{color:var(--sub);font-size:11px}
 .pl-memo-num{display:block;text-align:right;font-variant-numeric:tabular-nums}
-/* 率％・自動列を廃止し備考へ統合（2026-07-24 永井様指示）：率の数字＋％を同じ行に右寄せで表示（例：1.5％） */
 .pl-rate-cell{display:block;text-align:right;font-variant-numeric:tabular-nums}
 .pl-rate-cell .pl-memo-num{display:inline}
 .pl-rate-unit{color:var(--sub);font-size:11px}
-/* 坪単価（土地仕入原価・建築費・合計）は「坪単価」ラベルなしで値だけ右寄せ表示（2026-07-24 中西さん指示） */
 .pl-rate-auto{display:block;text-align:right;font-variant-numeric:tabular-nums}
-/* 原価表は各列を1行に収まるギリギリ幅にしてコンパクトに（2026-07-24 中西さん指示・実測ベース） */
 .pl-cost-table{max-width:none}
 .pl-cost-table th,.pl-cost-table td{white-space:nowrap;overflow-wrap:normal;word-break:keep-all}
 .nr-strategy-wrap{display:flex;gap:8px;flex-wrap:wrap}
@@ -433,6 +425,9 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .pl-irr-table td:first-child{font-weight:700;color:var(--sub)}
 .pl-irr-table{background:#fff}
 .pl-irr-wrap{max-width:420px;margin-top:12px}
+.pl-loan-row{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:10px;font-size:13px}
+.pl-loan-label{font-weight:700;color:var(--sub)}
+.pl-loan-row .pl-auto,.pl-loan-row input.shushi-input{width:120px;min-width:0;text-align:right}
 .pl-irr-table td.pl-irr-title{width:26%;background:#e2efda;font-weight:800;color:#1f2937;vertical-align:middle;white-space:normal}
 .pl-irr-table td.pl-irr-period{width:46%;font-weight:700;color:var(--sub);white-space:normal}
 .pl-irr-table td.pl-irr-val{width:28%;text-align:right}
@@ -447,13 +442,9 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .pl-market-table .market-feature{width:136px}
 .pl-market-table .market-station{width:94px}
 .pl-market-table .market-address{width:auto;min-width:150px}
-/* 入力セル＝フリー項目と同じ薄グレー背景のみ・枠なし（2026-07-24 中西さん指示「入力できる箇所はこのグレー背景だけを追加」。自動算出セルは変更不可のまま） */
 .pl-sheet-sections input[type=text],.pl-sheet-sections select{background:#f3f4f6;border:none;border-radius:0;padding:2px 5px;font-size:13px;font-family:"Meiryo UI",Meiryo,sans-serif}
 .pl-sheet-sections input[type=text]:focus,.pl-sheet-sections select:focus{outline:none;box-shadow:0 0 0 2px var(--green-mid);background:#fff}
-/* 物件情報・評価額・借入金・IRRの2ブロックのみ入力枠を復活（2026-07-24 中西さん指示） */
 .pl-prop-grid input[type=text],.pl-prop-grid select,.pl-eval-side input[type=text]{background:#fff;border:1px solid #c8cdd3}
-/* 道路＝1マスを点線で左右分割（2026-07-24 中西さん指示・横幅は増やさない） */
-/* 道路＝左右2マス・真ん中に縦点線／交通＝上下2マスを1枠に・真ん中に横点線（2026-07-24 中西さん指示） */
 .pl-road-pair{display:flex;flex:1;min-width:0}
 .pl-road-pair input{flex:1 1 50%;min-width:0}
 .pl-prop-section .pl-road-pair input:first-child{border-right:1px dashed #d1d5db}
@@ -463,7 +454,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .pl-prop-section .pl-kotsu-pair input:first-child{border-bottom:1px dashed #d1d5db}
 .pl-prop-section .pl-kotsu-pair input:last-child{border-top:none}
 .pl-prop-vstack{display:flex;flex-direction:column;gap:8px;flex:none}
-/* 最終行は各列の上端を揃える（交通の枠＝縦2マスの高さに合わせる） */
 .pl-prop-row-last{align-items:flex-start}
 .pl-prop-row-last>.pl-field{align-items:flex-start}
 .xl input.shushi-input,.xl input.shushi-text,.xl select.shushi-input{width:100%;min-width:0}
@@ -474,7 +464,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
   .pl-field-w2{grid-column:auto}
   .shiryo-layout{grid-template-columns:1fr}
   .deal-header{flex-direction:column;gap:6px}
-  .pl-prop-wrap{flex-wrap:wrap} /* 狭い画面は評価額ブロックを物件情報の下へ折返す */
+  .pl-prop-wrap{flex-wrap:wrap} 
 }
 .stamp-tbl{border-collapse:collapse;margin-left:auto;margin-right:8px}
 .stamp-tbl td{border:1px solid #999;width:64px;text-align:center;font-size:11px;padding:2px 0;background:#fff}
@@ -486,7 +476,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .xl-toolbar{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center}
 #pl-top-toolbar{justify-content:flex-end;align-items:flex-start}
 .pl-sheet-tabs{align-items:center}
-/* 収支想定＝最重要のため大きめ・緑枠強調（2026-07-24 中西さん指示・同日「もう少し大きく」で再拡大） */
 .pl-profit-inline{margin-left:auto;display:flex;align-items:center;gap:18px;background:#fff;border:2px solid var(--green);border-radius:12px;padding:14px 26px;box-shadow:0 4px 14px rgba(26,107,58,.18);white-space:nowrap}
 .pl-pi-title{font-size:16px;font-weight:900;color:var(--green)}
 .pl-pi-basis{font-size:13px;color:var(--sub)}
@@ -500,8 +489,8 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .text-warn{color:var(--warn-fg)}
 .text-ng{color:var(--ng-fg)}
 .text-bold{font-weight:700}
-.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}
-.mb8{margin-bottom:8px}.mb12{margin-bottom:12px}.mb16{margin-bottom:16px}
+.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt24{margin-top:24px}
+.mb8{margin-bottom:8px}.mb12{margin-bottom:12px}.mb16{margin-bottom:16px}.mb24{margin-bottom:24px}.mb36{margin-bottom:36px}
 .flex{display:flex}.flex-center{display:flex;align-items:center}
 .gap8{gap:8px}.gap12{gap:12px}
 .right{text-align:right}
@@ -523,7 +512,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
   .info-grid{grid-template-columns:1fr 1fr}
 }
 
-/* ===== ホーム画面 ===== */
 .home-greeting{font-size:22px;font-weight:800;color:var(--ink);margin-bottom:10px}
 .home-lead-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:16px}
 .home-lead{font-size:15px;color:var(--ink);font-weight:600;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
@@ -576,7 +564,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
   .home-deal-num{width:28px;height:28px;font-size:13px}
 }
 
-/* ===== サマリータブ（判断ナビ） ===== */
 .summary-layout{display:grid;grid-template-columns:1fr 280px;gap:20px;align-items:start}
 .step-bar{display:flex;align-items:center;gap:0;margin-bottom:20px;overflow-x:auto;padding-bottom:4px}
 .step-item{display:flex;align-items:center;gap:0;flex-shrink:0}
@@ -596,13 +583,11 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .step-note:empty{display:none}
 .hearing-clear-btn{border:1px solid var(--line);background:#fff;color:var(--sub);border-radius:4px;padding:1px 8px;font-size:10.5px;font-weight:600;cursor:pointer;margin-left:6px;vertical-align:middle}
 .hearing-clear-btn:hover{background:var(--bg)}
-/* 販売会社ヒアリング＝3社比較カード */
 .hearing-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px}
 .hearing-card{border:1px solid var(--line);border-radius:8px;padding:14px;background:#fff;display:flex;flex-direction:column;gap:10px}
 .hearing-card-title{font-size:13px;font-weight:700;color:var(--ink);display:flex;justify-content:space-between;align-items:center}
 .hearing-summary{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--ink);margin-bottom:12px}
 @media(max-width:768px){.hearing-cards{grid-template-columns:1fr}}
-/* 規定利益の関所モーダル */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:2000;align-items:center;justify-content:center;display:flex}
 .modal-box{background:#fff;border-radius:12px;padding:22px;width:440px;max-width:90vw;box-shadow:0 8px 30px rgba(0,0,0,.25)}
 .modal-title{font-size:15px;font-weight:800;color:var(--ink);margin-bottom:10px}
@@ -686,7 +671,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 
   <main class="main-area">
 
-    <!-- V0: ホーム -->
     <div id="view-home" class="view" style="display:none">
       <div class="home-greeting" id="home-greeting">おはようございます、田中さん。</div>
       <div class="home-lead-row">
@@ -705,7 +689,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
       </div>
     </div>
 
-    <!-- V1: 案件一覧 -->
     <div id="view-list" class="view">
       <div class="view-header">
         <div>
@@ -715,8 +698,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
         <button class="btn btn-primary" onclick="openNewReg()">新規案件登録</button>
       </div>
       <div id="hold-banner-wrap"></div>
-      <!-- 進行中／過去（見送り・契約済みの終了案件）のタブ切替（JSのみ・ページ遷移なし）
-           ボタンはシート切替（戸建て等）と同じデザイン・「実績」→「過去」（2026-07-24 中西さん指示） -->
       <div class="pl-sheet-tabs" style="margin-bottom:14px">
         <button class="pl-sheet-tab active" id="list-tab-active" onclick="setListTab('active')">進行中</button>
         <button class="pl-sheet-tab" id="list-tab-past" onclick="setListTab('past')">過去</button>
@@ -755,38 +736,16 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
       </div>
     </div>
 
-    <!-- V2: 新規案件登録（専用画面・5項目のみの軽い入力） -->
     <div id="view-newreg" class="view" style="display:none">
       <div class="view-header">
         <div>
           <div class="view-title">新規案件登録</div>
-          <div class="view-desc">まず5項目だけ入力します。詳しい収支は「登録」後の収支シートで作成します。</div>
+          <div class="view-desc">まず基本項目だけ入力します。詳しい収支は「登録」後の収支シートで作成します。</div>
         </div>
       </div>
       <div class="card" style="max-width:560px">
         <div class="card-body">
-          <div class="form-group mb12">
-            <label class="form-label">物件名</label>
-            <input class="form-input" type="text" id="nr-name" placeholder="例：北葛西建売プロジェクト" onkeydown="nrEnter(event,'nr-address')">
-          </div>
-          <div class="form-group mb12">
-            <label class="form-label">住所</label>
-            <input class="form-input" type="text" id="nr-address" placeholder="例：江戸川区北葛西3丁目" onkeydown="nrEnter(event,'nr-chiban')">
-          </div>
-          <div class="form-group mb12">
-            <label class="form-label">地番</label>
-            <input class="form-input" type="text" id="nr-chiban" placeholder="例：1234番5" onkeydown="nrEnter(event,'nr-menseki')">
-          </div>
-          <div class="form-group mb12">
-            <label class="form-label">面積（㎡）</label>
-            <input class="form-input" type="text" id="nr-menseki" inputmode="numeric" placeholder="例：120" oninput="numFormat(this)" onkeydown="nrEnter(event,'nr-eki')">
-          </div>
-          <div class="form-group mb12">
-            <label class="form-label">駅距離（徒歩分）</label>
-            <input class="form-input" type="text" id="nr-eki" inputmode="numeric" placeholder="例：8" oninput="numFormat(this)" onkeydown="nrEnter(event,'nr-submit-btn')">
-          </div>
-          <!-- 仕入れ形態＝どういう形での仕入れを検討するか（複数選択可・詳細ヘッダーのチップと収支シート初期選択に反映）2026-07-24 中西さん指示 -->
-          <div class="form-group mb12">
+          <div class="form-group mb36">
             <label class="form-label">仕入れ形態（検討する形・複数選択可）</label>
             <div class="nr-strategy-wrap" id="nr-strategy-wrap">
               <button type="button" class="nr-strategy-btn active" data-strategy="戸建て建売" onclick="toggleNrStrategy(this)">戸建て建売</button>
@@ -795,8 +754,42 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
               <button type="button" class="nr-strategy-btn" data-strategy="アパート" onclick="toggleNrStrategy(this)">アパート</button>
             </div>
           </div>
-          <!-- 資料（必須）＝収支・一覧と同じ deal.shiryo に一元保存（登録・見送りの確定時に案件へ移る） -->
-          <div class="shiryo-box mt12">
+          <div class="form-group mb12">
+            <label class="form-label">物件名</label>
+            <input class="form-input" type="text" id="nr-name" placeholder="例：北葛西建売プロジェクト" onkeydown="nrEnter(event,'nr-address')">
+          </div>
+          <div class="form-group mb12">
+            <label class="form-label">住所</label>
+            <input class="form-input" type="text" id="nr-address" placeholder="例：江戸川区北葛西三丁目" oninput="onAddressInput(this)" onblur="onAddressInput(this)" oncompositionstart="this.dataset.ime='1'" oncompositionend="delete this.dataset.ime;onAddressInput(this)" onkeydown="nrEnter(event,'nr-chiban')">
+            <div class="form-hint">丁目は漢数字で統一されます（3丁目 → 三丁目）</div>
+          </div>
+          <div class="form-group mb12">
+            <label class="form-label">地番</label>
+            <input class="form-input" type="text" id="nr-chiban" placeholder="例：1234-5" oninput="onChibanInput(this)" onblur="onChibanInput(this,true)" oncompositionstart="this.dataset.ime='1'" oncompositionend="delete this.dataset.ime;onChibanInput(this)" onkeydown="nrEnter(event,'nr-menseki')">
+            <div class="form-hint">数字とハイフンのみ（1234番5 → 1234-5）</div>
+          </div>
+          <div class="form-group mb12">
+            <label class="form-label">面積（㎡）</label>
+            <input class="form-input" type="text" id="nr-menseki" inputmode="numeric" placeholder="例：120" oninput="numFormat(this)" onkeydown="nrEnter(event,'nr-ensen')">
+          </div>
+          <div class="form-group mb36">
+            <label class="form-label">交通</label>
+            <div class="form-subgroup">
+              <div class="form-sub">
+                <label class="form-sublabel" for="nr-ensen">沿線</label>
+                <input class="form-input" type="text" id="nr-ensen" placeholder="例：東西線" onkeydown="nrEnter(event,'nr-ekimei')">
+              </div>
+              <div class="form-sub">
+                <label class="form-sublabel" for="nr-ekimei">駅名</label>
+                <input class="form-input" type="text" id="nr-ekimei" placeholder="例：西葛西" onkeydown="nrEnter(event,'nr-eki')">
+              </div>
+              <div class="form-sub">
+                <label class="form-sublabel" for="nr-eki">駅距離（徒歩分）</label>
+                <input class="form-input" type="text" id="nr-eki" inputmode="numeric" placeholder="例：8" oninput="numFormat(this)" onkeydown="nrEnter(event,'nr-submit-btn')">
+              </div>
+            </div>
+          </div>
+          <div class="shiryo-box">
             <div class="shiryo-title">資料（必須）｜画像・PDF共通</div>
             <div id="newreg-shiryo-list"></div>
             <button class="btn btn-secondary btn-sm mt8" onclick="openShiryoPickerNewreg()">ファイルを選択（資料を追加）</button>
@@ -810,10 +803,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
       </div>
     </div>
 
-    <!-- V3: 案件詳細 -->
     <div id="view-detail" class="view" style="display:none">
-      <!-- パンくず（案件一覧›物件名）・右上？ボタンは削除して上に詰める（2026-07-24 中西さん指示） -->
-      <!-- 詳細ヘッダー＝物件名・住所・種別チップ（キマール参考デザイン・2026-07-24 中西さん指示） -->
       <div class="deal-header" id="detail-header"></div>
       <div class="card">
         <div class="card-header" style="border-bottom:none">
@@ -827,13 +817,10 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
         </div>
         <div class="card-body">
 
-          <!-- サマリータブ（判断ナビ） -->
           <div id="tab-summary" class="tab-content">
-            <!-- プロセスステップバー -->
             <div class="step-bar" id="summary-step-bar"></div>
             <div class="step-note" id="summary-step-note"></div>
 
-            <!-- 上段カード：次に考えましょう｜なぜこのステップなのか？（背景枠を連結） -->
             <div class="card mb16">
               <div class="card-body">
                 <div class="summary-2col">
@@ -852,7 +839,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
               </div>
             </div>
 
-            <!-- 下段カード：現在の収支サマリー｜判断ポイント（背景枠を連結） -->
             <div class="card mb16">
               <div class="card-body">
                 <div class="summary-2col">
@@ -868,7 +854,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
               </div>
             </div>
 
-            <!-- 物件資料（2026-07-24 中西さん指示＝タブから外し、サマリー内・過去の類似案件の上へ移動） -->
             <div class="card mb16">
               <div class="card-header">物件資料</div>
               <div class="card-body">
@@ -891,7 +876,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
               </div>
             </div>
 
-            <!-- 過去の類似案件 -->
             <div class="card">
               <div class="card-header">過去の類似案件（参考）</div>
               <div class="card-body">
@@ -900,7 +884,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
             </div>
           </div>
 
-          <!-- 収支タブ（登録・Excel出力ボタンはページ左上 pl-top-toolbar に移動済み） -->
           <div id="tab-pl" class="tab-content active">
             <div id="sheet-dup-warning"></div>
             <div id="first-est-box" class="first-est-box" style="display:none">
@@ -916,16 +899,11 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
               </div>
             </div>
 
-            <!-- 物件写真・資料ブロックは「物件資料」タブへ移動（2026-07-24 中西さん指示で収支タブから削除） -->
-
-            <!-- 登録・共有URLコピー＝収支タブの最下部に大きく表示（2026-07-24 中西さん指示。Excel出力ボタンは共有URLコピーに変更） -->
             <div class="pl-action-bar">
               <button class="btn btn-primary pl-action-btn" onclick="registerPL()">保存</button>
               <button class="btn btn-secondary pl-action-btn" onclick="copyShareUrl()">共有URLコピー</button>
-              <button class="btn btn-secondary pl-action-btn" onclick="downloadShushiCsv()">CSVダウンロード</button>
+              <button class="btn btn-secondary pl-action-btn" onclick="downloadShushiExcel()">Excelダウンロード</button>
             </div>
-
-            <!-- 「過去の事例をエリアから呼び出す」ボタンは一旦削除（2026-07-24 中西さん指示。機能自体は本実装の検討項目として保留） -->
 
             <div id="pl-legacy-metrics" style="display:none">
               <span id="c-total"></span><span id="pl-sell-a"></span><span id="pl-sell-b"></span><span id="pl-sell-c"></span>
@@ -935,10 +913,8 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
             </div>
           </div>
 
-          <!-- 市場調査タブ -->
           <div id="tab-market" class="tab-content">
             <div class="form-section-title">市場調査</div>
-            <!-- 近隣の販売在庫（近隣）は収支計算タブからこの市場調査タブへ移設（2026-07-25 中西さん指示）。renderMarketTab() が描画 -->
             <div id="market-stock"></div>
             <div class="form-section-title" style="margin-top:16px">調査メモ</div>
             <textarea class="form-textarea" style="min-height:120px" placeholder="競合状況・需要動向・特記事項など自由記入"></textarea>
@@ -947,7 +923,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
             </div>
           </div>
 
-          <!-- ヒアリングタブ -->
           <div id="tab-hearing" class="tab-content">
             <div class="form-section-title">販売会社ヒアリング（3社比較）</div>
             <div class="notice mb12">販売会社3社の回答を記録し、想定販売価格②（着地前後）と比較します。</div>
@@ -985,34 +960,26 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
             </div>
           </div>
 
-          <!-- 建築プランタブ（2026-07-24 中西さん指示で追加・ヒアリングと同じ3社比較の型） -->
           <div id="tab-archplan" class="tab-content">
-            <div class="form-section-title">建築プラン依頼（3社比較）</div>
-            <div class="notice mb12">建築会社への依頼と回答（建築費）を記録し、概算収支の建築費と比較します。</div>
+            <div class="form-section-title">建築プラン依頼</div>
             <div class="hearing-cards">
               <div class="hearing-card">
-                <div class="hearing-card-title">建築会社1</div>
+                <div class="hearing-card-title">建築会社①</div>
                 <div class="form-group"><label class="form-label">建築会社名</label><input class="form-input" type="text" id="ap-name-1"></div>
                 <div class="form-group"><label class="form-label">依頼日</label><input class="form-input" type="date" id="ap-date-1"></div>
                 <div class="form-group"><label class="form-label">回答日</label><input class="form-input" type="date" id="ap-ans-1"></div>
                 <div class="form-group"><label class="form-label">回答建築費（円）</label><input class="form-input" type="number" id="ap-cost-1" style="text-align:right"></div>
                 <div class="form-group"><label class="form-label">コメント</label><textarea class="hearing-note" id="ap-comment-1"></textarea></div>
+                <div class="shiryo-box mt12"><div class="shiryo-title">建築プラン資料（PDF・画像）</div><div id="ap-files-1"></div><button class="btn btn-secondary btn-sm mt8" onclick="openPlanFilePicker(1)">ファイルを選択（資料を追加）</button></div>
               </div>
               <div class="hearing-card">
-                <div class="hearing-card-title">建築会社2</div>
+                <div class="hearing-card-title">建築会社②</div>
                 <div class="form-group"><label class="form-label">建築会社名</label><input class="form-input" type="text" id="ap-name-2"></div>
                 <div class="form-group"><label class="form-label">依頼日</label><input class="form-input" type="date" id="ap-date-2"></div>
                 <div class="form-group"><label class="form-label">回答日</label><input class="form-input" type="date" id="ap-ans-2"></div>
                 <div class="form-group"><label class="form-label">回答建築費（円）</label><input class="form-input" type="number" id="ap-cost-2" style="text-align:right"></div>
                 <div class="form-group"><label class="form-label">コメント</label><textarea class="hearing-note" id="ap-comment-2"></textarea></div>
-              </div>
-              <div class="hearing-card">
-                <div class="hearing-card-title">建築会社3</div>
-                <div class="form-group"><label class="form-label">建築会社名</label><input class="form-input" type="text" id="ap-name-3"></div>
-                <div class="form-group"><label class="form-label">依頼日</label><input class="form-input" type="date" id="ap-date-3"></div>
-                <div class="form-group"><label class="form-label">回答日</label><input class="form-input" type="date" id="ap-ans-3"></div>
-                <div class="form-group"><label class="form-label">回答建築費（円）</label><input class="form-input" type="number" id="ap-cost-3" style="text-align:right"></div>
-                <div class="form-group"><label class="form-label">コメント</label><textarea class="hearing-note" id="ap-comment-3"></textarea></div>
+                <div class="shiryo-box mt12"><div class="shiryo-title">建築プラン資料（PDF・画像）</div><div id="ap-files-2"></div><button class="btn btn-secondary btn-sm mt8" onclick="openPlanFilePicker(2)">ファイルを選択（資料を追加）</button></div>
               </div>
             </div>
             <div class="flex gap8 mt16">
@@ -1024,7 +991,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
       </div>
     </div>
 
-    <!-- V6: 設定（スタブ） -->
     <div id="view-settings" class="view" style="display:none">
       <div class="view-header">
         <div>
@@ -1049,7 +1015,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
   </main>
 </div>
 
-<!-- 規定利益の関所モーダル（評価マークなし・事実と問いのみ） -->
 <div id="gate-modal" class="modal-overlay" style="display:none">
   <div class="modal-box">
     <div class="modal-title">確認</div>
@@ -1063,7 +1028,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
   </div>
 </div>
 
-<!-- 検討しない（見送り）＝理由を残して実績タブへ保存するモーダル -->
 <div id="miokuri-modal" class="modal-overlay" style="display:none">
   <div class="modal-box">
     <div class="modal-title">検討しない（見送りとして記録）</div>
@@ -1083,7 +1047,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
   </div>
 </div>
 
-<!-- 資料一覧モーダル（詳細上部の「資料を確認」から開く） -->
 <div id="shiryo-list-modal" class="modal-overlay" style="display:none">
   <div class="modal-box">
     <div class="modal-title">資料一覧</div>
@@ -1095,7 +1058,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
   </div>
 </div>
 
-<!-- 収支の未保存ガード＝保存せずに移動しようとしたときの確認（2026-07-24 中西さん指示） -->
 <div id="unsaved-modal" class="modal-overlay" style="display:none">
   <div class="modal-box">
     <div class="modal-title">保存されていない編集があります</div>
@@ -1108,7 +1070,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
   </div>
 </div>
 
-<!-- 仕入れ形態の変更モーダル＝登録後も後から変更できる（複数選択可・2026-07-24 中西さん指示） -->
 <div id="strategy-modal" class="modal-overlay" style="display:none">
   <div class="modal-box">
     <div class="modal-title">仕入れ形態の変更</div>
@@ -1120,15 +1081,12 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
   </div>
 </div>
 
-<!-- 資料添付用の隠しファイル選択（モック＝ファイル名のみメモリ保持・実アップロードなし） -->
 <input type="file" id="shiryo-file-input" multiple accept="image/*,.pdf" style="display:none" onchange="onShiryoSelected(this)">
 
 <script>
 const TODAY = '2026-07-11';
 const TODAY_DATE = new Date('2026-07-11');
 
-// reg＝各工程の「登録」フラグ（market:市場調査/pl:概算収支/hearing:ヒアリング/plan:建築プラン）
-// 値は現ステータスと矛盾しない初期値。荒川南千住(id:7)のみ market:false＝市場調査を飛ばした案件（デモ用）
 const DEALS = [
   {id:1,name:'○○邸新築',area:'世田谷',status:'概算収支作成済み',staff:'田中',type:'戸建て建売',photo:'photos/house1.jpg',acquiredDate:'2026-06-01',price:null,note:'',holdDate:null,reg:{market:true,pl:true,hearing:false,plan:false}},
   {id:2,name:'△△町土地',area:'杉並',status:'市場調査中',staff:'佐藤',type:'土地',photo:'photos/land1.jpg',acquiredDate:'2026-06-05',price:null,note:'',holdDate:null,reg:{market:true,pl:false,hearing:false,plan:false}},
@@ -1210,7 +1168,6 @@ const HISTORY = [
   {dealId:14,date:'2026-07-01',from:'未検討',to:'検討中',by:'佐藤'},
 ];
 
-/* ===== ユーティリティ ===== */
 function judge(rate, irr) {
   if (rate >= 0.10 && irr >= 0.10) return {k:'ok',mark:'◎',label:'推奨',cls:'j-ok'};
   if (rate >= 0.08 && irr >= 0.10) return {k:'warn',mark:'△',label:'条件付き可',cls:'j-warn'};
@@ -1267,15 +1224,12 @@ function setInner(id, html) {
   if (el) el.innerHTML = html;
 }
 function statusChip(status) {
-  // ステータスの色分けは行わない（単色・中西さん指示 2026-07-14）
   return '<span class="chip chip-status">' + status + '</span>';
 }
-/* 遷移先の表示ラベル：見送りは理由つきで表示（ホームの更新フィードで使用） */
 function toLabel(h) {
   return (h.to === '見送り' && h.reason) ? '見送り（理由：' + h.reason + '）' : h.to;
 }
 
-/* 一覧「次に行うこと」列＝ステータス連動の短句マップ（要件14節の9列準拠） */
 const NEXT_LIST_LABEL = {
   '未検討': '情報の整理',
   '検討中': '収支作成へ',
@@ -1290,10 +1244,8 @@ const NEXT_LIST_LABEL = {
   '契約': '販売計画へ',
 };
 
-/* ===== ビュー制御 ===== */
 let currentView = 'home';
 function setHash(h) { try { history.replaceState(null, '', '#' + h); } catch(e) {} }
-// このページ（開いている案件）の共有URLをコピー（2026-07-24 中西さん指示。URLに案件番号が入るため開くと同じ案件が表示される）
 function copyShareUrl() {
   const url = location.href;
   const done = () => showToast('このページの共有URLをコピーしました');
@@ -1311,7 +1263,6 @@ function copyShareUrlFallback(text, done) {
   document.body.removeChild(ta);
 }
 function showView(name, el) {
-  // 収支計算タブで未保存の編集があれば、別画面への移動前に確認（detail内の遷移は switchTab 側でガード）
   if (name !== 'detail' && typeof plGuardActive === 'function' && plGuardActive()) {
     guardPlNav(() => doShowView(name, el));
     return;
@@ -1331,25 +1282,22 @@ function doShowView(name, el) {
   if (name === 'settings') renderSettings();
 }
 
-/* ===== 一覧を開く（絞り込みなしの全件表示） ===== */
 function openListAll(el) {
   listTab = 'active';
   const fs = document.getElementById('filter-status');
   if (fs) fs.value = '';
   showView('list', el);
 }
-function onStatusFilterChange() { // ステータス絞り込み変更時：見送り・契約なら「実績」タブへ、それ以外は「進行中」へ自動で合わせる
+function onStatusFilterChange() {
   const v = ((document.getElementById('filter-status') || {value:''}).value) || '';
   if (v) listTab = PAST_STATUSES.includes(v) ? 'past' : 'active';
   renderList();
 }
 
-/* ===== V1 一覧 ===== */
 let currentDealId = null;
 
-/* 一覧タブ：進行中／実績（見送り・契約＝終了案件） */
 const PAST_STATUSES = ['見送り', '契約'];
-let listTab = 'active'; // 'active' | 'past'
+let listTab = 'active';
 function setListTab(tab) {
   listTab = tab;
   renderList();
@@ -1362,7 +1310,6 @@ function syncListTabBtns() {
 }
 
 function renderHoldBanner() {
-  // ログインユーザー（デモ固定＝田中）の担当分のみ表示（他担当の保留は本人の画面に出さない）
   const alertDeals = DEALS.filter(d => holdDays(d) > 30 && d.staff === '田中');
   const wrap = document.getElementById('hold-banner-wrap');
   if (!wrap) return;
@@ -1394,7 +1341,6 @@ function renderList() {
   });
 
   syncListTabBtns();
-  // タブ絞り込み：進行中＝終了案件（見送り・契約）以外／実績＝終了案件のみ
   deals = deals.filter(d => listTab === 'past' ? PAST_STATUSES.includes(d.status) : !PAST_STATUSES.includes(d.status));
   if (kw)      deals = deals.filter(d => d.name.toLowerCase().includes(kw) || d.area.toLowerCase().includes(kw));
   if (fStatus) deals = deals.filter(d => d.status === fStatus);
@@ -1412,7 +1358,7 @@ function renderList() {
       const isPast = PAST_STATUSES.includes(d.status);
       const pastCls = isPast ? ' past-row' : '';
       const alertCls = hd > 30 ? ' hold-alert' : '';
-      const myCls = (!isPast && d.staff === '田中') ? ' my-row' : '';  // ログインユーザー（デモ固定）の担当案件（実績タブではグレー優先）
+      const myCls = (!isPast && d.staff === '田中') ? ' my-row' : '';
       const holdInfo = hd > 30 ? '<span style="margin-left:6px;font-size:10px;color:var(--warn-fg);font-weight:700">' + hd + '日</span>' : '';
       const priceStr = d.price != null ? Math.round(d.price).toLocaleString('ja-JP') + '円' : '—';
       const sh = d.shiryo || [];
@@ -1445,8 +1391,7 @@ function listDealCellHtml(deal, holdInfo) {
     + '</div>';
 }
 
-/* ===== 資料管理：登録・収支・詳細のどこから追加しても同じ deal.shiryo 配列に一元化 ===== */
-let shiryoTargetId = null; // 数値＝案件ID／'__newreg__'＝新規登録画面の一時添付
+let shiryoTargetId = null;
 let shiryoEmptyNoteTimer = null;
 function getShiryo(deal) {
   if (!deal.shiryo) deal.shiryo = [];
@@ -1461,13 +1406,58 @@ function openShiryoPicker(dealId) {
   const inp = document.getElementById('shiryo-file-input');
   if (inp) { inp.value = ''; inp.click(); }
 }
-function openShiryoPickerNewreg() { // 新規登録画面：案件確定前の一時添付
+function getPlanFiles(deal, no) {
+  if (!deal.planFiles) deal.planFiles = {};
+  if (!deal.planFiles[no]) deal.planFiles[no] = [];
+  return deal.planFiles[no];
+}
+function openPlanFilePicker(no) {
+  if (currentDealId === null) { showToast('案件を選択してください'); return; }
+  shiryoTargetId = '__plan' + no + '__';
+  const inp = document.getElementById('shiryo-file-input');
+  if (inp) { inp.value = ''; inp.click(); }
+}
+function renderPlanFiles() {
+  const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
+  [1, 2].forEach(no => {
+    const list = document.getElementById('ap-files-' + no);
+    if (!list) return;
+    const files = deal ? getPlanFiles(deal, no) : [];
+    list.innerHTML = files.length === 0
+      ? '<div class="shiryo-empty">まだ資料がありません。プラン図面・見積書などを添付してください。</div>'
+      : files.map((f, i) => '<div class="shiryo-item"><span style="flex:1">' + escapeHtml(f.name) + '</span>'
+          + '<button class="shiryo-del" title="この資料を削除" onclick="removePlanFile(' + no + ',' + i + ')">✕ 削除</button></div>').join('');
+  });
+}
+function removePlanFile(no, idx) {
+  const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
+  if (!deal) return;
+  const files = getPlanFiles(deal, no);
+  if (!files[idx]) return;
+  const removed = files.splice(idx, 1);
+  showToast('資料「' + removed[0].name + '」を削除しました');
+  renderPlanFiles();
+}
+function openShiryoPickerNewreg() {
   shiryoTargetId = '__newreg__';
   const inp = document.getElementById('shiryo-file-input');
   if (inp) { inp.value = ''; inp.click(); }
 }
 function onShiryoSelected(inp) {
   if (!inp.files || inp.files.length === 0) return;
+  const planMatch = typeof shiryoTargetId === 'string' ? shiryoTargetId.match(/^__plan(\d+)__$/) : null;
+  if (planMatch) {
+    const no = Number(planMatch[1]);
+    const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
+    if (deal) {
+      const files = getPlanFiles(deal, no);
+      Array.from(inp.files).forEach(f => files.push({ name: f.name }));
+      showToast('建築会社' + (no === 1 ? '①' : '②') + 'の資料を' + inp.files.length + '件追加しました');
+      renderPlanFiles();
+    }
+    inp.value = '';
+    return;
+  }
   if (shiryoTargetId === '__newreg__') {
     Array.from(inp.files).forEach(f => newregShiryo.push({name: f.name}));
     showToast('資料を' + inp.files.length + '件添付しました（登録時に案件へ保存されます）');
@@ -1504,7 +1494,6 @@ function refreshShiryoViews() {
   renderShiryoDetail();
   renderShiryoListModal();
 }
-/* 詳細画面上部の資料バー（開いてすぐ見える位置） */
 function renderShiryoDetail() {
   const btn = document.getElementById('detail-shiryo-check-btn');
   if (!btn) return;
@@ -1567,7 +1556,6 @@ function renderShiryoListModal() {
     + '<button class="shiryo-del" title="この資料を削除" onclick="removeShiryo(' + deal.id + ',' + i + ')">✕ 削除</button></div>'
   }).join('');
 }
-/* 新規登録画面の資料枠（一時添付 newregShiryo を表示） */
 function renderShiryoNewreg() {
   const list = document.getElementById('newreg-shiryo-list');
   if (!list) return;
@@ -1590,15 +1578,11 @@ function renderShiryoPL() {
   const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
   if (!deal) { list.innerHTML = '<div class="shiryo-empty">案件を選択すると資料を添付できます</div>'; return; }
   const sh = getShiryo(deal);
-  // 資料項目内はファイル名のみ表示（2026-07-24 中西さん指示）
   list.innerHTML = sh.length === 0
     ? '<div class="shiryo-empty">まだ資料がありません。物件概要書・現地写真・図面などを添付できます。</div>'
     : sh.map(f => '<div class="shiryo-item"><span style="flex:1">' + f.name + '</span></div>').join('');
 }
 
-/* ===== 物件資料タブ（キマール参考デザイン・2026-07-24 中西さん指示) =====
-   地図表示は2026-07-24 中西さん指示で削除（一旦不要）
-   表紙＝「表紙に設定」ボタンで画像またはPDFを選択。PDFは1ページ目を表紙として表示（案b・2026-07-24 中西さん決定） */
 function shiryoIsImg(n) { return /\.(jpe?g|png|gif|webp)$/i.test(n); }
 function shiryoIsPdf(n) { return /\.pdf$/i.test(n); }
 function renderShiryoTab() {
@@ -1608,10 +1592,8 @@ function renderShiryoTab() {
   const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
   if (!deal) { photoBox.innerHTML = '写真未登録'; listBody.innerHTML = ''; return; }
   const sh = getShiryo(deal);
-  // 表紙の既定＝最初の画像ファイル。表紙に設定した資料が削除されていたら既定に戻す
   if (deal.shiryoTopName && !sh.some(f => f.name === deal.shiryoTopName)) deal.shiryoTopName = null;
   if (!deal.shiryoTopName) { const first = sh.find(f => shiryoIsImg(f.name)); if (first) deal.shiryoTopName = first.name; }
-  // 表紙の表示：PDFなら「1ページ目を表紙化」のプレースホルダー・画像ならサンプル写真
   if (deal.shiryoTopName && shiryoIsPdf(deal.shiryoTopName)) {
     photoBox.innerHTML = '<div class="shiryo-pdf-cover"><div class="shiryo-pdf-badge">PDF</div><div class="shiryo-pdf-name">' + escapeHtml(deal.shiryoTopName) + '</div><div class="shiryo-pdf-note">1ページ目を表紙として表示します（本実装で画像化）</div></div>';
   } else {
@@ -1658,23 +1640,24 @@ function shiryoDrop(e, el) {
   refreshShiryoViews();
 }
 
-/* 仕入れ形態（どういう形での仕入れを検討しているか）＝物件登録時に複数選択し、ヘッダーのチップと収支シートの初期選択に使う（2026-07-24 中西さん指示） */
 const STRATEGY_OPTIONS = ['戸建て建売', '戸建て土地売り', '土地転売', 'アパート'];
 function dealStrategies(deal) {
   if (deal && Array.isArray(deal.strategies) && deal.strategies.length) return deal.strategies;
-  // 既存サンプル案件は種別から導出（表記重複を避け、仕入れ形態の語彙に統一）
   const t = (deal && deal.type) || '';
   if (t.includes('アパート')) return ['アパート'];
   if (t.includes('土地') && !t.includes('戸建て')) return ['土地転売'];
   return ['戸建て建売'];
 }
-// 仕入れ形態→収支シート（Excelフォーマット）の対応（2026-07-25 中西さん指示：形態を選ぶと該当フォーマットに自動で切替）
-// 戸建て建売・戸建て土地売り＝戸建てシート／土地転売＝土地転売シート／アパート＝アパートシート
 function strategyToSheet(s) {
   return s === 'アパート' ? 'アパート' : s === '土地転売' ? '土地転売（業者売り）' : '戸建て（建売・土地売り）';
 }
-/* 詳細ヘッダー＝左上に物件名・住所・仕入れ形態チップ（キマール参考デザイン・2026-07-24 中西さん指示）
-   物件名・住所は収支画面が正本（B1/B3）＝未入力時は案件登録の値を表示 */
+const STAFF_PHOTOS = {};
+function staffAvatar(staff) {
+  const name = String(staff || '').trim();
+  const src = STAFF_PHOTOS[name];
+  if (src) return '<img class="staff-avatar" src="' + escapeHtml(src) + '" alt="' + escapeHtml(name) + '">';
+  return '<span class="staff-avatar staff-avatar-initial" title="担当者の顔写真（登録すると写真が表示されます）">' + escapeHtml(name.slice(0, 1)) + '</span>';
+}
 function renderDetailHeader() {
   const el = document.getElementById('detail-header');
   if (!el) return;
@@ -1682,17 +1665,16 @@ function renderDetailHeader() {
   if (!deal) { el.innerHTML = ''; return; }
   const name = String(shushiResolvedValue(activeShushiSheet, 'B1') || '').trim() || deal.name;
   const addr = String(shushiResolvedValue(activeShushiSheet, 'B3') || '').trim() || deal.address || '';
-  // 仕入れ形態チップ＝クリックで該当フォーマット（収支シート）に切替。現在表示中のフォーマットのチップをアクティブ表示（2026-07-25 中西さん指示・3タブの代わり）
   const chips = dealStrategies(deal).map(s => {
     const sh = strategyToSheet(s);
     return '<button type="button" class="deal-chip deal-chip-sheet' + (sh === activeShushiSheet ? ' active' : '') + '" onclick="switchShushiSheet(\'' + sh + '\')" title="このフォーマットに切替">' + escapeHtml(s) + '</button>';
   }).join('');
   el.innerHTML = '<div><h1 class="deal-title">' + escapeHtml(name) + '</h1>'
     + (addr ? '<div class="deal-addr">' + escapeHtml(addr) + '</div>' : '')
-    + '<div class="deal-chips">' + chips + statusChip(deal.status) + '<button class="deal-chip-edit" onclick="openStrategyModal()" title="仕入れ形態を変更">変更</button></div></div>'
-    + '<div class="deal-header-side"><span>担当：' + escapeHtml(deal.staff) + '</span><span>取得日：' + escapeHtml(deal.acquiredDate || '—') + '</span><span>作成日：' + escapeHtml(TODAY) + '</span></div>';
+    + '<div class="deal-chips">' + chips + '<button class="deal-chip-edit" onclick="openStrategyModal()" title="仕入れ形態を変更">変更</button></div></div>'
+    + '<div class="deal-header-side"><span class="deal-staff">担当：' + escapeHtml(deal.staff) + staffAvatar(deal.staff) + '</span><span>取得日：' + escapeHtml(deal.acquiredDate || '—') + '</span><span>作成日：' + escapeHtml(TODAY) + '</span>'
+    + '<span class="deal-side-status">' + statusChip(deal.status) + '</span></div>';
 }
-/* 仕入れ形態は登録後も変更できる（複数→最終的に1つへ絞る等・2026-07-24 中西さん指示） */
 let strategyModalChanged = false;
 function openStrategyModal() {
   const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
@@ -1719,18 +1701,15 @@ function toggleDealStrategy(btn) {
     cur.push(s);
   }
   deal.strategies = STRATEGY_OPTIONS.filter(x => cur.includes(x));
-  // 先頭＝主形態。一覧の種別と、次回この案件を開いたときの収支シート初期選択に反映
   const primary = deal.strategies[0];
   deal.type = primary === 'アパート' ? 'アパート' : primary === '土地転売' ? '土地' : '戸建て建売';
   btn.classList.toggle('active');
   strategyModalChanged = true;
-  // 選んだ形態＝該当フォーマット（収支シート）に即連動（2026-07-25 中西さん指示）。
-  // 追加した形態のシートを表示／削除で表示中フォーマットが選択から外れたら主形態のシートへ切替。
   const added = deal.strategies.includes(s);
   const targetSheet = added ? strategyToSheet(s)
     : (deal.strategies.some(x => strategyToSheet(x) === activeShushiSheet) ? activeShushiSheet : strategyToSheet(primary));
   if (targetSheet !== activeShushiSheet) {
-    switchShushiSheet(targetSheet); // 収支シート再描画＋ヘッダー（チップのアクティブ）更新
+    switchShushiSheet(targetSheet);
   } else {
     renderDetailHeader();
   }
@@ -1740,24 +1719,20 @@ function closeStrategyModal() {
   if (strategyModalChanged) showToast('仕入れ形態を更新しました');
 }
 
-/* ===== V3 詳細 ===== */
 function openDetail(id) {
   persistCurrentShushiState();
   currentDealId = id;
-  plDirty = false; // 案件を開き直したら未保存フラグをリセット
+  plDirty = false;
   setHash('deal' + id);
   const deal = DEALS.find(d => d.id === id);
   if (!deal) return;
 
-  // サイドバーに案件詳細の項目は置かない（一覧・ホームのカードから遷移する）
   showView('detail', null);
 
   const bc = document.getElementById('detail-breadcrumb-name');
   if (bc) bc.textContent = deal.name;
 
-  // 詳細ヘッダーはシート確定後（setShushiSheetByDeal 後）に renderDetailHeader で描画
 
-  // 収支タブ初期値（円単位）
   if (id === 5) {
     sv('pl-land',40000000); sv('pl-build',24000000); sv('pl-kukaku',1);
     const mSel = document.getElementById('pl-months'); if (mSel) mSel.value = '12';
@@ -1771,7 +1746,6 @@ function openDetail(id) {
     sv('pl-address','江戸川区北葛西3丁目'); sv('pl-name','北葛西建売プロジェクト');
     sv('pl-yoto','第一種低層住居専用地域'); sv('pl-kotsu','東西線 葛西駅 徒歩8分');
     sv('pl-price-basis','近隣成約 坪単価270〜280万円・販売中競合2件の中間');
-    // ヒアリング3社比較：販売会社1にサンプル回答1件・2/3は空
     sv('hc-name-1','◯◯不動産販売'); sv('hc-tanto-1',''); sv('hc-date-1',''); sv('hc-price-1',79000000);
     sv('hc-comment-1','駅距離を考慮するとやや強気。7,800万前後が無難');
     for (let i = 2; i <= 3; i++) { sv('hc-name-'+i,''); sv('hc-tanto-'+i,''); sv('hc-date-'+i,''); sv('hc-price-'+i,''); sv('hc-comment-'+i,''); }
@@ -1794,8 +1768,8 @@ function openDetail(id) {
     sv('hearing-other','');
   }
 
-  // 建築プランタブの入力欄をリセット（案件間で値が残らないように）
-  for (let i = 1; i <= 3; i++) { sv('ap-name-' + i, ''); sv('ap-date-' + i, ''); sv('ap-ans-' + i, ''); sv('ap-cost-' + i, ''); sv('ap-comment-' + i, ''); }
+  for (let i = 1; i <= 2; i++) { sv('ap-name-' + i, ''); sv('ap-date-' + i, ''); sv('ap-ans-' + i, ''); sv('ap-cost-' + i, ''); sv('ap-comment-' + i, ''); }
+  renderPlanFiles();
 
   setInner('sheet-dup-warning', '');
   setShushiSheetByDeal(deal);
@@ -1804,7 +1778,6 @@ function openDetail(id) {
   renderShiryoPL();
   renderShiryoTab();
   renderShiryoDetail();
-  // サマリータブをデフォルト表示（先頭タブは物件資料のため onclick で特定する）
   const summaryBtn = document.querySelector('#detail-tabs .tab-btn[onclick*="summary"]');
   switchTab('summary', summaryBtn);
   renderSummaryTab(deal);
@@ -1825,7 +1798,6 @@ function sv(id, val) {
 }
 
 
-/* ===== 完成版Excel 3シート対応：収支シート描画・計算 ===== */
 const SHUSHI_SHEETS = ['戸建て（建売・土地売り）','土地転売（業者売り）','アパート'];
 let activeShushiSheet = SHUSHI_SHEETS[0];
 let shushiCells = {};
@@ -1845,31 +1817,30 @@ const SHUSHI_LABELS = {
 };
 
 const SHUSHI_INPUTS = {
-  '戸建て（建売・土地売り）': ['G2','G3','B6','B7','B8','B9','I6','J6','N6','I7','J7','N7','I8','J8','N8','I9','J9','N9','I10','J10','N10','I11','J11','N11','C16','C17','C18','C19','C20','C21','C22','C23','C24','I17','J17','N17','I18','J18','N18','I19','J19','N19','I20','J20','N20','I21','J21','N21','G22','G23','G24','C25','C26','C27','C28','C29','K26','U26','U27','C31','K32','U32','U33','K38','U38','U39','C39','C41','C42','C43','C47','D45','D46'],
-  '土地転売（業者売り）': ['G3','B6','B7','B8','B9','I6','I7','I8','I9','I10','I11','C16','C17','C18','C19','C20','C21','C22','C23','I17','I18','I19','I20','I21','G22','G23','C24','G24','K25','C25','C26','K31','C34','C35','C36','C37','C38','D38','C39','D39'],
-  'アパート': ['G3','G4','J4','K4','L4','M4','J5','K5','L5','M5','B6','J6','K6','L6','M6','B7','J7','K7','L7','M7','B8','J8','K8','L8','M8','B9','J9','K9','L9','M9','N14','C16','C17','C18','C19','C20','C21','C22','N20','G21','G22','G24','C25','C26','C27','C28','C29','C30','C40','C41','C42','C43','C47','D45','D46']
+  '戸建て（建売・土地売り）': ['G2','G3','B6','B7','B8','B9','I6','J6','N6','I7','J7','N7','I8','J8','N8','I9','J9','N9','I10','J10','N10','I11','J11','N11','C16','C17','C18','C19','C20','C21','C22','C23','C24','I17','J17','N17','I18','J18','N18','I19','J19','N19','I20','J20','N20','I21','J21','N21','G22','G23','G24','C25','C26','C27','C28','C29','K26','U26','U27','C31','K32','U32','U33','U34','K38','U38','U39','U28','C39','C41','C42','C43','C44','C47','D45','D46','C39_2'],
+  '土地転売（業者売り）': ['G3','B6','B7','B8','B9','I6','I7','I8','I9','I10','I11','C16','C17','C18','C19','C20','C21','C22','C23','I17','I18','I19','I20','I21','G22','G23','C24','G24','K25','C25','C26','K31','C34','C35','C36','C37','D38','D39','C34_2'],
+  'アパート': ['G3','G4','J4','K4','L4','M4','J5','K5','L5','M5','B6','J6','K6','L6','M6','B7','J7','K7','L7','M7','B8','J8','K8','L8','M8','B9','J9','K9','L9','M9','N14','C16','C17','C18','C19','C20','C21','C22','N20','G21','G22','G24','C25','C26','C27','C28','C29','C30','C40','C41','C42','C43','C44','C47','D45','D46','C40_2']
 };
 const SHUSHI_META_INPUTS = {
-  '戸建て（建売・土地売り）': ['B1','B3','B4','B5','B5_2','B10','B11','B23','B24','B31','B47','D8','D9','D10','D11','G4','G5','G6','G7','G8','G9','G10','G11','S6','W6','Z6','S7','W7','Z7','S8','W8','Z8','S9','W9','Z9','S10','W10','Z10','S11','W11','Z11','S17','W17','Z17','S18','W18','Z18','S19','W19','Z19','S20','W20','Z20','S21','W21','Z21','D17','D18','D19','D20','D22','D26','D28','D30','X26','Z26','AB26','X27','Z27','AB27','D41','D42','D43','D44','D45','D46','X32','Z32','AB32','X33','Z33','AB33','X38','Z38','AB38','X39','Z39','AB39'],
-  '土地転売（業者売り）': ['B1','B3','B4','B5','B5_2','B10','B11','D8','D9','D10','D11','G4','G5','G6','G7','G8','G9','G10','G11','J6','N6','S6','W6','Z6','J7','N7','S7','W7','Z7','J8','N8','S8','W8','Z8','J9','N9','S9','W9','Z9','J10','N10','S10','W10','Z10','J11','N11','S11','W11','Z11','J17','N17','S17','W17','Z17','J18','N18','S18','W18','Z18','J19','N19','S19','W19','Z19','J20','N20','S20','W20','Z20','J21','N21','S21','W21','Z21','D19','D20','D21','D22','D23','D24','D25','D26','D35','D36','D37','D38','D39'],
-  'アパート': ['B1','B3','B4','B5','B5_2','B10','B11','D8','D9','D10','D11','G4','G6','G7','G8','G9','G10','K4','K5','K6','K7','K8','K9','D19','D20','D21','D22','D25','D26','D27','D28','D29','D30','D41','D42','D43','D44','D45','D46','D47']
+  '戸建て（建売・土地売り）': ['B1','B3','B4','B5','B5_2','B10','B11','B23','B24','B31','B43','B47','B39_2','D8','D9','D10','D11','G4','G5','G6','G7','G8','G9','G10','G11','S6','W6','Z6','S7','W7','Z7','S8','W8','Z8','S9','W9','Z9','S10','W10','Z10','S11','W11','Z11','S17','W17','Z17','S18','W18','Z18','S19','W19','Z19','S20','W20','Z20','S21','W21','Z21','D17','D18','D19','D20','D22','D26','D28','D30','X26','Z26','AB26','X27','Z27','AB27','X28','Z28','AB28','D41','D42','D43','D44','D45','D46','X32','Z32','AB32','X33','Z33','AB33','X34','Z34','AB34','X38','Z38','AB38','X39','Z39','AB39'],
+  '土地転売（業者売り）': ['B1','B3','B4','B5','B5_2','B10','B11','B34_2','D8','D9','D10','D11','G4','G5','G6','G7','G8','G9','G10','G11','J6','N6','S6','W6','Z6','J7','N7','S7','W7','Z7','J8','N8','S8','W8','Z8','J9','N9','S9','W9','Z9','J10','N10','S10','W10','Z10','J11','N11','S11','W11','Z11','J17','N17','S17','W17','Z17','J18','N18','S18','W18','Z18','J19','N19','S19','W19','Z19','J20','N20','S20','W20','Z20','J21','N21','S21','W21','Z21','D19','D20','D21','D22','D23','D24','D25','D26','D35','D36','D37','D38','D39'],
+  'アパート': ['B1','B3','B4','B5','B5_2','B10','B11','B43','B40_2','D8','D9','D10','D11','G4','G6','G7','G8','G9','G10','K4','K5','K6','K7','K8','K9','D19','D20','D21','D22','D25','D26','D27','D28','D29','D30','D41','D42','D43','D44','D45','D46','D47']
 };
-// 2026-07-24 Codexダブルチェックで原本と完全一致に補正（アパート末尾8セルは式・値なしの黄色塗りのみ＝挙動への影響なし）
 const SHUSHI_YELLOW = {
   '戸建て（建売・土地売り）': ['F19','M25','K26','P26','K27','K28','C30','M31','C32','K32','P32','C33','K33','C34','K34','C35','C36','C37','M37','C38','K38','P38','K39','K40','C44','C45','C46'],
   '土地転売（業者売り）': ['F19','M24','K25','P25','K26','K27','M30','K31','P31','K32','K33'],
   'アパート': ['I10','J10','L10','O10','K15','P15','K16','K17','F19','K21','P21','K22','K24','K30','K31','K32','C33','C34','C35','C36','C37','C38','C39','C44','C45','C46','C47','K10','M10','K23','L23','M23','N23','O23']
 };
 const SHUSHI_FORMULAS = {
-  '戸建て（建売・土地売り）': ['K2','C6','C7','P6','P7','P8','P9','P10','P11','D16','F16','P17','P18','F19','P19','P20','P21','D25','G25','M25','P26','K27','K28','M31','C30','C32','P32','C33','K33','C34','K34','C35','C36','C37','M37','C38','P38','K39','K40','C44','C45','C46','C48','D48','G54','I54','I56','G58','I58','I62','G64','I64','I68'],
-  '土地転売（業者売り）': ['K2','C6','C7','P6','P7','P8','P9','P10','P11','D16','F16','P17','P18','P19','P20','P21','F19','M24','G25','P25','K26','K27','C27','C28','C29','C30','C31','C32','C33','M30','P31','K32','K33','C40','D40','G46','I46','I48','G50','I50','I54','G56','I56','I60'],
-  'アパート': ['K2','O4','O5','C6','O6','C7','O7','O8','O9','J10','L10','O10','K15','P15','D16','F16','K16','K17','F19','K21','P21','K22','K24','G25','K30','K31','K32','C33','C34','C35','C36','C37','C38','C39','C44','C45','C46','C48','D48','G55','I55','I57','G59','I59','I63','G65','I65','I69']
+  '戸建て（建売・土地売り）': ['K2','C6','C7','P6','P7','P8','P9','P10','P11','D16','F16','P17','P18','F19','P19','P20','P21','D25','G25','M25','P26','K27','K28','M31','C30','C32','P32','C33','K33','C34','K34','C35','C36','C37','M37','C38','P38','K39','K40','C45','C46','C48','D48','G54','I54','I56','G58','I58','I62','G64','I64','I68'],
+  '土地転売（業者売り）': ['K2','C6','C7','P6','P7','P8','P9','P10','P11','D16','F16','P17','P18','P19','P20','P21','F19','M24','G25','P25','K26','K27','C27','C28','C29','C30','C31','C32','C33','M30','P31','K32','K33','C38','C39','C40','D40','G46','I46','I48','G50','I50','I54','G56','I56','I60'],
+  'アパート': ['K2','O4','O5','C6','O6','C7','O7','O8','O9','J10','L10','O10','K15','P15','D16','F16','K16','K17','F19','K21','P21','K22','K24','G25','K30','K31','K32','C33','C34','C35','C36','C37','C38','C39','C45','C46','C48','D48','G55','I55','I57','G59','I59','I63','G65','I65','I69']
 };
-const SHUSHI_TEXT_CELLS = ['B1','B3','B4','B5','B5_2','B10','B11','B23','B24','B31','B47','D8','D9','D10','D11','G4','G5','G6','G7','G8','G9','G10','G11','S6','W6','Z6','S7','W7','Z7','S8','W8','Z8','S9','W9','Z9','S10','W10','Z10','S11','W11','Z11','S17','W17','Z17','S18','W18','Z18','S19','W19','Z19','S20','W20','Z20','S21','W21','Z21','D17','D18','D19','D20','D22','D25','D26','D30','D41','D42','D43','D44','D47','X26','Z26','AB26','X27','Z27','AB27','X32','Z32','AB32','X33','Z33','AB33','X38','Z38','AB38','X39','Z39','AB39','K4','K5','K6','K7','K8','K9'];
+const SHUSHI_TEXT_CELLS = ['B1','B3','B4','B5','B5_2','B10','B11','B23','B24','B31','B47','D8','D9','D10','D11','G4','G5','G6','G7','G8','G9','G10','G11','S6','W6','Z6','S7','W7','Z7','S8','W8','Z8','S9','W9','Z9','S10','W10','Z10','S11','W11','Z11','S17','W17','Z17','S18','W18','Z18','S19','W19','Z19','S20','W20','Z20','S21','W21','Z21','D17','D18','D19','D20','D22','D25','D26','D30','D41','D42','D43','D44','D47','X26','Z26','AB26','X27','Z27','AB27','X28','Z28','AB28','X32','Z32','AB32','X33','Z33','AB33','X34','Z34','AB34','X38','Z38','AB38','X39','Z39','AB39','K4','K5','K6','K7','K8','K9'];
 const SHUSHI_SAMPLE = {
   '戸建て（建売・土地売り）': {B1:'北葛西建売プロジェクト',B3:'江戸川区北葛西3丁目',B4:'北葛西三丁目100番1',B5:'東西線「西葛西」駅徒歩9分',G2:1,G3:12,B6:118.4,B7:96.8,B8:150,B9:60,B10:'南側：4.5m公道',D8:'第一種住居地域',D9:'準防火',D10:'第二種高度地区',D11:'最低敷地70㎡',I6:1,J6:89800000,N6:112.5,S6:'96.1㎡（4LDK）',W6:'西葛西9分',Z6:'北葛西3丁目',I7:2,J7:86800000,N7:105.2,S7:'93.5㎡（4LDK）',W7:'葛西11分',Z7:'中葛西4丁目',I8:3,J8:92800000,N8:120.6,S8:'101.2㎡（4LDK）',W8:'西葛西7分',Z8:'西葛西6丁目',C16:52000000,D19:'35.82坪',D20:'20万以下は無し',D22:'2年分',I17:1,J17:55800000,N17:115.4,S17:'整形地',W17:'西葛西10分',Z17:'北葛西4丁目',I18:2,J18:59800000,N18:124.1,S18:'角地',W18:'葛西9分',Z18:'中葛西5丁目',G22:300000,G23:260000,G24:0,C25:23000000,K26:103000000,U26:10300,X26:'4LDK',Z26:'96.1㎡',AB26:'有',U27:10100,X27:'4LDK',Z27:'93.5㎡',AB27:'有',C30:88000,C31:0,D32:1.5,K32:99000000,U32:9900,X32:'4LDK',Z32:'96.1㎡',AB32:'有',D33:3,U33:9700,X33:'4LDK',Z33:'93.5㎡',AB33:'有',D34:1.4,D35:0.3,D36:2,D37:2,D38:0.4,K38:95000000,U38:9500,X38:'4LDK',Z38:'96.1㎡',AB38:'有',C39:30000,U39:9300,X39:'4LDK',Z39:'93.5㎡',AB39:'有',C41:120000,C42:800000,D42:'50万以下は無し',D43:'あれば項目変更する',D45:3.5,D46:1},
-  '土地転売（業者売り）': {B1:'南葛西土地転売',B3:'江戸川区南葛西2丁目',B4:'南葛西二丁目200番8',B5:'東西線「葛西」駅徒歩13分',G3:12,B6:132.4,B7:128.6,B8:200,B9:60,B10:'東側：5.0m公道',D8:'第一種住居地域',D9:'準防火地域',D10:'第三種高度地区',D11:'最低敷地70㎡',I6:1,J6:142000000,N6:130.4,S6:'125.3㎡（4LDK）',W6:'葛西12分',Z6:'南葛西2丁目',I7:2,J7:136000000,N7:124.8,S7:'118.6㎡（4LDK）',W7:'葛西14分',Z7:'南葛西3丁目',I8:3,J8:148000000,N8:138.1,S8:'131.0㎡（5LDK）',W8:'西葛西15分',Z8:'臨海町1丁目',C16:108000000,D19:'42.35坪',D20:'70万円/1棟',I17:1,J17:118000000,N17:126.4,S17:'整形地',W17:'葛西13分',Z17:'南葛西2丁目',I18:2,J18:123000000,N18:134.2,S18:'角地',W18:'葛西11分',Z18:'南葛西4丁目',I19:3,J19:112000000,N19:121.5,S19:'古家あり',W19:'葛西15分',Z19:'南葛西1丁目',G22:225000,G23:210000,C24:0,G24:0,K25:139000000,D27:1.5,D28:3,D29:1.4,D30:0.3,D31:2,K31:132000000,D32:2,D33:0.4,C34:30000,D38:3.5,D39:1},
-  'アパート': {B1:'船堀アパート計画',B3:'江戸川区船堀5丁目',B4:'船堀五丁目300番2',B5:'都営新宿線「船堀」駅徒歩8分',G3:18,G4:12,B6:142.2,B7:218.4,B8:150,B9:60,B10:'北側：約4.0m',D8:'準工業地域',D9:'準防火地域',D10:'第三種高度地区',D11:'検査済証あり',J4:22.5,K4:'1K',L4:2,M4:86000,J5:25.1,K5:'1DK',L5:2,M5:98000,J6:31.4,K6:'1LDK',L6:2,M6:124000,J7:22.5,K7:'1K',L7:2,M7:84000,J8:25.1,K8:'1DK',L8:2,M8:96000,J9:31.4,K9:'1LDK',L9:2,M9:118000,N14:6,C16:62000000,D19:'45.30坪',D20:'20万以下は無し',D22:'2年分',C19:2800000,N20:6.5,G21:295000,G22:265000,G24:0,C25:68000000,D33:1.5,D34:3,D35:1.4,D36:0.3,D37:2,D38:2,D39:0.4,C40:30000,C41:250000,D45:2.7,D46:1}
+  '土地転売（業者売り）': {B1:'南葛西土地転売',B3:'江戸川区南葛西2丁目',B4:'南葛西二丁目200番8',B5:'東西線「葛西」駅徒歩13分',G3:12,B6:132.4,B7:128.6,B8:200,B9:60,B10:'東側：5.0m公道',D8:'第一種住居地域',D9:'準防火',D10:'第三種高度地区',D11:'最低敷地70㎡',I6:1,J6:142000000,N6:130.4,S6:'125.3㎡（4LDK）',W6:'葛西12分',Z6:'南葛西2丁目',I7:2,J7:136000000,N7:124.8,S7:'118.6㎡（4LDK）',W7:'葛西14分',Z7:'南葛西3丁目',I8:3,J8:148000000,N8:138.1,S8:'131.0㎡（5LDK）',W8:'西葛西15分',Z8:'臨海町1丁目',C16:108000000,D19:'42.35坪',D20:'70万円/1棟',I17:1,J17:118000000,N17:126.4,S17:'整形地',W17:'葛西13分',Z17:'南葛西2丁目',I18:2,J18:123000000,N18:134.2,S18:'角地',W18:'葛西11分',Z18:'南葛西4丁目',I19:3,J19:112000000,N19:121.5,S19:'古家あり',W19:'葛西15分',Z19:'南葛西1丁目',G22:225000,G23:210000,C24:0,G24:0,K25:139000000,D27:1.5,D28:3,D29:1.4,D30:0.3,D31:2,K31:132000000,D32:2,D33:0.4,C34:30000,D38:3.5,D39:1},
+  'アパート': {B1:'船堀アパート計画',B3:'江戸川区船堀5丁目',B4:'船堀五丁目300番2',B5:'都営新宿線「船堀」駅徒歩8分',G3:18,G4:12,B6:142.2,B7:218.4,B8:150,B9:60,B10:'北側：約4.0m',D8:'準工業地域',D9:'準防火',D10:'第三種高度地区',D11:'検査済証あり',J4:22.5,K4:'1K',L4:2,M4:86000,J5:25.1,K5:'1DK',L5:2,M5:98000,J6:31.4,K6:'1LDK',L6:2,M6:124000,J7:22.5,K7:'1K',L7:2,M7:84000,J8:25.1,K8:'1DK',L8:2,M8:96000,J9:31.4,K9:'1LDK',L9:2,M9:118000,N14:6,C16:62000000,D19:'45.30坪',D20:'20万以下は無し',D22:'2年分',C19:2800000,N20:6.5,G21:295000,G22:265000,G24:0,C25:68000000,D33:1.5,D34:3,D35:1.4,D36:0.3,D37:2,D38:2,D39:0.4,C40:30000,C41:250000,D45:2.7,D46:1}
 };
 const SHUSHI_SUMMARY = {
   '戸建て（建売・土地売り）': {basis:'純利益', sell:'K32', total:'C48', profit:'K34', rate:'P32', irr:'G25', sellA:'K26', sellB:'K32', sellC:'K38', profitA:'K28', profitB:'K34', profitC:'K40', rateA:'P26', rateB:'P32', rateC:'P38'},
@@ -1878,16 +1849,16 @@ const SHUSHI_SUMMARY = {
 };
 const SHUSHI_SAMPLE_DEAL_IDS = [5, 16, 17];
 const OLD_ID_CELL = {'pl-land':'C16','pl-build':'C25','pl-menseki':'B6','pl-yoseki':'B8','pl-tatemono':'B7','pl-krosenka':'G23','pl-beval':'G24','pl-rosenka':'G22','pl-months':'G3','pl-kukaku':'G2','pl-name':'B1','pl-address':'B3','pl-yoto':'D8','pl-kotsu':'B5','pl-sell-a':'__sellA','pl-sell-b':'__sellB','pl-sell-c':'__sellC'};
-const SHUSHI_STATE = {}; // dealId -> sheet -> cell -> user input
+const SHUSHI_STATE = {};
 
 function shushiCellId(cell) { return 'shushi-' + cell.replace(/[^A-Z0-9]/g, ''); }
+const YOTO_CHIIKI = ['第一種低層住居専用地域','第二種低層住居専用地域','第一種中高層住居専用地域','第二種中高層住居専用地域','第一種住居地域','第二種住居地域','準住居地域','田園住居地域','近隣商業地域','商業地域','準工業地域','工業地域','工業専用地域'];
 function shushiIsInput(sheet, cell) { return SHUSHI_INPUTS[sheet].includes(cell) || SHUSHI_META_INPUTS[sheet].includes(cell); }
 function shushiIsFormula(sheet, cell) { return SHUSHI_FORMULAS[sheet].includes(cell); }
 function shushiIsText(cell) { return SHUSHI_TEXT_CELLS.includes(cell); }
 function escHtml(v) { return String(v === undefined || v === null ? '' : v).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
 function shushiDeal() { return currentDealId !== null ? DEALS.find(d => d.id === currentDealId) : null; }
-// 自動計算値をデフォルト表示しつつ手入力で上書き可能なセル（仲介手数料C17）。手入力されたら記録し、再計算で上書きしない。空にすると自動へ戻る（2026-07-25 中西さん指示）
-const SHUSHI_AUTODEFAULT_CELLS = ['C17'];
+const SHUSHI_AUTODEFAULT_CELLS = ['C17','C44','C37'];
 const shushiManualCells = {};
 function shushiManualKey(cell) { const d = shushiDeal(); return (d ? d.id : 'x') + '|' + activeShushiSheet + '|' + cell; }
 function shushiIsManual(cell) { return !!shushiManualCells[shushiManualKey(cell)]; }
@@ -1897,7 +1868,6 @@ function shushiStateFor(dealId, sheet) {
   if (!SHUSHI_STATE[dealId][sheet]) SHUSHI_STATE[dealId][sheet] = {};
   return SHUSHI_STATE[dealId][sheet];
 }
-// 三為スキーム（土地転売のみ）。ONのとき取得税・固定資産税・都市計画税・登録免許税・抵当権を0にする（2026-07-26 先方回答Q&A No.16）
 function shushiIsSanyu() {
   const deal = shushiDeal();
   if (!deal || activeShushiSheet !== '土地転売（業者売り）') return false;
@@ -1909,15 +1879,33 @@ function toggleSanyu() {
   if (!deal) return;
   const st = shushiStateFor(deal.id, activeShushiSheet);
   st.__sanyu = !(st.__sanyu === true);
+  if (st.__sanyu) st.__renken = false;
   renderShushiSheet();
-  if (typeof showToast === 'function') showToast(st.__sanyu ? '三為スキームON：取得税・固定資産税・都市計画税・登録免許税・抵当権を0で計算します' : '三為スキームOFF：税金を通常どおり計算します');
+  if (typeof showToast === 'function') showToast(st.__sanyu ? '三為スキームON：印紙税のみ計上し、不動産取得税・登録免許税・固定資産税・都市計画税・抵当権・営業外費用は表から外します' : '三為スキームOFF：通常どおり全項目を計上します');
 }
+function shushiIsRenken() {
+  const deal = shushiDeal();
+  if (!deal || activeShushiSheet !== '土地転売（業者売り）') return false;
+  const st = shushiStateFor(deal.id, activeShushiSheet);
+  return st && st.__renken === true;
+}
+function toggleRenken() {
+  const deal = shushiDeal();
+  if (!deal) return;
+  const st = shushiStateFor(deal.id, activeShushiSheet);
+  st.__renken = !(st.__renken === true);
+  if (st.__renken) st.__sanyu = false;
+  renderShushiSheet();
+  if (typeof showToast === 'function') showToast(st.__renken ? '連件スキームON：不動産取得税・登録免許税・印紙税を計上し、固定資産税・都市計画税・抵当権・営業外費用は表から外します' : '連件スキームOFF：通常どおり全項目を計上します');
+}
+const EDITABLE_ITEM_CELLS = ['B43'];
 function shushiPersistCell(el) {
   const deal = shushiDeal();
   if (!deal || !el || !el.dataset || !el.dataset.cell) return;
   const st = shushiStateFor(deal.id, activeShushiSheet);
+  if (st && EDITABLE_ITEM_CELLS.includes(el.dataset.cell) && String(el.value).trim() === '') { delete st[el.dataset.cell]; plDirty = true; return; }
   if (st) st[el.dataset.cell] = el.value;
-  plDirty = true; // 未保存ガード用（「保存」で解除・2026-07-24 中西さん指示）
+  plDirty = true;
 }
 function persistCurrentShushiState() {
   const deal = shushiDeal();
@@ -1927,23 +1915,35 @@ function persistCurrentShushiState() {
   if (!st) return;
   grid.querySelectorAll('input[data-cell],select[data-cell]').forEach(el => { st[el.dataset.cell] = el.value; });
 }
+function dealKotsuText(deal) {
+  if (!deal) return '';
+  const ensen = (deal.ensen || '').trim(), eki = (deal.ekimei || '').trim();
+  const raw = deal.ekitoho;
+  let toho = '';
+  if (raw !== null && raw !== undefined && String(raw).trim() !== '' && String(raw) !== '0') {
+    toho = /^[0-9]+(\.[0-9]+)?$/.test(String(raw)) ? '徒歩' + raw + '分' : String(raw);
+  }
+  if (ensen && eki) return ensen + '「' + eki + '」駅' + toho;
+  if (eki) return eki + '駅' + toho;
+  if (ensen) return toho ? ensen + ' ' + toho : ensen;
+  return toho;
+}
 function shushiRegisteredValue(sheet, cell, deal) {
   if (!deal) return undefined;
   if (cell === 'B1') return deal.name === '（新規案件）' ? '' : deal.name;
   if (cell === 'B3') return deal.address || '';
   if (cell === 'B4') return deal.chiban || '';
-  if (cell === 'B5') return deal.ekitoho ? (/^[0-9０-９,，.]+$/.test(String(deal.ekitoho)) ? '徒歩' + deal.ekitoho + '分' : String(deal.ekitoho)) : '';
+  if (cell === 'B5') return dealKotsuText(deal);
   if (cell === 'B6' && deal.menseki) return deal.menseki;
   return undefined;
 }
-// Excel原本に明記されている定型の備考・税率等＝全案件の初期値として表示（2026-07-23 中西さん指示。物件固有の坪数メモは対象外）
 const SHUSHI_CELL_DEFAULTS = {
   '戸建て（建売・土地売り）': {D20:'20万以下は無し', D22:'2年分', D28:'新規引き込み含む', D42:'50万以下は無し', D43:'あれば項目変更する',
-    D32:1.5, D33:3, D34:1.4, D35:0.3, D36:2, D37:2, D38:0.4, D45:3.5, D46:1},
+    D32:1.5, D33:3, D34:1.4, D35:0.3, D36:2, D37:2, D38:0.4, D45:3.5, D46:1, B43:'その他'},
   '土地転売（業者売り）': {D20:'70万円/1棟', D22:'2年分', D23:'20万以下は無し', D25:'新規引き込み含む', D36:'50万以下は無し',
     D27:1.5, D28:3, D29:1.4, D30:0.3, D31:2, D32:2, D33:0.4, D38:3.5, D39:1},
   'アパート': {D20:'20万以下は無し', D22:'2年分', D28:'新規引き込み含む', D42:'50万以下は無し', D43:'あれば項目変更する',
-    D33:1.5, D34:3, D35:1.4, D36:0.3, D37:2, D38:2, D39:0.4, D45:2.7, D46:1}
+    D33:1.5, D34:3, D35:1.4, D36:0.3, D37:2, D38:2, D39:0.4, D45:2.7, D46:1, B43:'その他'}
 };
 function shushiResolvedValue(sheet, cell) {
   const deal = shushiDeal();
@@ -1972,7 +1972,6 @@ function shushiColsFor(sheet) {
 }
 function shushiInputHtml(sheet, cell) {
   const val = shushiResolvedValue(sheet, cell);
-  // 空欄でも数値セルは数値入力扱いにする（''をtext扱いにするとカンマ自動整形が効かなくなるため・2026-07-24修正）
   const isText = shushiIsText(cell) || (typeof val === 'string' && val !== '');
   const cls = isText ? 'shushi-text' : 'shushi-input';
   const inputmode = isText ? '' : ' inputmode="decimal"';
@@ -1980,17 +1979,17 @@ function shushiInputHtml(sheet, cell) {
   if (cell === 'G3') {
     return '<select class="shushi-input" id="' + shushiCellId(cell) + '" data-cell="' + cell + '" onchange="shushiPersistCell(this);calcPL()"><option value=""></option><option value="12"' + (String(val) === '12' ? ' selected' : '') + '>12ヶ月</option><option value="18"' + (String(val) === '18' ? ' selected' : '') + '>18ヶ月</option><option value="24"' + (String(val) === '24' ? ' selected' : '') + '>24ヶ月</option></select>';
   }
-  // 防火指定＝選択式（防火／準防火／準防火(新防火)）。2026-07-25 中西さん指示
+  if (cell === 'D8') {
+    return '<select class="shushi-input" id="' + shushiCellId(cell) + '" data-cell="' + cell + '" onchange="shushiPersistCell(this)"><option value=""></option>'
+      + YOTO_CHIIKI.map(o => '<option value="' + escHtml(o) + '"' + (String(val) === o ? ' selected' : '') + '>' + escHtml(o) + '</option>').join('') + '</select>';
+  }
   if (cell === 'D9') {
     const fireOpts = ['防火', '準防火', '準防火(新防火)'];
     return '<select class="shushi-input" id="' + shushiCellId(cell) + '" data-cell="' + cell + '" onchange="shushiPersistCell(this)"><option value=""></option>' + fireOpts.map(o => '<option value="' + escHtml(o) + '"' + (String(val) === o ? ' selected' : '') + '>' + escHtml(o) + '</option>').join('') + '</select>';
   }
-  // Excelの黄色＝「数式を上書きから守る」が目的（7/20永井様メール・7/23確認）。
-  // 数式はシステム側に組み込みで誰も触れないため、手入力項目（売上高・瑕疵担保保険）は通常入力欄のまま。
   return '<input type="text" class="' + cls + '" id="' + shushiCellId(cell) + '" data-cell="' + cell + '" value="' + value + '"' + inputmode + ' oninput="shushiOnInput(this)" onkeydown="shushiEnter(event,this)" oncompositionstart="this.dataset.ime=\'1\'" oncompositionend="delete this.dataset.ime;shushiOnInput(this)">';
 }
-// セクションの折りたたみ（▽/▷）＋未入力件数バッジ（2026-07-24 中西さん指示。デフォルトは開いた状態）
-const PL_SECTION_COLLAPSED = {}; // タイトル文字列 -> 閉じているか（シート切替・再描画をまたいで維持）
+const PL_SECTION_COLLAPSED = {};
 function setupPlSectionToggles() {
   document.querySelectorAll('#pl-sheet-grid .pl-section').forEach(sec => {
     const title = sec.querySelector('.pl-section-title');
@@ -2015,7 +2014,6 @@ function updatePlSectionBadges() {
     const badge = sec.querySelector('.pl-sec-badge');
     if (!badge) return;
     let empty = 0;
-    // 備考欄（pl-memo-cell）とフリー項目の行（pl-free-row）は任意項目のため未入力カウントから除外（2026-07-24 中西さん指示）
     sec.querySelectorAll('input[data-cell], select[data-cell]').forEach(el => {
       if (el.closest('.pl-memo-cell') || el.closest('.pl-free-row')) return;
       if (String(el.value).trim() === '') empty++;
@@ -2026,7 +2024,6 @@ function updatePlSectionBadges() {
 function renderShushiTabs() {
   const el = document.getElementById('pl-sheet-tabs');
   if (!el) return;
-  // 3シートタブは撤廃（2026-07-25 中西さん指示：シート切替はヘッダーの仕入れ形態チップで行う）。ここは収支想定（最重要）の1行表示のみ。
   el.innerHTML = '<div class="pl-profit-inline" aria-label="収支想定"><span class="pl-pi-title">収支想定</span><span class="pl-pi-basis" id="pl-profit-basis">—</span><strong class="pl-pi-main" id="pl-profit-main">—</strong><span class="pl-pi-kv">利益率 <strong id="pl-profit-rate">—</strong></span><span class="pl-pi-kv">IRR <strong id="pl-profit-irr">—</strong></span></div>';
 }
 function shushiCellHtml(sheet, cell) {
@@ -2038,11 +2035,9 @@ function shushiCellHtml(sheet, cell) {
   }
   return '<span>' + escHtml(shushiResolvedValue(sheet, cell)) + '</span>';
 }
-// 物件情報の入力欄＝内容に応じたコンパクト幅（値コンテナの幅・px）。区画数/総戸数は2桁・容積率/建蔽率は3桁・プロジェクト期間は選択肢テキスト幅（2026-07-24 中西さん指示）
 const PROP_VAL_W = { B1:205, G3:80, G2:44, G4:44, B3:205, B4:205, B5:205, B5_2:205, B6:122, B7:118, B8:60, B9:60, B10:150, D8:140, D9:134, D10:134 };
 function shushiFieldHtml(sheet, labelCell, valueCell, extraCells, wide, unit, noPropW) {
   const labels = SHUSHI_LABELS[sheet];
-  // 表示上のみ末尾の「：」を除去（Excel原本ラベルは「物件名：」だが画面では不要・2026-07-24 中西さん指示）
   const label = (labels[labelCell] || labelCell).replace(/[：:]\s*$/, '');
   const extras = (extraCells || []).map(c => shushiCellHtml(sheet, c)).join('');
   const wideCls = wide === 'w2' ? ' pl-field-w2' : wide ? ' pl-field-wide' : '';
@@ -2050,13 +2045,10 @@ function shushiFieldHtml(sheet, labelCell, valueCell, extraCells, wide, unit, no
   const vStyle = vw ? ' style="flex:' + vw + ' 1 ' + vw + 'px;min-width:0"' : '';
   return '<div class="pl-field' + wideCls + '"><div class="pl-field-label">' + escHtml(label) + '</div><div class="pl-field-value"' + vStyle + '>' + shushiCellHtml(sheet, valueCell) + (unit ? '<span class="pl-unit">' + escHtml(unit) + '</span>' : '') + extras + '</div></div>';
 }
-// 道路（戸建てのみ2つ目B11あり）：1つの入力マスを点線で左右に分割して2本分を収める＝横幅は増やさない
-// （2026-07-24 中西さん指示。同日の「＋ボタンで追加」案は取り消し）
 function shushiRoadFields(sheet) {
   const label = SHUSHI_LABELS[sheet]['A10'] || '道路';
   return '<div class="pl-field"><div class="pl-field-label">' + escHtml(label) + '</div><div class="pl-field-value" style="flex:220 1 220px;min-width:0"><span class="pl-road-pair">' + shushiCellHtml(sheet, 'B10') + shushiCellHtml(sheet, 'B11') + '</span></div></div>';
 }
-// 交通＝上下2マスを1枠にまとめ、真ん中を横点線で区切る（道路の縦版・2026-07-24 中西さん指示。2路線まで＝B5上・B5_2下）
 function shushiKotsuStack(sheet, cls) {
   const label = (SHUSHI_LABELS[sheet]['A5'] || '交通');
   return '<div class="pl-field ' + (cls || '') + '"><div class="pl-field-label">' + escHtml(label) + '</div><div class="pl-field-value" style="flex:205 1 205px;min-width:0"><span class="pl-kotsu-pair">' + shushiCellHtml(sheet, 'B5') + shushiCellHtml(sheet, 'B5_2') + '</span></div></div>';
@@ -2064,27 +2056,17 @@ function shushiKotsuStack(sheet, cls) {
 function shushiPropertySection(sheet) {
   const isApart = sheet === 'アパート';
   const isTochi = sheet === '土地転売（業者売り）';
-  // 列ごとの縦スタックに再構成（2026-07-25 中西さん指示）：列を入替え、2列目に数値系（区画数/地積/建物面積/建蔽率/容積率）を集約して入力枠を5桁ぎりぎりまで最短化。
-  //  結果＝1列目（物件名/所在地/地番/交通＝テキスト）が最長・2列目（数値）が最短・3列目（期間/用途地域/防火指定/道路/高度地区）が中。左が締まり右の評価額ブロックに余白を回す。
-  //  道路2行目（B11）はExcel原本で戸建てのみ存在＝ROADマーカーで点線分割マス表示（土地転売・アパートは単一）。KOTSU＝交通の縦2マス枠。
-  //  noPW（第7引数）＝2列目は物件情報用の幅表(PROP_VAL_W)を無効化し、CSSで入力を56px固定（10000が入るギリギリ）。
   const F = (r, noPW) => !r ? '' : r === 'ROAD' ? shushiRoadFields(sheet) : r === 'KOTSU' ? shushiKotsuStack(sheet, '') : shushiFieldHtml(sheet, r[0], r[1], r[2], r[3], r[4], noPW);
   const kukaku = isApart ? ['F4','G4',null,null,'戸'] : isTochi ? null : ['F2','G2',null,null,'区画'];
-  // 道路は1マスに統合（2026-07-25 中西さん指示：左右2マス分割をやめ単一入力に＝3列目をよりコンパクトに）
   const road = ['A10','B10'];
   const col1 = [['A1','B1'], ['A3','B3'], ['A4','B4'], 'KOTSU'];
   const col2 = [kukaku, ['A6','B6',['C6'],null,'㎡'], ['A7','B7',['C7'],null,'㎡'], ['A9','B9',null,null,'%'], ['A8','B8',null,null,'%']];
   const col3 = [['F3','G3'], ['C8','D8'], ['C9','D9'], road, ['C10','D10']];
   const colHtml = (items, cls, noPW) => '<div class="pl-prop-col ' + cls + '">' + items.map(r => F(r, noPW)).join('') + '</div>';
-  // タイトル「物件情報」なし・常時表示（折りたたみなし）。右に点線区切りで評価額系5項目（2026-07-24 中西さん指示）
   return '<section class="pl-section pl-prop-section"><div class="pl-prop-wrap"><div class="pl-prop-main">'
     + colHtml(col1, 'pl-pcol1') + colHtml(col2, 'pl-pcol2', true) + colHtml(col3, 'pl-pcol3')
     + '</div>' + shushiPropEvalBlock(sheet) + '</div></section>';
 }
-// Excelで原価表の右隣にある縦ブロック（一種単価〜IRR）＋期間別IRR表＝原価セクションの右列
-// （2026-07-24 中西さん指示：販売想定を独立させ、この評価ブロックを右列へ置き換え）
-// 単位表示（2026-07-24 中西さん指示）：一種単価＝円/坪・路線価/固定資産税路線価＝円/㎡入力＋右に自動坪換算・借入金/建物評価額＝円
-// help＝ラベル横の？ボタンに格納する注記（IRRの「10％以上を目指す」等・2026-07-24 中西さん指示）
 function shushiEvalField(sheet, labelCell, valueCell, unit, tsubo, help) {
   const label = (SHUSHI_LABELS[sheet][labelCell] || labelCell).replace(/[：:]\s*$/, '');
   return '<div class="pl-field"><div class="pl-field-label">' + escHtml(label) + '</div><div class="pl-field-value">' + shushiCellHtml(sheet, valueCell)
@@ -2093,68 +2075,84 @@ function shushiEvalField(sheet, labelCell, valueCell, unit, tsubo, help) {
     + (help ? '<span class="help-wrap" style="margin-left:4px"><button class="help-btn" onclick="toggleHelp(this)" title="この項目の目安">？</button><div class="help-pop help-pop-float" style="display:none">' + escHtml(help) + '</div></span>' : '')
     + '</div></div>';
 }
-// 評価額系5項目（一種単価・借入金・路線価・固定資産税路線価・建物評価額）＝物件情報の右に点線区切りで縦5つ並べる（2026-07-24 中西さん指示・IRRは含めず原価右上へ）
 function shushiPropEvalBlock(sheet) {
   const isApart = sheet === 'アパート';
-  // [ラベル, 値セル, 単位, 坪換算表示]。路線価・固定資産税路線価＝営業担当が手入力＝「円」のみ・自動坪換算なし（2026-07-25 中西さん指示）
   const fields = isApart
-    ? [['F15','F16','円/坪'],['F18','F19','円'],['F21','G21','円'],['F22','G22','円'],['F24','G24','円']]
-    : [['F15','F16','円/坪'],['F18','F19','円'],['F22','G22','円'],['F23','G23','円'],['F24','G24','円']];
-  return '<div class="pl-prop-eval">' + fields.map(r => shushiEvalField(sheet, r[0], r[1], r[2], r[3])).join('') + '</div>';
+    ? [['F15','F16','円/坪'],['F21','G21','円'],['F22','G22','円'],['F24','G24','円']]
+    : [['F15','F16','円/坪'],['F22','G22','円'],['F23','G23','円'],['F24','G24','円']];
+  const tsuboTanka = '<div class="pl-field"><div class="pl-field-label">坪単価</div><div class="pl-field-value">'
+    + '<span class="pl-auto" data-mirror-of="D16">—</span><span class="pl-unit">円/坪</span></div></div>';
+  const evalRows = fields.map(r => shushiEvalField(sheet, r[0], r[1], r[2], r[3]));
+  const brk = '<div class="pl-eval-break"></div>';
+  return '<div class="pl-prop-eval">' + tsuboTanka + evalRows[0] + brk + evalRows.slice(1).join('') + '</div>';
 }
-// IRR＝原価の右上（枠外）に単独表示。？ボタンに「10％以上を目指す」注記（2026-07-24 中西さん指示）
 function shushiCostIrr(sheet) {
   return '<div class="pl-cost-irr">' + shushiEvalField(sheet, 'F25', 'G25', null, false, 'IRRは10％以上を目指す') + '</div>';
 }
-// 仕入契約日〜仲介会社（取引の相手・日付）＝「取引概要」セクションとして担当の上に表示（2026-07-24 中西さん指示）
 function shushiTorihikiSection(sheet) {
   const fields = sheet === 'アパート'
     ? [['F6','G6'],['F7','G7'],['F8','G8'],['F9','G9'],['F10','G10']]
     : [['F4','G4'],['F5','G5'],['F6','G6'],['F7','G7'],['F8','G8'],['F9','G9'],['F10','G10'],['F11','G11']];
   return '<section class="pl-section"><div class="pl-section-title">取引概要</div><div class="pl-field-grid pl-eval-grid">' + fields.map(r => shushiFieldHtml(sheet, r[0], r[1], null, null, null, true)).join('') + '</div></section>';
 }
+const SHUSHI_FREE_TAX = {
+  '戸建て（建売・土地売り）': { after: 39, row: '39_2' },
+  '土地転売（業者売り）': { after: 34, row: '34_2' },
+  'アパート': { after: 40, row: '40_2' },
+};
+function freeTaxAmount(c, sheet) { return n(c, 'C' + SHUSHI_FREE_TAX[sheet].row); }
 function shushiCostRows(sheet) {
   if (sheet === '土地転売（業者売り）') return {start:16,end:40,sections:{16:'A16',24:'A24',27:'A27',35:'A35',38:'A38',40:'B40'}};
   if (sheet === 'アパート') return {start:16,end:48,sections:{16:'A16',25:'A25',33:'A33',41:'A41',45:'A45',48:'B48'}};
   return {start:16,end:48,sections:{16:'A16',25:'A25',32:'A32',41:'A41',45:'A45',48:'B48'}};
 }
-// 原価表の備考列＝入力セルにせず固定テキスト表示（2026-07-24 中西さん指示・フリー項目の表記と同様）。
-// 税率は変更不可の表示専用にし、計算用には SHUSHI_CELL_DEFAULTS から読み込む（2026-07-26 先方回答Q&A No.17）
 function shushiMemoTextHtml(sheet, cell) {
   if (!cell) return '';
   const text = shushiFormatInputValue(shushiResolvedValue(sheet, cell));
-  // 数値のみの備考（税率1.5等）は右寄せ表示（2026-07-24 中西さん指示）
   const isNum = text !== '' && /^-?[0-9][0-9,]*\.?[0-9]*$/.test(text);
   return '<span class="pl-free-note' + (isNum ? ' pl-memo-num' : '') + '" id="' + shushiCellId(cell) + '" data-cell="' + cell + '">' + escHtml(text) + '</span>';
+}
+function shushiHiddenCostRows(sheet) {
+  const hidden = new Set();
+  if (sheet !== '土地転売（業者売り）') return hidden;
+  const sanyu = shushiIsSanyu(), renken = shushiIsRenken();
+  if (!sanyu && !renken) return hidden;
+  [29, 30, 33].forEach(r => hidden.add(r));
+  [38, 39].forEach(r => hidden.add(r));
+  if (sanyu) [27, 28, 31, 32].forEach(r => hidden.add(r));
+  return hidden;
 }
 function shushiCostSection(sheet) {
   const labels = SHUSHI_LABELS[sheet];
   const cfg = shushiCostRows(sheet);
+  const hiddenRows = shushiHiddenCostRows(sheet);
+  const groupSection = {};
   const noteCell = sheet === '土地転売（業者売り）' ? 'F40' : 'F48';
-  // 率％・自動列は削除し、その内容（税率の％・自動値）は左隣の備考列へ統合（2026-07-24 永井様指示）
   let html = '<div><table class="pl-cost-table"><colgroup><col style="width:16%"><col style="width:30%"><col style="width:30%"><col style="width:24%"></colgroup><thead><tr><th>分類</th><th>項目</th><th>金額（税込）</th><th>' + escHtml(labels.D15 || '備　考') + '</th></tr></thead><tbody>';
-  // 分類列はExcelと同じく縦結合＝各分類（土地原価〜営業外費用）の全行にまたがる1セル（2026-07-23 中西さん指示）
   const rows = [];
   let groupId = -1;
   for (let r = cfg.start; r <= cfg.end; r++) {
     const isSection = !!cfg.sections[r];
-    // フリー項目の行：Excelどおり項目名はB列の入力欄（営業が自由に書く）・「フリー項目」の文字は備考側に表示（2026-07-24 中西さん指示）
     const freeItem = !labels['B' + r] && labels['D' + r] === 'フリー項目' && SHUSHI_META_INPUTS[sheet].includes('B' + r);
-    const item = cfg.sections[r] === 'B' + r || freeItem ? '' : (labels['B' + r] || labels['D' + r] || '');
+    const memoText = labels['D' + r] || (SHUSHI_CELL_DEFAULTS[sheet] || {})['D' + r];
+    const editableItem = memoText === 'あれば項目変更する' && SHUSHI_META_INPUTS[sheet].includes('B' + r);
+    const item = cfg.sections[r] === 'B' + r || freeItem || editableItem ? '' : (labels['B' + r] || labels['D' + r] || '');
     const amountCell = shushiIsInput(sheet, 'C' + r) || shushiIsFormula(sheet, 'C' + r) ? 'C' + r : '';
     const hasMemoValue = shushiResolvedValue(sheet, 'D' + r) !== '';
     const memoCell = shushiIsInput(sheet, 'D' + r) || SHUSHI_META_INPUTS[sheet].includes('D' + r) || hasMemoValue ? 'D' + r : '';
-    // F・G列の隣接ブロック（一種単価・借入金・評価額・路線価・建物評価額・IRR・IRR注記）はExcel上は原価表の右隣にある独立項目
-    // ＝物件情報ブロック・IRRブロックに表示済みのため、率％・自動列には出さない（2026-07-24 中西さん指摘・Excel再確認済み）
-    // 坪単価（D16=土地仕入原価・D25=建築費・D40/D48=合計）は「坪単価」ラベルを付けず、値（〇〇円/坪）だけ右寄せで備考に表示（2026-07-24 中西さん指示：不要なのは「坪単価」の3文字ラベルのみ・値は残す）
     const sideCells = ['F15','F16','F18','F19','F20','F21','F22','F23','F24','F25','F28','F30','G21','G22','G23','G24','G25'];
     const rateCells = ((shushiIsFormula(sheet, 'D' + r) && !memoCell) ? ['D' + r] : []).concat(['E' + r,'F' + r,'G' + r]).filter(c => c !== noteCell && !sideCells.includes(c) && (labels[c] || shushiIsInput(sheet, c) || shushiIsFormula(sheet, c))).map(c => {
       const label = labels[c] || '';
       return (label ? '<span class="pl-field-label">' + escHtml(label) + '</span>' : '') + shushiCellHtml(sheet, c);
     }).join(' ');
+    if (isSection) { groupId = r; groupSection[r] = labels[cfg.sections[r]] || ''; }
+    if (hiddenRows.has(r)) continue;
     if (!isSection && !item && !freeItem && !amountCell && !memoCell && !rateCells) continue;
-    if (isSection) groupId = r;
-    rows.push({group: groupId, section: isSection ? (labels[cfg.sections[r]] || '') : '', isTotal: cfg.sections[r] === 'B' + r, item, freeItem, freeRow: r, amountCell, memoCell, rateCells});
+    rows.push({group: groupId, section: isSection ? (labels[cfg.sections[r]] || '') : '', isTotal: cfg.sections[r] === 'B' + r, item, freeItem, editableItem, freeRow: r, amountCell, memoCell, rateCells});
+    const ft = SHUSHI_FREE_TAX[sheet];
+    if (ft && r === ft.after) {
+      rows.push({group: groupId, section: '', isTotal: false, item: '', freeItem: true, editableItem: false, freeRow: ft.row, amountCell: 'C' + ft.row, memoCell: '', rateCells: ''});
+    }
   }
   const groupCount = {};
   rows.forEach(row => { groupCount[row.group] = (groupCount[row.group] || 0) + 1; });
@@ -2163,32 +2161,26 @@ function shushiCostSection(sheet) {
     html += '<tr class="' + (row.isTotal ? 'pl-cost-section' : '') + (row.freeItem ? ' pl-free-row' : '') + '">';
     if (!emitted[row.group]) {
       emitted[row.group] = true;
-      html += '<td class="pl-cost-cat" rowspan="' + groupCount[row.group] + '">' + escHtml(rows.find(x => x.group === row.group).section) + '</td>';
+      html += '<td class="pl-cost-cat" rowspan="' + groupCount[row.group] + '">' + escHtml(groupSection[row.group] || '') + '</td>';
     }
-    // 備考セル＝（旧）備考 ＋ 旧「率％・自動」列の内容を統合（2026-07-24 永井様指示）
     let memoFull;
     if (row.freeItem) {
       memoFull = '<span class="pl-free-note">フリー項目</span>';
     } else {
       const eLbl = labels['E' + row.freeRow];
       if ((eLbl === '％' || eLbl === '%') && row.memoCell) {
-        // 率の行：数字（備考列の値）に％を付けて1つの右寄せセルに（例：1.5→1.5％）
         memoFull = '<span class="pl-rate-cell">' + shushiMemoTextHtml(sheet, row.memoCell) + '<span class="pl-rate-unit">' + escHtml(eLbl) + '</span></span>';
       } else {
-        // ％以外の自動値（坪単価：土地仕入原価D16・建築費D25・合計D40/D48）は右寄せで備考に表示（「坪単価」ラベルは付けない）。
-        // ※formulaセルは初期「—」で描画→再計算で値が入るため「—」でスキップしない（スキップするとspanごと消え、再計算で値が埋まらなくなる）
         const baseMemo = shushiMemoTextHtml(sheet, row.memoCell);
         memoFull = row.rateCells ? (baseMemo + (baseMemo ? ' ' : '') + '<span class="pl-rate-auto">' + row.rateCells + '</span>') : baseMemo;
       }
     }
-    html += '<td>' + (row.freeItem ? shushiCellHtml(sheet, 'B' + row.freeRow) : escHtml(row.item)) + '</td><td class="pl-money-cell">' + shushiCellHtml(sheet, row.amountCell) + '</td><td class="pl-memo-cell">' + memoFull + '</td></tr>';
+    html += '<td>' + (row.freeItem || row.editableItem ? shushiCellHtml(sheet, 'B' + row.freeRow) : escHtml(row.item)) + '</td><td class="pl-money-cell">' + shushiCellHtml(sheet, row.amountCell) + '</td><td class="pl-memo-cell">' + memoFull + '</td></tr>';
   });
-  // 合計・坪単価の下にIRR行（左「IRR」・右＝自動計算値）を2セルで追加（2026-07-24 中西さん指示）
   html += '<tr class="pl-cost-irr-row"><td colspan="2" class="pl-cost-irr-blank"></td><td class="pl-cost-irr-label">IRR</td><td class="pl-cost-irr-val">' + shushiCellHtml(sheet, 'G25') + '<span class="help-wrap" style="margin-left:6px"><button class="help-btn" onclick="toggleHelp(this)" title="IRRの目安">？</button><div class="help-pop help-pop-float" style="display:none">IRRは10％以上を目指す</div></span></td></tr>';
   html += '</tbody></table><div class="pl-cost-note">' + escHtml((labels[noteCell] || '').replace(/^←/, '※')) + '</div></div>';
   return html;
 }
-// 項目名の単位表示（2026-07-24 中西さん指示・値はExcelどおり）：金額系＝（円）・坪＝坪単価（円/坪）
 const SELL_TH_DISPLAY = {'売上高':'売上高（円）','原価合計':'原価合計（円）','総利益':'総利益（円）','坪':'坪単価（円/坪）'};
 function shushiSellCard(sheet, titleCell, cells, isBasis) {
   const labels = SHUSHI_LABELS[sheet];
@@ -2196,7 +2188,6 @@ function shushiSellCard(sheet, titleCell, cells, isBasis) {
   const alias = aliasCell && labels[aliasCell] ? '｜' + labels[aliasCell] : '';
   return '<div class="pl-sell-card"><div class="pl-sell-card-title' + (isBasis ? ' pl-sell-basis' : '') + '">' + escHtml((labels[titleCell] || titleCell) + alias) + (isBasis ? '<span class="pl-basis-chip">判定基準</span>' : '') + '</div><div class="pl-sell-card-body"><table class="pl-sell-table"><tbody>' + cells.map(row => { const lbl = labels[row[0]] || row[0]; return '<tr><th>' + escHtml(SELL_TH_DISPLAY[lbl] || lbl) + '</th><td class="pl-money-cell">' + (row[2] ? '<span class="pl-with-unit">' + shushiCellHtml(sheet, row[1]) + '<span class="pl-unit">' + escHtml(row[2]) + '</span></span>' : shushiCellHtml(sheet, row[1])) + '</td></tr>'; }).join('') + '</tbody></table></div></div>';
 }
-// 戸建てのみ：販売計画（価格・間取・延床・車庫×想定①②③×各2行）を販売想定カードから分離した独立カード（2026-07-24 中西さん指示）
 function shushiPlanCard(sheet) {
   const labels = SHUSHI_LABELS[sheet];
   const groups = [['I25','AC25',[26,27]],['I31','AC31',[32,33]],['I37','AC37',[38,39]]];
@@ -2209,19 +2200,15 @@ function shushiPlanCard(sheet) {
   });
   return '<div class="pl-sell-card pl-plan-card"><div class="pl-sell-card-title">' + escHtml(labels.T25 || '販売計画') + '</div><div class="pl-sell-card-body"><table class="pl-plan-table"><colgroup><col style="width:27%"><col style="width:21%"><col style="width:17%"><col style="width:21%"><col style="width:14%"></colgroup><thead><tr><th></th><th>' + escHtml((labels.U25 || '価格') + '（万円）') + '</th><th>' + escHtml(labels.X25 || '間取') + '</th><th>' + escHtml(labels.Z25 || '延床') + '</th><th>' + escHtml(labels.AB25 || '車庫') + '</th></tr></thead><tbody>' + body + '</tbody></table></div></div>';
 }
-// 販売計画1つ分のカード（価格・間取・延床・車庫×2行）＝販売想定①②に対応して縦に並べる（2026-07-24 中西さん指示）
 function shushiPlanCardOne(sheet, numLabel, aliasCell, rows) {
   const labels = SHUSHI_LABELS[sheet];
-  // 見出しはExcelのT25「販売計画」＋①②（2026-07-26 修正：従来はI25「販売想定①」を誤参照し、販売想定カードと同じ見出しになっていた）
   const title = (labels.T25 || '販売計画') + numLabel + '｜' + (labels[aliasCell] || '');
   const body = rows.map(r => '<tr><td class="pl-money-cell">' + shushiCellHtml(sheet, 'U' + r) + '</td><td>' + shushiCellHtml(sheet, 'X' + r) + '</td><td>' + shushiCellHtml(sheet, 'Z' + r) + '</td><td>' + shushiCellHtml(sheet, 'AB' + r) + '</td></tr>').join('');
   return '<div class="pl-sell-card pl-plan-card"><div class="pl-sell-card-title">' + escHtml(title) + '</div><div class="pl-sell-card-body"><table class="pl-plan-table"><colgroup><col style="width:34%"><col style="width:20%"><col style="width:26%"><col style="width:20%"></colgroup><thead><tr><th>' + escHtml((labels.U25 || '価格') + '（万円）') + '</th><th>' + escHtml(labels.X25 || '間取') + '</th><th>' + escHtml(labels.Z25 || '延床') + '</th><th>' + escHtml(labels.AB25 || '車庫') + '</th></tr></thead><tbody>' + body + '</tbody></table></div></div>';
 }
-// 原価表＋販売想定①②（縦）＋販売計画①②（縦）を横並び、下に期間別IRR＋IRR（2026-07-24 中西さん指示：販売想定・計画セクション廃止／③削除／IRRを下へ）
 function shushiCostBlock(sheet) {
   const isKodate = sheet === '戸建て（建売・土地売り）';
   const isTochi = sheet === '土地転売（業者売り）';
-  // 販売想定①②カード（③は削除）
   const sellCards = isKodate
     ? [shushiSellCard(sheet,'I25',[['I26','K26'],['I27','K27'],['I28','K28'],['P25','P26'],['L25','M25']]),
        shushiSellCard(sheet,'I31',[['I32','K32'],['I33','K33'],['I34','K34'],['P31','P32'],['L31','M31']],true)]
@@ -2230,16 +2217,19 @@ function shushiCostBlock(sheet) {
          shushiSellCard(sheet,'I30',[['I31','K31'],['I32','K32'],['I33','K33'],['P30','P31'],['L30','M30']])]
       : [shushiSellCard(sheet,'I14',[['I15','K15'],['I16','K16'],['I17','K17'],['P14','P15'],['L14','N14','％']],true),
          shushiSellCard(sheet,'I20',[['I21','K21'],['I22','K22'],['I24','K24'],['P20','P21'],['L20','N20','％']])];
-  // 販売計画①②カード（戸建てのみ・③削除）
-  const planCards = isKodate ? [shushiPlanCardOne(sheet,'①','AC25',[26,27]), shushiPlanCardOne(sheet,'②','AC31',[32,33])] : [];
-  // 期間別IRR表＋IRR＝販売想定・計画の下に配置（2026-07-24 中西さん指示）
+  const planCards = isKodate ? [shushiPlanCardOne(sheet,'①','AC25',[26,27,28]), shushiPlanCardOne(sheet,'②','AC31',[32,33,34])] : [];
   const labels = SHUSHI_LABELS[sheet];
   const irrRows = isTochi ? [['D46','G46'],['D50','G50'],['D56','G56']]
     : sheet === 'アパート' ? [['D55','G55'],['D59','G59'],['D65','G65']]
     : [['D54','G54'],['D58','G58'],['D64','G64']];
-  const irrTable = '<div class="pl-irr-wrap"><table class="pl-irr-table"><tbody>' + irrRows.map((r, i) => '<tr>' + (i === 0 ? '<td class="pl-irr-title" rowspan="' + irrRows.length + '">期間別IRR</td>' : '') + '<td class="pl-irr-period">' + escHtml(labels[r[0]] || '') + '</td><td class="pl-irr-val">' + shushiCellHtml(sheet, r[1]) + '</td></tr>').join('') + '</tbody></table></div>';
-  const sanyuBtn = isTochi ? '<span class="pl-title-actions"><button type="button" class="pl-sanyu-btn' + (shushiIsSanyu() ? ' active' : '') + '" onclick="event.stopPropagation();toggleSanyu()">三為スキーム</button></span>' : '';
-  // 見出しは「収支計算」。販売想定/計画のキャプションは無し（表の上端を原価表に揃える）。期間別IRRは販売想定②の下に配置（2026-07-24 中西さん指示）
+  const irrTable = '<div class="pl-irr-wrap"><table class="pl-irr-table"><tbody>' + irrRows.map((r, i) => '<tr>' + (i === 0 ? '<td class="pl-irr-title" rowspan="' + irrRows.length + '">期間別IRR</td>' : '') + '<td class="pl-irr-period">' + escHtml(labels[r[0]] || '') + '</td><td class="pl-irr-val">' + shushiCellHtml(sheet, r[1]) + '</td></tr>').join('') + '</tbody></table>'
+    + ((shushiIsSanyu() || shushiIsRenken()) ? ''
+      : '<div class="pl-loan-row"><span class="pl-loan-label">' + escHtml((labels.F18 || '借入金').replace(/\s+/g, '')) + '</span>'
+        + shushiCellHtml(sheet, 'F19') + '<span class="pl-unit">円</span></div>') + '</div>';
+  const sanyuBtn = isTochi ? '<span class="pl-title-actions">'
+    + '<button type="button" class="pl-sanyu-btn' + (shushiIsSanyu() ? ' active' : '') + '" onclick="event.stopPropagation();toggleSanyu()">三為スキーム</button>'
+    + '<button type="button" class="pl-sanyu-btn' + (shushiIsRenken() ? ' active' : '') + '" onclick="event.stopPropagation();toggleRenken()">連件スキーム</button>'
+    + '</span>' : '';
   return '<section class="pl-section"><div class="pl-section-title" data-section-name="収支計算">収支計算' + sanyuBtn + '</div>'
     + '<div class="pl-cost-layout">'
     + '<div class="pl-cost-tablewrap">' + shushiCostSection(sheet) + '</div>'
@@ -2252,7 +2242,6 @@ function shushiMarketTable(sheet, titleCell, rows, cols) {
   const labels = SHUSHI_LABELS[sheet];
   const classByCol = {I:'market-no',J:'market-price',N:'market-area',P:'market-tsubo',S:'market-feature',W:'market-station',Z:'market-address',M:'market-price',O:'market-price'};
   const header = cols.map(c => '<th class="' + (classByCol[c.col] || '') + '">' + escHtml(c.header || (c.col === 'I' ? 'No.' : (labels[c.label] || c.label))) + '</th>').join('');
-  // I列はExcelにラベルがあればそれを使う（アパートのタイプA〜F・合計行など）。合計行は強調表示
   const body = rows.map((r, idx) => {
     const isTotal = labels['I' + r] === '合計';
     return '<tr' + (isTotal ? ' class="market-total"' : '') + '>' + cols.map(c => {
@@ -2270,15 +2259,11 @@ function shushiMarketSection(sheet) {
     const income = '<div><div class="pl-market-title">' + escHtml(apLbl.I29) + '</div><table class="pl-market-table"><tbody><tr><th>' + escHtml((apLbl.I30 || '月額賃料') + '（円）') + '</th><td>' + shushiCellHtml(sheet,'K30') + '</td></tr><tr><th>' + escHtml((apLbl.I31 || '年額賃料') + '（円）') + '</th><td>' + shushiCellHtml(sheet,'K31') + '</td></tr><tr><th>' + escHtml((apLbl.I32 || '坪単価') + '（円/坪）') + '</th><td>' + shushiCellHtml(sheet,'K32') + '</td></tr></tbody></table></div>';
     return '<section class="pl-section"><div class="pl-section-title">レントロール・年間賃料</div><div class="pl-market-stack">' + rent + income + '</div></section>';
   }
-  // 市場調査の列構成は戸建て・土地転売とも共通（2026-07-23 中西さん指示＝Excelでは土地転売のみ3列だが6列に統一）
-  // 土地面積は㎡入力＝見出しに（㎡）を付ける（2026-07-24 中西さん指示・坪単価は㎡→坪換算で算出）
   const lbl = SHUSHI_LABELS[sheet];
   const colsNew = [{label:'I3',col:'I'},{label:'J5',col:'J',header:(lbl.J5 || '価格') + '（円）'},{label:'N5',col:'N',header:(lbl.N5 || '土地面積') + '（㎡）'},{label:'P5',col:'P',header:(lbl.P5 || '坪単価') + '（円/坪）'},{label:'S5',col:'S'},{label:'W5',col:'W'},{label:'Z5',col:'Z'}];
   const colsLand = [{label:'I14',col:'I'},{label:'J16',col:'J',header:(lbl.J16 || '価格') + '（円）'},{label:'N16',col:'N',header:(lbl.N16 || '土地面積') + '（㎡）'},{label:'P16',col:'P',header:(lbl.P16 || '坪単価') + '（円/坪）'},{label:'S16',col:'S'},{label:'W16',col:'W'},{label:'Z16',col:'Z'}];
-  // セクション名は詳細タブ「市場調査」との名称重複を避けて「販売在庫（近隣）」（2026-07-24 レビュー反映）
   return '<section class="pl-section"><div class="pl-section-title">販売在庫（近隣）</div><div class="pl-market-stack">' + shushiMarketTable(sheet,'I3',[6,7,8,9,10,11],colsNew) + shushiMarketTable(sheet,'I14',[17,18,19,20,21],colsLand) + '</div></section>';
 }
-// 販売在庫（近隣）＝市場調査タブに描画（2026-07-25 中西さん指示：収支計算タブから移設）。アパートは近隣販売在庫なし＝案内のみ（レントロールは収支計算タブに残す）
 function renderMarketTab() {
   const el = document.getElementById('market-stock');
   if (!el) return;
@@ -2288,15 +2273,87 @@ function renderMarketTab() {
     ? '<div class="notice mb12">アパートは近隣の販売在庫表はありません。賃料表（レントロール）は収支計算タブにあります。</div>'
     : shushiMarketSection(sheet);
 }
-// 収支データをCSVで出力（Excelでも開ける・UTF-8 BOM付き）。2026-07-25 中西さん指示：最下部にCSVダウンロードボタン
-function downloadShushiCsv() {
+const CRC32_TABLE = (() => {
+  const t = new Uint32Array(256);
+  for (let i = 0; i < 256; i++) { let c = i; for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1); t[i] = c >>> 0; }
+  return t;
+})();
+function crc32(bytes) {
+  let c = 0xFFFFFFFF;
+  for (let i = 0; i < bytes.length; i++) c = CRC32_TABLE[(c ^ bytes[i]) & 0xFF] ^ (c >>> 8);
+  return (c ^ 0xFFFFFFFF) >>> 0;
+}
+function zipStore(files) {
+  const enc = new TextEncoder();
+  const parts = [], central = [];
+  let offset = 0;
+  files.forEach(f => {
+    const nameBytes = enc.encode(f.name);
+    const data = f.data;
+    const crc = crc32(data);
+    const local = new Uint8Array(30 + nameBytes.length);
+    const lv = new DataView(local.buffer);
+    lv.setUint32(0, 0x04034b50, true); lv.setUint16(4, 20, true); lv.setUint16(6, 0, true); lv.setUint16(8, 0, true);
+    lv.setUint16(10, 0, true); lv.setUint16(12, 0, true);
+    lv.setUint32(14, crc, true); lv.setUint32(18, data.length, true); lv.setUint32(22, data.length, true);
+    lv.setUint16(26, nameBytes.length, true); lv.setUint16(28, 0, true);
+    local.set(nameBytes, 30);
+    parts.push(local, data);
+    const cd = new Uint8Array(46 + nameBytes.length);
+    const cv = new DataView(cd.buffer);
+    cv.setUint32(0, 0x02014b50, true); cv.setUint16(4, 20, true); cv.setUint16(6, 20, true); cv.setUint16(8, 0, true);
+    cv.setUint16(10, 0, true); cv.setUint16(12, 0, true); cv.setUint16(14, 0, true);
+    cv.setUint32(16, crc, true); cv.setUint32(20, data.length, true); cv.setUint32(24, data.length, true);
+    cv.setUint16(28, nameBytes.length, true); cv.setUint16(30, 0, true); cv.setUint16(32, 0, true);
+    cv.setUint16(34, 0, true); cv.setUint16(36, 0, true); cv.setUint32(38, 0, true); cv.setUint32(42, offset, true);
+    cd.set(nameBytes, 46);
+    central.push(cd);
+    offset += local.length + data.length;
+  });
+  const cdSize = central.reduce((t, c) => t + c.length, 0);
+  const end = new Uint8Array(22);
+  const ev = new DataView(end.buffer);
+  ev.setUint32(0, 0x06054b50, true); ev.setUint16(8, files.length, true); ev.setUint16(10, files.length, true);
+  ev.setUint32(12, cdSize, true); ev.setUint32(16, offset, true);
+  return new Blob(parts.concat(central, [end]), { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+}
+function xmlEsc(s) { return String(s).replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+function xlsxColName(i) { let s = ''; i++; while (i > 0) { const m = (i - 1) % 26; s = String.fromCharCode(65 + m) + s; i = Math.floor((i - 1) / 26); } return s; }
+function xlsxSheetXml(rows) {
+  let xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><cols><col min="1" max="1" width="18"/><col min="2" max="2" width="24"/><col min="3" max="7" width="16"/></cols><sheetData>';
+  rows.forEach((row, ri) => {
+    xml += '<row r="' + (ri + 1) + '">';
+    (row || []).forEach((v, ci) => {
+      const raw = String(v == null ? '' : v).trim();
+      if (raw === '' || raw === '—') return;
+      const ref = xlsxColName(ci) + (ri + 1);
+      const num = raw.replace(/,/g, '');
+      if (/^-?\d+(\.\d+)?$/.test(num)) xml += '<c r="' + ref + '"><v>' + num + '</v></c>';
+      else xml += '<c r="' + ref + '" t="inlineStr"><is><t xml:space="preserve">' + xmlEsc(raw) + '</t></is></c>';
+    });
+    xml += '</row>';
+  });
+  return xml + '</sheetData></worksheet>';
+}
+function buildXlsxBlob(sheetName, rows) {
+  const enc = new TextEncoder();
+  const name = String(sheetName || '収支').replace(/[\[\]\*\/\\\?:]/g, '').slice(0, 31) || '収支';
+  const files = [
+    { name: '[Content_Types].xml', data: enc.encode('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>') },
+    { name: '_rels/.rels', data: enc.encode('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>') },
+    { name: 'xl/workbook.xml', data: enc.encode('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="' + xmlEsc(name) + '" sheetId="1" r:id="rId1"/></sheets></workbook>') },
+    { name: 'xl/_rels/workbook.xml.rels', data: enc.encode('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/></Relationships>') },
+    { name: 'xl/worksheets/sheet1.xml', data: enc.encode(xlsxSheetXml(rows)) },
+  ];
+  return zipStore(files);
+}
+function downloadShushiExcel() {
   const sheet = activeShushiSheet;
   const deal = shushiDeal();
   const labels = SHUSHI_LABELS[sheet];
   const disp = cell => { const el = document.getElementById(shushiCellId(cell)); if (el) return String(('value' in el ? el.value : el.textContent) || '').trim(); return String(shushiFormatInputValue(shushiResolvedValue(sheet, cell)) || '').trim(); };
-  const esc = s => { s = String(s == null ? '' : s); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
   const rows = [];
-  const push = arr => rows.push((arr || []).map(esc).join(','));
+  const push = arr => rows.push((arr || []).map(v => (v == null ? '' : String(v))));
   push(['GREENS 物件仕入れ収支', sheet]);
   push(['物件名', disp('B1')]);
   push(['作成日', TODAY]);
@@ -2306,13 +2363,26 @@ function downloadShushiCsv() {
   push([]);
   push(['【原価表】', '項目', '金額(税込)', '備考']);
   const cfg = shushiCostRows(sheet);
+  const hiddenRows = shushiHiddenCostRows(sheet);
+  let pendingSec = '';
   for (let r = cfg.start; r <= cfg.end; r++) {
-    const sec = cfg.sections[r] ? (labels[cfg.sections[r]] || '') : '';
-    const item = labels['B' + r] || '';
+    if (cfg.sections[r]) pendingSec = labels[cfg.sections[r]] || '';
+    if (hiddenRows.has(r)) continue;
+    const memoText = labels['D' + r] || (SHUSHI_CELL_DEFAULTS[sheet] || {})['D' + r];
+    const editableItem = memoText === 'あれば項目変更する' && SHUSHI_META_INPUTS[sheet].includes('B' + r);
+    const freeItemRow = !labels['B' + r] && labels['D' + r] === 'フリー項目' && SHUSHI_META_INPUTS[sheet].includes('B' + r);
+    const item = (editableItem || freeItemRow) ? disp('B' + r) : (labels['B' + r] || '');
     const amount = (shushiIsInput(sheet, 'C' + r) || shushiIsFormula(sheet, 'C' + r)) ? disp('C' + r) : '';
     const memo = disp('D' + r);
-    if (!sec && !item && !amount && !memo) continue;
-    push([sec, item, amount, memo]);
+    if (pendingSec || item || amount || memo) {
+      const sec = pendingSec; pendingSec = '';
+      push([sec, item, amount, memo]);
+    }
+    const ft = SHUSHI_FREE_TAX[sheet];
+    if (ft && r === ft.after) {
+      const fname = disp('B' + ft.row), famount = disp('C' + ft.row);
+      if (fname || famount) push(['', fname, famount, '']);
+    }
   }
   const m = SHUSHI_SUMMARY[sheet];
   push([]);
@@ -2352,17 +2422,15 @@ function downloadShushiCsv() {
       push(row);
     });
   }
-  const csv = '﻿' + rows.join('\r\n');
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const blob = buildXlsxBlob(sheet, rows);
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = (disp('B1') || (deal && deal.name) || '収支') + '_' + sheet + '_' + TODAY + '.csv';
+  a.download = (disp('B1') || (deal && deal.name) || '収支') + '_' + sheet + '_' + TODAY + '.xlsx';
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   setTimeout(() => URL.revokeObjectURL(url), 1000);
-  if (typeof showToast === 'function') showToast('CSVをダウンロードしました');
+  if (typeof showToast === 'function') showToast('Excelをダウンロードしました');
 }
-// 担当欄（社長/上長/担当）：Excelには存在するが画面では非表示。Excel出力機能の実装時にこのセル位置（戸建てI60/M60/Q60・土地転売I36/L36/P36・アパートI43/L43/P43）へ挿入する。
 function renderShushiSheet() {
   renderShushiTabs();
   const wrap = document.getElementById('pl-sheet-grid');
@@ -2370,16 +2438,12 @@ function renderShushiSheet() {
   const sheet = activeShushiSheet;
   let html = '<div class="pl-sheet-sections">';
   html += shushiPropertySection(sheet);
-  // 原価表＋販売想定①②＋販売計画①②を横並び＋下部にIRR（2026-07-24 中西さん指示で販売想定・計画を原価の横に統合）
   html += shushiCostBlock(sheet);
-  // 近隣の販売在庫（近隣）は市場調査タブへ移設（2026-07-25 中西さん指示）。アパートのレントロール（賃料表）は計算入力のため収支画面に残す
   if (sheet === 'アパート') html += shushiMarketSection(sheet);
   html += shushiTorihikiSection(sheet);
-  // 担当（社長/上長/担当のハンコ欄）は画面では非表示＝Excel出力時にのみ挿入する（2026-07-24 中西さん指示）
-  // 登録・Excel出力ボタンは収支タブ最下部（物件写真・資料の下）の静的HTML側に配置
   html += '</div>';
   wrap.innerHTML = html;
-  renderMarketTab(); // 市場調査タブの販売在庫（近隣）を現在のシートで再描画（2026-07-25 中西さん指示）
+  renderMarketTab();
   setupPlSectionToggles();
   calcPL();
 }
@@ -2387,10 +2451,9 @@ function switchShushiSheet(sheet) {
   persistCurrentShushiState();
   activeShushiSheet = sheet;
   renderShushiSheet();
-  renderDetailHeader(); // ヘッダーのシート種別チップ・物件名（収支正本）を追随
+  renderDetailHeader();
 }
 function setShushiSheetByDeal(deal) {
-  // 仕入れ形態の先頭（戸建て建売・戸建て土地売り→戸建てシート／土地転売／アパート）で初期シートを決める
   const s = deal ? dealStrategies(deal)[0] : null;
   activeShushiSheet = s === 'アパート' ? 'アパート' : s === '土地転売' ? '土地転売（業者売り）' : SHUSHI_SHEETS[0];
   renderShushiSheet();
@@ -2417,10 +2480,9 @@ function fmtCell(cell, val) {
   if (cell === 'K2') return String(val || '');
   if (val === '該当なし') return val;
   if (!isFinite(val) || isNaN(val)) return '—';
-  // P15/P21はアパートのみ利益率（戸建て・土地転売では販売在庫の坪単価行と同名のため、シートで振り分ける）
   const pctCells = activeShushiSheet === 'アパート' ? ['P15','P21'] : ['P25','P26','P31','P32','P38'];
   if (/^G\d+$/.test(cell) || pctCells.includes(cell)) return pct(val);
-  if (['C6','C7'].includes(cell)) return val.toLocaleString('ja-JP', {minimumFractionDigits: 1, maximumFractionDigits: 1}) + '坪'; // 地積・建物面積の坪換算は常に小数第1位まで表示（2026-07-25 中西さん指示：0.1単位まで必ず表示・整数でも「1,000.0坪」）
+  if (['C6','C7'].includes(cell)) return val.toLocaleString('ja-JP', {minimumFractionDigits: 1, maximumFractionDigits: 1}) + '坪';
   if (['D16','D25','D40','D48'].includes(cell)) return Math.round(val).toLocaleString('ja-JP') + '円/坪';
   if (['F16','M24','M25','M30','M31','M37','K32'].includes(cell)) return Math.round(val).toLocaleString('ja-JP');
   return fmt(val);
@@ -2447,49 +2509,45 @@ function shushiSetFormula(c, cell, val) {
 }
 function calcKodateCells(c) {
   c.K2 = TODAY; c.C6 = n(c,'B6') * 0.3025; c.C7 = n(c,'B7') * 0.3025;
-  // 販売在庫の土地面積は㎡入力＝坪単価は㎡→坪換算（×0.3025）で算出（2026-07-24 中西さん指示・Excelの直割りJ/Nとの意図的な差）
   [6,7,8,9,10,11].forEach(r => c['P'+r] = n(c,'J'+r) / (n(c,'N'+r) * 0.3025));
-  c.D16 = n(c,'C16') / n(c,'C6'); c.F16 = n(c,'C16') / n(c,'C6') / (n(c,'B8') / 100); // 容積率は%数値入力（150=150%）2026-07-24
-  // 手数料の固定加算(+6万/+12万)は、元金額の未入力時に固定分だけ表示されるのを防ぐため0とする（Excelとの意図的な差・2026-07-23中西さん指示）
+  c.D16 = n(c,'C16') / n(c,'C6'); c.F16 = n(c,'C16') / n(c,'C6') / (n(c,'B8') / 100);
   const autoC17 = n(c,'C16') > 0 ? Math.round((n(c,'C16') * 0.03 + 60000) * 1.1) : 0; c.C17 = shushiIsManual('C17') ? n(c,'C17') : autoC17;
   [17,18,19,20,21].forEach(r => c['P'+r] = n(c,'J'+r) / (n(c,'N'+r) * 0.3025));
   c.F19 = n(c,'C16') * 0.9; c.D25 = n(c,'C25') / n(c,'C7'); c.M25 = (n(c,'K26') - n(c,'C25')) / n(c,'C6'); c.M31 = (n(c,'K32') - n(c,'C25')) / n(c,'C6'); c.M37 = (n(c,'K38') - n(c,'C25')) / n(c,'C6');
-  // 区画数（棟数）に応じて88,000円×棟数（2026-07-26 先方回答Q&A No.18）
   c.C30 = 88000 * Math.max(1, Math.floor(n(c,'G2')) || 1);
-  // 固定資産税路線価G23は㎡単価入力＝地積B6を掛けて評価額（総額）に換算して税計算（2026-07-24 中西さん指示・Excelの総額直書きとの意図的な差分）
-  const hyokaK = n(c,'G23') * n(c,'B6');
-  c.C32 = hyokaK * (n(c,'D32') / 100); c.C33 = n(c,'G24') * 0.03; c.C34 = hyokaK * 0.014; c.C35 = hyokaK * 0.003; c.C36 = hyokaK * 0.02; c.C37 = n(c,'G24') * 0.02; c.C38 = n(c,'F19') * (n(c,'D38') / 100); c.C44 = n(c,'K26') > 0 ? (n(c,'K26') * 0.03 + 60000) * 1.1 : 0; c.C45 = (n(c,'F19') * (n(c,'D45') / 100) / 12) * n(c,'G3'); c.C46 = n(c,'F19') * (n(c,'D46') / 100);
-  c.C48 = sumCells(c,'C',16,47); c.D48 = n(c,'C48') / n(c,'C7');
+  const hyokaK = n(c,'G23');
+  c.C32 = hyokaK * (n(c,'D32') / 100); c.C33 = n(c,'G24') * (n(c,'D33') / 100); c.C34 = hyokaK * (n(c,'D34') / 100); c.C35 = hyokaK * (n(c,'D35') / 100); c.C36 = hyokaK * (n(c,'D36') / 100); c.C37 = n(c,'G24') * (n(c,'D37') / 100); c.C38 = n(c,'F19') * (n(c,'D38') / 100); c.C44 = shushiIsManual('C44') ? n(c,'C44') : (n(c,'K26') > 0 ? Math.round((n(c,'K26') * 0.03 + 60000) * 1.1) : 0); c.C45 = (n(c,'F19') * (n(c,'D45') / 100) / 12) * n(c,'G3'); c.C46 = n(c,'F19') * (n(c,'D46') / 100);
+  c.C48 = sumCells(c,'C',16,47) + freeTaxAmount(c,'戸建て（建売・土地売り）'); c.D48 = n(c,'C48') / n(c,'C7');
   c.K27 = n(c,'C48'); c.K28 = n(c,'K26') - n(c,'K27'); c.P26 = n(c,'K28') / n(c,'K26'); c.K33 = n(c,'C48'); c.K34 = n(c,'K32') - n(c,'K33'); c.P32 = n(c,'K34') / n(c,'K32'); c.K39 = n(c,'C48'); c.K40 = n(c,'K38') - n(c,'K39'); c.P38 = n(c,'K40') / n(c,'K38');
-  c.I54 = -sumCells(c,'C',16,47); c.I56 = n(c,'K32'); c.G54 = calcIrrExcel(n(c,'I56'), -n(c,'I54'), 12); c.I58 = -n(c,'C48'); c.I62 = n(c,'K32'); c.G58 = calcIrrExcel(n(c,'I62'), -n(c,'I58'), 18); c.I64 = n(c,'I54'); c.I68 = n(c,'K32'); c.G64 = calcIrrExcel(n(c,'I68'), -n(c,'I64'), 24); c.G25 = displayIrr(n(c,'G3'), c.G54, c.G58, c.G64);
+  c.I54 = -n(c,'C48'); c.I56 = n(c,'K32'); c.G54 = calcIrrExcel(n(c,'I56'), -n(c,'I54'), 12); c.I58 = -n(c,'C48'); c.I62 = n(c,'K32'); c.G58 = calcIrrExcel(n(c,'I62'), -n(c,'I58'), 18); c.I64 = n(c,'I54'); c.I68 = n(c,'K32'); c.G64 = calcIrrExcel(n(c,'I68'), -n(c,'I64'), 24); c.G25 = displayIrr(n(c,'G3'), c.G54, c.G58, c.G64);
 }
 function calcTochiCells(c) {
   c.K2 = TODAY; c.C6 = n(c,'B6') * 0.3025; c.C7 = n(c,'B7') * 0.3025; c.D16 = n(c,'C16') / n(c,'C6'); c.F16 = n(c,'C16') / n(c,'C6') / (n(c,'B8') / 100); const autoC17 = n(c,'C16') > 0 ? Math.round((n(c,'C16') * 0.03 + 60000) * 1.1) : 0; c.C17 = shushiIsManual('C17') ? n(c,'C17') : autoC17; c.F19 = n(c,'C16') * 0.9;
-  // 販売在庫の土地面積は㎡入力＝坪単価は㎡→坪換算（×0.3025）で算出（2026-07-24 中西さん指示）
   [6,7,8,9,10,11].forEach(r => c['P'+r] = n(c,'J'+r) / (n(c,'N'+r) * 0.3025)); [17,18,19,20,21].forEach(r => c['P'+r] = n(c,'J'+r) / (n(c,'N'+r) * 0.3025));
-  // 税金＝自動計算（2026-07-26 先方回答Q&A No.16）。三為スキームON時は課税されないため0にする
-  const hyokaT = n(c,'G23') * n(c,'B6');
-  const sanyu = shushiIsSanyu();
-  c.C27 = sanyu ? 0 : hyokaT * (n(c,'D27') / 100);   // 取得税(土地)
-  c.C28 = sanyu ? 0 : n(c,'G24') * (n(c,'D28') / 100); // 取得税(建物)
-  c.C29 = sanyu ? 0 : hyokaT * (n(c,'D29') / 100);   // 固定資産税
-  c.C30 = sanyu ? 0 : hyokaT * (n(c,'D30') / 100);   // 都市計画税
-  c.C31 = sanyu ? 0 : hyokaT * (n(c,'D31') / 100);   // 登録免許税(土地)
-  c.C32 = sanyu ? 0 : n(c,'G24') * (n(c,'D32') / 100); // 登録免許税(建物)
-  c.C33 = sanyu ? 0 : n(c,'F19') * (n(c,'D33') / 100); // 抵当権
-  c.C40 = sumCells(c,'C',16,39); c.D40 = n(c,'C40') / n(c,'C6'); c.M24 = n(c,'K25') / n(c,'C6'); c.K26 = n(c,'C40'); c.K27 = n(c,'K25') - n(c,'K26'); c.P25 = n(c,'K27') / n(c,'K25'); c.M30 = n(c,'K31') / n(c,'C6'); c.K32 = n(c,'C40'); c.K33 = n(c,'K31') - n(c,'K32'); c.P31 = n(c,'K33') / n(c,'K31');
-  c.I46 = -sumCells(c,'C',8,39); c.I48 = n(c,'K25'); c.G46 = calcIrrExcel(n(c,'I48'), -n(c,'I46'), 12); c.I50 = -n(c,'C40'); c.I54 = n(c,'I48'); c.G50 = calcIrrExcel(n(c,'I54'), -n(c,'I50'), 18); c.I56 = n(c,'I46'); c.I60 = n(c,'I48'); c.G56 = calcIrrExcel(n(c,'I60'), -n(c,'I56'), 24); c.G25 = displayIrr(n(c,'G3'), c.G46, c.G50, c.G56);
+  const hyokaT = n(c,'G23');
+  const sanyu = shushiIsSanyu(), renken = shushiIsRenken(), scheme = sanyu || renken;
+  c.C27 = sanyu ? 0 : hyokaT * (n(c,'D27') / 100);
+  c.C28 = sanyu ? 0 : n(c,'G24') * (n(c,'D28') / 100);
+  c.C29 = scheme ? 0 : hyokaT * (n(c,'D29') / 100);
+  c.C30 = scheme ? 0 : hyokaT * (n(c,'D30') / 100);
+  c.C31 = sanyu ? 0 : hyokaT * (n(c,'D31') / 100);
+  c.C32 = sanyu ? 0 : n(c,'G24') * (n(c,'D32') / 100);
+  c.C33 = scheme ? 0 : n(c,'F19') * (n(c,'D33') / 100);
+  c.C37 = shushiIsManual('C37') ? n(c,'C37') : (n(c,'K25') > 0 ? Math.round((n(c,'K25') * 0.03 + 60000) * 1.1) : 0);
+  c.C38 = scheme ? 0 : (n(c,'F19') * (n(c,'D38') / 100) / 12) * n(c,'G3');
+  c.C39 = scheme ? 0 : n(c,'F19') * (n(c,'D39') / 100);
+  c.C40 = sumCells(c,'C',16,39) + freeTaxAmount(c,'土地転売（業者売り）'); c.D40 = n(c,'C40') / n(c,'C6'); c.M24 = n(c,'K25') / n(c,'C6'); c.K26 = n(c,'C40'); c.K27 = n(c,'K25') - n(c,'K26'); c.P25 = n(c,'K27') / n(c,'K25'); c.M30 = n(c,'K31') / n(c,'C6'); c.K32 = n(c,'C40'); c.K33 = n(c,'K31') - n(c,'K32'); c.P31 = n(c,'K33') / n(c,'K31');
+  c.I46 = -n(c,'C40'); c.I48 = n(c,'K25'); c.G46 = calcIrrExcel(n(c,'I48'), -n(c,'I46'), 12); c.I50 = -n(c,'C40'); c.I54 = n(c,'I48'); c.G50 = calcIrrExcel(n(c,'I54'), -n(c,'I50'), 18); c.I56 = n(c,'I46'); c.I60 = n(c,'I48'); c.G56 = calcIrrExcel(n(c,'I60'), -n(c,'I56'), 24); c.G25 = displayIrr(n(c,'G3'), c.G46, c.G50, c.G56);
 }
 function calcApartCells(c) {
   c.K2 = TODAY; [4,5,6,7,8,9].forEach(r => c['O'+r] = n(c,'M'+r) * n(c,'L'+r)); c.C6 = n(c,'B6') * 0.3025; c.C7 = n(c,'B7') * 0.3025; c.J10 = [4,5,6,7,8,9].reduce((t,r) => t + n(c,'J'+r) * n(c,'L'+r),0); c.L10 = [4,5,6,7,8,9].reduce((t,r) => t + n(c,'L'+r),0); c.O10 = [4,5,6,7,8,9].reduce((t,r) => t + n(c,'O'+r),0);
   c.K30 = n(c,'O10'); c.K31 = n(c,'K30') * 12; c.K32 = n(c,'K30') / n(c,'C7');
-  // 利回りは％数値で入力（6＝6%）＝Excelの0.06と等価。他の％欄（1.5=1.5%）と入力ルールを統一（2026-07-24 レビュー反映）
   c.K15 = n(c,'K31') / (n(c,'N14') / 100); c.K21 = n(c,'K31') / (n(c,'N20') / 100); c.D16 = n(c,'C16') / n(c,'C6'); c.F16 = n(c,'C16') / n(c,'C6') / (n(c,'B8') / 100); const autoC17 = n(c,'C16') > 0 ? Math.round((n(c,'C16') * 0.03 + 60000) * 1.1) : 0; c.C17 = shushiIsManual('C17') ? n(c,'C17') : autoC17; c.F19 = n(c,'C16') * 0.9;
-  // 固定資産税路線価G22は㎡単価入力＝地積B6を掛けて評価額（総額）に換算して税計算（2026-07-24 中西さん指示・Excelの総額直書きとの意図的な差分）
-  const hyokaA = n(c,'G22') * n(c,'B6');
-  c.C33 = hyokaA * (n(c,'D33') / 100); c.C34 = n(c,'G24') * (n(c,'D34') / 100); c.C35 = hyokaA * 0.014; c.C36 = n(c,'G24') * 0.003; c.C37 = hyokaA * 0.02; c.C38 = n(c,'G24') * (n(c,'D38') / 100); c.C39 = n(c,'F19') * (n(c,'D39') / 100); c.C44 = n(c,'K15') * 0.03 * 1.1; c.C45 = (n(c,'F19') * (n(c,'D45') / 100) / 12) * n(c,'G3'); c.C46 = n(c,'F19') * 0.01;
-  c.C48 = sumCells(c,'C',16,47); c.D48 = n(c,'C48') / n(c,'C6'); c.K16 = n(c,'C48'); c.K17 = n(c,'K15') - n(c,'K16'); c.P15 = n(c,'K17') / n(c,'K15'); c.K22 = n(c,'C48'); c.K24 = n(c,'K21') - n(c,'K22'); c.P21 = n(c,'K24') / n(c,'K21');
-  c.I55 = -sumCells(c,'C',8,47); c.I57 = n(c,'K15'); c.G55 = calcIrrExcel(n(c,'I57'), -n(c,'I55'), 12); c.I59 = -sumCells(c,'C',8,47); c.I63 = n(c,'I57'); c.G59 = calcIrrExcel(n(c,'I63'), -n(c,'I59'), 18); c.I65 = n(c,'I55'); c.I69 = n(c,'I63'); c.G65 = calcIrrExcel(n(c,'I69'), -n(c,'I65'), 24); c.G25 = displayIrr(n(c,'G3'), c.G55, c.G59, c.G65);
+  const hyokaA = n(c,'G22');
+  c.C33 = hyokaA * (n(c,'D33') / 100); c.C34 = n(c,'G24') * (n(c,'D34') / 100); c.C35 = hyokaA * (n(c,'D35') / 100); c.C36 = hyokaA * (n(c,'D36') / 100); c.C37 = hyokaA * (n(c,'D37') / 100); c.C38 = n(c,'G24') * (n(c,'D38') / 100); c.C39 = n(c,'F19') * (n(c,'D39') / 100);
+  c.C44 = shushiIsManual('C44') ? n(c,'C44') : (n(c,'K15') > 0 ? Math.round((n(c,'K15') * 0.03 + 60000) * 1.1) : 0); c.C45 = (n(c,'F19') * (n(c,'D45') / 100) / 12) * n(c,'G3'); c.C46 = n(c,'F19') * 0.01;
+  c.C48 = sumCells(c,'C',16,47) + freeTaxAmount(c,'アパート'); c.D48 = n(c,'C48') / n(c,'C6'); c.K16 = n(c,'C48'); c.K17 = n(c,'K15') - n(c,'K16'); c.P15 = n(c,'K17') / n(c,'K15'); c.K22 = n(c,'C48'); c.K24 = n(c,'K21') - n(c,'K22'); c.P21 = n(c,'K24') / n(c,'K21');
+  c.I55 = -n(c,'C48'); c.I57 = n(c,'K15'); c.G55 = calcIrrExcel(n(c,'I57'), -n(c,'I55'), 12); c.I59 = -n(c,'C48'); c.I63 = n(c,'I57'); c.G59 = calcIrrExcel(n(c,'I63'), -n(c,'I59'), 18); c.I65 = n(c,'I55'); c.I69 = n(c,'I63'); c.G65 = calcIrrExcel(n(c,'I69'), -n(c,'I65'), 24); c.G25 = displayIrr(n(c,'G3'), c.G55, c.G59, c.G65);
 }
 function calcPL() {
   const sheet = activeShushiSheet;
@@ -2501,7 +2559,6 @@ function calcPL() {
   else calcApartCells(c);
   shushiCells = c;
   SHUSHI_FORMULAS[sheet].forEach(cell => shushiSetFormula(c, cell, c[cell]));
-  // 仲介手数料C17＝手入力していなければ自動計算値を入力欄へ反映（手入力後はその値を尊重）2026-07-25 中西さん指示
   SHUSHI_AUTODEFAULT_CELLS.forEach(cell => { if (!shushiIsManual(cell)) document.querySelectorAll('[data-cell="' + cell + '"]').forEach(el => { if ('value' in el && document.activeElement !== el) el.value = shushiFormatInputValue(c[cell]); }); });
   const m = SHUSHI_SUMMARY[sheet];
   const sell = n(c, m.sell), total = n(c, m.total), profit = n(c, m.profit), rate = n(c, m.rate), irr = c[m.irr] === '該当なし' ? NaN : n(c, m.irr);
@@ -2517,9 +2574,27 @@ function calcPL() {
   renderFirstDiff(lastShushiMetrics.sellA, lastShushiMetrics.total);
   calcHearing();
   updateRosenkaTsubo();
+  updateMirrorCells();
+  updateEvalLayout();
   updatePlSectionBadges();
 }
-// 路線価・固定資産税路線価（㎡単価入力）の右横に自動で坪換算を表示（2026-07-24 中西さん指示）
+function updateEvalLayout() {
+  document.querySelectorAll('#pl-sheet-grid .pl-prop-wrap').forEach(wrap => {
+    const main = wrap.querySelector('.pl-prop-main'), ev = wrap.querySelector('.pl-prop-eval');
+    if (!main || !ev) return;
+    ev.classList.remove('pl-eval-row');
+    if (ev.offsetTop > main.offsetTop + 5) ev.classList.add('pl-eval-row');
+  });
+}
+let evalLayoutTimer = null;
+window.addEventListener('resize', () => { clearTimeout(evalLayoutTimer); evalLayoutTimer = setTimeout(updateEvalLayout, 80); });
+function updateMirrorCells() {
+  document.querySelectorAll('#pl-sheet-grid [data-mirror-of]').forEach(el => {
+    const src = document.getElementById(shushiCellId(el.dataset.mirrorOf));
+    const txt = src ? String(('value' in src ? src.value : src.textContent) || '').trim() : '';
+    el.textContent = txt ? txt.replace(/円\/坪\s*$/, '') : '—';
+  });
+}
 function updateRosenkaTsubo() {
   document.querySelectorAll('#pl-sheet-grid [data-tsubo-of]').forEach(el => {
     const v = shushiNum(shushiRawValue(el.dataset.tsuboOf));
@@ -2528,14 +2603,14 @@ function updateRosenkaTsubo() {
 }
 function calcNTsubo(fromInput) { if (fromInput && currentDealId !== null) { const deal = DEALS.find(d => d.id === currentDealId); if (deal && deal.reg && !deal.reg.market) registerStep('market'); } calcPL(); }
 function shushiOnInput(el) {
-  // 日本語入力の変換中は処理しない（変換中の書き換えはIMEの二重入力・文字化けの原因）。確定時（compositionend）にまとめて処理
   if (el.dataset.ime) return;
   el.value = el.value.replace(/[０-９．－，]/g, ch => ({'０':'0','１':'1','２':'2','３':'3','４':'4','５':'5','６':'6','７':'7','８':'8','９':'9','．':'.','－':'-','，':','}[ch] || ch));
   if (el.inputMode === 'decimal') {
     const raw = el.value.replace(/,/g,'');
     if (/^-?\d+(\.\d+)?$/.test(raw) && Math.abs(parseFloat(raw)) >= 1000 && !raw.includes('.')) el.value = parseFloat(raw).toLocaleString('ja-JP');
   }
-  // 自動デフォルトセル（仲介手数料C17）＝手入力されたら記録して以後尊重、空にしたら自動へ戻す（2026-07-25 中西さん指示）
+  if (el.dataset.cell === 'B3') applyFieldRule(el, formatChomeKanji);
+  if (el.dataset.cell === 'B4') applyFieldRule(el, v => formatChiban(v, false));
   if (SHUSHI_AUTODEFAULT_CELLS.includes(el.dataset.cell)) {
     if (String(el.value).trim() === '') delete shushiManualCells[shushiManualKey(el.dataset.cell)];
     else shushiManualCells[shushiManualKey(el.dataset.cell)] = true;
@@ -2545,7 +2620,6 @@ function shushiOnInput(el) {
 }
 function shushiEnter(e, el) {
   if (e.key !== 'Enter') return;
-  // 日本語入力の変換確定Enterでは移動しない（isComposing/229＝IME変換中。未確定文字が次セルへ持ち越される不具合の修正・2026-07-24）
   if (e.isComposing || e.keyCode === 229) return;
   e.preventDefault();
   const inputs = Array.from(document.querySelectorAll('#pl-sheet-grid input, #pl-sheet-grid select')).filter(x => !x.disabled);
@@ -2560,16 +2634,11 @@ function renderPLPhotos() {
 }
 function calcSellRow(profitId, rateId, sell, total) { setText(profitId, sell > 0 && total > 0 ? fmt(sell - total) : '—'); setText(rateId, sell > 0 && total > 0 ? pct((sell - total) / sell) : '—'); }
 
-/* ===== 初回想定の保持（案件別）＝収支「登録」の初回実行時に自動記録 ===== */
-const FIRST_EST = {};   // dealId -> {sell, cost, date}
-let lastTotal = 0;      // calcPL()が更新する現在の総原価
+const FIRST_EST = {};
+let lastTotal = 0;
 
-/* ===== 「登録」共通：deal.regのフラグを立て、対応ステータスまで自動昇格（昇格のみ・後退なし） ===== */
-// 収支計算→市場調査の順（2026-07-24 中西さん指示でステップ2・3を入れ替え＝収支を先に作ってから相場で裏取りする流れ）
 const STATUS_ORDER = ['未検討','検討中','概算収支作成済み','市場調査中','販売会社ヒアリング中','建築プラン依頼中','買付検討中','買付提出','契約'];
 
-// ステップバー6段のラベル（仮）＝一元管理・設定ビューから変更可能（in-memory）
-// 名称はお打ち合わせで御社の呼び方に合わせて確定する前提。ステータス11種・ファネル集計は不変更
 const STEP_LABELS = ['案件登録','収支計算','市場調査','販売会社ヒアリング','建築プラン依頼','買付判断'];
 
 const REG_STEPS = {
@@ -2586,7 +2655,6 @@ function registerStep(kind, extraNote) {
   if (!deal || !step) return;
   if (!deal.reg) deal.reg = {market:false, pl:false, hearing:false, plan:false};
   deal.reg[kind] = true;
-  // 昇格：現在のステータスが対応ステータスより手前の場合のみ（保留・見送りはSTATUS_ORDER外＝動かさない）
   const cur = STATUS_ORDER.indexOf(deal.status);
   const target = STATUS_ORDER.indexOf(step.status);
   let promoted = false;
@@ -2597,29 +2665,25 @@ function registerStep(kind, extraNote) {
     promoted = true;
   }
   refreshAfterReg(deal);
-  // 収支は「保存」ボタン名に合わせた文言（2026-07-24 中西さん指示）
   showToast(step.label + 'を' + (kind === 'pl' ? '保存' : '登録') + 'しました'
     + (promoted ? '（ステップを「' + step.status + '」に進めました）' : '')
     + (extraNote || ''));
 }
 
 function refreshAfterReg(deal) {
-  renderDetailHeader(); // ステータスチップ・物件名・住所を最新化
+  renderDetailHeader();
   renderSummaryTab(deal);
   renderHoldBanner();
   if (currentView === 'list') renderList();
   if (currentView === 'home') renderHome();
 }
 
-/* タブ移動（サマリーの誘導ボタン・ステップバーの！から使用）
-   ※対象外のタブ名（旧・建築プラン/判断と履歴）は何もしない＝安全に無効化 */
 function gotoTab(name) {
   const btn = document.querySelector('#detail-tabs .tab-btn[onclick*="\'' + name + '\'"]');
   if (btn) switchTab(name, btn);
 }
 
-/* 収支タブの「登録」＝初回想定の記録（旧・下書き保存の機能）＋概算収支の登録＋販売価格の判断イベント */
-const LAST_REG_PRICE = {};  // dealId -> {a,b}＝前回登録時の販売想定①②（判断イベントの変更検知用）
+const LAST_REG_PRICE = {};
 
 function registerPL() {
   if (currentDealId === null) { showToast('案件を選択してください'); return; }
@@ -2627,10 +2691,7 @@ function registerPL() {
   if (!FIRST_EST[currentDealId] && gv('pl-sell-a') > 0 && lastTotal > 0) {
     FIRST_EST[currentDealId] = { sell: gv('pl-sell-a'), cost: lastTotal, date: TODAY };
     renderFirstDiff(gv('pl-sell-a'), lastTotal);
-    firstNote = '（初回の想定として記録しました）';
   }
-  // 販売価格の判断イベント：販売想定①②が新規または前回登録から変更されていたら自動記録（②＝仕入れ判断の基準）
-  // 設定根拠（pl-price-basis）が入力されていれば「・根拠：◯◯」を付加（空なら従来文言）
   const sellA = gv('pl-sell-a');
   const sellB2 = gv('pl-sell-b');
   const deal = DEALS.find(d => d.id === currentDealId);
@@ -2647,17 +2708,14 @@ function registerPL() {
   }
   if (deal) LAST_REG_PRICE[currentDealId] = { a: sellA, b: sellB2 };
   registerStep('pl', firstNote);
-  plDirty = false; // 保存完了＝未保存ガードを解除
+  plDirty = false;
 }
 
-/* ===== 規定利益の関所：ヒアリング登録の直前チェック（評価はしない・事実と問いのみ） ===== */
 function registerHearing() {
   if (currentDealId === null) { showToast('案件を選択してください'); return; }
-  // 1社以上の回答（回答販売価格のいずれかが>0）を確認してから登録
   let hasAnswer = false;
   for (let i = 1; i <= 3; i++) { if (gv('hc-price-' + i) > 0) { hasAnswer = true; break; } }
   if (!hasAnswer) { showToast('販売会社の回答価格が未入力です。1社以上の回答を入力してから登録してください'); return; }
-  // 収支データがある場合のみ判定（販売想定②>0 かつ 総原価>0。判定基準＝販売想定②・着地前後（2026-07-03 社長確定）
   const sellB = gv('pl-sell-b');
   const total = lastTotal;
   if (sellB > 0 && total > 0) {
@@ -2666,7 +2724,7 @@ function registerHearing() {
     const irr = calcIRR(sellB, total, months);
     if (rate < 0.08 || irr < 0.10) {
       openGateModal(rate, irr);
-      return; // モーダルの［進む／戻る］で続行を判断
+      return;
     }
   }
   registerStep('hearing');
@@ -2692,7 +2750,6 @@ function gateProceed() {
   const reason = reasonEl ? reasonEl.value.trim() : '';
   closeGateModal();
   registerStep('hearing');
-  // 判断イベント：基準を下回った状態で進む判断を記録
   if (deal) {
     HISTORY.push({dealId: deal.id, date: TODAY, type: 'decision',
       text: '基準を下回った状態でヒアリングへ進む判断（理由：' + (reason || '記入なし') + '）', by: deal.staff});
@@ -2700,14 +2757,12 @@ function gateProceed() {
   }
 }
 
-/* ヒアリングタブ：会社カードごとのクリア（削除相当） */
 function clearHearingCard(i) {
   ['hc-name-', 'hc-tanto-', 'hc-date-', 'hc-price-', 'hc-comment-'].forEach(p => sv(p + i, ''));
   calcHearing();
   showToast('販売会社' + i + 'の入力をクリアしました');
 }
 
-/* 3社回答の比較サマリー：中央値と販売想定②（着地前後）との差額を自動表示（事実表示のみ） */
 function calcHearing() {
   const box = document.getElementById('hearing-summary');
   if (!box) return;
@@ -2736,12 +2791,13 @@ function calcHearing() {
   box.textContent = txt;
 }
 
+const SHOW_FIRST_DIFF = false;
 function renderFirstDiff(sellNow, costNow) {
   const box  = document.getElementById('first-est-box');
   const rows = document.getElementById('first-est-rows');
   if (!box || !rows) return;
   const fe = (currentDealId !== null) ? FIRST_EST[currentDealId] : null;
-  if (!fe) { box.style.display = 'none'; return; }
+  if (!fe || !SHOW_FIRST_DIFF) { box.style.display = 'none'; return; }
   box.style.display = '';
   rows.innerHTML = diffLine('販売想定①', fe.sell, sellNow) + diffLine('総原価', fe.cost, costNow);
 }
@@ -2758,10 +2814,8 @@ function diffLine(label, first, now) {
   return '<div>' + label + '：初回 ' + fmt(first) + '円 → 現在 ' + fmt(now) + '円（' + dStr + '）</div>';
 }
 
-/* ===== タブ ===== */
-/* ===== 収支の未保存ガード（2026-07-24 中西さん指示）＝収支計算タブで編集後、保存せずに移動しようとしたら確認ポップ ===== */
-let plDirty = false;      // 収支セルの編集があってから「保存」されるまで true
-let pendingNav = null;    // 確認ポップで保留中の移動処理
+let plDirty = false;
+let pendingNav = null;
 function plGuardActive() {
   return plDirty && currentView === 'detail' && currentDealId !== null
     && !!document.getElementById('tab-pl') && document.getElementById('tab-pl').classList.contains('active');
@@ -2773,19 +2827,18 @@ function guardPlNav(proceed) {
 }
 function unsavedSave() {
   document.getElementById('unsaved-modal').style.display = 'none';
-  registerPL(); // 保存（plDirty は registerPL 内で解除）
+  registerPL();
   const f = pendingNav; pendingNav = null; if (f) f();
 }
 function unsavedDiscard() {
   document.getElementById('unsaved-modal').style.display = 'none';
-  plDirty = false; // 今回の編集は「保存」としては記録しない（入力値自体はシートに残る）
+  plDirty = false;
   const f = pendingNav; pendingNav = null; if (f) f();
 }
 function unsavedCancel() {
   document.getElementById('unsaved-modal').style.display = 'none';
   pendingNav = null;
 }
-// ブラウザの戻る・閉じる＝ブラウザ標準の確認ダイアログで警告（文言はブラウザ固定）
 window.addEventListener('beforeunload', e => {
   if (plGuardActive()) { e.preventDefault(); e.returnValue = ''; }
 });
@@ -2801,21 +2854,17 @@ function doSwitchTab(name, el) {
   const tc = document.getElementById('tab-' + name);
   if (tc) tc.classList.add('active');
   if (el) el.classList.add('active');
-  // 収支の操作ボタン（ページ左上）は収支タブ表示中のみ
   const plTb = document.getElementById('pl-top-toolbar');
   if (plTb) plTb.style.display = (name === 'pl') ? 'flex' : 'none';
-  // 物件資料はサマリー内へ移動済み（2026-07-24）＝サマリー表示時に最新の資料一覧・写真を描画
   if (name === 'summary') renderShiryoTab();
-  // サマリーに戻ったときは最新状態で再描画（ステータス変更を反映）
   if (name === 'summary' && currentDealId !== null) {
     const d = DEALS.find(x => x.id === currentDealId);
     if (d) renderSummaryTab(d);
   }
 }
 
-/* ===== 新規案件登録（専用画面）＝5項目入力→「登録」で収支シートへ／「検討しない」で見送り記録 ===== */
-let newregShiryo = []; // 登録前の一時添付（登録/見送りの確定時に案件の shiryo へ移す）
-let newregStrategies = ['戸建て建売']; // 仕入れ形態の選択（既定＝戸建て建売・1つ以上必須）
+let newregShiryo = [];
+let newregStrategies = ['戸建て建売'];
 
 function toggleNrStrategy(btn) {
   const s = btn.dataset.strategy;
@@ -2831,7 +2880,7 @@ function toggleNrStrategy(btn) {
 }
 
 function openNewReg(el) {
-  ['nr-name','nr-address','nr-chiban','nr-menseki','nr-eki'].forEach(id => sv(id, ''));
+  ['nr-name','nr-address','nr-chiban','nr-menseki','nr-ensen','nr-ekimei','nr-eki'].forEach(id => sv(id, ''));
   newregShiryo = [];
   newregStrategies = ['戸建て建売'];
   document.querySelectorAll('#nr-strategy-wrap .nr-strategy-btn').forEach(b => b.classList.toggle('active', b.dataset.strategy === '戸建て建売'));
@@ -2843,22 +2892,78 @@ function openNewReg(el) {
   if (first) first.focus();
 }
 
-/* 数字入力の共通ルール：全角→半角・数字以外は除去・3桁カンマ表示 */
 function numFormat(el) {
   let v = (el.value || '').replace(/[０-９]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0));
   v = v.replace(/[^0-9]/g, '');
   el.value = v ? parseInt(v, 10).toLocaleString('ja-JP') : '';
 }
+const ZEN_HAN_EXTRA = { '．': '.', '，': ',', '－': '-' };
+function toHalfWidth(s) {
+  return String(s)
+    .replace(/[０-９Ａ-Ｚａ-ｚ]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0))
+    .replace(/[．，－]/g, ch => ZEN_HAN_EXTRA[ch] || ch);
+}
+function autoHalfWidth(el) {
+  if (!el || typeof el.value !== 'string') return;
+  const half = toHalfWidth(el.value);
+  if (half === el.value) return;
+  let start = null, end = null;
+  try { start = el.selectionStart; end = el.selectionEnd; } catch (_) {}
+  el.value = half;
+  if (start !== null) { try { el.setSelectionRange(start, end); } catch (_) {} }
+}
+const NO_HANKAKU_TYPES = ['checkbox', 'radio', 'range', 'color', 'file', 'date', 'button', 'submit'];
+function isHankakuTarget(el) {
+  if (!el || (el.tagName !== 'INPUT' && el.tagName !== 'TEXTAREA')) return false;
+  return !NO_HANKAKU_TYPES.includes(el.type);
+}
+document.addEventListener('input', e => {
+  if (!isHankakuTarget(e.target) || e.isComposing || e.target.dataset.ime) return;
+  autoHalfWidth(e.target);
+}, true);
+document.addEventListener('compositionend', e => {
+  if (!isHankakuTarget(e.target)) return;
+  autoHalfWidth(e.target);
+}, true);
+const KANJI_DIGITS = ['〇','一','二','三','四','五','六','七','八','九'];
+function numToKanji(num) {
+  const n = parseInt(num, 10);
+  if (!isFinite(n) || n <= 0 || n > 99) return null;
+  if (n < 10) return KANJI_DIGITS[n];
+  const tens = Math.floor(n / 10), ones = n % 10;
+  return (tens > 1 ? KANJI_DIGITS[tens] : '') + '十' + (ones ? KANJI_DIGITS[ones] : '');
+}
+function formatChomeKanji(s) {
+  return String(s).replace(/([0-9]+)\s*丁目/g, (whole, digits) => (numToKanji(digits) || digits) + '丁目');
+}
+function formatChiban(s, finalize) {
+  let v = String(s)
+    .replace(/番地|番|[のノ]/g, '-')
+    .replace(/[ー‐‑–—―]/g, '-')
+    .replace(/[^0-9-]/g, '')
+    .replace(/-{2,}/g, '-');
+  if (finalize) v = v.replace(/^-+/, '').replace(/-+$/, '');
+  return v;
+}
+function applyFieldRule(el, fn) {
+  if (!el || el.dataset.ime) return;
+  const before = el.value, after = fn(before);
+  if (after === before) return;
+  const pos = el.selectionStart;
+  el.value = after;
+  const next = (after.length === before.length && pos !== null) ? pos : after.length;
+  try { el.setSelectionRange(next, next); } catch (_) {}
+}
+function onAddressInput(el) { applyFieldRule(el, formatChomeKanji); }
+function onChibanInput(el, finalize) { applyFieldRule(el, v => formatChiban(v, finalize === true)); }
 function numVal(id) {
   const el = document.getElementById(id);
   if (!el) return 0;
   const n = parseInt((el.value || '').replace(/[^0-9]/g, ''), 10);
   return isFinite(n) ? n : 0;
 }
-/* 数字入力の共通ルール：Enterで次の項目へ移動 */
 function nrEnter(e, nextId) {
   if (e.key !== 'Enter') return;
-  // 日本語入力の変換確定Enterでは移動しない（IME対応・2026-07-24）
   if (e.isComposing || e.keyCode === 229) return;
   e.preventDefault();
   const next = document.getElementById(nextId);
@@ -2869,19 +2974,18 @@ function gvs(id) {
   return el ? el.value : '';
 }
 
-/* 登録フォームの5項目から案件オブジェクトを作る（登録・見送り共通） */
 function buildNewDealFromForm(status) {
   const newId = DEALS.length ? Math.max(...DEALS.map(d => d.id)) + 1 : 1;
   const addr = (gvs('nr-address') || '').trim();
   const m = addr.match(/^(?:.+?[都道府県])?(.+?)[区市]/);
-  // 仕入れ形態は定義順（STRATEGY_OPTIONS）に正規化。先頭が主形態＝一覧の種別・初期シート・写真の既定に使う
   const strategies = STRATEGY_OPTIONS.filter(s => newregStrategies.includes(s));
   const primary = strategies[0] || '戸建て建売';
   const deal = {
     id: newId, name: (gvs('nr-name') || '').trim() || '（新規案件）',
     area: m ? m[1] : addr, address: addr,
     chiban: (gvs('nr-chiban') || '').trim(),
-    menseki: numVal('nr-menseki'), ekitoho: numVal('nr-eki'),
+    menseki: numVal('nr-menseki'),
+    ensen: (gvs('nr-ensen') || '').trim(), ekimei: (gvs('nr-ekimei') || '').trim(), ekitoho: numVal('nr-eki'),
     status: status, staff: '田中',
     type: primary === 'アパート' ? 'アパート' : primary === '土地転売' ? '土地' : '戸建て建売',
     strategies: strategies,
@@ -2895,7 +2999,6 @@ function buildNewDealFromForm(status) {
   return deal;
 }
 
-/* 「登録」＝案件を作成して収支シートへ（既存フローに接続） */
 function createNewDeal() {
   const err = document.getElementById('newreg-shiryo-error');
   if (newregShiryo.length === 0) {
@@ -2906,17 +3009,16 @@ function createNewDeal() {
   const deal = buildNewDealFromForm('未検討');
   HISTORY.push({dealId: deal.id, date: TODAY, from: '—', to: '未検討', by: '田中'});
   openDetail(deal.id);
-  // 収支（Excel入力）タブへ直行し、登録画面の入力値をシートへ引き継ぐ
   const plBtn = document.querySelector('#detail-tabs .tab-btn[onclick*="\'pl\'"]');
   if (plBtn) switchTab('pl', plBtn);
   sv('pl-chiban', deal.chiban || '');
   if (deal.menseki > 0) sv('pl-menseki', deal.menseki);
-  if (deal.ekitoho > 0) sv('pl-kotsu', '徒歩' + deal.ekitoho + '分');
+  const kotsu = dealKotsuText(deal);
+  if (kotsu) sv('pl-kotsu', kotsu);
   calcPL();
   showToast('案件を登録しました。続けて収支シートを作成できます');
 }
 
-/* 「検討しない」＝見送り理由を記録して実績タブへ保存 */
 function openMiokuriModal() {
   const modal = document.getElementById('miokuri-modal');
   if (!modal) return;
@@ -2945,7 +3047,6 @@ function miokuriSubmit() {
   deal.note = reason;
   HISTORY.push({dealId: deal.id, date: TODAY, from: '—', to: '見送り', by: '田中', reason: reason});
   closeMiokuriModal();
-  // 一覧の「実績」タブへ（見送り案件として保存済み）
   listTab = 'past';
   const fs = document.getElementById('filter-status');
   if (fs) fs.value = '';
@@ -2953,7 +3054,6 @@ function miokuriSubmit() {
   showToast('「' + deal.name + '」を見送りとして記録しました（実績タブ）');
 }
 
-/* ===== シート⇄案件データの同期 ===== */
 function syncDealName() {
   if (currentDealId === null) return;
   const deal = DEALS.find(d => d.id === currentDealId);
@@ -2977,7 +3077,6 @@ function syncDealAddress() {
   checkDuplicateSheet();
 }
 
-/* ===== 重複警告（シートの所在地セル入力時に発火） ===== */
 function hasNameOverlap(input, dealName) {
   if (!input || !dealName || input.length < 2) return false;
   const maxLen = Math.min(input.length, 4);
@@ -3008,7 +3107,6 @@ function checkDuplicateSheet() {
     + '</div>';
 }
 
-/* ===== 市場調査タブ・収支タブ：過去事例の呼び出しデモ（価格＝円） ===== */
 const PAST_CASES = [
   {kind:'sc', title:'西葛西5丁目 新築戸建て', price:76800000, area:92,  madori:'3LDK', eki:'9分', addr:'江戸川区西葛西5丁目', src:'2025年11月成約・過去案件「西葛西建売」で登録済み（担当：佐藤）'},
   {kind:'sc', title:'中葛西2丁目 新築戸建て', price:81500000, area:105, madori:'4LDK', eki:'6分', addr:'江戸川区中葛西2丁目', src:'2026年2月成約・過去案件「中葛西プロジェクト」で登録済み（担当：田中）'},
@@ -3016,7 +3114,6 @@ const PAST_CASES = [
 ];
 
 function loadPastCases() {
-  // 市場調査タブと収支タブ（ボタン直下）の両方に描画
   ['past-cases-list','past-cases-pl'].forEach(cid => {
   const list = document.getElementById(cid);
   if (list) {
@@ -3030,7 +3127,6 @@ function loadPastCases() {
     ).join('');
   }
   });
-  // 収支タブ内のインライン表示
   const inline = document.getElementById('past-cases-inline');
   if (inline) {
     inline.textContent = '葛西エリア ' + PAST_CASES.length + '件を読み込みました。下記の「追加」から各行へ追加できます。';
@@ -3072,7 +3168,6 @@ function addPastCase(i) {
   showToast(added ? '事例を収支計算タブの販売在庫（近隣）に追加しました' : '空き行がありません。既存の行を上書きしてください');
 }
 
-/* ===== 入力はみ出しポップ（枠に収まらないときだけ全文表示） ===== */
 const _pop = document.createElement('div'); _pop.id = 'input-pop';
 document.addEventListener('DOMContentLoaded', () => document.body.appendChild(_pop));
 const _measureCtx = document.createElement('canvas').getContext('2d');
@@ -3097,13 +3192,11 @@ document.addEventListener('focusin', e => { if (e.target.matches && e.target.mat
 document.addEventListener('input',   e => { if (e.target.matches && e.target.matches('input') && document.activeElement === e.target) _popShow(e.target); });
 document.addEventListener('focusout', () => { _pop.style.display = 'none'; });
 
-/* ===== ？ヘルプの開閉 ===== */
 function toggleHelp(btn) {
   const d = btn.nextElementSibling;
   if (d) d.style.display = (d.style.display === 'none') ? 'block' : 'none';
 }
 
-/* ===== V6 設定：ステップ名（仮）の編集＝STEP_LABELSに即反映（in-memory） ===== */
 function renderSettings() {
   const wrap = document.getElementById('step-label-inputs');
   if (!wrap) return;
@@ -3118,15 +3211,12 @@ function renderSettings() {
 function updateStepLabel(i, value) {
   const v = (value || '').trim();
   if (v) STEP_LABELS[i] = v;
-  // 詳細を開いている案件があればステップバーに即反映
   if (currentDealId !== null) {
     const deal = DEALS.find(d => d.id === currentDealId);
     if (deal) renderSummaryTab(deal);
   }
 }
 
-/* ===== NEXT_RULES：ステータス別の判断ナビ定型ルール ===== */
-// 全11ステータス分。question=問い、action=ボタン文言、tab=遷移先タブ、why[]=理由3点、theme=判断テーマ
 const NEXT_RULES = {
   '未検討': {
     question: 'この物件の基本情報と取得経緯を整理しましょう。',
@@ -3251,8 +3341,6 @@ const NEXT_RULES = {
   },
 };
 
-/* 判断ポイント（助言）＝ステータス連動の定型ヒント。経験者の考え方を言語化する枠。
-   文言は要件定義で貴社の判断基準をお伺いして作り込む（評価・判定はしない） */
 const JUDGE_HINTS = {
   '未検討': ['情報の入手経路と入手日を残しておくと、後からスピード感を振り返れます。','同じエリアの過去案件があれば、先に目を通すと検討が速くなります。'],
   '検討中': ['まず販売想定と原価を仮置きすると、検討に値する案件かを早く見極められます。','出値は次のステップ（市場調査）で近隣在庫と突き合わせて裏取りする前提で、仮の数字でかまいません。'],
@@ -3267,41 +3355,32 @@ const JUDGE_HINTS = {
   '契約': ['計画時の想定価格・原価を残してあるため、販売後に判断の振り返りができます。'],
 };
 
-/* ===== ホーム：優先案件の抽出ロジック ===== */
-// 条件①保留30日超 ②現ステータス滞留が長い（14日以上） ③次アクション対象（概算収支作成済み→ヒアリング等）
 function calcPriorityDeals() {
   const todayD = new Date(TODAY);
-  // ログインユーザー（デモ固定＝田中）の担当案件のみ（他担当のタスクを本人のホームに出さない）
   const scored = DEALS.filter(d => d.staff === '田中' && !['見送り','契約'].includes(d.status)).map(d => {
     let score = 0;
     let reason = '';
 
-    // ①保留30日超
     const hd = holdDays(d);
     if (hd > 30) { score += 100; reason = '保留' + hd + '日（確認をおすすめします）'; }
 
-    // 現ステータスへの遷移日を求める
     const myHistory = HISTORY.filter(h => h.dealId === d.id).sort((a,b) => a.date.localeCompare(b.date));
     const lastTransition = myHistory.filter(h => h.to === d.status).pop();
     const stayDays = lastTransition
       ? Math.floor((todayD - new Date(lastTransition.date)) / 86400000)
       : 0;
 
-    // ②滞留14日以上
     if (stayDays >= 14 && score < 100) { score += 50 + stayDays; reason = d.status + 'が' + stayDays + '日経過'; }
 
-    // ③次アクション推奨ステータス（滞留と併発したら加算＝次のアクションが明確な案件を優先。保留超過①は別格のまま）
     const actionStatuses = ['概算収支作成済み','建築プラン依頼中'];
     if (actionStatuses.includes(d.status) && score < 100) { score += 30; reason = reason || '次のステップへ進める段階です'; }
 
     return { deal: d, score, reason, stayDays };
   }).filter(x => x.score > 0).sort((a, b) => b.score - a.score);
 
-  return scored.slice(0, 3); // 上位3件
+  return scored.slice(0, 3);
 }
 
-/* ===== ホーム画面描画 ===== */
-/* 北葛西（id:5）の収支計算＝openDetailの初期値・収支タブと同一式から算出 */
 function calcDeal5Nums() {
   const land = 40000000, build = 24000000, krosenka = 30000000, beval = 0, months = 12, sellA = 82800000, sellB = 79800000;
   const loan     = Math.round(land * 0.9);
@@ -3403,7 +3482,6 @@ function homeCardKey(e, id) {
 }
 
 function renderHome() {
-  // N件（緑数字・自動抽出）
   const priority = calcPriorityDeals();
   setText('home-n-count', priority.length);
 
@@ -3415,20 +3493,17 @@ function renderHome() {
   if (allEl) allEl.innerHTML = renderHomeCards(activeDeals, priority.length + 1);
 }
 
-/* ===== サマリータブ（判断ナビ）描画 ===== */
 function renderSummaryTab(deal) {
   if (!deal) return;
   const rule = NEXT_RULES[deal.status] || {};
 
-  // プロセスステップバー（reg＝登録フラグ・tab＝未登録！クリックの移動先）
-  // ラベルはSTEP_LABELS（設定ビューで変更可能）から取得＝一元管理
   const STEPS = [
     {label:STEP_LABELS[0], statuses:['未検討','検討中'],                reg:null,      tab:'pl'},
-    {label:STEP_LABELS[1], statuses:['概算収支作成済み'],               reg:'pl',      tab:'pl'},      // 収支計算＝ステップ2（2026-07-24 順序入れ替え）
-    {label:STEP_LABELS[2], statuses:['市場調査中'],                     reg:'market',  tab:'market'},  // 市場調査＝ステップ3
+    {label:STEP_LABELS[1], statuses:['概算収支作成済み'],               reg:'pl',      tab:'pl'},
+    {label:STEP_LABELS[2], statuses:['市場調査中'],                     reg:'market',  tab:'market'},
     {label:STEP_LABELS[3], statuses:['販売会社ヒアリング中'],           reg:'hearing', tab:'hearing'},
     {label:STEP_LABELS[4], statuses:['建築プラン依頼中'],               reg:'plan',    tab:'archplan'},
-    {label:STEP_LABELS[5], statuses:['買付検討中','買付提出','契約'],   reg:null,      tab:null},  // 判断と履歴タブは契約範囲外＝クリック遷移なし（ラベルは維持）
+    {label:STEP_LABELS[5], statuses:['買付検討中','買付提出','契約'],   reg:null,      tab:null},
   ];
   const curIdx = STATUS_ORDER.indexOf(deal.status);
 
@@ -3440,7 +3515,6 @@ function renderSummaryTab(deal) {
       const stepMaxIdx = Math.max(...step.statuses.map(s => STATUS_ORDER.indexOf(s)));
       const isPast = curIdx > stepMaxIdx && !['見送り','保留'].includes(deal.status);
       const isCurrent = step.statuses.includes(deal.status);
-      // 現在地より前なのに未登録＝飛ばしたステップ → 赤「！」
       const isMissed = isPast && step.reg && deal.reg && !deal.reg[step.reg];
       if (isMissed) missedLabels.push(step.label);
       let circleClass, labelClass, circleTxt, titleTxt;
@@ -3457,7 +3531,6 @@ function renderSummaryTab(deal) {
         circleClass = 'step-circle'; labelClass = 'step-label'; circleTxt = (i + 1);
         titleTxt = step.label + '（クリックで入力画面へ）';
       }
-      // 全ステップ＝クリックで対応タブへ移動（tab定義があるもの）
       const clickAttr = step.tab
         ? ' onclick="gotoTab(\'' + step.tab + '\')" style="cursor:pointer" title="' + titleTxt + '"'
         : '';
@@ -3470,7 +3543,6 @@ function renderSummaryTab(deal) {
     });
     stepBar.innerHTML = html;
   }
-  // 未登録ステップの注釈（中立トーン）
   const noteEl = document.getElementById('summary-step-note');
   if (noteEl) {
     noteEl.innerHTML = missedLabels.length
@@ -3478,12 +3550,10 @@ function renderSummaryTab(deal) {
       : '';
   }
 
-  // 次に考えましょう
   const qEl  = document.getElementById('summary-question');
   const aBtn = document.getElementById('summary-action-btn');
   if (qEl)  qEl.textContent  = rule.question  || '—';
   if (aBtn) {
-    // 遷移先タブが現存するものだけボタンを表示（旧・建築プラン/判断と履歴タブ行きは契約範囲外＝問いの文言のみ表示）
     const VALID_TABS = {summary:true, pl:true, market:true, hearing:true, archplan:true};
     if (rule.tab && VALID_TABS[rule.tab]) {
       aBtn.style.display = '';
@@ -3494,7 +3564,6 @@ function renderSummaryTab(deal) {
     }
   }
 
-  // なぜこのステップなのか
   const whyEl = document.getElementById('summary-why-items');
   if (whyEl && rule.why) {
     whyEl.innerHTML = rule.why.map((w, i) =>
@@ -3502,7 +3571,6 @@ function renderSummaryTab(deal) {
     ).join('');
   }
 
-  // 収支サマリー（北葛西id:5のみ収支実値・その他は「収支未作成」）
   const nums3El = document.getElementById('summary-3nums');
   if (nums3El) {
     const sellA = gv('pl-sell-a');
@@ -3515,7 +3583,6 @@ function renderSummaryTab(deal) {
       const rate = profit / sellB * 100;
       const refA = (sellA > 0) ? Math.round(sellA/10000).toLocaleString('ja-JP') + '万円・' + ((sellA-totalCost)/sellA*100).toFixed(1) + '%' : '—';
       const refC = (sellC > 0) ? Math.round(sellC/10000).toLocaleString('ja-JP') + '万円・' + ((sellC-totalCost)/sellC*100).toFixed(1) + '%' : '—';
-      // 規定利益（10%）との差額＝②の利益 − ②×10%（pptx要件の自動計算項目・色なし事実表示）
       const kiteiDiff = profit - sellB * 0.10;
       const kiteiSign = kiteiDiff > 0 ? '＋' : kiteiDiff < 0 ? '−' : '±';
       const kiteiStr = kiteiSign + Math.abs(Math.round(kiteiDiff / 10000)).toLocaleString('ja-JP') + '万円';
@@ -3529,7 +3596,6 @@ function renderSummaryTab(deal) {
     }
   }
 
-  // 判断ポイント（助言＝経験者の考え方のヒント。評価・判定はしない）
   const precEl = document.getElementById('summary-precision-box');
   if (precEl) {
     const hints = (JUDGE_HINTS[deal.status] || []);
@@ -3538,10 +3604,7 @@ function renderSummaryTab(deal) {
       : '<div style="color:var(--sub);font-size:12.5px">この段階の判断ポイントは要件定義で作り込みます。</div>';
   }
 
-  // この案件の判断テーマ
-  // （この案件の判断テーマは参考画像の判断履歴画面側の要素のため、サマリーからは撤去）
 
-  // 過去の類似案件（参考）
   const pastEl = document.getElementById('summary-past-cases');
   if (pastEl) {
     const refs = PAST_CASES.slice(0, 2);
@@ -3563,7 +3626,6 @@ function renderSummaryTab(deal) {
   }
 }
 
-/* ===== URL直リンク（#ルーティング） ===== */
 function applyHashRoute() {
   const h = (location.hash || '').slice(1);
   if (!h) return false;
@@ -3586,9 +3648,7 @@ function applyHashRoute() {
   return false;
 }
 
-/* ===== 初期化 ===== */
 (function init() {
-  // ハッシュがあればその画面へ・なければホーム。URL変更（ハッシュ）でも切替
   window.addEventListener('hashchange', applyHashRoute);
   if (!applyHashRoute()) showView('home', document.querySelector('[data-view=home]'));
   renderHoldBanner();
