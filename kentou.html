@@ -17,9 +17,13 @@
 body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;font-size:14px;color:var(--body);background:var(--bg);min-height:100vh}
 button{cursor:pointer;font-family:inherit;font-size:13px}
 input,select,textarea{font-family:inherit;font-size:13px}
-.header{display:flex;align-items:center;background:#fff;padding:0 16px;height:36px;position:sticky;top:0;z-index:100;border-bottom:1px solid var(--line)}
+.header{display:flex;align-items:center;justify-content:space-between;background:#fff;padding:0 16px;height:36px;position:sticky;top:0;z-index:100;border-bottom:1px solid var(--line)}
 .header-logo{display:flex;align-items:center}
 .header-logo img{height:20px;width:auto;display:block}
+.header-role-switch{display:flex;align-items:center;gap:6px}
+.header-role-label{font-size:12px;color:var(--sub);font-weight:700}
+.header-role-chip{border:1px solid var(--green);background:var(--green-light);color:var(--green);font-family:inherit;line-height:1.4;cursor:pointer}
+.header-role-chip.active{background:var(--green);color:#fff}
 .app-layout{display:flex;min-height:calc(100vh - 36px)}
 .sidebar{width:158px;flex-shrink:0;background:#fff;border-right:1px solid var(--line);padding:16px 0;position:sticky;top:36px;height:calc(100vh - 36px);overflow-y:auto;display:flex;flex-direction:column}
 .sidebar-main{flex:0 0 auto}
@@ -106,7 +110,12 @@ input,select,textarea{font-family:inherit;font-size:13px}
 .deal-chip-sheet{cursor:pointer;border:1px solid var(--green);background:var(--green-light);color:var(--green);font-family:inherit;line-height:1.4}
 .deal-chip-sheet:hover{background:#fff}
 .deal-chip-sheet.active{background:var(--green);color:#fff}
-.deal-header-side{display:flex;flex-direction:column;align-items:flex-end;gap:3px;font-size:12px;color:var(--sub);white-space:nowrap;padding-top:8px}
+.deal-header-side{display:flex;flex-direction:column;align-items:flex-start;gap:3px;font-size:12px;color:var(--sub);white-space:nowrap;padding-top:8px}
+.deal-side-row{display:flex;align-items:center;gap:0}
+.deal-side-label{display:inline-block}
+.deal-side-val{display:inline-flex;justify-content:flex-start;align-items:center;text-align:left;min-height:25px}
+.deal-approve-btn{border:1px solid var(--ng-fg);background:var(--ng-fg);color:#fff;font-size:13px;font-weight:700;padding:4px 14px;border-radius:5px;cursor:pointer}
+.deal-approve-btn:hover{opacity:.88}
 .deal-side-status{margin-top:5px}
 .deal-staff{display:flex;align-items:center;gap:7px}
 .staff-avatar{width:26px;height:26px;border-radius:50%;object-fit:cover;flex:none;border:1px solid var(--line);background:#fff}
@@ -427,6 +436,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .pl-memo-num{display:block;text-align:left;font-variant-numeric:tabular-nums}
 .pl-rate-cell{display:block;text-align:left;font-variant-numeric:tabular-nums}
 .pl-rate-cell .pl-memo-num{display:inline}
+.pl-cost-table .pl-rate-cell input{display:inline-block;width:46px;min-width:46px;padding-left:3px;padding-right:3px;text-align:left}
 .pl-rate-unit{color:var(--sub);font-size:11px}
 .pl-rate-auto{display:block;text-align:left;font-variant-numeric:tabular-nums}
 .pl-memo-cell .pl-auto{text-align:left;min-width:0}
@@ -438,6 +448,12 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .nr-strategy-btn.active{background:var(--green);border-color:var(--green);color:#fff}
 .pl-action-bar{display:flex;gap:14px;justify-content:flex-end;padding:20px 0 8px}
 .pl-action-btn{font-size:15px;padding:13px 52px;font-weight:700}
+.changelog-scroll{max-height:60vh;overflow:auto}
+.changelog-table td,.changelog-table th{white-space:nowrap}
+.changelog-table .num{text-align:right;font-variant-numeric:tabular-nums}
+.changelog-approve{color:var(--ng-fg);font-weight:800}
+.changelog-comment{min-width:240px}
+.changelog-comment-input{width:100%;min-width:220px}
 .pl-market-table .pl-auto{min-width:0}
 .pl-with-unit{display:flex;align-items:center;gap:4px;min-width:0}
 .pl-with-unit input{flex:1;min-width:0}
@@ -536,27 +552,43 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .home-see-all{color:var(--green);font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap}
 .home-see-all:hover{text-decoration:underline}
 .home-deal-list{display:grid;grid-template-columns:1fr;gap:14px}
-.home-deal-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;box-shadow:0 1px 4px rgba(0,0,0,.06);display:grid;grid-template-columns:38px 112px minmax(0,1fr) minmax(240px,330px);gap:16px;align-items:center;transition:border-color .15s,box-shadow .15s,transform .15s,background .15s;cursor:pointer}
+.home-deal-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;box-shadow:0 1px 4px rgba(0,0,0,.06);display:grid;grid-template-columns:38px 128px minmax(0,1.5fr) minmax(178px,0.8fr) minmax(230px,1.1fr);gap:18px;align-items:center;transition:border-color .15s,box-shadow .15s,transform .15s,background .15s;cursor:pointer}
 .home-deal-card:hover{border-color:var(--green-mid);box-shadow:0 6px 18px rgba(26,107,58,.16);transform:translateY(-1px);background:#fbfefc}
 .home-deal-num{width:32px;height:32px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;font-variant-numeric:tabular-nums}
-.home-thumb{width:112px;height:78px;border-radius:8px;background:#edf1f4;border:1px solid #dfe5ea;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#8b98a6;flex-shrink:0}
+.home-thumb{width:128px;height:128px;border-radius:8px;background:#edf1f4;border:1px solid #dfe5ea;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#8b98a6;flex-shrink:0}
 .home-thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .home-thumb-icon{font-size:24px;line-height:1}
 .home-card-main{min-width:0}
 .home-card-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-.home-card-name{font-size:18px;font-weight:800;color:var(--ink);line-height:1.35}
+.home-card-name{font-size:19px;font-weight:900;color:var(--ink);line-height:1.35}
 .strategy-badge{font-size:11px;font-weight:800;padding:3px 9px;border-radius:12px;background:var(--green-light);color:var(--green);white-space:nowrap}
 .prio-badge{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:10px;white-space:nowrap}
 .prio-high{background:#fdeaea;color:#c0392b}
 .prio-mid{background:#fdf3e0;color:#b9770e}
 .prio-low{background:#f0f0f0;color:#666}
-.home-card-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-.home-card-stat{border-left:3px solid var(--green-mid);padding-left:10px;min-width:0}
+.home-stage-block{margin-bottom:14px}
+.home-stage-label{font-size:11px;color:var(--sub);font-weight:700;margin-bottom:4px}
+.home-stage-val{font-size:14px;font-weight:900;color:var(--ink);line-height:1.25}
+.home-progress{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:0;margin-top:12px;max-width:520px}
+.home-progress-step{position:relative;display:flex;flex-direction:column;align-items:center;min-width:0}
+.home-progress-step:not(:first-child)::before{content:"";position:absolute;top:10px;left:-50%;width:100%;height:2px;background:var(--line)}
+.home-progress-step.link-done:not(:first-child)::before{background:var(--green)}
+.home-progress-dot{position:relative;z-index:1;width:22px;height:22px;border-radius:50%;border:2px solid var(--line);background:var(--card);display:flex;align-items:center;justify-content:center}
+.home-progress-dot.done{background:var(--green);border-color:var(--green);color:var(--card)}
+.home-progress-dot.current{border:3px solid var(--green)}
+.home-progress-dot.current::after{content:"";width:7px;height:7px;border-radius:50%;background:var(--green)}
+.home-progress-check{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.home-progress-label{font-size:11px;color:var(--sub);font-weight:700;margin-top:6px;white-space:nowrap}
+.home-progress-label.current{color:var(--green);font-weight:900}
+.home-card-stats{display:flex;flex-direction:column;gap:16px;border-left:1px solid var(--line);padding-left:20px;min-width:0}
+.home-card-stat{display:grid;grid-template-columns:18px minmax(0,1fr);column-gap:10px;align-items:start;min-width:0}
+.home-card-stat-icon{width:16px;height:16px;color:var(--sub);margin-top:1px}
+.home-card-stat-icon svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .home-card-stat-label{font-size:11px;color:var(--sub);font-weight:700;margin-bottom:4px}
 .home-card-stat-val{font-size:14px;font-weight:800;color:var(--ink);line-height:1.25}
 .home-card-stat-val.yield{font-size:24px;color:var(--green);font-variant-numeric:tabular-nums}
 .home-card-stat-val.na{font-size:13px;color:var(--sub);font-weight:700}
-.home-card-side{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.home-card-side{display:flex;flex-direction:column;gap:10px;align-items:flex-start;border-left:1px solid var(--line);padding-left:20px;min-width:0}
 .home-card-q-label{font-size:11px;font-weight:800;color:var(--sub)}
 .home-card-question{font-size:13px;font-weight:700;color:var(--ink);line-height:1.55;background:var(--green-light);border-radius:7px;padding:9px 11px;width:100%}
 .summary-2col{display:grid;grid-template-columns:1fr 300px;gap:22px}
@@ -567,18 +599,22 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 @media(max-width:960px){.summary-2col{grid-template-columns:1fr}.summary-2col-right{border-left:none;padding-left:0;border-top:1px solid var(--line);padding-top:14px}}
 .home-section-title{font-size:13px;font-weight:700;color:var(--ink);margin:24px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--line)}
 @media(max-width:768px){
-  .home-deal-card{grid-template-columns:34px 96px 1fr;align-items:start}
-  .home-card-side{grid-column:2 / -1}
-  .home-thumb{width:96px;height:70px}
-  .home-card-stats{grid-template-columns:1fr}
+  .home-deal-card{grid-template-columns:34px 112px minmax(0,1fr);align-items:start}
+  .home-card-stats,.home-card-side{grid-column:2 / -1}
+  .home-thumb{width:112px;height:112px}
+  .home-card-stats{border-left:1px solid var(--line);padding-left:14px;gap:12px}
+  .home-card-side{border-left:none;padding-left:0}
+  .home-progress{max-width:100%}
 }
 @media(max-width:480px){
   .home-n-inline{font-size:22px}
   .home-greeting{font-size:18px}
   .home-deal-card{grid-template-columns:30px 1fr;gap:12px;padding:14px}
-  .home-thumb{grid-column:2;width:100%;height:120px}
-  .home-card-main,.home-card-side{grid-column:1 / -1}
+  .home-thumb{grid-column:2;width:100%;aspect-ratio:1/1;height:auto}
+  .home-card-main,.home-card-stats,.home-card-side{grid-column:1 / -1}
+  .home-card-stats{border-left:1px solid var(--line);padding-left:12px}
   .home-deal-num{width:28px;height:28px;font-size:13px}
+  .home-progress-label{font-size:10px}
 }
 
 .summary-layout{display:grid;grid-template-columns:1fr 280px;gap:20px;align-items:start}
@@ -649,6 +685,11 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
   <div class="header-logo">
     <img src="photos/greens_logo.png" alt="GREENS">
   </div>
+  <div class="header-role-switch" id="header-role-switch">
+    <span class="header-role-label">表示中：</span>
+    <button type="button" class="deal-chip header-role-chip active" id="role-sales" onclick="setCurrentRole('sales')">営業（田中）</button>
+    <button type="button" class="deal-chip header-role-chip" id="role-president" onclick="setCurrentRole('president')">社長</button>
+  </div>
 </header>
 
 <div class="app-layout">
@@ -692,11 +733,10 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
       <div class="home-greeting" id="home-greeting">おはようございます、田中さん。</div>
       <div class="home-lead-row">
         <div class="home-lead">
-          今日、判断を前に進められる案件が
+          <span>今日対応する案件（</span>
           <span class="home-n-inline" id="home-n-count">—</span>
-          <span>件 あります</span>
-          <span class="help-wrap"><button class="help-btn" onclick="toggleHelp(this)" title="この件数の説明">？</button><div class="help-pop help-pop-float" style="display:none">件数とカードは、登録データと履歴から自動で抽出しています（①保留が30日を超えた案件 ②現在の段階で止まっている期間が長い案件 ③次のアクション待ちの案件）。作り置きの数字はありません。</div></span>
-        </div>
+          <span>件）</span>
+          </div>
       </div>
       <div class="home-deal-list" id="home-priority-list"></div>
       <div class="home-section-title">担当中の案件（すべて）</div>
@@ -942,7 +982,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 
           <div id="tab-hearing" class="tab-content">
             <div class="form-section-title">販売会社ヒアリング（3社比較）</div>
-            <div class="notice mb12">販売会社3社の回答を記録し、想定販売価格②（着地前後）と比較します。</div>
             <div class="hearing-cards">
               <div class="hearing-card">
                 <div class="hearing-card-title">販売会社1 <button class="hearing-clear-btn" onclick="clearHearingCard(1)">クリア</button></div>
@@ -951,6 +990,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
                 <div class="form-group"><label class="form-label">ヒアリング日</label><input class="form-input" type="date" id="hc-date-1"></div>
                 <div class="form-group"><label class="form-label">回答販売価格（円）</label><input class="form-input" type="number" id="hc-price-1" oninput="calcHearing()" style="text-align:right"></div>
                 <div class="form-group"><label class="form-label">コメント</label><textarea class="hearing-note" id="hc-comment-1"></textarea></div>
+                <div class="shiryo-box mt12"><div class="shiryo-title">ヒアリング資料（PDF・画像）</div><div id="hearing-files-1"></div><button class="btn btn-secondary btn-sm mt8" onclick="openHearingFilePicker(1)">ファイルを選択（資料を追加）</button></div>
               </div>
               <div class="hearing-card">
                 <div class="hearing-card-title">販売会社2 <button class="hearing-clear-btn" onclick="clearHearingCard(2)">クリア</button></div>
@@ -959,6 +999,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
                 <div class="form-group"><label class="form-label">ヒアリング日</label><input class="form-input" type="date" id="hc-date-2"></div>
                 <div class="form-group"><label class="form-label">回答販売価格（円）</label><input class="form-input" type="number" id="hc-price-2" oninput="calcHearing()" style="text-align:right"></div>
                 <div class="form-group"><label class="form-label">コメント</label><textarea class="hearing-note" id="hc-comment-2"></textarea></div>
+                <div class="shiryo-box mt12"><div class="shiryo-title">ヒアリング資料（PDF・画像）</div><div id="hearing-files-2"></div><button class="btn btn-secondary btn-sm mt8" onclick="openHearingFilePicker(2)">ファイルを選択（資料を追加）</button></div>
               </div>
               <div class="hearing-card">
                 <div class="hearing-card-title">販売会社3 <button class="hearing-clear-btn" onclick="clearHearingCard(3)">クリア</button></div>
@@ -967,11 +1008,10 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
                 <div class="form-group"><label class="form-label">ヒアリング日</label><input class="form-input" type="date" id="hc-date-3"></div>
                 <div class="form-group"><label class="form-label">回答販売価格（円）</label><input class="form-input" type="number" id="hc-price-3" oninput="calcHearing()" style="text-align:right"></div>
                 <div class="form-group"><label class="form-label">コメント</label><textarea class="hearing-note" id="hc-comment-3"></textarea></div>
+                <div class="shiryo-box mt12"><div class="shiryo-title">ヒアリング資料（PDF・画像）</div><div id="hearing-files-3"></div><button class="btn btn-secondary btn-sm mt8" onclick="openHearingFilePicker(3)">ファイルを選択（資料を追加）</button></div>
               </div>
             </div>
-            <div class="hearing-summary" id="hearing-summary">回答が入力されると、想定価格②との差額を自動表示します</div>
-            <div class="form-section-title">その他コメント</div>
-            <textarea class="hearing-note" id="hearing-other" placeholder="顧客層・競合との差別化・懸案事項など自由記入" style="width:100%"></textarea>
+            <div class="hearing-summary" id="hearing-summary" style="display:none"></div>
             <div class="flex gap8 mt16">
               <button class="btn btn-primary btn-sm" onclick="registerHearing()">登録</button>
             </div>
@@ -1029,6 +1069,22 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
         </div>
       </div>
     </div>
+
+    <div id="view-changelog" class="view" style="display:none">
+      <div class="view-header">
+        <div>
+          <div class="view-title" id="changelog-page-title">修正履歴</div>
+          <div class="view-desc">収支計算の保存時に変わった項目と承認の記録を確認できます。</div>
+        </div>
+        <button class="btn btn-secondary" onclick="returnToPlFromChangelog()">収支計算に戻る</button>
+      </div>
+      <div class="card">
+        <div class="card-header">修正履歴</div>
+        <div class="card-body">
+          <div class="changelog-scroll" id="changelog-page-body"></div>
+        </div>
+      </div>
+    </div>
   </main>
 </div>
 
@@ -1050,8 +1106,14 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
     <div class="modal-title">検討しない（見送りとして記録）</div>
     <div class="modal-text">見送りの理由を残しておくと、後から「どんな案件を・なぜ見送ったか」を振り返れます。</div>
     <select class="form-select" id="miokuri-class" style="width:100%;margin-bottom:10px">
-      <option>価格が合わない（利益率・IRRが基準未達）</option>
-      <option>立地・接道・形状などの物件条件</option>
+      <option>価格が合わない（売主希望価格が高すぎる）</option>
+      <option>接道・道路条件が悪い</option>
+      <option>権利関係が複雑</option>
+      <option>エリア対象外・駅距離が遠い</option>
+      <option>プラン入らない（ボリューム取れない）</option>
+      <option>商品性・出口が弱い</option>
+      <option>売主条件が合わない（金額以外）</option>
+      <option>他社成約・購入済</option>
       <option>その他</option>
     </select>
     <label class="form-label" for="miokuri-free">見送り理由</label>
@@ -1110,7 +1172,7 @@ const DEALS = [
   {id:3,name:'□□2丁目',area:'練馬',status:'買付提出',staff:'鈴木',type:'戸建て建売',photo:'photos/house2.jpg',acquiredDate:'2026-05-15',price:null,note:'',holdDate:null,reg:{market:true,pl:true,hearing:true,plan:true},shiryo:[{name:'物件概要書.pdf'},{name:'測量図.pdf'}]},
   {id:4,name:'××ハイツ跡地',area:'中野',status:'見送り',staff:'田中',type:'土地',photo:'photos/land2.jpg',acquiredDate:'2026-05-20',price:null,note:'接道条件',holdDate:null,reg:{market:true,pl:false,hearing:false,plan:false}},
   {id:15,name:'大島6丁目土地',area:'江東',status:'販売会社ヒアリング中',staff:'田中',type:'土地',photo:'photos/land3.jpg',acquiredDate:'2026-07-02',price:null,note:'',holdDate:null,reg:{market:true,pl:true,hearing:true,plan:false}},
-  {id:5,name:'北葛西建売',area:'江戸川',status:'概算収支作成済み',staff:'田中',type:'戸建て建売',photo:'photos/house1.jpg',acquiredDate:'2026-06-10',price:82800000,note:'',holdDate:null,reg:{market:true,pl:true,hearing:false,plan:false},shiryo:[{name:'物件概要書.pdf'},{name:'現地写真_南側.jpg'},{name:'公図.pdf'}]},
+  {id:5,name:'北葛西建売',area:'江戸川',status:'概算収支作成済み',staff:'田中',type:'戸建て建売',photo:'photos/house1.jpg',acquiredDate:'2026-06-10',price:82800000,note:'',holdDate:null,approvedAt:'2026-07-28 14:05',reg:{market:true,pl:true,hearing:false,plan:false},shiryo:[{name:'物件概要書.pdf'},{name:'現地写真_南側.jpg'},{name:'公図.pdf'}]},
   {id:16,name:'船堀アパート計画',area:'江戸川',status:'概算収支作成済み',staff:'佐藤',type:'アパート',photo:'photos/apt1.jpg',acquiredDate:'2026-06-18',price:null,note:'',holdDate:null,reg:{market:true,pl:true,hearing:false,plan:false},shiryo:[{name:'物件概要書.pdf'},{name:'レントロール.xlsx'}]},
   {id:17,name:'南葛西土地転売',area:'江戸川',status:'概算収支作成済み',staff:'鈴木',type:'土地',photo:'photos/land2.jpg',acquiredDate:'2026-06-25',price:null,note:'',holdDate:null,reg:{market:true,pl:true,hearing:false,plan:false},shiryo:[{name:'物件概要書.pdf'}]},
   {id:6,name:'板橋本町土地',area:'板橋',status:'検討中',staff:'佐藤',type:'土地',photo:'photos/land4.jpg',acquiredDate:'2026-06-20',price:null,note:'',holdDate:null,reg:{market:false,pl:false,hearing:false,plan:false}},
@@ -1184,6 +1246,169 @@ const HISTORY = [
   {dealId:13,date:'2026-07-01',from:'検討中',to:'見送り',by:'鈴木',reason:'販売価格が合わない'},
   {dealId:14,date:'2026-07-01',from:'未検討',to:'検討中',by:'佐藤'},
 ];
+
+const DEMO_TODAY = '2026-07-28';
+let currentRole = 'sales';
+
+const SHUSHI_CHANGELOG = {};
+const SHUSHI_SAVE_SNAPSHOT = {};
+
+function nowMinuteStr() {
+  const d = new Date();
+  const hh = String(d.getHours()).padStart(2, '0');
+  const mm = String(d.getMinutes()).padStart(2, '0');
+  return DEMO_TODAY + ' ' + hh + ':' + mm;
+}
+function setCurrentRole(role) {
+  currentRole = role === 'president' ? 'president' : 'sales';
+  renderRoleSwitcher();
+  renderDetailHeader();
+  if (currentView === 'home') renderHome();
+  if (currentView === 'list') { renderList(); renderHoldBanner(); }
+}
+function renderRoleSwitcher() {
+  const sales = document.getElementById('role-sales');
+  const president = document.getElementById('role-president');
+  if (sales) sales.classList.toggle('active', currentRole === 'sales');
+  if (president) president.classList.toggle('active', currentRole === 'president');
+}
+function currentActorName(deal) {
+  return currentRole === 'president' ? '社長' : ((deal && deal.staff) || '田中');
+}
+function changelogFor(dealId) {
+  if (!SHUSHI_CHANGELOG[dealId]) SHUSHI_CHANGELOG[dealId] = [];
+  return SHUSHI_CHANGELOG[dealId];
+}
+function snapshotKey(dealId, sheet) {
+  return dealId + '|' + sheet;
+}
+function normalizeLogValue(v) {
+  if (v === undefined || v === null) return '';
+  const s = String(v).trim();
+  const n = shushiNum(s);
+  if (s !== '' && isFinite(n) && String(s).match(/[0-9０-９]/)) return n;
+  return s;
+}
+function changelogDisplayCell(sheet, cell) {
+  const row = String(cell).match(/\d+/);
+  if (!row) return cell;
+  const r = row[0];
+  const labels = SHUSHI_LABELS[sheet] || {};
+  return labels['B' + r] ? 'B' + r : labels['A' + r] ? 'A' + r : cell;
+}
+function changelogLabel(sheet, cell) {
+  const labels = SHUSHI_LABELS[sheet] || {};
+  const displayCell = changelogDisplayCell(sheet, cell);
+  return (labels[displayCell] || labels[cell] || cell).replace(/[：:]\s*$/, '');
+}
+function changelogSnapshot(sheet) {
+  const cells = (SHUSHI_INPUTS[sheet] || []).concat(SHUSHI_META_INPUTS[sheet] || []);
+  const snap = {};
+  cells.forEach(cell => {
+    const raw = shushiRawValue(cell);
+    snap[cell] = normalizeLogValue(raw === undefined ? shushiResolvedValue(sheet, cell) : raw);
+  });
+  return snap;
+}
+function recordShushiChangesOnSave(deal, sheet) {
+  if (!deal) return;
+  persistCurrentShushiState();
+  const key = snapshotKey(deal.id, sheet);
+  const current = changelogSnapshot(sheet);
+  const previous = SHUSHI_SAVE_SNAPSHOT[key];
+  if (previous) {
+    const rows = [];
+    Object.keys(current).forEach(cell => {
+      const before = previous[cell];
+      const after = current[cell];
+      if (String(before) === String(after)) return;
+      rows.push({
+        at: nowMinuteStr(),
+        by: currentActorName(deal),
+        type: 'edit',
+        sheet: sheet,
+        cell: changelogDisplayCell(sheet, cell),
+        label: changelogLabel(sheet, cell),
+        before: before,
+        after: after,
+        comment: ''
+      });
+    });
+    if (rows.length) changelogFor(deal.id).push.apply(changelogFor(deal.id), rows);
+  }
+  SHUSHI_SAVE_SNAPSHOT[key] = current;
+}
+function formatLogValue(v) {
+  if (v === undefined || v === null || v === '') return '';
+  if (typeof v === 'number' && isFinite(v)) return fmt(v);
+  return escapeHtml(v);
+}
+function renderChangelogPage() {
+  const body = document.getElementById('changelog-page-body');
+  const title = document.getElementById('changelog-page-title');
+  const deal = currentDealId !== null ? DEALS.find(d => d.id === currentDealId) : null;
+  if (!body) return;
+  if (title) title.textContent = deal ? deal.name + ' の修正履歴' : '修正履歴';
+  if (!deal) { body.innerHTML = '<div class="shiryo-empty">案件を選択してください。</div>'; return; }
+  const rows = changelogFor(deal.id).map((row, index) => ({ row, index }))
+    .sort((a, b) => String(b.row.at || '').localeCompare(String(a.row.at || '')));
+  if (rows.length === 0) {
+    body.innerHTML = '<div class="shiryo-empty">まだ修正履歴がありません</div>';
+    return;
+  }
+  body.innerHTML = '<table class="data-table changelog-table"><thead><tr><th>日時</th><th>変更者</th><th>変更項目</th><th>変更前</th><th>変更後</th><th>コメント</th></tr></thead><tbody>'
+    + rows.map(item => {
+      const r = item.row;
+      if (r.type === 'approve') {
+        return '<tr><td>' + escapeHtml(r.at || '') + '</td><td>' + escapeHtml(r.by || '社長') + '</td><td class="changelog-approve">承認</td><td></td><td></td><td class="changelog-comment"></td></tr>';
+      }
+      return '<tr><td>' + escapeHtml(r.at || '') + '</td><td>' + escapeHtml(r.by || '') + '</td><td>' + escapeHtml(r.label || r.cell || '') + '</td><td class="num">' + formatLogValue(r.before) + '</td><td class="num">' + formatLogValue(r.after) + '</td><td class="changelog-comment"><input class="form-input changelog-comment-input" type="text" data-log-index="' + item.index + '" value="' + escapeHtml(r.comment || '') + '" placeholder="変更の意図・経緯を記入" oninput="updateChangelogComment(this.dataset.logIndex,this.value)"></td></tr>';
+    }).join('') + '</tbody></table>';
+}
+function updateChangelogComment(index, value) {
+  const deal = currentDealId !== null ? DEALS.find(d => d.id === currentDealId) : null;
+  if (!deal) return;
+  const rows = changelogFor(deal.id);
+  const row = rows[parseInt(index, 10)];
+  if (!row || row.type === 'approve') return;
+  row.comment = value;
+}
+function returnToPlFromChangelog() {
+  if (currentDealId === null || !DEALS.find(d => d.id === currentDealId)) { showView('home', document.querySelector('[data-view=home]')); return; }
+  doShowView('detail', null);
+  const btn = document.querySelector("#detail-tabs .tab-btn[onclick*=\"'pl'\"]");
+  doSwitchTab('pl', btn);
+}
+function approveDeal() {
+  const deal = currentDealId !== null ? DEALS.find(d => d.id === currentDealId) : null;
+  if (!deal || currentRole !== 'president' || deal.approvedAt) return;
+  deal.approvedAt = nowMinuteStr();
+  changelogFor(deal.id).push({ at: deal.approvedAt, by: '社長', type: 'approve' });
+  renderDetailHeader();
+  if (currentView === 'changelog') renderChangelogPage();
+  showToast('承認しました');
+}
+
+function initDemoChangelog() {
+  const sheet = '戸建て（建売・土地売り）';
+  const landNow = normalizeLogValue(SHUSHI_SAMPLE[sheet].C16);
+  const buildNow = normalizeLogValue(SHUSHI_SAMPLE[sheet].C25);
+  SHUSHI_CHANGELOG[5] = [
+    {at:'2026-07-28 15:20', by:'田中', type:'edit', sheet:sheet, cell:'B16', label:'土地仕入原価', before:landNow - 500000, after:landNow},
+    {at:'2026-07-28 15:05', by:'田中', type:'edit', sheet:sheet, cell:'B16', label:'土地仕入原価', before:landNow - 1500000, after:landNow - 500000},
+    {at:'2026-07-28 14:05', by:'社長', type:'approve'},
+    {at:'2026-07-28 13:20', by:'田中', type:'edit', sheet:sheet, cell:'B25', label:'建築費', before:buildNow - 2000000, after:buildNow}
+  ];
+  const snap = {};
+  (SHUSHI_INPUTS[sheet] || []).concat(SHUSHI_META_INPUTS[sheet] || []).forEach(cell => {
+    snap[cell] = normalizeLogValue(Object.prototype.hasOwnProperty.call(SHUSHI_SAMPLE[sheet], cell) ? SHUSHI_SAMPLE[sheet][cell] : (SHUSHI_CELL_DEFAULTS[sheet] || {})[cell] || '');
+  });
+  SHUSHI_SAVE_SNAPSHOT[snapshotKey(5, sheet)] = snap;
+}
+function refreshDemoSnapshotIfNeeded(deal) {
+  if (!deal || deal.id !== 5) return;
+  SHUSHI_SAVE_SNAPSHOT[snapshotKey(deal.id, activeShushiSheet)] = changelogSnapshot(activeShushiSheet);
+}
 
 function judge(rate, irr) {
   if (rate >= 0.10 && irr >= 0.10) return {k:'ok',mark:'◎',label:'推奨',cls:'j-ok'};
@@ -1287,6 +1512,10 @@ function showView(name, el) {
   doShowView(name, el);
 }
 function doShowView(name, el) {
+  if (name === 'changelog' && (currentDealId === null || !DEALS.find(d => d.id === currentDealId))) {
+    name = 'home';
+    el = document.querySelector('[data-view=home]');
+  }
   setHash(name);
   document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
   const viewEl = document.getElementById('view-' + name);
@@ -1296,6 +1525,7 @@ function doShowView(name, el) {
   currentView = name;
   if (name === 'home')   { renderHome(); }
   if (name === 'list')   { renderList(); renderHoldBanner(); }
+  if (name === 'changelog') renderChangelogPage();
   if (name === 'settings') renderSettings();
 }
 
@@ -1428,9 +1658,20 @@ function getPlanFiles(deal, no) {
   if (!deal.planFiles[no]) deal.planFiles[no] = [];
   return deal.planFiles[no];
 }
+function getHearingFiles(deal, no) {
+  if (!deal.hearingFiles) deal.hearingFiles = {};
+  if (!deal.hearingFiles[no]) deal.hearingFiles[no] = [];
+  return deal.hearingFiles[no];
+}
 function openPlanFilePicker(no) {
   if (currentDealId === null) { showToast('案件を選択してください'); return; }
   shiryoTargetId = '__plan' + no + '__';
+  const inp = document.getElementById('shiryo-file-input');
+  if (inp) { inp.value = ''; inp.click(); }
+}
+function openHearingFilePicker(no) {
+  if (currentDealId === null) { showToast('案件を選択してください'); return; }
+  shiryoTargetId = '__hearing' + no + '__';
   const inp = document.getElementById('shiryo-file-input');
   if (inp) { inp.value = ''; inp.click(); }
 }
@@ -1446,6 +1687,18 @@ function renderPlanFiles() {
           + '<button class="shiryo-del" title="この資料を削除" onclick="removePlanFile(' + no + ',' + i + ')">✕ 削除</button></div>').join('');
   });
 }
+function renderHearingFiles() {
+  const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
+  [1, 2, 3].forEach(no => {
+    const list = document.getElementById('hearing-files-' + no);
+    if (!list) return;
+    const files = deal ? getHearingFiles(deal, no) : [];
+    list.innerHTML = files.length === 0
+      ? '<div class="shiryo-empty">まだ資料がありません。査定書・提案資料などを添付してください。</div>'
+      : files.map((f, i) => '<div class="shiryo-item"><span style="flex:1">' + escapeHtml(f.name) + '</span>'
+          + '<button class="shiryo-del" title="この資料を削除" onclick="removeHearingFile(' + no + ',' + i + ')">✕ 削除</button></div>').join('');
+  });
+}
 function removePlanFile(no, idx) {
   const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
   if (!deal) return;
@@ -1455,6 +1708,15 @@ function removePlanFile(no, idx) {
   showToast('資料「' + removed[0].name + '」を削除しました');
   renderPlanFiles();
 }
+function removeHearingFile(no, idx) {
+  const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
+  if (!deal) return;
+  const files = getHearingFiles(deal, no);
+  if (!files[idx]) return;
+  const removed = files.splice(idx, 1);
+  showToast('資料「' + removed[0].name + '」を削除しました');
+  renderHearingFiles();
+}
 function openShiryoPickerNewreg() {
   shiryoTargetId = '__newreg__';
   const inp = document.getElementById('shiryo-file-input');
@@ -1463,6 +1725,7 @@ function openShiryoPickerNewreg() {
 function onShiryoSelected(inp) {
   if (!inp.files || inp.files.length === 0) return;
   const planMatch = typeof shiryoTargetId === 'string' ? shiryoTargetId.match(/^__plan(\d+)__$/) : null;
+  const hearingMatch = typeof shiryoTargetId === 'string' ? shiryoTargetId.match(/^__hearing(\d+)__$/) : null;
   if (planMatch) {
     const no = Number(planMatch[1]);
     const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
@@ -1471,6 +1734,18 @@ function onShiryoSelected(inp) {
       Array.from(inp.files).forEach(f => files.push({ name: f.name }));
       showToast('建築会社' + (no === 1 ? '①' : '②') + 'の資料を' + inp.files.length + '件追加しました');
       renderPlanFiles();
+    }
+    inp.value = '';
+    return;
+  }
+  if (hearingMatch) {
+    const no = Number(hearingMatch[1]);
+    const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
+    if (deal) {
+      const files = getHearingFiles(deal, no);
+      Array.from(inp.files).forEach(f => files.push({ name: f.name }));
+      showToast('販売会社' + no + 'の資料を' + inp.files.length + '件追加しました');
+      renderHearingFiles();
     }
     inp.value = '';
     return;
@@ -1686,10 +1961,17 @@ function renderDetailHeader() {
     const sh = strategyToSheet(s);
     return '<button type="button" class="deal-chip deal-chip-sheet' + (sh === activeShushiSheet ? ' active' : '') + '" onclick="switchShushiSheet(\'' + sh + '\')" title="このフォーマットに切替">' + escapeHtml(s) + '</button>';
   }).join('');
+  const approvedDate = deal.approvedAt ? String(deal.approvedAt).slice(0, 10) : '';
+  const approveHtml = approvedDate
+    ? escapeHtml(approvedDate)
+    : (currentRole === 'president' ? '<button type="button" class="deal-approve-btn" onclick="approveDeal()">承認</button>' : '');
   el.innerHTML = '<div><h1 class="deal-title">' + escapeHtml(name) + '</h1>'
     + (addr ? '<div class="deal-addr">' + escapeHtml(addr) + '</div>' : '')
-    + '<div class="deal-chips">' + chips + '<button class="deal-chip-edit" onclick="openStrategyModal()" title="仕入れ形態を変更">変更</button></div></div>'
-    + '<div class="deal-header-side"><span class="deal-staff">担当：' + escapeHtml(deal.staff) + staffAvatar(deal.staff) + '</span><span>取得日：' + escapeHtml(deal.acquiredDate || '—') + '</span><span>作成日：' + escapeHtml(TODAY) + '</span>'
+    + '<div class="deal-chips">' + chips + '<button class="deal-chip-edit" onclick="openStrategyModal()" title="仕入れ形態を変更">変更</button><button class="deal-chip-edit" onclick="showView(\'changelog\')" title="収支計算の修正履歴を確認">修正履歴</button></div></div>'
+    + '<div class="deal-header-side"><span class="deal-staff">担当：' + escapeHtml(deal.staff) + staffAvatar(deal.staff) + '</span>'
+    + '<span class="deal-side-row"><span class="deal-side-label">取得日：</span><span class="deal-side-val">' + escapeHtml(deal.acquiredDate || '—') + '</span></span>'
+    + '<span class="deal-side-row"><span class="deal-side-label">作成日：</span><span class="deal-side-val">' + escapeHtml(TODAY) + '</span></span>'
+    + '<span class="deal-side-row"><span class="deal-side-label">承認日：</span><span class="deal-side-val">' + approveHtml + '</span></span>'
     + '</div>';
 }
 let strategyModalChanged = false;
@@ -1766,7 +2048,6 @@ function openDetail(id) {
     sv('hc-name-1','◯◯不動産販売'); sv('hc-tanto-1',''); sv('hc-date-1',''); sv('hc-price-1',79000000);
     sv('hc-comment-1','駅距離を考慮するとやや強気。7,800万前後が無難');
     for (let i = 2; i <= 3; i++) { sv('hc-name-'+i,''); sv('hc-tanto-'+i,''); sv('hc-date-'+i,''); sv('hc-price-'+i,''); sv('hc-comment-'+i,''); }
-    sv('hearing-other','');
   } else {
     sv('pl-land',0); sv('pl-build',0); sv('pl-kukaku',1);
     const mSel = document.getElementById('pl-months'); if (mSel) mSel.value = '12';
@@ -1782,15 +2063,16 @@ function openDetail(id) {
     sv('pl-yoto',''); sv('pl-kotsu','');
     sv('pl-price-basis','');
     for (let i = 1; i <= 3; i++) { sv('hc-name-'+i,''); sv('hc-tanto-'+i,''); sv('hc-date-'+i,''); sv('hc-price-'+i,''); sv('hc-comment-'+i,''); }
-    sv('hearing-other','');
   }
 
   for (let i = 1; i <= 2; i++) { sv('ap-name-' + i, ''); sv('ap-date-' + i, ''); sv('ap-ans-' + i, ''); sv('ap-cost-' + i, ''); sv('ap-comment-' + i, ''); }
   renderPlanFiles();
+  renderHearingFiles();
 
   setInner('sheet-dup-warning', '');
   setShushiSheetByDeal(deal);
   renderDetailHeader();
+  refreshDemoSnapshotIfNeeded(deal);
   renderPLPhotos();
   renderShiryoPL();
   renderShiryoTab();
@@ -1826,22 +2108,22 @@ const SHUSHI_LABELS = {
     A1:'物件名：',F2:'区画数',K2:'作成日',A3:'所在地',F3:'事業期間',I3:'新築　販売在庫（近隣）',A4:'地番',F4:'仕入契約日',A5:'交通',F5:'仕入決済日',J5:'価格',N5:'土地面積',P5:'坪単価',S5:'延床面積（間取）',W5:'駅距離',Z5:'住所',A6:'地積',D6:'実測入れる（SB後）',F6:'売主',A7:'建物面積',D7:'建物延床入れる',F7:'仲介会社',A8:'容積率',C8:'用途地域',F8:'売却契約日',A9:'建蔽率',C9:'防火指定',F9:'売却決済日',A10:'道路',C10:'高度地区',F10:'買主',C11:'その他',F11:'仲介会社',A14:'仕入れ原価',I14:'土地　販売在庫（近隣）',C15:'金　額',D15:'備　考',F15:'一種単価',A16:'土地原価',B16:'土地仕入原価',J16:'価格',N16:'土地面積',P16:'坪単価',S16:'特徴',W16:'駅距離',Z16:'住所',B17:'仲介手数料',B18:'業務委託手数料',F18:'借 入 金',B19:'解体整地費用',B20:'測量費用',B21:'譲渡承諾料',B22:'立退き費用',D23:'フリー項目',D24:'フリー項目',F22:'路線価',F23:'固定資産税路線価',A25:'建物原価',B25:'建築費',F24:'建物評価額',F25:'IRR',F28:'上記IRRは10％以上を目指す',B26:'設計費用',B27:'地盤改良',B28:'インフラ費用（改修）',B29:'外構費用',I25:'販売想定①',L25:'坪',O25:'円',P25:'利益率',T25:'販売計画',U25:'価格',X25:'間取',Z25:'延床',AB25:'車庫',AC25:'出値価格',I26:'売上高',I27:'原価合計',I28:'総利益',B30:'瑕疵担保保険',D31:'フリー項目',A32:'租税公課',I31:'販売想定②',L31:'坪',O31:'円',P31:'利益率',T31:'販売計画',U31:'価格',X31:'間取',Z31:'延床',AB31:'車庫',AC31:'着地前後価格',I32:'売上高',B32:'取 得 税(土地)',E32:'％',I33:'原価合計',B33:'取 得 税(建物)',E33:'％',I34:'総利益',B34:'固定資産税',E34:'％',B35:'都市計画税',E35:'％',B36:'登録免許税(土地）',E36:'％',B37:'登録免許税（建物）',E37:'％',I37:'販売想定③',L37:'坪',O37:'円',P37:'利益率',T37:'販売計画',U37:'価格',X37:'間取',Z37:'延床',AB37:'車庫',AC37:'下限価格',B38:'抵当権',E38:'％',I38:'売上高',B39:'印  紙  税',I39:'原価合計',I40:'総利益',A41:'販売管理費',B41:'司法書士報酬',B42:'予備費',B43:'その他',B44:'販売手数料',A45:'営業外費用',B45:'借入金利',E45:'％',B46:'事務手数料',E46:'%',D47:'フリー項目',B48:'合　計',F48:'←原価合計は必ず手計算すること',F53:'上記IRRは10％以上を目指す',D54:'事業期間12ヶ月',F54:'IRR',D58:'事業期間18ヶ月',F58:'IRR',D64:'事業期間24ヶ月',F64:'IRR',I60:'社長',M60:'上長',Q60:'担当'
   },
   '土地転売（業者売り）': {
-    A1:'物件名：',K2:'作成日',A3:'所在地',F3:'事業期間',I3:'新築　販売在庫（近隣）',A4:'地番',F4:'仕入契約日',A5:'交通',F5:'仕入決済日',J5:'価格',N5:'土地面積',P5:'坪単価',S5:'延床面積（間取）',W5:'駅距離',Z5:'住所',A6:'地積',F6:'売主',A7:'実測',F7:'仲介会社',A8:'容積率',C8:'用途地域',F8:'売却契約日',A9:'建蔽率',C9:'防火指定',F9:'売却決済日',A10:'道路',C10:'高度地区',F10:'買主',C11:'その他',F11:'仲介会社',A14:'仕入れ原価',I14:'土地　販売在庫（近隣）',C15:'金　額',D15:'備　考',F15:'一種単価',A16:'土地原価',B16:'土地仕入原価',J16:'価格',N16:'土地面積',P16:'坪単価',S16:'特徴',W16:'駅距離',Z16:'住所',B17:'仲介手数料',B18:'業務委託手数料',F18:'借 入 金',B19:'解体整地費用',B20:'地盤改良費用',B21:'譲渡承諾料',F21:'評価額',B22:'立退き費用',F22:'路線価',B23:'測量費用',F23:'固定資産税路線価',A24:'建物原価',B24:'建築費',F24:'建物評価額',I24:'販売想定①',L24:'坪',O24:'円',P24:'利益率',B25:'インフラ費用（改修）',F25:'IRR',I25:'売上高',U25:'出値価格',B26:'設計費用',I26:'原価合計',A27:'租税公課',B27:'取 得 税(土地)',E27:'％',I27:'総利益',B28:'取 得 税(建物)',E28:'％',F28:'上記IRRは10％以上を目指す',B29:'固定資産税',E29:'％',B30:'都市計画税',E30:'％',I30:'販売想定②',L30:'坪',O30:'円',P30:'利益率',B31:'登録免許税(土地）',E31:'％',I31:'売上高',U31:'着地前後価格',B32:'登録免許税（建物）',E32:'％',I32:'原価合計',B33:'抵当権',E33:'％',I33:'総利益',B34:'印  紙  税',A35:'販売管理費',B35:'司法書士報酬',B36:'予備費',B37:'販売手数料',A38:'営業外費用',B38:'借入金利',E38:'％',B39:'事務手数料',E39:'%',B40:'合　計',F40:'←原価合計は必ず手計算すること',F44:'上記IRRは10％以上を目指す',D46:'事業期間12ヶ月',F46:'IRR',D50:'事業期間18ヶ月',F50:'IRR',D56:'事業期間24ヶ月',F56:'IRR',I36:'社長',L36:'部長',P36:'担当'
+    A1:'物件名：',K2:'作成日',A3:'所在地',F3:'事業期間',I3:'新築　販売在庫（近隣）',A4:'地番',F4:'仕入契約日',A5:'交通',F5:'仕入決済日',J5:'価格',N5:'土地面積',P5:'坪単価',S5:'延床面積（間取）',W5:'駅距離',Z5:'住所',A6:'地積',F6:'売主',A7:'実測',F7:'仲介会社',A8:'容積率',C8:'用途地域',F8:'売却契約日',A9:'建蔽率',C9:'防火指定',F9:'売却決済日',A10:'道路',C10:'高度地区',F10:'買主',C11:'その他',F11:'仲介会社',A14:'仕入れ原価',I14:'土地　販売在庫（近隣）',C15:'金　額',D15:'備　考',F15:'一種単価',A16:'土地原価',B16:'土地仕入原価',J16:'価格',N16:'土地面積',P16:'坪単価',S16:'特徴',W16:'駅距離',Z16:'住所',B17:'仲介手数料',B18:'業務委託手数料',F18:'借 入 金',B19:'解体整地費用',B20:'地盤改良費用',B21:'譲渡承諾料',F21:'評価額',B22:'立退き費用',F22:'路線価',B23:'測量費用',F23:'固定資産税路線価',A24:'建物原価',B24:'建築費',F24:'建物評価額',I24:'販売想定①',L24:'坪',O24:'円',P24:'利益率',B25:'インフラ費用（改修）',F25:'IRR',I25:'売上高',U25:'出値価格',B26:'設計費用',I26:'原価合計',A27:'租税公課',B27:'取 得 税(土地)',E27:'％',I27:'総利益',B28:'取 得 税(建物)',E28:'％',F28:'上記IRRは10％以上を目指す',B29:'固定資産税',E29:'％',B30:'都市計画税',E30:'％',I30:'販売想定②',L30:'坪',O30:'円',P30:'利益率',B31:'登録免許税(土地）',E31:'％',I31:'売上高',U31:'着地前後価格',B32:'登録免許税（建物）',E32:'％',I32:'原価合計',B33:'抵当権',E33:'％',I33:'総利益',B34:'印  紙  税',A35:'販売管理費',B35:'司法書士報酬',B36:'予備費',B37:'販売手数料',A38:'営業外費用',B38:'借入金利',E38:'％',B39:'事務手数料',E39:'%',D39_2:'フリー項目',B40:'合　計',F40:'←原価合計は必ず手計算すること',F44:'上記IRRは10％以上を目指す',D46:'事業期間12ヶ月',F46:'IRR',D50:'事業期間18ヶ月',F50:'IRR',D56:'事業期間24ヶ月',F56:'IRR',I36:'社長',L36:'部長',P36:'担当'
   },
   'アパート': {
-    A1:'物件名：',K2:'作成日',A3:'所在地',F3:'事業期間',I3:'タイプ',J3:'面積',K3:'間取',L3:'戸数',M3:'賃料',O3:'合計',A4:'地番',F4:'総戸数',I4:'A',A5:'交通',I5:'B',A6:'実測面積',D6:'実測入れる（SB後）',F6:'契約日',I6:'C',A7:'建物専有面積',D7:'建物専有面積入れる',F7:'決済日',I7:'D',A8:'容積率',C8:'用途地域',F8:'売主',I8:'E',A9:'建蔽率',C9:'防火指定',F9:'仲介会社',I9:'F',A10:'道路',C10:'高度地区',F10:'仲介会社',I10:'合計',C11:'検査済証',A14:'仕入れ原価',I14:'販売想定①',L14:'利回り',P14:'利益率',C15:'金　額',D15:'備　考',F15:'一種単価',I15:'売上高',U15:'出値価格',A16:'土地原価',B16:'土地仕入原価',I16:'原価合計',B17:'仲介手数料',I17:'総利益',B18:'業務委託手数料',F18:'借 入 金',B19:'解体整地費用',B20:'測量費用',F20:'評価額',I20:'販売想定②',L20:'利回り',P20:'利益率',B21:'譲渡承諾料',F21:'路線価',I21:'売上高',U21:'着地前後価格',B22:'立退き費用',F22:'固定資産税路線価',I22:'原価合計',F24:'建物評価額',I24:'総利益',A25:'建物原価',B25:'建築費',F25:'IRR',B26:'設計費用',B27:'地盤改良',B28:'インフラ費用（改修）',B29:'外構費用',I29:'年間賃料収入（想定）',B30:'瑕疵担保保険',F30:'上記IRRは10％以上を目指す',I30:'月額賃料',I31:'年額賃料',I32:'坪単価',A33:'租税公課',B33:'取 得 税(土地)',E33:'％',B34:'取 得 税(建物)',E34:'％',B35:'固定資産税',E35:'％',B36:'都市計画税',E36:'％',B37:'登録免許税(土地）',E37:'％',B38:'登録免許税（建物）',E38:'％',B39:'抵当権',E39:'％',B40:'印  紙  税',A41:'販売管理費',B41:'司法書士報酬',B42:'予備費',B43:'その他',B44:'販売手数料',A45:'営業外費用',B45:'借入金利',E45:'％',B46:'事務手数料',E46:'%',B48:'合　計',F48:'←原価合計は必ず手計算すること',F53:'上記IRRは10％以上を目指す',D55:'事業期間12ヶ月',F55:'IRR',D59:'事業期間18ヶ月',F59:'IRR',D65:'事業期間24ヶ月',F65:'IRR',I43:'社長',L43:'部長',P43:'担当'
+    A1:'物件名：',K2:'作成日',A3:'所在地',F3:'事業期間',I3:'タイプ',J3:'面積',K3:'間取',L3:'戸数',M3:'賃料',O3:'合計',A4:'地番',F4:'総戸数',I4:'A',A5:'交通',I5:'B',A6:'実測面積',D6:'実測入れる（SB後）',F6:'契約日',I6:'C',A7:'建物専有面積',D7:'建物専有面積入れる',F7:'決済日',I7:'D',A8:'容積率',C8:'用途地域',F8:'売主',I8:'E',A9:'建蔽率',C9:'防火指定',F9:'仲介会社',I9:'F',A10:'道路',C10:'高度地区',F10:'仲介会社',I10:'合計',C11:'検査済証',A14:'仕入れ原価',I14:'販売想定①',L14:'利回り',P14:'利益率',C15:'金　額',D15:'備　考',F15:'一種単価',I15:'売上高',U15:'出値価格',A16:'土地原価',B16:'土地仕入原価',I16:'原価合計',B17:'仲介手数料',I17:'総利益',B18:'業務委託手数料',F18:'借 入 金',B19:'解体整地費用',B20:'測量費用',F20:'評価額',I20:'販売想定②',L20:'利回り',P20:'利益率',B21:'譲渡承諾料',F21:'路線価',I21:'売上高',U21:'着地前後価格',B22:'立退き費用',F22:'固定資産税路線価',I22:'原価合計',F24:'建物評価額',I24:'総利益',A25:'建物原価',B25:'建築費',F25:'IRR',B26:'設計費用',B27:'地盤改良',B28:'インフラ費用（改修）',B29:'外構費用',I29:'年間賃料収入（想定）',B30:'瑕疵担保保険',F30:'上記IRRは10％以上を目指す',I30:'月額賃料',I31:'年額賃料',I32:'坪単価',A33:'租税公課',B33:'取 得 税(土地)',E33:'％',B34:'取 得 税(建物)',E34:'％',B35:'固定資産税',E35:'％',B36:'都市計画税',E36:'％',B37:'登録免許税(土地）',E37:'％',B38:'登録免許税（建物）',E38:'％',B39:'抵当権',E39:'％',B40:'印  紙  税',A41:'販売管理費',B41:'司法書士報酬',B42:'予備費',B43:'その他',B44:'販売手数料',A45:'営業外費用',B45:'借入金利',E45:'％',B46:'事務手数料',E46:'%',D47:'フリー項目',B48:'合　計',F48:'←原価合計は必ず手計算すること',F53:'上記IRRは10％以上を目指す',D55:'事業期間12ヶ月',F55:'IRR',D59:'事業期間18ヶ月',F59:'IRR',D65:'事業期間24ヶ月',F65:'IRR',I43:'社長',L43:'部長',P43:'担当'
   }
 };
 
 const SHUSHI_INPUTS = {
   '戸建て（建売・土地売り）': ['G2','G3','B6','B7','B8','B9','I6','J6','N6','I7','J7','N7','I8','J8','N8','I9','J9','N9','I10','J10','N10','I11','J11','N11','C16','C17','C18','C19','C20','C21','C22','C23','C24','I17','J17','N17','I18','J18','N18','I19','J19','N19','I20','J20','N20','I21','J21','N21','G22','G23','G24','C25','C26','C27','C28','C29','K26','U26','U27','C31','K32','U32','U33','U34','K38','U38','U39','U28','C39','C41','C42','C43','C44','C47','D45','D46','C39_2'],
-  '土地転売（業者売り）': ['G3','B6','B7','B8','B9','I6','I7','I8','I9','I10','I11','C16','C17','C18','C19','C20','C21','C22','C23','I17','I18','I19','I20','I21','G22','G23','C24','G24','K25','C25','C26','K31','C34','C35','C36','C37','D38','D39','C34_2'],
+  '土地転売（業者売り）': ['G3','B6','B7','B8','B9','I6','I7','I8','I9','I10','I11','C16','C17','C18','C19','C20','C21','C22','C23','I17','I18','I19','I20','I21','G22','G23','C24','G24','K25','C25','C26','K31','C34','C35','C36','C37','D38','D39','C34_2','C39_2'],
   'アパート': ['G3','G4','J4','K4','L4','M4','J5','K5','L5','M5','B6','J6','K6','L6','M6','B7','J7','K7','L7','M7','B8','J8','K8','L8','M8','B9','J9','K9','L9','M9','N14','C16','C17','C18','C19','C20','C21','C22','N20','G21','G22','G24','C25','C26','C27','C28','C29','C30','C40','C41','C42','C43','C44','C47','D45','D46','C40_2']
 };
 const SHUSHI_META_INPUTS = {
   '戸建て（建売・土地売り）': ['B1','B3','B4','B5','B5_2','B10','B11','B23','B24','B31','B43','B47','B39_2','D8','D9','D10','D11','G4','G5','G6','G7','G8','G9','G10','G11','S6','W6','Z6','S7','W7','Z7','S8','W8','Z8','S9','W9','Z9','S10','W10','Z10','S11','W11','Z11','S17','W17','Z17','S18','W18','Z18','S19','W19','Z19','S20','W20','Z20','S21','W21','Z21','D17','D18','D19','D20','D22','D26','D28','D30','X26','Z26','AB26','X27','Z27','AB27','X28','Z28','AB28','D41','D42','D43','D44','D45','D46','X32','Z32','AB32','X33','Z33','AB33','X34','Z34','AB34','X38','Z38','AB38','X39','Z39','AB39'],
-  '土地転売（業者売り）': ['B1','B3','B4','B5','B5_2','B10','B11','B34_2','D8','D9','D10','D11','G4','G5','G6','G7','G8','G9','G10','G11','J6','N6','S6','W6','Z6','J7','N7','S7','W7','Z7','J8','N8','S8','W8','Z8','J9','N9','S9','W9','Z9','J10','N10','S10','W10','Z10','J11','N11','S11','W11','Z11','J17','N17','S17','W17','Z17','J18','N18','S18','W18','Z18','J19','N19','S19','W19','Z19','J20','N20','S20','W20','Z20','J21','N21','S21','W21','Z21','D19','D20','D21','D22','D23','D24','D25','D26','D35','D36','D37','D38','D39'],
-  'アパート': ['B1','B3','B4','B5','B5_2','B10','B11','B43','B40_2','D8','D9','D10','D11','G4','G6','G7','G8','G9','G10','K4','K5','K6','K7','K8','K9','D19','D20','D21','D22','D25','D26','D27','D28','D29','D30','D41','D42','D43','D44','D45','D46','D47']
+  '土地転売（業者売り）': ['B1','B3','B4','B5','B5_2','B10','B11','B34_2','B39_2','D8','D9','D10','D11','G4','G5','G6','G7','G8','G9','G10','G11','J6','N6','S6','W6','Z6','J7','N7','S7','W7','Z7','J8','N8','S8','W8','Z8','J9','N9','S9','W9','Z9','J10','N10','S10','W10','Z10','J11','N11','S11','W11','Z11','J17','N17','S17','W17','Z17','J18','N18','S18','W18','Z18','J19','N19','S19','W19','Z19','J20','N20','S20','W20','Z20','J21','N21','S21','W21','Z21','D19','D20','D21','D22','D23','D24','D25','D26','D35','D36','D37','D38','D39'],
+  'アパート': ['B1','B3','B4','B5','B5_2','B10','B11','B43','B47','B40_2','D8','D9','D10','D11','G4','G6','G7','G8','G9','G10','K4','K5','K6','K7','K8','K9','D19','D20','D21','D22','D26','D27','D28','D29','D30','D41','D42','D43','D44','D45','D46','D47']
 };
 const SHUSHI_YELLOW = {
   '戸建て（建売・土地売り）': ['F19','M25','K26','P26','K27','K28','C30','M31','C32','K32','P32','C33','K33','C34','K34','C35','C36','C37','M37','C38','K38','P38','K39','K40','C44','C45','C46'],
@@ -1851,9 +2133,9 @@ const SHUSHI_YELLOW = {
 const SHUSHI_FORMULAS = {
   '戸建て（建売・土地売り）': ['K2','C6','C7','P6','P7','P8','P9','P10','P11','D16','F16','P17','P18','F19','P19','P20','P21','D25','G25','M25','P26','K27','K28','M31','C30','C32','P32','C33','K33','C34','K34','C35','C36','C37','M37','C38','P38','K39','K40','C45','C46','C48','D48','G54','I54','I56','G58','I58','I62','G64','I64','I68'],
   '土地転売（業者売り）': ['K2','C6','C7','P6','P7','P8','P9','P10','P11','D16','F16','P17','P18','P19','P20','P21','F19','M24','G25','P25','K26','K27','C27','C28','C29','C30','C31','C32','C33','M30','P31','K32','K33','C38','C39','C40','D40','G46','I46','I48','G50','I50','I54','G56','I56','I60'],
-  'アパート': ['K2','O4','O5','C6','O6','C7','O7','O8','O9','J10','L10','O10','K15','P15','D16','F16','K16','K17','F19','K21','P21','K22','K24','G25','K30','K31','K32','C33','C34','C35','C36','C37','C38','C39','C45','C46','C48','D48','G55','I55','I57','G59','I59','I63','G65','I65','I69']
+  'アパート': ['K2','O4','O5','C6','O6','C7','O7','O8','O9','J10','L10','O10','K15','P15','D16','F16','K16','K17','F19','K21','P21','K22','K24','D25','G25','K30','K31','K32','C33','C34','C35','C36','C37','C38','C39','C45','C46','C48','D48','G55','I55','I57','G59','I59','I63','G65','I65','I69']
 };
-const SHUSHI_TEXT_CELLS = ['B1','B3','B4','B5','B5_2','B10','B11','B23','B24','B31','B47','D8','D9','D10','D11','G4','G5','G6','G7','G8','G9','G10','G11','S6','W6','Z6','S7','W7','Z7','S8','W8','Z8','S9','W9','Z9','S10','W10','Z10','S11','W11','Z11','S17','W17','Z17','S18','W18','Z18','S19','W19','Z19','S20','W20','Z20','S21','W21','Z21','D17','D18','D19','D20','D22','D25','D26','D30','D41','D42','D43','D44','D47','X26','Z26','AB26','X27','Z27','AB27','X28','Z28','AB28','X32','Z32','AB32','X33','Z33','AB33','X34','Z34','AB34','X38','Z38','AB38','X39','Z39','AB39','K4','K5','K6','K7','K8','K9'];
+const SHUSHI_TEXT_CELLS = ['B1','B3','B4','B5','B5_2','B10','B11','B23','B24','B31','B47','B34_2','B39_2','B40_2','D8','D9','D10','D11','G4','G5','G6','G7','G8','G9','G10','G11','S6','W6','Z6','S7','W7','Z7','S8','W8','Z8','S9','W9','Z9','S10','W10','Z10','S11','W11','Z11','S17','W17','Z17','S18','W18','Z18','S19','W19','Z19','S20','W20','Z20','S21','W21','Z21','D17','D18','D19','D20','D22','D25','D26','D30','D41','D42','D43','D44','D47','X26','Z26','AB26','X27','Z27','AB27','X28','Z28','AB28','X32','Z32','AB32','X33','Z33','AB33','X34','Z34','AB34','X38','Z38','AB38','X39','Z39','AB39','K4','K5','K6','K7','K8','K9'];
 const SHUSHI_SAMPLE = {
   '戸建て（建売・土地売り）': {B1:'北葛西建売プロジェクト',B3:'江戸川区北葛西3丁目',B4:'北葛西三丁目100番1',B5:'東西線「西葛西」駅徒歩9分',G2:1,G3:12,B6:118.4,B7:96.8,B8:150,B9:60,B10:'南側：4.5m公道',D8:'第一種住居地域',D9:'準防火',D10:'第二種高度地区',D11:'最低敷地70㎡',I6:1,J6:89800000,N6:112.5,S6:'96.1㎡（4LDK）',W6:'西葛西9分',Z6:'北葛西3丁目',I7:2,J7:86800000,N7:105.2,S7:'93.5㎡（4LDK）',W7:'葛西11分',Z7:'中葛西4丁目',I8:3,J8:92800000,N8:120.6,S8:'101.2㎡（4LDK）',W8:'西葛西7分',Z8:'西葛西6丁目',C16:52000000,D19:'35.82坪',D20:'20万以下は無し',D22:'2年分',I17:1,J17:55800000,N17:115.4,S17:'整形地',W17:'西葛西10分',Z17:'北葛西4丁目',I18:2,J18:59800000,N18:124.1,S18:'角地',W18:'葛西9分',Z18:'中葛西5丁目',G22:300000,G23:260000,G24:0,C25:23000000,K26:103000000,U26:10300,X26:'4LDK',Z26:'96.1㎡',AB26:'有',U27:10100,X27:'4LDK',Z27:'93.5㎡',AB27:'有',C30:88000,C31:0,D32:1.5,K32:99000000,U32:9900,X32:'4LDK',Z32:'96.1㎡',AB32:'有',D33:3,U33:9700,X33:'4LDK',Z33:'93.5㎡',AB33:'有',D34:1.4,D35:0.3,D36:2,D37:2,D38:0.4,K38:95000000,U38:9500,X38:'4LDK',Z38:'96.1㎡',AB38:'有',C39:30000,U39:9300,X39:'4LDK',Z39:'93.5㎡',AB39:'有',C41:120000,C42:800000,D42:'50万以下は無し',D43:'あれば項目変更する',D45:3.5,D46:1},
   '土地転売（業者売り）': {B1:'南葛西土地転売',B3:'江戸川区南葛西2丁目',B4:'南葛西二丁目200番8',B5:'東西線「葛西」駅徒歩13分',G3:12,B6:132.4,B7:128.6,B8:200,B9:60,B10:'東側：5.0m公道',D8:'第一種住居地域',D9:'準防火',D10:'第三種高度地区',D11:'最低敷地70㎡',I6:1,J6:142000000,N6:130.4,S6:'125.3㎡（4LDK）',W6:'葛西12分',Z6:'南葛西2丁目',I7:2,J7:136000000,N7:124.8,S7:'118.6㎡（4LDK）',W7:'葛西14分',Z7:'南葛西3丁目',I8:3,J8:148000000,N8:138.1,S8:'131.0㎡（5LDK）',W8:'西葛西15分',Z8:'臨海町1丁目',C16:108000000,D19:'42.35坪',D20:'70万円/1棟',I17:1,J17:118000000,N17:126.4,S17:'整形地',W17:'葛西13分',Z17:'南葛西2丁目',I18:2,J18:123000000,N18:134.2,S18:'角地',W18:'葛西11分',Z18:'南葛西4丁目',I19:3,J19:112000000,N19:121.5,S19:'古家あり',W19:'葛西15分',Z19:'南葛西1丁目',G22:225000,G23:210000,C24:0,G24:0,K25:139000000,D27:1.5,D28:3,D29:1.4,D30:0.3,D31:2,K31:132000000,D32:2,D33:0.4,C34:30000,D38:3.5,D39:1},
@@ -1898,7 +2180,7 @@ function toggleSanyu() {
   st.__sanyu = !(st.__sanyu === true);
   if (st.__sanyu) st.__renken = false;
   renderShushiSheet();
-  if (typeof showToast === 'function') showToast(st.__sanyu ? '三為スキームON：印紙税のみ計上し、不動産取得税・登録免許税・固定資産税・都市計画税・抵当権・営業外費用は表から外します' : '三為スキームOFF：通常どおり全項目を計上します');
+  if (typeof showToast === 'function') showToast(st.__sanyu ? '三為スキームON：対象項目の金額を0円で表示します' : '三為スキームOFF：通常どおり全項目を計上します');
 }
 function shushiIsRenken() {
   const deal = shushiDeal();
@@ -1913,7 +2195,7 @@ function toggleRenken() {
   st.__renken = !(st.__renken === true);
   if (st.__renken) st.__sanyu = false;
   renderShushiSheet();
-  if (typeof showToast === 'function') showToast(st.__renken ? '連件スキームON：不動産取得税・登録免許税・印紙税を計上し、固定資産税・都市計画税・抵当権・営業外費用は表から外します' : '連件スキームOFF：通常どおり全項目を計上します');
+  if (typeof showToast === 'function') showToast(st.__renken ? '連件スキームON：対象項目の金額を0円で表示します' : '連件スキームOFF：通常どおり全項目を計上します');
 }
 const EDITABLE_ITEM_CELLS = ['B43'];
 function shushiPersistCell(el) {
@@ -1962,6 +2244,7 @@ const SHUSHI_CELL_DEFAULTS = {
   'アパート': {G3:18, D20:'20万以下は無し', D22:'2年分', D28:'新規引き込み含む', D42:'50万以下は無し', D43:'あれば項目変更する',
     D33:1.5, D34:3, D35:1.4, D36:0.3, D37:2, D38:2, D39:0.4, D45:2.7, D46:1, B43:'その他'}
 };
+initDemoChangelog();
 function shushiResolvedValue(sheet, cell) {
   const deal = shushiDeal();
   const st = deal ? shushiStateFor(deal.id, sheet) : null;
@@ -2004,7 +2287,7 @@ function shushiInputHtml(sheet, cell) {
     const fireOpts = ['防火', '準防火', '準防火(新防火)'];
     return '<select class="shushi-input" id="' + shushiCellId(cell) + '" data-cell="' + cell + '" onchange="shushiPersistCell(this)"><option value=""></option>' + fireOpts.map(o => '<option value="' + escHtml(o) + '"' + (String(val) === o ? ' selected' : '') + '>' + escHtml(o) + '</option>').join('') + '</select>';
   }
-  return '<input type="text" class="' + cls + '" id="' + shushiCellId(cell) + '" data-cell="' + cell + '" value="' + value + '"' + inputmode + ' oninput="shushiOnInput(this)" onkeydown="shushiEnter(event,this)" oncompositionstart="this.dataset.ime=\'1\'" oncompositionend="delete this.dataset.ime;shushiOnInput(this)">';
+  return '<input type="text" class="' + cls + '" id="' + shushiCellId(cell) + '" data-cell="' + cell + '" value="' + value + '"' + inputmode + ' autocomplete="off" oninput="shushiOnInput(this)" onkeydown="shushiEnter(event,this)" oncompositionstart="this.dataset.ime=\'1\'" oncompositionend="delete this.dataset.ime;shushiOnInput(this)">';
 }
 const PL_SECTION_COLLAPSED = {};
 function setupPlSectionToggles() {
@@ -2118,6 +2401,21 @@ const SHUSHI_FREE_TAX = {
   'アパート': { after: 40, row: '40_2' },
 };
 function freeTaxAmount(c, sheet) { return n(c, 'C' + SHUSHI_FREE_TAX[sheet].row); }
+const SHUSHI_FREE_OPERATING = {
+  '土地転売（業者売り）': { after: 39, row: '39_2' },
+};
+function freeOperatingAmount(c, sheet) {
+  const cfg = SHUSHI_FREE_OPERATING[sheet];
+  return cfg ? n(c, 'C' + cfg.row) : 0;
+}
+const SHUSHI_RATE_INPUT_CELLS = {
+  '戸建て（建売・土地売り）': new Set(['D45','D46']),
+  '土地転売（業者売り）': new Set(['D38','D39']),
+  'アパート': new Set(['D45','D46']),
+};
+function shushiIsRateInputCell(sheet, cell) {
+  return !!(SHUSHI_RATE_INPUT_CELLS[sheet] && SHUSHI_RATE_INPUT_CELLS[sheet].has(cell));
+}
 function shushiCostRows(sheet) {
   if (sheet === '土地転売（業者売り）') return {start:16,end:40,sections:{16:'A16',24:'A24',27:'A27',35:'A35',38:'A38',40:'B40'}};
   if (sheet === 'アパート') return {start:16,end:48,sections:{16:'A16',25:'A25',33:'A33',41:'A41',45:'A45',48:'B48'}};
@@ -2182,6 +2480,10 @@ function shushiCostSection(sheet) {
     if (ft && r === ft.after) {
       rows.push({group: groupId, section: '', isTotal: false, item: '', freeItem: true, editableItem: false, freeRow: ft.row, amountCell: 'C' + ft.row, memoCell: '', rateCells: ''});
     }
+    const fo = SHUSHI_FREE_OPERATING[sheet];
+    if (fo && r === fo.after) {
+      rows.push({group: groupId, section: '', isTotal: false, item: '', freeItem: true, editableItem: false, freeRow: fo.row, amountCell: 'C' + fo.row, memoCell: '', rateCells: ''});
+    }
   }
   const groupCount = {};
   rows.forEach(row => { groupCount[row.group] = (groupCount[row.group] || 0) + 1; });
@@ -2198,12 +2500,9 @@ function shushiCostSection(sheet) {
     } else {
       const eLbl = labels['E' + row.freeRow];
       const loanInterestBlankMonthsNote = shushiLoanInterestBlankMonthsNoteHtml(sheet, row.amountCell);
-      if (row.zeroFixed && row.memoCell) {
-        memoFull = (eLbl === '％' || eLbl === '%')
-          ? '<span class="pl-rate-cell">' + shushiZeroFixedMemoHtml(sheet, row.memoCell) + '<span class="pl-rate-unit">' + escHtml(eLbl) + '</span>' + loanInterestBlankMonthsNote + '</span>'
-          : shushiZeroFixedMemoHtml(sheet, row.memoCell) + loanInterestBlankMonthsNote;
-      } else if ((eLbl === '％' || eLbl === '%') && row.memoCell) {
-        memoFull = '<span class="pl-rate-cell">' + shushiMemoTextHtml(sheet, row.memoCell) + '<span class="pl-rate-unit">' + escHtml(eLbl) + '</span>' + loanInterestBlankMonthsNote + '</span>';
+      if ((eLbl === '％' || eLbl === '%') && row.memoCell) {
+        const rateValueHtml = shushiIsRateInputCell(sheet, row.memoCell) ? shushiCellHtml(sheet, row.memoCell) : shushiMemoTextHtml(sheet, row.memoCell);
+        memoFull = '<span class="pl-rate-cell">' + rateValueHtml + '<span class="pl-rate-unit">' + escHtml(eLbl) + '</span>' + loanInterestBlankMonthsNote + '</span>';
       } else {
         const baseMemo = shushiMemoTextHtml(sheet, row.memoCell);
         memoFull = (row.rateCells ? (baseMemo + (baseMemo ? ' ' : '') + '<span class="pl-rate-auto">' + row.rateCells + '</span>') : baseMemo) + loanInterestBlankMonthsNote;
@@ -2465,8 +2764,10 @@ function shushiExcelCellTarget(sheet, cell) {
   if (cell === 'B5_2') return null;
   if (sheet === '戸建て（建売・土地売り）' && cell === 'B39_2') return 'B40';
   if (sheet === '戸建て（建売・土地売り）' && cell === 'C39_2') return 'C40';
-  if (sheet === 'アパート' && cell === 'B40_2') return 'B47';
-  if (sheet === 'アパート' && cell === 'C40_2') return 'C47';
+  if (sheet === '土地転売（業者売り）' && cell === 'B39_2') return null;
+  if (sheet === '土地転売（業者売り）' && cell === 'C39_2') return null;
+  if (sheet === 'アパート' && cell === 'B40_2') return null;
+  if (sheet === 'アパート' && cell === 'C40_2') return null;
   return /^\D+\d+$/.test(cell) ? cell : null;
 }
 function shushiExcelCellValue(sheet, cell, c) {
@@ -2583,6 +2884,20 @@ function xlsxApplySheetValues(xml, sheet) {
     const name = String(c['B' + ft.row] || '').trim();
     const amount = c['C' + ft.row];
     if (shushiNum(amount) || name) xlsxSetCellValue(doc, sheetData, 'D34', 'text', [name, shushiFormatInputValue(amount)].filter(Boolean).join(' '));
+  }
+  if (sheet === 'アパート' && ft) {
+    const name = String(c['B' + ft.row] || '').trim();
+    const amount = c['C' + ft.row];
+    if (shushiNum(amount) || name) xlsxSetCellValue(doc, sheetData, 'D40', 'text', [name, shushiFormatInputValue(amount)].filter(Boolean).join(' '));
+  }
+  const fo = SHUSHI_FREE_OPERATING[sheet];
+  if (sheet === '土地転売（業者売り）' && fo) {
+    const name = String(c['B' + fo.row] || '').trim();
+    const amount = c['C' + fo.row];
+    if (shushiNum(amount) || name) {
+      xlsxSetCellValue(doc, sheetData, 'B42', 'text', name);
+      if (shushiNum(amount)) xlsxSetCellValue(doc, sheetData, 'C42', 'number', amount);
+    }
   }
   const views = doc.getElementsByTagNameNS('http://schemas.openxmlformats.org/spreadsheetml/2006/main', 'sheetView');
   Array.from(views).forEach(v => {
@@ -2754,7 +3069,7 @@ function calcTochiCells(c) {
   c.C37 = shushiIsManual('C37') ? n(c,'C37') : (n(c,'K25') > 0 ? Math.round((n(c,'K25') * 0.03 + 60000) * 1.1) : 0);
   c.C38 = scheme ? 0 : (n(c,'F19') * (n(c,'D38') / 100) / 12) * n(c,'G3');
   c.C39 = scheme ? 0 : n(c,'F19') * (n(c,'D39') / 100);
-  c.C40 = sumCells(c,'C',16,39) + freeTaxAmount(c,'土地転売（業者売り）'); c.D40 = n(c,'C40') / n(c,'C6'); c.M24 = n(c,'K25') / n(c,'C6'); c.K26 = n(c,'C40'); c.K27 = n(c,'K25') - n(c,'K26'); c.P25 = n(c,'K27') / n(c,'K25'); c.M30 = n(c,'K31') / n(c,'C6'); c.K32 = n(c,'C40'); c.K33 = n(c,'K31') - n(c,'K32'); c.P31 = n(c,'K33') / n(c,'K31');
+  c.C40 = sumCells(c,'C',16,39) + freeTaxAmount(c,'土地転売（業者売り）') + freeOperatingAmount(c,'土地転売（業者売り）'); c.D40 = n(c,'C40') / n(c,'C6'); c.M24 = n(c,'K25') / n(c,'C6'); c.K26 = n(c,'C40'); c.K27 = n(c,'K25') - n(c,'K26'); c.P25 = n(c,'K27') / n(c,'K25'); c.M30 = n(c,'K31') / n(c,'C6'); c.K32 = n(c,'C40'); c.K33 = n(c,'K31') - n(c,'K32'); c.P31 = n(c,'K33') / n(c,'K31');
   c.I46 = -n(c,'C40'); c.I48 = n(c,'K25'); c.G46 = calcIrrExcel(n(c,'I48'), -n(c,'I46'), 12); c.I50 = -n(c,'C40'); c.I54 = n(c,'I48'); c.G50 = calcIrrExcel(n(c,'I54'), -n(c,'I50'), 18); c.I56 = n(c,'I46'); c.I60 = n(c,'I48'); c.G56 = calcIrrExcel(n(c,'I60'), -n(c,'I56'), 24); c.G25 = displayIrr(n(c,'G3'), c.G46, c.G50, c.G56);
 }
 function calcApartCells(c) {
@@ -2763,7 +3078,8 @@ function calcApartCells(c) {
   c.K15 = n(c,'K31') / (n(c,'N14') / 100); c.K21 = n(c,'K31') / (n(c,'N20') / 100); c.D16 = n(c,'C16') / n(c,'C6'); c.F16 = n(c,'C16') / n(c,'C6') / (n(c,'B8') / 100); const autoC17 = n(c,'C16') > 0 ? Math.round((n(c,'C16') * 0.03 + 60000) * 1.1) : 0; c.C17 = shushiIsManual('C17') ? n(c,'C17') : autoC17; c.F19 = n(c,'C16') * 0.9;
   const hyokaA = n(c,'G22');
   c.C33 = hyokaA * (n(c,'D33') / 100); c.C34 = n(c,'G24') * (n(c,'D34') / 100); c.C35 = hyokaA * (n(c,'D35') / 100); c.C36 = hyokaA * (n(c,'D36') / 100); c.C37 = hyokaA * (n(c,'D37') / 100); c.C38 = n(c,'G24') * (n(c,'D38') / 100); c.C39 = n(c,'F19') * (n(c,'D39') / 100);
-  c.C44 = shushiIsManual('C44') ? n(c,'C44') : (n(c,'K15') > 0 ? Math.round((n(c,'K15') * 0.03 + 60000) * 1.1) : 0); c.C45 = (n(c,'F19') * (n(c,'D45') / 100) / 12) * n(c,'G3'); c.C46 = n(c,'F19') * 0.01;
+  c.D25 = n(c,'C25') / n(c,'C7');
+  c.C44 = shushiIsManual('C44') ? n(c,'C44') : (n(c,'K15') > 0 ? Math.round((n(c,'K15') * 0.03 + 60000) * 1.1) : 0); c.C45 = (n(c,'F19') * (n(c,'D45') / 100) / 12) * n(c,'G3'); c.C46 = n(c,'F19') * (n(c,'D46') / 100);
   c.C48 = sumCells(c,'C',16,47) + freeTaxAmount(c,'アパート'); c.D48 = n(c,'C48') / n(c,'C6'); c.K16 = n(c,'C48'); c.K17 = n(c,'K15') - n(c,'K16'); c.P15 = n(c,'K17') / n(c,'K15'); c.K22 = n(c,'C48'); c.K24 = n(c,'K21') - n(c,'K22'); c.P21 = n(c,'K24') / n(c,'K21');
   c.I55 = -n(c,'C48'); c.I57 = n(c,'K15'); c.G55 = calcIrrExcel(n(c,'I57'), -n(c,'I55'), 12); c.I59 = -n(c,'C48'); c.I63 = n(c,'I57'); c.G59 = calcIrrExcel(n(c,'I63'), -n(c,'I59'), 18); c.I65 = n(c,'I55'); c.I69 = n(c,'I63'); c.G65 = calcIrrExcel(n(c,'I69'), -n(c,'I65'), 24); c.G25 = displayIrr(n(c,'G3'), c.G55, c.G59, c.G65);
 }
@@ -2840,12 +3156,6 @@ function shushiOnInput(el) {
   calcPL();
 }
 function shushiEnter(e, el) {
-  if (e.key !== 'Enter') return;
-  if (e.isComposing || e.keyCode === 229) return;
-  e.preventDefault();
-  const inputs = Array.from(document.querySelectorAll('#pl-sheet-grid input, #pl-sheet-grid select')).filter(x => !x.disabled);
-  const idx = inputs.indexOf(el);
-  if (idx >= 0 && inputs[idx + 1]) inputs[idx + 1].focus();
 }
 function renderPLPhotos() {
   const el = document.getElementById('pl-photo-grid'); if (!el) return;
@@ -2928,6 +3238,7 @@ function registerPL() {
       text: '販売価格を' + fmt(sellB2) + '円に設定（販売想定②着地前後＝判断基準' + basisSuffix + '）', by: deal.staff});
   }
   if (deal) LAST_REG_PRICE[currentDealId] = { a: sellA, b: sellB2 };
+  if (deal) recordShushiChangesOnSave(deal, activeShushiSheet);
   registerStep('pl', firstNote);
   plDirty = false;
 }
@@ -2993,9 +3304,11 @@ function calcHearing() {
     if (v > 0) prices.push(v);
   }
   if (prices.length === 0) {
-    box.textContent = '回答が入力されると、想定価格②との差額を自動表示します';
+    box.textContent = '';
+    box.style.display = 'none';
     return;
   }
+  box.style.display = '';
   prices.sort((a, b) => a - b);
   const median = prices.length === 1 ? prices[0]
     : prices.length === 2 ? (prices[0] + prices[1]) / 2
@@ -3082,6 +3395,8 @@ function doSwitchTab(name, el) {
     const d = DEALS.find(x => x.id === currentDealId);
     if (d) renderSummaryTab(d);
   }
+  if (name === 'hearing') renderHearingFiles();
+  if (name === 'archplan') renderPlanFiles();
 }
 
 let newregShiryo = [];
@@ -3183,12 +3498,105 @@ function numVal(id) {
   const n = parseInt((el.value || '').replace(/[^0-9]/g, ''), 10);
   return isFinite(n) ? n : 0;
 }
+function isElementVisible(el) {
+  if (!el || el.disabled) return false;
+  if (el.offsetParent === null && getComputedStyle(el).position !== 'fixed') return false;
+  const r = el.getBoundingClientRect();
+  return r.width > 0 && r.height > 0 && getComputedStyle(el).visibility !== 'hidden';
+}
+function activeInputScope(el) {
+  const modal = el.closest('.modal-overlay');
+  if (modal && isElementVisible(modal)) return modal;
+  const view = el.closest('.view');
+  return view || document.body;
+}
+function focusableInputsInScope(scope) {
+  return Array.from(scope.querySelectorAll('input, select'))
+    .filter(el => el.tagName !== 'TEXTAREA' && isElementVisible(el) && !el.disabled && el.type !== 'hidden' && el.type !== 'file');
+}
+function inputRect(el) {
+  const r = el.getBoundingClientRect();
+  return {el, r, cx:r.left + r.width / 2, cy:r.top + r.height / 2};
+}
+function overlap(a1, a2, b1, b2) { return Math.max(a1, b1) <= Math.min(a2, b2); }
+function nearestInputByPosition(current, dir) {
+  const scope = activeInputScope(current);
+  const cur = inputRect(current);
+  const candidates = focusableInputsInScope(scope).filter(el => el !== current).map(inputRect);
+  let filtered;
+  if (dir === 'up') filtered = candidates.filter(x => x.r.bottom <= cur.r.top && overlap(x.r.left, x.r.right, cur.r.left, cur.r.right));
+  if (dir === 'down') filtered = candidates.filter(x => x.r.top >= cur.r.bottom && overlap(x.r.left, x.r.right, cur.r.left, cur.r.right));
+  if (dir === 'left') filtered = candidates.filter(x => x.r.right <= cur.r.left && overlap(x.r.top, x.r.bottom, cur.r.top, cur.r.bottom));
+  if (dir === 'right') filtered = candidates.filter(x => x.r.left >= cur.r.right && overlap(x.r.top, x.r.bottom, cur.r.top, cur.r.bottom));
+  if (!filtered || !filtered.length) return null;
+  filtered.sort((a, b) => {
+    const da = dir === 'up' ? cur.r.top - a.r.bottom : dir === 'down' ? a.r.top - cur.r.bottom : dir === 'left' ? cur.r.left - a.r.right : a.r.left - cur.r.right;
+    const db = dir === 'up' ? cur.r.top - b.r.bottom : dir === 'down' ? b.r.top - cur.r.bottom : dir === 'left' ? cur.r.left - b.r.right : b.r.left - cur.r.right;
+    const ca = (dir === 'up' || dir === 'down') ? Math.abs(a.cx - cur.cx) : Math.abs(a.cy - cur.cy);
+    const cb = (dir === 'up' || dir === 'down') ? Math.abs(b.cx - cur.cx) : Math.abs(b.cy - cur.cy);
+    return da - db || ca - cb;
+  });
+  return filtered[0].el;
+}
+function focusNextInput(current) {
+  const list = focusableInputsInScope(activeInputScope(current));
+  const idx = list.indexOf(current);
+  if (idx >= 0 && list[idx + 1]) { list[idx + 1].focus(); return true; }
+  return false;
+}
+function textCaretAtEdge(el, edge) {
+  try {
+    if (typeof el.selectionStart !== 'number' || typeof el.selectionEnd !== 'number') return false;
+    if (el.selectionStart !== el.selectionEnd) return false;
+    return edge === 'start' ? el.selectionStart === 0 : el.selectionStart === String(el.value || '').length;
+  } catch (_) {
+    return false;
+  }
+}
+function handleGlobalInputNavigation(e) {
+  if (e.defaultPrevented || e.isComposing || e.keyCode === 229) return;
+  const el = e.target;
+  if (!el || !el.matches || !el.matches('input, select, textarea')) return;
+  if (el.tagName === 'TEXTAREA' || el.type === 'hidden' || el.type === 'file') return;
+  if (e.key === 'Enter') {
+    if (focusNextInput(el)) e.preventDefault();
+    return;
+  }
+  if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+    if (el.tagName === 'SELECT') return;
+    const next = nearestInputByPosition(el, e.key === 'ArrowUp' ? 'up' : 'down');
+    if (next) { e.preventDefault(); next.focus(); }
+    return;
+  }
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+    if (el.tagName === 'SELECT') return;
+    if (e.key === 'ArrowLeft' && !textCaretAtEdge(el, 'start')) return;
+    if (e.key === 'ArrowRight' && !textCaretAtEdge(el, 'end')) return;
+    const next = nearestInputByPosition(el, e.key === 'ArrowLeft' ? 'left' : 'right');
+    if (next) { e.preventDefault(); next.focus(); }
+  }
+}
+document.addEventListener('keydown', handleGlobalInputNavigation);
+
+function applyAutocompleteOff(root) {
+  const base = root && root.querySelectorAll ? root : document;
+  base.querySelectorAll('input, textarea').forEach(el => el.setAttribute('autocomplete', 'off'));
+  base.querySelectorAll('form').forEach(el => el.setAttribute('autocomplete', 'off'));
+  if (root && root.matches && (root.matches('input, textarea') || root.matches('form'))) root.setAttribute('autocomplete', 'off');
+}
+function setupAutocompleteOffObserver() {
+  applyAutocompleteOff(document);
+  if (!document.body) return;
+  new MutationObserver(records => {
+    records.forEach(rec => rec.addedNodes.forEach(node => {
+      if (node.nodeType === 1) applyAutocompleteOff(node);
+    }));
+  }).observe(document.body, { childList:true, subtree:true });
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setupAutocompleteOffObserver);
+else setupAutocompleteOffObserver();
+
 function nrEnter(e, nextId) {
-  if (e.key !== 'Enter') return;
-  if (e.isComposing || e.keyCode === 229) return;
-  e.preventDefault();
-  const next = document.getElementById(nextId);
-  if (next) next.focus();
 }
 function gvs(id) {
   const el = document.getElementById(id);
@@ -3662,7 +4070,61 @@ function homeYieldHtml(deal) {
     const pl = calcDeal5Nums();
     return '<div class="home-card-stat-val yield">' + pl.rate.toFixed(1) + '%</div>';
   }
+  if (deal.reg && deal.reg.pl) return '<div class="home-card-stat-val na">—</div>';
   return '<div class="home-card-stat-val na">収支未作成</div>';
+}
+
+function homeMetricIconHtml(type) {
+  const icons = {
+    chart: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5"></path><path d="M4 19h16"></path><path d="M8 16v-5"></path><path d="M12 16V8"></path><path d="M16 16v-9"></path></svg>',
+    calendar: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"></rect><path d="M8 3v4"></path><path d="M16 3v4"></path><path d="M4 10h16"></path></svg>',
+    doc: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"></path><path d="M14 3v5h5"></path><path d="M9 13h6"></path><path d="M9 17h5"></path></svg>'
+  };
+  return '<span class="home-card-stat-icon">' + (icons[type] || '') + '</span>';
+}
+
+function homeStatHtml(icon, label, valueHtml) {
+  return '<div class="home-card-stat">'
+    + homeMetricIconHtml(icon)
+    + '<div><div class="home-card-stat-label">' + label + '</div>' + valueHtml + '</div>'
+    + '</div>';
+}
+
+function homePlStatusHtml(deal) {
+  return '<div class="home-card-stat-val' + (deal.reg && deal.reg.pl ? '' : ' na') + '">'
+    + (deal.reg && deal.reg.pl ? '作成済み' : '収支未作成')
+    + '</div>';
+}
+
+function homeProgressCheckSvg() {
+  return '<svg class="home-progress-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.2l3 3L12.8 4.8"></path></svg>';
+}
+
+function homeStepIndex(deal) {
+  const status = deal.status || '';
+  const statusSteps = [
+    {index:0, statuses:['未検討','検討中']},
+    {index:1, statuses:['概算収支作成済み','市場調査中','販売会社ヒアリング中','建築プラン依頼中']},
+    {index:2, statuses:['買付検討中','買付提出','契約']}
+  ];
+  const hit = statusSteps.find(step => step.statuses.includes(status));
+  if (hit) return hit.index;
+  return deal.reg && deal.reg.pl ? 1 : 0;
+}
+
+function homeProgressHtml(deal) {
+  const labels = ['情報収集', '概算収支', '判断'];
+  const current = homeStepIndex(deal);
+  return '<div class="home-progress" aria-label="検討進捗">'
+    + labels.map((label, i) => {
+      const state = i < current ? 'done' : (i === current ? 'current' : '');
+      const linkClass = i > 0 && i <= current ? ' link-done' : '';
+      return '<div class="home-progress-step' + linkClass + '">'
+        + '<div class="home-progress-dot ' + state + '">' + (state === 'done' ? homeProgressCheckSvg() : '') + '</div>'
+        + '<div class="home-progress-label' + (state === 'current' ? ' current' : '') + '">' + label + '</div>'
+        + '</div>';
+    }).join('')
+    + '</div>';
 }
 
 function renderHomeCards(items, startIndex) {
@@ -3682,14 +4144,19 @@ function renderHomeCards(items, startIndex) {
       + '<span class="strategy-badge">' + homeStrategyLabel(deal.type) + '</span>'
       + homePriorityBadge(score)
       + '</div>'
-      + '<div class="home-card-stats">'
-      + '<div class="home-card-stat"><div class="home-card-stat-label">検討ステージ</div><div class="home-card-stat-val">' + deal.status + '</div></div>'
-      + '<div class="home-card-stat"><div class="home-card-stat-label">想定利回り</div>' + homeYieldHtml(deal) + '</div>'
-      + '<div class="home-card-stat"><div class="home-card-stat-label">判断期限</div><div class="home-card-stat-val">' + (HOME_DEADLINES[deal.id] || TODAY) + '</div></div>'
+      + '<div class="home-stage-block">'
+      + '<div class="home-stage-label">検討ステージ</div>'
+      + '<div class="home-stage-val">' + escapeHtml(deal.status) + '</div>'
+      + homeProgressHtml(deal)
       + '</div>'
+      + '</div>'
+      + '<div class="home-card-stats">'
+      + homeStatHtml('chart', '想定利回り', homeYieldHtml(deal))
+      + homeStatHtml('calendar', '判断期限', '<div class="home-card-stat-val">' + (HOME_DEADLINES[deal.id] || TODAY) + '</div>')
+      + homeStatHtml('doc', '収支', homePlStatusHtml(deal))
       + '</div>'
       + '<div class="home-card-side">'
-      + '<div class="home-card-q-label">次に考えること</div>'
+      + '<div class="home-card-q-label">次にやること</div>'
       + '<div class="home-card-question">' + action + '</div>'
       + '</div>'
       + '</article>';
@@ -3865,6 +4332,7 @@ function applyHashRoute() {
   if (h === 'home') { showView('home', q('[data-view=home]')); return true; }
   if (h === 'newreg') { openNewReg(); return true; }
   if (h === 'list') { openListAll(q('[data-view=list]')); return true; }
+  if (h === 'changelog') { showView('changelog', null); return true; }
   if (h === 'settings') { showView('settings', q('[data-view=settings]')); return true; }
   return false;
 }
