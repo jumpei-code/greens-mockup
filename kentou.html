@@ -225,6 +225,10 @@ input,select,textarea{font-family:inherit;font-size:13px}
 .first-est-title{font-size:11px;font-weight:700;color:var(--green);margin-bottom:4px}
 .dup-warning{background:var(--warn-bg);border:1px solid #fcd34d;border-radius:6px;padding:8px 12px;font-size:12px;color:var(--warn-fg);margin-top:6px;line-height:1.6}
 .past-case-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;margin-bottom:8px;background:#fff;flex-wrap:wrap}
+.changelog-table tr.hist-row{cursor:pointer}
+.changelog-table tr.hist-row-on{background:#f2f9f3}
+.hist-selected{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:8px;background:var(--green);color:#fff;font-size:10px;font-weight:700;vertical-align:middle}
+.hist-clear-btn{margin-left:6px;padding:0 6px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--sub);font-size:10px;cursor:pointer}
 .data-table tbody tr.past-row{background:#fafafa}
 .data-table tbody tr.past-row td{color:var(--sub)}
 .data-table tbody tr.past-row .chip{opacity:.65}
@@ -622,6 +626,10 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .step-circle.missed{background:#fff;border-color:var(--ng-fg);color:var(--ng-fg);cursor:pointer}
 .step-circle.missed:hover{background:var(--ng-bg)}
 .step-label.missed{color:var(--ng-fg)}
+#summary-step-bar .step-node{min-width:92px;gap:5px}
+#summary-step-bar .step-circle{width:38px;height:38px;font-size:14px;border-width:2px}
+#summary-step-bar .step-label{font-size:11.5px}
+#summary-step-bar .step-arrow{width:30px;margin-bottom:19px}
 .step-note{font-size:11.5px;color:var(--warn-fg);margin:-8px 0 14px}
 .step-note:empty{display:none}
 .hearing-clear-btn{border:1px solid var(--line);background:#fff;color:var(--sub);border-radius:4px;padding:1px 8px;font-size:10.5px;font-weight:600;cursor:pointer;margin-left:6px;vertical-align:middle}
@@ -932,6 +940,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
                   <div class="changelog-scroll" id="summary-status-history" style="flex:1 1 480px;min-width:0"></div>
                   <div style="flex:0 0 320px;max-width:100%">
                     <div class="sum-block-title">備考</div>
+                    <div id="summary-note-target" style="font-size:11px;color:var(--sub);margin-bottom:4px"></div>
                     <textarea class="form-textarea" id="summary-note" style="min-height:160px" placeholder="進行中のメモ（例：売主の返答待ち・金融機関調整中）" onblur="saveSummaryNote(true)"></textarea>
                     <button class="btn btn-secondary btn-sm" style="margin-top:8px" onclick="saveSummaryNote()">保存</button>
                   </div>
@@ -1378,14 +1387,54 @@ function formatLogValue(v) {
   if (typeof v === 'number' && isFinite(v)) return fmt(v);
   return escapeHtml(v);
 }
+let selectedHistoryIdx = null;
+function selectHistoryRow(idx) {
+  selectedHistoryIdx = (selectedHistoryIdx === idx) ? null : idx;
+  const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
+  syncNoteBox(deal);
+  renderStatusHistory(deal);
+}
+function clearHistorySelection() {
+  selectedHistoryIdx = null;
+  const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
+  syncNoteBox(deal);
+  renderStatusHistory(deal);
+}
+function syncNoteBox(deal) {
+  const el = document.getElementById('summary-note');
+  if (!el) return;
+  const h = (selectedHistoryIdx !== null && HISTORY[selectedHistoryIdx] && deal && HISTORY[selectedHistoryIdx].dealId === deal.id)
+    ? HISTORY[selectedHistoryIdx] : null;
+  if (h) {
+    el.value = h.reason || '';
+    el.placeholder = 'この段階の理由・メモ（空にして保存すると削除されます）';
+    el.dataset.mode = 'history';
+  } else {
+    el.value = deal ? (deal.note || '') : '';
+    el.placeholder = '進行中のメモ（例：売主の返答待ち・金融機関調整中）';
+    el.dataset.mode = 'note';
+    if (deal) el.dataset.dealId = String(deal.id);
+  }
+}
+function renderNoteTarget() {
+  const el = document.getElementById('summary-note-target');
+  if (!el) return;
+  const h = (selectedHistoryIdx !== null) ? HISTORY[selectedHistoryIdx] : null;
+  if (!h) { el.innerHTML = ''; return; }
+  el.innerHTML = '選択中：' + escapeHtml(h.date || '') + '　' + escapeHtml(statusLabel(h.to) || '') + ' の理由・メモを編集中'
+    + '<button type="button" class="hist-clear-btn" onclick="clearHistorySelection()">解除</button>';
+}
 function renderStatusHistory(deal) {
   const el = document.getElementById('summary-status-history');
   if (!el) return;
   if (!deal) { el.innerHTML = ''; return; }
+  if (selectedHistoryIdx !== null && (!HISTORY[selectedHistoryIdx] || HISTORY[selectedHistoryIdx].dealId !== deal.id)) selectedHistoryIdx = null;
+  renderNoteTarget();
   const rows = HISTORY.filter(h => h.dealId === deal.id)
     .slice().sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')));
   if (rows.length === 0) {
     el.innerHTML = '<div class="shiryo-empty">まだステータスの変更はありません（登録した時点の状態です）。</div>';
+    renderNoteTarget();
     return;
   }
   const acquired = deal.acquiredDate || '';
@@ -1395,12 +1444,16 @@ function renderStatusHistory(deal) {
       const days = (prev && h.date) ? Math.floor((new Date(h.date) - new Date(prev)) / 86400000) : null;
       const daysTxt = (days !== null && isFinite(days) && days >= 0) ? days + '日' : '—';
       const fromTxt = (!h.from || h.from === '—') ? '（新規登録）' : statusLabel(h.from);
-      return '<tr><td>' + escapeHtml(h.date || '') + '</td>'
+      const hi = HISTORY.indexOf(h);
+      const on = (hi === selectedHistoryIdx);
+      const mark = on ? '<span class="hist-selected">選択中</span>' : '';
+      return '<tr class="hist-row' + (on ? ' hist-row-on' : '') + '" onclick="selectHistoryRow(' + hi + ')" title="クリックすると、この行の理由・メモを右の欄で編集できます">'
+        + '<td>' + escapeHtml(h.date || '') + '</td>'
         + '<td class="num">' + daysTxt + '</td>'
         + '<td>' + escapeHtml(fromTxt) + '</td>'
         + '<td>' + statusChip(h.to) + '</td>'
         + '<td>' + escapeHtml(h.by || '') + '</td>'
-        + '<td class="changelog-comment" style="white-space:normal">' + escapeHtml(h.reason || '') + '</td></tr>';
+        + '<td class="changelog-comment" style="white-space:normal">' + escapeHtml(h.reason || '') + mark + '</td></tr>';
     }).join('')
     + '</tbody></table>';
 }
@@ -1412,6 +1465,17 @@ function saveSummaryNote(silent) {
   const deal = DEALS.find(d => d.id === targetId);
   if (!deal) return;
   const val = String(el.value || '').trim();
+  if (selectedHistoryIdx !== null && HISTORY[selectedHistoryIdx] && HISTORY[selectedHistoryIdx].dealId === deal.id) {
+    if (silent) return;
+    const h = HISTORY[selectedHistoryIdx];
+    const had = !!h.reason;
+    h.reason = val;
+    refreshForDeal(deal);
+    renderStatusHistory(deal);
+    showToast('「' + (h.date || '') + '　' + statusLabel(h.to) + '」の理由・メモを'
+      + (val ? '保存しました' : (had ? '削除しました' : '保存しました')));
+    return;
+  }
   if (silent && val === String(deal.note || '')) return;
   deal.note = val;
   refreshForDeal(deal);
@@ -4594,7 +4658,7 @@ function renderSummaryTab(deal) {
   if (!deal) return;
   const rule = NEXT_RULES[deal.status] || {};
   const summaryNoteEl = document.getElementById('summary-note');
-  if (summaryNoteEl) { summaryNoteEl.value = deal.note || ''; summaryNoteEl.dataset.dealId = String(deal.id); }
+  if (summaryNoteEl) { summaryNoteEl.dataset.dealId = String(deal.id); syncNoteBox(deal); }
 
   const stepBar = document.getElementById('summary-step-bar');
   const missedLabels = [];
