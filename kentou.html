@@ -65,10 +65,6 @@ input,select,textarea{font-family:inherit;font-size:13px}
 .data-table td{padding:12px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
 .data-table tbody tr{cursor:pointer;transition:background .1s}
 .data-table tbody tr:hover{background:var(--green-light)}
-.data-table tbody tr.my-row{background:#f2f9f3}
-.data-table tbody tr.my-row td:first-child{border-left:3px solid var(--green)}
-.data-table tbody tr.hold-alert{background:#fff7ed}
-.data-table tbody tr.hold-alert td:first-child{border-left:3px solid var(--warn-fg)}
 .list-deal-cell{display:flex;align-items:center;gap:10px;min-width:190px}
 .list-thumb{width:54px;height:40px;border-radius:6px;background:#edf1f4;border:1px solid #dfe5ea;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#8b98a6;flex-shrink:0}
 .list-thumb img{width:100%;height:100%;object-fit:cover;display:block}
@@ -1705,12 +1701,10 @@ function renderList() {
       const hd = stagnantDays(d);
       const isPast = PAST_STATUSES.includes(d.status);
       const pastCls = isPast ? ' past-row' : '';
-      const alertCls = hd > 30 ? ' hold-alert' : '';
-      const myCls = (!isPast && d.staff === '田中') ? ' my-row' : '';
       const holdInfo = '';
       const priceStr = d.price != null ? Math.round(d.price).toLocaleString('ja-JP') + '円' : '—';
       const sh = d.shiryo || [];
-      return '<tr class="' + myCls + alertCls + pastCls + '" onclick="openDetail(' + d.id + ')">'
+      return '<tr class="' + pastCls + '" onclick="openDetail(' + d.id + ')">'
         + '<td>' + listDealCellHtml(d, holdInfo) + '</td>'
         + '<td>' + d.staff + '</td>'
         + '<td>' + d.acquiredDate + '</td>'
