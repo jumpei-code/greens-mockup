@@ -451,6 +451,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .nr-strategy-btn.active{background:var(--green);border-color:var(--green);color:#fff}
 .pl-action-bar{display:flex;gap:14px;justify-content:flex-end;padding:20px 0 8px}
 .pl-action-btn{font-size:15px;padding:13px 52px;font-weight:700}
+.pl-action-left{margin-right:auto}
 .changelog-scroll{max-height:60vh;overflow:auto}
 .changelog-table td,.changelog-table th{white-space:nowrap}
 .changelog-table .num{text-align:right;font-variant-numeric:tabular-nums}
@@ -934,16 +935,11 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
             </div>
 
             <div class="card mb16">
-              <div class="card-header">これまでの経緯（ステータスの変更履歴）</div>
+              <div class="card-header"><span style="display:inline-flex;align-items:center">備考<span class="help-wrap" style="margin-left:2px"><button class="help-btn" onclick="toggleHelp(this)" onmouseenter="showHelp(this)" onmouseleave="hideHelp(this)" title="備考の説明">？</button><div class="help-pop help-pop-float" style="display:none;width:300px">ここに書いた内容は、案件一覧の「備考」列に表示されます。</div></span></span></div>
               <div class="card-body">
-                <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start">
-                  <div class="changelog-scroll" id="summary-status-history" style="flex:1 1 480px;min-width:0"></div>
-                  <div style="flex:0 0 320px;max-width:100%">
-                    <div class="sum-block-title">備考</div>
-                    <div id="summary-note-target" style="font-size:11px;color:var(--sub);margin-bottom:4px"></div>
-                    <textarea class="form-textarea" id="summary-note" style="min-height:160px" placeholder="進行中のメモ（例：売主の返答待ち・金融機関調整中）" onblur="saveSummaryNote(true)"></textarea>
-                    <button class="btn btn-secondary btn-sm" style="margin-top:8px" onclick="saveSummaryNote()">保存</button>
-                  </div>
+                <div style="max-width:520px">
+                  <textarea class="form-textarea" id="summary-note" style="min-height:120px" placeholder="進行中のメモ（例：売主の返答待ち・金融機関調整中）" onblur="saveSummaryNote(true)"></textarea>
+                  <button class="btn btn-secondary btn-sm" style="margin-top:8px" onclick="saveSummaryNote()">保存</button>
                 </div>
               </div>
             </div>
@@ -972,6 +968,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
             </div>
 
             <div class="pl-action-bar">
+              <button class="btn btn-secondary pl-action-btn pl-action-left" onclick="openHistoryView('shushi')">収支の変更履歴</button>
               <button class="btn btn-primary pl-action-btn" onclick="registerPL()">保存</button>
               <button class="btn btn-secondary pl-action-btn" onclick="copyShareUrl()">共有URLコピー</button>
               <button class="btn btn-secondary pl-action-btn" onclick="downloadShushiExcel()">Excelダウンロード</button>
@@ -1110,15 +1107,34 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
     <div id="view-changelog" class="view" style="display:none">
       <div class="view-header">
         <div>
-          <div class="view-title" id="changelog-page-title">修正履歴</div>
-          <div class="view-desc">収支計算の保存時に変わった項目・承認・担当の変更を確認できます。</div>
+          <div class="view-title" id="changelog-page-title">進行履歴</div>
+          <div class="view-desc">この案件の進み具合・担当・承認の記録と、収支計算の変更の記録を確認できます。</div>
         </div>
-        <button class="btn btn-secondary" onclick="returnToPlFromChangelog()">収支計算に戻る</button>
+        <button class="btn btn-secondary" onclick="returnToSummaryFromHistory()">サマリーに戻る</button>
       </div>
       <div class="card">
-        <div class="card-header">修正履歴</div>
         <div class="card-body">
-          <div class="changelog-scroll" id="changelog-page-body"></div>
+          <div class="tabs" id="hist-tabs">
+            <button class="tab-btn active" id="hist-tab-status" onclick="switchHistoryTab('status',this)">ステータス変更履歴</button>
+            <button class="tab-btn" id="hist-tab-shushi" onclick="switchHistoryTab('shushi',this)">収支変更履歴</button>
+          </div>
+
+          <div id="hist-pane-status">
+            <div id="hist-fix-bar" style="margin:14px 0 10px"></div>
+            <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start">
+              <div class="changelog-scroll" id="summary-status-history" style="flex:1 1 520px;min-width:0"></div>
+              <div style="flex:0 0 320px;max-width:100%">
+                <div class="sum-block-title">理由・メモ</div>
+                <div id="summary-note-target" style="font-size:11px;color:var(--sub);margin-bottom:4px"></div>
+                <textarea class="form-textarea" id="hist-note" style="min-height:140px" placeholder="左の行を選ぶと、その段階の理由・メモを編集できます"></textarea>
+                <button class="btn btn-secondary btn-sm" style="margin-top:8px" onclick="saveHistoryNote()">保存</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="hist-pane-shushi" style="display:none">
+            <div class="changelog-scroll" id="changelog-page-body" style="margin-top:14px"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -1159,6 +1175,24 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
     <div class="modal-btns">
       <button class="btn btn-ghost" onclick="closeMiokuriModal()">戻る</button>
       <button class="btn btn-primary" onclick="miokuriSubmit()">見送りとして保存</button>
+    </div>
+  </div>
+</div>
+
+<div id="status-fix-modal" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <div class="modal-title">ステータスの訂正</div>
+    <div class="modal-text" id="status-fix-text"></div>
+    <label class="form-label" for="status-fix-to">訂正後のステータス</label>
+    <select class="form-select" id="status-fix-to" onchange="updateStatusFixWarn()" style="width:100%;margin-top:4px;margin-bottom:10px"></select>
+    <label class="form-label" for="status-fix-reason">訂正の理由</label>
+    <input class="form-input" id="status-fix-reason" type="text" placeholder="例：買付結果を誤って契約で登録したため" style="width:100%;margin-top:4px">
+    <div class="field-error" id="status-fix-error" style="margin-bottom:10px"></div>
+    <div class="modal-text">訂正した内容は、いつ・どなたが・どこからどこへ・なぜ訂正したかを「これまでの経緯」に記録として残します（この記録は消せません）。</div>
+    <div class="field-error" id="status-fix-warn" style="margin-bottom:14px"></div>
+    <div class="modal-btns">
+      <button class="btn btn-ghost" onclick="closeStatusFixModal()">戻る</button>
+      <button class="btn btn-primary" onclick="statusFixSubmit()">訂正して記録する</button>
     </div>
   </div>
 </div>
@@ -1319,6 +1353,9 @@ function renderRoleSwitcher() {
 function currentActorName(deal) {
   return currentRole === 'president' ? '社長' : ((deal && deal.staff) || '田中');
 }
+function canFixStatus(deal) {
+  return !!deal && (currentRole === 'president' || deal.staff === '田中');
+}
 function changelogFor(dealId) {
   if (!SHUSHI_CHANGELOG[dealId]) SHUSHI_CHANGELOG[dealId] = [];
   return SHUSHI_CHANGELOG[dealId];
@@ -1387,75 +1424,143 @@ function formatLogValue(v) {
   if (typeof v === 'number' && isFinite(v)) return fmt(v);
   return escapeHtml(v);
 }
-let selectedHistoryIdx = null;
-function selectHistoryRow(idx) {
-  selectedHistoryIdx = (selectedHistoryIdx === idx) ? null : idx;
+let selectedHistoryKey = null;
+
+function summaryEventRows(deal) {
+  const rows = [];
+  HISTORY.forEach((h, i) => {
+    if (h.dealId !== deal.id) return;
+    const kind = h.to ? 'status' : (h.type === 'decision' ? 'decision' : null);
+    if (!kind) return;
+    rows.push({ kind: kind, date: String(h.date || ''), obj: h, key: 'h:' + i });
+  });
+  changelogFor(deal.id).forEach((r, i) => {
+    if (r.type !== 'staff' && r.type !== 'approve') return;
+    rows.push({ kind: r.type, date: String(r.at || '').slice(0, 10), obj: r, key: 'c:' + deal.id + ':' + i });
+  });
+  const order = { status: 0, decision: 1, staff: 2, approve: 3 };
+  rows.sort(function (a, b) {
+    if (a.date !== b.date) return a.date.localeCompare(b.date);
+    return order[a.kind] - order[b.kind];
+  });
+  return rows;
+}
+function historyByKey(key) {
+  if (!key) return null;
+  if (key.indexOf('h:') === 0) {
+    const h = HISTORY[Number(key.slice(2))];
+    return h ? { kind: 'status', obj: h, dealId: h.dealId } : null;
+  }
+  const parts = key.split(':');
+  const dealId = Number(parts[1]);
+  const r = (SHUSHI_CHANGELOG[dealId] || [])[Number(parts[2])];
+  return r ? { kind: r.type, obj: r, dealId: dealId } : null;
+}
+function historySelectionText(sel) {
+  if (!sel) return '';
+  return (sel.kind === 'status' ? sel.obj.reason : sel.obj.comment) || '';
+}
+function selectHistoryRow(key) {
+  const sel = historyByKey(key);
+  if (!sel || sel.kind === 'approve' || sel.kind === 'decision') return;
+  selectedHistoryKey = (selectedHistoryKey === key) ? null : key;
   const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
-  syncNoteBox(deal);
   renderStatusHistory(deal);
+  syncHistoryNoteBox(deal);
 }
 function clearHistorySelection() {
-  selectedHistoryIdx = null;
+  selectedHistoryKey = null;
   const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
-  syncNoteBox(deal);
   renderStatusHistory(deal);
+  syncHistoryNoteBox(deal);
 }
 function syncNoteBox(deal) {
   const el = document.getElementById('summary-note');
   if (!el) return;
-  const h = (selectedHistoryIdx !== null && HISTORY[selectedHistoryIdx] && deal && HISTORY[selectedHistoryIdx].dealId === deal.id)
-    ? HISTORY[selectedHistoryIdx] : null;
-  if (h) {
-    el.value = h.reason || '';
-    el.placeholder = 'この段階の理由・メモ（空にして保存すると削除されます）';
-    el.dataset.mode = 'history';
-  } else {
-    el.value = deal ? (deal.note || '') : '';
-    el.placeholder = '進行中のメモ（例：売主の返答待ち・金融機関調整中）';
-    el.dataset.mode = 'note';
-    if (deal) el.dataset.dealId = String(deal.id);
-  }
+  el.value = deal ? (deal.note || '') : '';
+  if (deal) el.dataset.dealId = String(deal.id);
+}
+function historySelectionLabel(sel) {
+  if (!sel) return '';
+  if (sel.kind === 'status') return String(sel.obj.date || '') + '　' + (statusLabel(sel.obj.to) || '');
+  return String(sel.obj.at || '').slice(0, 10) + '　担当の変更';
 }
 function renderNoteTarget() {
   const el = document.getElementById('summary-note-target');
   if (!el) return;
-  const h = (selectedHistoryIdx !== null) ? HISTORY[selectedHistoryIdx] : null;
-  if (!h) { el.innerHTML = ''; return; }
-  el.innerHTML = '選択中：' + escapeHtml(h.date || '') + '　' + escapeHtml(statusLabel(h.to) || '') + ' の理由・メモを編集中'
+  const sel = historyByKey(selectedHistoryKey);
+  if (!sel) { el.innerHTML = ''; return; }
+  el.innerHTML = '選択中：' + escapeHtml(historySelectionLabel(sel)) + ' の理由・メモを編集中'
     + '<button type="button" class="hist-clear-btn" onclick="clearHistorySelection()">解除</button>';
 }
 function renderStatusHistory(deal) {
   const el = document.getElementById('summary-status-history');
   if (!el) return;
   if (!deal) { el.innerHTML = ''; return; }
-  if (selectedHistoryIdx !== null && (!HISTORY[selectedHistoryIdx] || HISTORY[selectedHistoryIdx].dealId !== deal.id)) selectedHistoryIdx = null;
+  const cur = historyByKey(selectedHistoryKey);
+  if (cur && cur.dealId !== deal.id) selectedHistoryKey = null;
   renderNoteTarget();
-  const rows = HISTORY.filter(h => h.dealId === deal.id)
-    .slice().sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')));
+  const rows = summaryEventRows(deal);
   if (rows.length === 0) {
-    el.innerHTML = '<div class="shiryo-empty">まだステータスの変更はありません（登録した時点の状態です）。</div>';
+    el.innerHTML = '<div class="shiryo-empty">まだ記録はありません（登録した時点の状態です）。</div>';
     renderNoteTarget();
     return;
   }
-  const acquired = deal.acquiredDate || '';
-  el.innerHTML = '<table class="data-table changelog-table"><thead><tr><th>日付</th><th>経過</th><th>変更前</th><th>変更後</th><th>担当</th><th>理由・メモ</th></tr></thead><tbody>'
-    + rows.map((h, i) => {
-      const prev = i === 0 ? acquired : rows[i - 1].date;
-      const days = (prev && h.date) ? Math.floor((new Date(h.date) - new Date(prev)) / 86400000) : null;
+  let prevStatusDate = deal.acquiredDate || '';
+  const body = rows.map(function (row) {
+    const on = (row.key === selectedHistoryKey);
+    const mark = on ? '<span class="hist-selected">選択中</span>' : '';
+    const canSelect = (row.kind !== 'approve' && row.kind !== 'decision');
+    const trOpen = '<tr class="' + (canSelect ? 'hist-row' : '') + (on ? ' hist-row-on' : '') + '"'
+      + (canSelect ? ' onclick="selectHistoryRow(\'' + row.key + '\')" title="クリックすると、この行の理由・メモを右の欄で編集できます"' : '')
+      + '>';
+    if (row.kind === 'status') {
+      const h = row.obj;
+      const days = (prevStatusDate && h.date) ? Math.floor((new Date(h.date) - new Date(prevStatusDate)) / 86400000) : null;
       const daysTxt = (days !== null && isFinite(days) && days >= 0) ? days + '日' : '—';
+      prevStatusDate = h.date || prevStatusDate;
       const fromTxt = (!h.from || h.from === '—') ? '（新規登録）' : statusLabel(h.from);
-      const hi = HISTORY.indexOf(h);
-      const on = (hi === selectedHistoryIdx);
-      const mark = on ? '<span class="hist-selected">選択中</span>' : '';
-      return '<tr class="hist-row' + (on ? ' hist-row-on' : '') + '" onclick="selectHistoryRow(' + hi + ')" title="クリックすると、この行の理由・メモを右の欄で編集できます">'
+      return trOpen
         + '<td>' + escapeHtml(h.date || '') + '</td>'
         + '<td class="num">' + daysTxt + '</td>'
+        + '<td>ステータス</td>'
         + '<td>' + escapeHtml(fromTxt) + '</td>'
         + '<td>' + statusChip(h.to) + '</td>'
         + '<td>' + escapeHtml(h.by || '') + '</td>'
         + '<td class="changelog-comment" style="white-space:normal">' + escapeHtml(h.reason || '') + mark + '</td></tr>';
-    }).join('')
-    + '</tbody></table>';
+    }
+    const r = row.obj;
+    if (row.kind === 'decision') {
+      return trOpen
+        + '<td>' + escapeHtml(row.date) + '</td>'
+        + '<td class="num">—</td>'
+        + '<td>判断</td>'
+        + '<td></td>'
+        + '<td></td>'
+        + '<td>' + escapeHtml(r.by || '') + '</td>'
+        + '<td class="changelog-comment" style="white-space:normal">' + escapeHtml(r.text || '') + '</td></tr>';
+    }
+    if (row.kind === 'staff') {
+      return trOpen
+        + '<td>' + escapeHtml(row.date) + '</td>'
+        + '<td class="num">—</td>'
+        + '<td>担当</td>'
+        + '<td>' + escapeHtml(r.before || '') + '</td>'
+        + '<td>' + escapeHtml(r.after || '') + '</td>'
+        + '<td>' + escapeHtml(r.by || '') + '</td>'
+        + '<td class="changelog-comment" style="white-space:normal">' + escapeHtml(r.comment || '') + mark + '</td></tr>';
+    }
+    return trOpen
+      + '<td>' + escapeHtml(row.date) + '</td>'
+      + '<td class="num">—</td>'
+      + '<td class="changelog-approve">承認</td>'
+      + '<td></td>'
+      + '<td></td>'
+      + '<td>' + escapeHtml(r.by || '社長') + '</td>'
+      + '<td class="changelog-comment"></td></tr>';
+  }).join('');
+  el.innerHTML = '<table class="data-table changelog-table"><thead><tr><th>日付</th><th>経過</th><th>種類</th><th>変更前</th><th>変更後</th><th>担当</th><th>理由・メモ</th></tr></thead><tbody>'
+    + body + '</tbody></table>';
 }
 function saveSummaryNote(silent) {
   const el = document.getElementById('summary-note');
@@ -1465,43 +1570,93 @@ function saveSummaryNote(silent) {
   const deal = DEALS.find(d => d.id === targetId);
   if (!deal) return;
   const val = String(el.value || '').trim();
-  if (selectedHistoryIdx !== null && HISTORY[selectedHistoryIdx] && HISTORY[selectedHistoryIdx].dealId === deal.id) {
-    if (silent) return;
-    const h = HISTORY[selectedHistoryIdx];
-    const had = !!h.reason;
-    h.reason = val;
-    refreshForDeal(deal);
-    renderStatusHistory(deal);
-    showToast('「' + (h.date || '') + '　' + statusLabel(h.to) + '」の理由・メモを'
-      + (val ? '保存しました' : (had ? '削除しました' : '保存しました')));
-    return;
-  }
   if (silent && val === String(deal.note || '')) return;
   deal.note = val;
   refreshForDeal(deal);
   if (!silent) showToast('備考を保存しました');
+}
+
+function returnToSummaryFromHistory() {
+  if (currentDealId === null || !DEALS.find(d => d.id === currentDealId)) { showView('home', document.querySelector('[data-view=home]')); return; }
+  doShowView('detail', null);
+  const btn = document.querySelector("#detail-tabs .tab-btn[onclick*=\"'summary'\"]");
+  doSwitchTab('summary', btn);
+}
+function openHistoryView(tab) {
+  switchHistoryTab(tab === 'shushi' ? 'shushi' : 'status');
+  showView('changelog');
+}
+let historyTab = 'status';
+function switchHistoryTab(name, el) {
+  historyTab = (name === 'shushi') ? 'shushi' : 'status';
+  const sp = document.getElementById('hist-pane-status');
+  const cp = document.getElementById('hist-pane-shushi');
+  if (sp) sp.style.display = (historyTab === 'status') ? '' : 'none';
+  if (cp) cp.style.display = (historyTab === 'shushi') ? '' : 'none';
+  ['hist-tab-status', 'hist-tab-shushi'].forEach(function (id) {
+    const b = document.getElementById(id);
+    if (b) b.classList.remove('active');
+  });
+  if (el) el.classList.add('active');
+  else {
+    const b = document.getElementById(historyTab === 'shushi' ? 'hist-tab-shushi' : 'hist-tab-status');
+    if (b) b.classList.add('active');
+  }
+}
+function syncHistoryNoteBox(deal) {
+  const el = document.getElementById('hist-note');
+  if (!el) return;
+  const sel = historyByKey(selectedHistoryKey);
+  const active = (sel && deal && sel.dealId === deal.id) ? sel : null;
+  el.value = active ? historySelectionText(active) : '';
+  el.placeholder = active
+    ? 'この段階の理由・メモ（空にして保存すると削除されます）'
+    : '左の行を選ぶと、その段階の理由・メモを編集できます';
+  el.disabled = !active;
+}
+function saveHistoryNote() {
+  const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
+  const el = document.getElementById('hist-note');
+  if (!deal || !el) return;
+  const sel = historyByKey(selectedHistoryKey);
+  if (!sel || sel.dealId !== deal.id || sel.kind === 'approve' || sel.kind === 'decision') { showToast('左の行を選んでから保存してください'); return; }
+  const val = String(el.value || '').trim();
+  const had = !!historySelectionText(sel);
+  if (sel.kind === 'status') sel.obj.reason = val; else sel.obj.comment = val;
+  refreshForDeal(deal);
+  renderStatusHistory(deal);
+  syncHistoryNoteBox(deal);
+  showToast('「' + historySelectionLabel(sel) + '」の理由・メモを'
+    + (val ? '保存しました' : (had ? '削除しました' : '保存しました')));
+}
+function renderHistoryFixBar(deal) {
+  const el = document.getElementById('hist-fix-bar');
+  if (!el) return;
+  el.innerHTML = (deal && canFixStatus(deal))
+    ? '<button class="btn btn-secondary btn-sm" onclick="openStatusFixModal()" title="ステータスを誤って設定した場合に訂正する">ステータスを訂正</button>'
+    : '';
 }
 function renderChangelogPage() {
   const body = document.getElementById('changelog-page-body');
   const title = document.getElementById('changelog-page-title');
   const deal = currentDealId !== null ? DEALS.find(d => d.id === currentDealId) : null;
   if (!body) return;
-  if (title) title.textContent = deal ? deal.name + ' の修正履歴' : '修正履歴';
+  if (title) title.textContent = deal ? deal.name + ' の進行履歴' : '進行履歴';
+  renderStatusHistory(deal);
+  renderHistoryFixBar(deal);
+  syncHistoryNoteBox(deal);
   if (!deal) { body.innerHTML = '<div class="shiryo-empty">案件を選択してください。</div>'; return; }
   const rows = changelogFor(deal.id).map((row, index) => ({ row, index }))
+    .filter(item => item.row.type !== 'approve' && item.row.type !== 'staff')
     .sort((a, b) => String(b.row.at || '').localeCompare(String(a.row.at || '')));
   if (rows.length === 0) {
-    body.innerHTML = '<div class="shiryo-empty">まだ修正履歴がありません</div>';
+    body.innerHTML = '<div class="shiryo-empty">まだ収支の変更はありません</div>';
     return;
   }
   body.innerHTML = '<table class="data-table changelog-table"><thead><tr><th>日時</th><th>変更者</th><th>変更項目</th><th>変更前</th><th>変更後</th><th>コメント</th></tr></thead><tbody>'
     + rows.map(item => {
       const r = item.row;
-      if (r.type === 'approve') {
-        return '<tr><td>' + escapeHtml(r.at || '') + '</td><td>' + escapeHtml(r.by || '社長') + '</td><td class="changelog-approve">承認</td><td></td><td></td><td class="changelog-comment"></td></tr>';
-      }
-      const valCls = r.type === 'staff' ? '' : ' class="num"';
-      return '<tr><td>' + escapeHtml(r.at || '') + '</td><td>' + escapeHtml(r.by || '') + '</td><td>' + escapeHtml(r.label || r.cell || '') + '</td><td' + valCls + '>' + formatLogValue(r.before) + '</td><td' + valCls + '>' + formatLogValue(r.after) + '</td><td class="changelog-comment"><input class="form-input changelog-comment-input" type="text" data-log-index="' + item.index + '" value="' + escapeHtml(r.comment || '') + '" placeholder="変更の意図・経緯を記入" oninput="updateChangelogComment(this.dataset.logIndex,this.value)"></td></tr>';
+      return '<tr><td>' + escapeHtml(r.at || '') + '</td><td>' + escapeHtml(r.by || '') + '</td><td>' + escapeHtml(r.label || r.cell || '') + '</td><td class="num">' + formatLogValue(r.before) + '</td><td class="num">' + formatLogValue(r.after) + '</td><td class="changelog-comment"><input class="form-input changelog-comment-input" type="text" data-log-index="' + item.index + '" value="' + escapeHtml(r.comment || '') + '" placeholder="変更の意図・経緯を記入" oninput="updateChangelogComment(this.dataset.logIndex,this.value)"></td></tr>';
     }).join('') + '</tbody></table>';
 }
 function updateChangelogComment(index, value) {
@@ -2247,7 +2402,8 @@ function renderDetailHeader() {
     : (currentRole === 'president' ? '<button type="button" class="deal-approve-btn" onclick="approveDeal()">承認</button>' : '');
   el.innerHTML = '<div><h1 class="deal-title">' + escapeHtml(name) + '</h1>'
     + (addr ? '<div class="deal-addr">' + escapeHtml(addr) + '</div>' : '')
-    + '<div class="deal-chips">' + chips + '<button class="deal-chip-edit" onclick="openStrategyModal()" title="仕入れ形態を変更">変更</button><button class="deal-chip-edit" onclick="showView(\'changelog\')" title="収支計算の修正履歴を確認">修正履歴</button>'
+    + '<div class="deal-chips">' + chips + '<button class="deal-chip-edit" onclick="openStrategyModal()" title="仕入れ形態を変更">変更</button>'
+    + '<button class="deal-chip-edit" onclick="openHistoryView(\'status\')" title="進み具合・担当・承認と、収支の変更の記録を見る">進行履歴</button>'
     + (PAST_STATUSES.includes(deal.status) ? '' : '<button class="deal-chip-edit" onclick="openKentoEndModal()" title="この案件の検討を終了し、見送りとして記録">検討終了</button>')
     + '</div></div>'
     + '<div class="deal-header-side"><span class="deal-staff">担当：' + escapeHtml(deal.staff) + staffAvatar(deal.staff)
@@ -4163,6 +4319,74 @@ function miokuriSubmit() {
   showToast('「' + deal.name + '」を見送りとして記録しました（実績タブ）');
 }
 
+let statusFixTargetDealId = null;
+function openStatusFixModal() {
+  if (currentDealId === null) { showToast('案件を選択してください'); return; }
+  const deal = DEALS.find(d => d.id === currentDealId);
+  if (!deal || !canFixStatus(deal)) return;
+  statusFixTargetDealId = deal.id;
+  setText('status-fix-text', '「' + deal.name + '」の現在のステータスは「' + statusLabel(deal.status) + '」です。誤って設定した場合はここで訂正できます。');
+  const sel = document.getElementById('status-fix-to');
+  if (sel) {
+    sel.innerHTML = STATUS_ORDER.concat(['見送り'])
+      .filter(s => s !== deal.status)
+      .map(s => '<option value="' + escapeHtml(s) + '">' + escapeHtml(statusLabel(s)) + '</option>')
+      .join('');
+  }
+  sv('status-fix-reason', '');
+  setText('status-fix-error', '');
+  updateStatusFixWarn();
+  const modal = document.getElementById('status-fix-modal');
+  if (modal) modal.style.display = 'flex';
+}
+function closeStatusFixModal() {
+  const modal = document.getElementById('status-fix-modal');
+  if (modal) modal.style.display = 'none';
+  statusFixTargetDealId = null;
+}
+function updateStatusFixWarn() {
+  const deal = (statusFixTargetDealId !== null) ? DEALS.find(d => d.id === statusFixTargetDealId) : null;
+  const to = (document.getElementById('status-fix-to') || {value:''}).value;
+  const warn = document.getElementById('status-fix-warn');
+  if (!warn) return;
+  if (deal && deal.status === '契約' && to !== '契約' && to !== '見送り') {
+    warn.textContent = '買付タブの結果と、契約時に入力した仕入価格も取り消されます。';
+  } else if (deal && deal.status === '見送り' && to !== '契約' && to !== '見送り') {
+    warn.textContent = '買付タブの結果も取り消されます。';
+  } else {
+    warn.textContent = '';
+  }
+}
+function statusFixSubmit() {
+  const deal = (statusFixTargetDealId !== null) ? DEALS.find(d => d.id === statusFixTargetDealId) : null;
+  if (!deal || !canFixStatus(deal)) { closeStatusFixModal(); return; }
+  const reason = (gvs('status-fix-reason') || '').trim();
+  const err = document.getElementById('status-fix-error');
+  if (!reason) {
+    if (err) err.textContent = '訂正の理由を記入してください';
+    return;
+  }
+  if (err) err.textContent = '';
+  const from = deal.status;
+  const to = (document.getElementById('status-fix-to') || {value:''}).value;
+  if (!to || from === to) return;
+  deal.status = to;
+  let extra = '';
+  if (to !== '契約' && to !== '見送り') {
+    deal.kaitsukeResult = '';
+    if (from === '契約' && deal.price != null) {
+      extra = '（仕入価格 ' + fmt(deal.price) + '円 を取り消し）';
+      deal.price = null;
+    }
+  }
+  HISTORY.push({dealId: deal.id, date: TODAY, from: from, to: to, by: currentActorName(deal), reason: '訂正：' + reason + extra});
+  closeStatusFixModal();
+  refreshAfterReg(deal);
+  if (currentView === 'changelog') renderChangelogPage();
+  if (document.getElementById('tab-kaitsuke') && document.getElementById('tab-kaitsuke').classList.contains('active')) renderKaitsukeTab();
+  showToast('ステータスを「' + statusLabel(from) + '」から「' + statusLabel(to) + '」に訂正しました（進行履歴に記録しました）');
+}
+
 function syncDealName() {
   if (currentDealId === null) return;
   const deal = DEALS.find(d => d.id === currentDealId);
@@ -4305,6 +4529,8 @@ function toggleHelp(btn) {
   const d = btn.nextElementSibling;
   if (d) d.style.display = (d.style.display === 'none') ? 'block' : 'none';
 }
+function showHelp(btn) { const d = btn.nextElementSibling; if (d) d.style.display = 'block'; }
+function hideHelp(btn) { const d = btn.nextElementSibling; if (d) d.style.display = 'none'; }
 
 function renderSettings() {
   const wrap = document.getElementById('step-label-inputs');
@@ -4750,7 +4976,6 @@ function renderSummaryTab(deal) {
   }
 
 
-  renderStatusHistory(deal);
 
   const pastEl = document.getElementById('summary-past-cases');
   if (pastEl) {
