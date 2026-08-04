@@ -99,21 +99,32 @@ input,select,textarea{font-family:inherit;font-size:13px}
 #detail-tabs .tab-btn.active:hover{background:var(--green);color:#fff}
 .deal-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:16px}
 .deal-title{font-size:24px;font-weight:900;color:var(--ink);margin:0 0 2px;line-height:1.25}
-.deal-addr{font-size:13px;color:var(--sub);margin-bottom:8px}
+.deal-addr{font-size:13px;color:var(--sub);margin-bottom:13px}
 .deal-chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .deal-chip{display:inline-block;font-size:13px;font-weight:700;padding:5px 14px;border-radius:5px}
 .deal-chip-type{background:#6b7280;color:#fff}
 .deal-chip-sheet{cursor:pointer;border:1px solid var(--green);background:var(--green-light);color:var(--green);font-family:inherit;line-height:1.4}
 .deal-chip-sheet:hover{background:#fff}
 .deal-chip-sheet.active{background:var(--green);color:#fff}
-.deal-header-side{display:flex;flex-direction:column;align-items:flex-start;gap:3px;font-size:12px;color:var(--sub);white-space:nowrap;padding-top:8px}
+.deal-header > div:first-child{min-width:0}
+.deal-titlerow{display:flex;align-items:center;gap:13px;flex-wrap:wrap;margin-bottom:9px;min-width:0}
+.deal-titlerow > .deal-title{margin-bottom:0;min-width:0;overflow-wrap:anywhere}
+.deal-result-badge{flex:none;display:inline-flex;align-items:center;gap:11px;font-size:17px;font-weight:900;
+  letter-spacing:.06em;line-height:1.3;cursor:default;padding:0}
+.deal-result-badge::before{content:"";width:3px;height:1.15em;border-radius:2px;background:currentColor;flex:none;opacity:.85}
+.deal-result-badge.is-keiyaku{color:var(--ok-fg)}
+.deal-result-badge.is-miokuri{color:var(--sub)}
+.deal-result-badge.is-takets{color:#1d4ed8}
+.deal-header-side{display:flex;align-items:flex-start;gap:22px;font-size:12px;color:var(--sub);white-space:nowrap;padding-top:8px}
+.deal-side-dates{display:flex;flex-direction:column;align-items:flex-start;gap:3px}
+@media(max-width:640px){.deal-header-side{flex-direction:column;gap:6px}}
 .deal-side-row{display:flex;align-items:center;gap:0}
 .deal-side-label{display:inline-block}
 .deal-side-val{display:inline-flex;justify-content:flex-start;align-items:center;text-align:left;min-height:25px}
 .deal-approve-btn{border:1px solid var(--ng-fg);background:var(--ng-fg);color:#fff;font-size:13px;font-weight:700;padding:4px 14px;border-radius:5px;cursor:pointer}
 .deal-approve-btn:hover{opacity:.88}
 .deal-side-status{margin-top:5px}
-.deal-staff{display:flex;align-items:center;gap:7px}
+.deal-staff{display:flex;align-items:center;gap:7px;min-height:25px}
 .staff-avatar{width:26px;height:26px;border-radius:50%;object-fit:cover;flex:none;border:1px solid var(--line);background:#fff}
 .staff-avatar-initial{display:inline-flex;align-items:center;justify-content:center;background:var(--green-light);color:var(--green);font-size:12px;font-weight:700}
 .deal-chip-edit{border:1px solid #c8cdd3;background:#f3f4f6;color:var(--sub);font-size:13px;font-weight:700;padding:4px 14px;border-radius:5px;cursor:pointer}
@@ -121,6 +132,15 @@ input,select,textarea{font-family:inherit;font-size:13px}
 .shiryo-layout{display:grid;grid-template-columns:340px minmax(0,1fr);gap:18px;align-items:start}
 .shiryo-photo{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#edf1f4;min-height:220px;display:flex;align-items:center;justify-content:center;color:var(--sub);font-size:12px}
 .shiryo-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.shiryo-map-box{margin-top:12px;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff}
+.shiryo-map-stage{position:relative;z-index:0;height:240px;background:#eef2f5}
+.shiryo-map-canvas{width:100%;height:100%}
+.shiryo-pin-icon{background:none;border:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.35));cursor:grab}
+.shiryo-map-fallback{display:flex;align-items:center;justify-content:center;height:100%;padding:16px;text-align:center;
+  color:var(--sub);font-size:12.5px;line-height:1.7}
+.shiryo-map-foot{border-top:1px solid var(--line);padding:9px 10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.shiryo-map-spacer{flex:1 1 auto}
+.shiryo-map-caption{font-size:11px;color:var(--sub);padding:0 10px 9px;line-height:1.6}
 .shiryo-upload{border:1px solid var(--line);border-radius:8px;background:#fff;padding:22px;text-align:center;color:var(--sub);font-size:13px;margin-bottom:14px;line-height:1.9}
 .shiryo-upload.dragover{border-color:var(--green);background:var(--green-light)}
 .shiryo-table{width:100%;border-collapse:collapse;font-size:13px;background:#fff}
@@ -451,7 +471,10 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .nr-strategy-btn.active{background:var(--green);border-color:var(--green);color:#fff}
 .pl-action-bar{display:flex;gap:14px;justify-content:flex-end;padding:20px 0 8px}
 .pl-action-btn{font-size:15px;padding:13px 52px;font-weight:700}
-.pl-action-left{margin-right:auto}
+.pl-action-left{margin-right:auto;padding-left:28px;padding-right:28px}
+.list-scope-note{display:flex;align-items:center;gap:10px;margin:-6px 0 12px;font-size:13px;color:var(--sub)}
+.list-scope-reset{border:1px solid var(--line);background:#fff;border-radius:6px;padding:3px 10px;font-size:12px;cursor:pointer;color:var(--body)}
+.list-scope-reset:hover{background:var(--green-light)}
 .changelog-scroll{max-height:60vh;overflow:auto}
 .changelog-table td,.changelog-table th{white-space:nowrap}
 .changelog-table .num{text-align:right;font-variant-numeric:tabular-nums}
@@ -550,66 +573,110 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 }
 
 .home-greeting{font-size:22px;font-weight:800;color:var(--ink);margin-bottom:10px}
+.alert-line{display:flex;align-items:flex-start;gap:8px;background:var(--ng-bg);border:1px solid #f5b5b5;border-radius:8px;
+  padding:9px 12px;margin-bottom:14px;font-size:12.5px;font-weight:700;color:var(--ng-fg);line-height:1.6}
+.alert-line:empty{display:none}
+.alert-mark{flex:none;width:16px;height:16px;border-radius:50%;background:var(--ng-fg);color:#fff;
+  font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.alert-link{flex:none;margin-left:auto;border:1px solid var(--ng-fg);background:#fff;color:var(--ng-fg);
+  font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:5px;cursor:pointer;font-family:inherit}
+.alert-link:hover{background:var(--ng-fg);color:#fff}
+.home-alert{margin-bottom:14px}
+.home-alert:empty{display:none}
+.home-alert-title{font-size:13px;font-weight:800;color:var(--ng-fg);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.home-alert-item{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--ng-fg);font-weight:700;padding:4px 0 4px 24px;line-height:1.6}
+.home-alert-name{text-decoration:underline;cursor:pointer}
+.home-alert-note{font-weight:600;color:#8a3a3a}
+@media(max-width:640px){.alert-line{flex-wrap:wrap}.alert-link{margin-left:24px}}
 .home-lead-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:16px}
 .home-lead{font-size:15px;color:var(--ink);font-weight:600;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
 .home-n-inline{font-size:26px;font-weight:900;color:var(--green);line-height:1;margin:0 2px}
 .home-see-all{color:var(--green);font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap}
 .home-see-all:hover{text-decoration:underline}
-.home-deal-list{display:grid;grid-template-columns:1fr;gap:14px}
-.home-deal-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;box-shadow:0 1px 4px rgba(0,0,0,.06);display:grid;grid-template-columns:38px 128px minmax(0,1.6fr) minmax(230px,1fr);gap:18px;align-items:center;transition:border-color .15s,box-shadow .15s,transform .15s,background .15s;cursor:pointer}
-.home-deal-card:hover{border-color:var(--green-mid);box-shadow:0 6px 18px rgba(26,107,58,.16);transform:translateY(-1px);background:#fbfefc}
-.home-deal-num{width:32px;height:32px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;font-variant-numeric:tabular-nums}
-.home-thumb{width:128px;height:128px;border-radius:8px;background:#edf1f4;border:1px solid #dfe5ea;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#8b98a6;flex-shrink:0}
+.home-deal-list{background:var(--card);border:1px solid var(--line);border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.06);overflow:hidden;font-size:clamp(10px,0.82vw,12px)}
+.home-empty{color:var(--sub);font-size:1.083em;padding:1.667em 1.333em}
+.home-deal-card{background:var(--card);border:0;border-bottom:1px solid var(--line);border-radius:0;padding:1.167em 1.333em;display:grid;grid-template-columns:2.667em 8.667em 12em 9.667em minmax(18.5em,1.7fr) 8em minmax(15em,1fr) 1.333em;gap:1.667em;align-items:center;transition:background .15s;cursor:pointer}
+.home-list-head{display:grid;grid-template-columns:2.667em 8.667em 12em 9.667em minmax(18.5em,1.7fr) 8em minmax(15em,1fr) 1.333em;gap:1.667em;padding:0.833em 1.333em;background:#f7f9fa;border-bottom:1px solid var(--line);font-weight:800;color:var(--sub);letter-spacing:.02em}
+.home-list-head > div{font-size:.958em}
+.home-list-head .home-col-value{text-align:center}
+@media(max-width:1130px){.home-list-head{display:none}}
+@media(min-width:1131px){.home-card-q-label{display:none}}
+.home-col{min-width:0}
+.home-card-addr{font-size:1em;color:var(--sub);margin-top:.2em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.home-card-kubun{margin-top:.417em}
+.home-deal-list .strategy-badge{font-size:.917em;padding:.25em .75em;border-radius:1em}
+.home-money{font-size:1.5em;font-weight:900;color:var(--ink);white-space:nowrap}
+.home-size{font-size:1em;color:var(--body);margin-top:.25em;white-space:nowrap}
+.home-size-label{color:var(--sub);font-weight:700;margin-right:.5em}
+.home-col-value{text-align:center}
+.home-value-label{font-size:.875em;color:var(--sub);font-weight:700}
+.home-value-num{font-size:1.667em;font-weight:900;color:var(--green);line-height:1.2;font-variant-numeric:tabular-nums}
+.home-card-chevron{color:#b9c2cc;font-size:1.833em;line-height:1;text-align:right}
+.home-deal-card:last-child{border-bottom:0}
+.home-deal-card:hover{background:var(--green-light)}
+.home-deal-num{width:2.133em;height:2.133em;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.25em;font-weight:900;font-variant-numeric:tabular-nums;flex-shrink:0}
+.home-thumb{width:8.667em;height:8.667em;border-radius:.667em;background:#edf1f4;border:1px solid #dfe5ea;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#8b98a6;flex-shrink:0}
 .home-thumb img{width:100%;height:100%;object-fit:cover;display:block}
-.home-thumb-icon{font-size:24px;line-height:1}
-.home-card-main{min-width:0}
-.home-card-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-.home-card-name{font-size:19px;font-weight:900;color:var(--ink);line-height:1.35}
+.home-thumb-icon{font-size:2em;line-height:1}
+.home-card-name{font-size:1.333em;font-weight:900;color:var(--ink);line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .strategy-badge{font-size:11px;font-weight:800;padding:3px 9px;border-radius:12px;background:var(--green-light);color:var(--green);white-space:nowrap}
 .prio-badge{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:10px;white-space:nowrap}
+.home-deal-list .prio-badge{font-size:.875em;padding:.167em .667em;border-radius:.833em}
 .prio-high{background:#fdeaea;color:#c0392b}
 .prio-mid{background:#fdf3e0;color:#b9770e}
 .prio-low{background:#f0f0f0;color:#666}
-.home-stage-inline{display:inline-flex;align-items:baseline;gap:2px;white-space:nowrap;margin-left:10px}
-.home-stage-inline .home-stage-label{font-size:11px;color:var(--sub);font-weight:700}
-.home-stage-inline .home-stage-val{font-size:14px;font-weight:900;color:var(--ink)}
-.home-stage-block{margin-bottom:0}
-.home-step-bar{display:flex;align-items:center;gap:0;margin-top:22px;width:100%;padding:10px 0 8px}
-.home-step-bar .step-item{flex:1 1 0;min-width:0}
-.home-step-bar .step-node{min-width:0;width:100%;gap:8px}
-.home-step-bar .step-circle{width:28px;height:28px;font-size:0;position:relative}
-.home-step-bar .step-circle.done{font-size:13px}
-.home-step-bar .step-circle.missed{font-size:12px}
-.home-step-bar .step-circle.current{background:#fff;border:3px solid var(--green)}
-.home-step-bar .step-circle.current::after{content:"";width:9px;height:9px;border-radius:50%;background:var(--green)}
-.home-step-bar .step-label{font-size:10.5px}
-.home-step-bar .step-arrow{flex:1 1 auto;width:auto;min-width:12px;margin-bottom:23px}
-.home-card-side{display:flex;flex-direction:column;gap:10px;align-items:flex-start;border-left:1px solid var(--line);padding-left:20px;min-width:0}
-.home-card-q-label{font-size:11px;font-weight:800;color:var(--sub)}
-.home-card-question{font-size:13px;font-weight:700;color:var(--ink);line-height:1.55;background:var(--green-light);border-radius:7px;padding:9px 11px;width:100%}
+.home-stage-inline{display:flex;align-items:baseline;gap:.25em;white-space:nowrap;margin-bottom:.167em}
+.home-stage-inline .home-stage-label{font-size:.917em;color:var(--sub);font-weight:700}
+.home-stage-inline .home-stage-val{font-size:1.083em;font-weight:900;color:var(--ink)}
+.home-step-bar{display:flex;align-items:center;gap:0;margin-top:.333em;width:100%;padding:.167em 0 0}
+.home-step-bar .step-item{flex:1 1 0;min-width:0;align-items:flex-start}
+.home-step-bar .step-node{min-width:0;width:100%;gap:.667em}
+.home-step-bar .step-circle{width:2.333em;height:2.333em;font-size:1em;color:transparent;position:relative;border-width:.167em}
+.home-step-bar .step-circle.current{background:#fff;border:.25em solid var(--green)}
+.home-step-bar .step-circle.current::after{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:.75em;height:.75em;border-radius:50%;background:var(--green)}
+.home-step-bar .step-label{font-size:.875em;white-space:normal;line-height:1.25;text-align:center;padding:0 .167em;overflow-wrap:anywhere}
+.home-step-bar .step-arrow{flex:0 1 auto;width:auto;min-width:.667em;margin:1.083em .167em 0}
+.home-card-side{display:flex;flex-direction:column;gap:.5em;align-items:flex-start;border-left:1px solid var(--line);padding-left:1.333em;min-width:0}
+.home-card-q-label{font-size:.917em;font-weight:800;color:var(--sub)}
+.home-card-question{font-size:1.083em;font-weight:700;color:var(--ink);line-height:1.55;background:var(--green-light);border-radius:.583em;padding:.75em .917em;width:100%}
 .summary-2col{display:grid;grid-template-columns:1fr 300px;gap:22px}
+.summary-next-col{display:flex}
+.summary-next-col > .next-card{flex:1}
 .summary-2col-right{border-left:1px solid var(--line);padding-left:22px}
 .sum-block-title{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:10px}
 .hint-item{display:flex;gap:8px;font-size:12.5px;color:var(--body);line-height:1.7;margin-bottom:10px}
 .hint-dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:7px}
 @media(max-width:960px){.summary-2col{grid-template-columns:1fr}.summary-2col-right{border-left:none;padding-left:0;border-top:1px solid var(--line);padding-top:14px}}
+.home-filter-bar{margin-bottom:16px}
+.home-sort{margin-left:auto;display:flex;align-items:center;gap:6px}
+.home-sort-label{font-size:13px;color:var(--sub);font-weight:700;white-space:nowrap}
+@media(max-width:900px){.home-sort{margin-left:0}}
 .home-section-title{font-size:13px;font-weight:700;color:var(--ink);margin:24px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--line)}
+@media(max-width:1130px){
+  .home-deal-list{font-size:11px}
+  .home-deal-card{grid-template-columns:2.667em 8.667em minmax(12em,1fr) 9.667em 8em 1.333em;align-items:start}
+  .home-col-steps{grid-column:2 / -1;margin-top:.833em}
+  .home-card-side{grid-column:2 / -1;border-left:none;padding-left:0;border-top:1px solid var(--line);padding-top:.833em;margin-top:.333em}
+}
 @media(max-width:768px){
-  .home-deal-card{grid-template-columns:34px 112px minmax(0,1fr);align-items:start}
-  .home-card-side{grid-column:2 / -1}
-  .home-thumb{width:112px;height:112px}
-  .home-card-side{border-left:none;padding-left:0}
+  .home-deal-list{font-size:11px}
+  .home-deal-card{grid-template-columns:2.667em 8em minmax(0,1fr);align-items:start}
+  .home-col-name{grid-column:3}
+  .home-col-money,.home-col-value,.home-col-steps,.home-card-side{grid-column:2 / -1}
+  .home-col-value{text-align:left}
+  .home-card-chevron{display:none}
+  .home-thumb{width:8em;height:8em}
   .home-step-bar{max-width:100%}
 }
 @media(max-width:480px){
   .home-n-inline{font-size:22px}
   .home-greeting{font-size:18px}
-  .home-deal-card{grid-template-columns:30px 1fr;gap:12px;padding:14px}
+  .home-deal-card{grid-template-columns:2.5em 1fr;gap:1em;padding:1.167em}
+  .home-col{grid-column:1 / -1}
   .home-thumb{grid-column:2;width:100%;aspect-ratio:1/1;height:auto}
-  .home-card-main,.home-card-side{grid-column:1 / -1}
-  .home-deal-num{width:28px;height:28px;font-size:13px}
-  .home-step-bar .step-node{min-width:62px}
-  .home-step-bar .step-label{font-size:9px}
+  .home-card-side{grid-column:1 / -1}
+  .home-deal-num{width:2.333em;height:2.333em;font-size:1.083em}
+  .home-step-bar .step-node{min-width:0}
 }
 
 .summary-layout{display:grid;grid-template-columns:1fr 280px;gap:20px;align-items:start}
@@ -633,6 +700,15 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 #summary-step-bar .step-arrow{width:30px;margin-bottom:19px}
 .step-note{font-size:11.5px;color:var(--warn-fg);margin:-8px 0 14px}
 .step-note:empty{display:none}
+.summary-outcome{display:flex;align-items:center;flex-wrap:wrap;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin-bottom:16px}
+.summary-outcome:empty{display:none}
+.summary-outcome-label{font-size:12px;font-weight:800;color:var(--sub)}
+.summary-outcome-chip{display:inline-flex;align-items:center;gap:9px;font-size:15px;font-weight:900;letter-spacing:.05em;line-height:1.3}
+.summary-outcome-chip::before{content:"";width:3px;height:1.15em;border-radius:2px;background:currentColor;flex:none;opacity:.85}
+.summary-outcome-chip.is-keiyaku{color:var(--ok-fg)}
+.summary-outcome-chip.is-miokuri{color:var(--sub)}
+.summary-outcome-chip.is-takets{color:#1d4ed8}
+.summary-outcome-detail{font-size:12.5px;color:var(--body)}
 .hearing-clear-btn{border:1px solid var(--line);background:#fff;color:var(--sub);border-radius:4px;padding:1px 8px;font-size:10.5px;font-weight:600;cursor:pointer;margin-left:6px;vertical-align:middle}
 .hearing-clear-btn:hover{background:var(--bg)}
 .hearing-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px}
@@ -640,15 +716,82 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .hearing-card-title{font-size:13px;font-weight:700;color:var(--ink);display:flex;justify-content:space-between;align-items:center}
 .hearing-summary{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--ink);margin-bottom:12px}
 @media(max-width:768px){.hearing-cards{grid-template-columns:1fr}}
+.hearing-common{display:grid;grid-template-columns:250px 1fr auto;gap:16px;align-items:center;
+  border:1px solid var(--line);border-radius:8px;padding:14px 16px;background:#fff;margin-bottom:14px}
+.hearing-common-label{background:var(--bg);border-radius:6px;padding:10px 12px;align-self:stretch;display:flex;flex-direction:column;justify-content:center;gap:3px}
+.hearing-common-name{font-size:13px;font-weight:800;color:var(--ink)}
+.hearing-common-desc{font-size:11px;color:var(--sub);line-height:1.45}
+.hearing-common-body{min-width:0;display:flex;flex-direction:column;gap:8px}
+.hearing-file-row{display:flex;align-items:center;gap:12px;min-width:0}
+.hearing-file-text{min-width:0;flex:1}
+.hearing-file-name{font-size:13px;font-weight:700;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hearing-file-meta{font-size:11px;color:var(--sub);margin-top:2px}
+.hearing-file-ops{display:flex;gap:6px;flex:none}
+@media(max-width:900px){.hearing-common{grid-template-columns:1fr}.hearing-common-label{align-self:auto}}
+.file-icon{position:relative;flex:none;width:30px;height:38px;border:1.5px solid #c8cdd3;border-radius:3px;background:#fff;
+  display:flex;align-items:flex-end;justify-content:center;padding-bottom:4px;font-size:8.5px;font-weight:800;color:var(--sub);letter-spacing:.02em}
+.file-icon::before{content:"";position:absolute;top:-1.5px;right:-1.5px;width:10px;height:10px;background:var(--bg);
+  border-left:1.5px solid #c8cdd3;border-bottom:1.5px solid #c8cdd3;border-bottom-left-radius:2px}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:2000;align-items:center;justify-content:center;display:flex}
 .modal-box{background:#fff;border-radius:12px;padding:22px;width:440px;max-width:90vw;box-shadow:0 8px 30px rgba(0,0,0,.25)}
 .modal-title{font-size:15px;font-weight:800;color:var(--ink);margin-bottom:10px}
+
+.sv-note{font-size:11px;color:var(--sub);line-height:1.6;margin-top:7px}
+.sv-note:empty{display:none}
+.sv-box{width:min(980px,94vw);padding:18px 20px 20px}
+.sv-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:12px}
+.sv-head-text{flex:1;min-width:0}
+.sv-hint{font-size:12.5px;color:var(--body);background:var(--green-light);border:1px solid var(--green-mid);
+  border-radius:8px;padding:9px 13px;margin-bottom:13px;line-height:1.7}
+.sv-panes{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:760px){.sv-panes{grid-template-columns:1fr}}
+.sv-pane{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--bg)}
+.sv-pane-cap{font-size:11.5px;font-weight:700;color:var(--sub);padding:7px 11px;background:#f7f9fa;border-bottom:1px solid var(--line)}
+.sv-map{position:relative;height:300px;background:#eef2f5;cursor:grab;touch-action:none}
+.sv-map.dragging{cursor:grabbing}
+.sv-view{position:relative;height:300px;background:#111;overflow:hidden}
+.sv-view img{width:100%;height:100%;object-fit:cover;display:block;user-select:none;-webkit-user-drag:none}
+.sv-turn{position:absolute;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;
+  border:none;background:rgba(0,0,0,.5);color:#fff;font-size:16px;font-weight:800;cursor:pointer;line-height:1}
+.sv-turn:hover{background:rgba(0,0,0,.72)}
+.sv-turn.is-left{left:9px}
+.sv-turn.is-right{right:9px}
+.sv-compass{position:absolute;left:9px;bottom:9px;background:rgba(0,0,0,.55);color:#fff;font-size:11px;
+  font-weight:700;padding:3px 9px;border-radius:4px;letter-spacing:.04em}
+.sv-attr{position:absolute;right:9px;bottom:9px;background:rgba(255,255,255,.86);color:#3c4043;font-size:10px;
+  font-weight:700;padding:2px 7px;border-radius:3px}
+.sv-actions{display:flex;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap}
+.sv-actions .sv-spacer{flex:1}
+.sv-limit{font-size:11.5px;color:var(--sub);line-height:1.6;margin-top:11px;border-top:1px solid var(--line);padding-top:10px}
+.sv-badge{position:absolute;left:9px;top:9px;background:rgba(0,0,0,.6);color:#fff;font-size:10.5px;font-weight:700;
+  padding:3px 9px;border-radius:4px;letter-spacing:.03em}
+.shiryo-photo{position:relative}
+.home-thumb{position:relative}
+.home-thumb .sv-mark,.list-thumb .sv-mark{position:absolute;left:2px;bottom:2px;background:rgba(0,0,0,.6);color:#fff;font-size:8px;
+  font-weight:700;padding:1px 4px;border-radius:2px;line-height:1.3}
+.list-thumb{position:relative}
+#file-preview-modal{z-index:2100}
+.preview-box{width:min(940px,94vw);padding:18px 20px 20px}
+.preview-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:12px}
+.preview-head-text{flex:1;min-width:0}
+.preview-head .modal-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.preview-meta{font-size:11.5px;color:var(--sub)}
+.preview-body{height:min(72vh,680px);background:var(--bg);border:1px solid var(--line);border-radius:8px;overflow:auto;display:flex;align-items:center;justify-content:center}
+.preview-body img{max-width:100%;max-height:100%;object-fit:contain;display:block}
+.preview-body embed{width:100%;height:100%;border:0;background:#fff}
+.preview-blank{text-align:center;padding:24px;color:var(--sub)}
+.preview-blank-name{font-size:14px;font-weight:800;color:var(--ink);margin:12px 0 6px}
+.preview-blank-note{font-size:12.5px;line-height:1.7}
+.preview-blank .file-icon{width:56px;height:70px;font-size:13px;margin:0 auto;padding-bottom:8px}
+.preview-blank .file-icon::before{width:18px;height:18px}
 .modal-text{font-size:13.5px;color:var(--body);line-height:1.8;margin-bottom:10px}
 .modal-facts{font-size:12.5px;color:var(--sub);background:var(--bg);border-radius:6px;padding:8px 12px;margin-bottom:12px}
 .modal-btns{display:flex;justify-content:flex-end;gap:10px}
 .next-card{background:var(--green-light);border:1.5px solid var(--green-mid);border-radius:12px;padding:20px;margin-bottom:16px}
 .next-card-label{font-size:11px;font-weight:700;color:var(--green);letter-spacing:.06em;margin-bottom:6px}
 .next-card-question{font-size:15px;font-weight:800;color:var(--ink);line-height:1.5;margin-bottom:12px}
+.next-card-sub{font-size:12.5px;color:var(--body);line-height:1.7;margin:-4px 0 12px}
+.next-card-sub:empty{display:none}
 .next-card-action-btn{display:inline-flex;align-items:center;gap:6px;background:var(--green);color:#fff;border:none;border-radius:6px;padding:9px 18px;font-size:13px;font-weight:700;cursor:pointer}
 .next-card-action-btn:hover{opacity:.88}
 .why-box{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:16px}
@@ -660,6 +803,21 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .summary-num-label{font-size:11px;color:var(--sub);font-weight:600;margin-bottom:4px}
 .summary-num-val{font-size:24px;font-weight:900;color:var(--ink);line-height:1}
 .summary-num-note{font-size:10px;color:var(--sub);margin-top:2px}
+.broker-tabs{display:flex;gap:6px;margin-bottom:10px}
+.broker-tab{border:1px solid var(--line);background:#fff;color:var(--sub);font-family:inherit;font-size:12px;font-weight:700;
+  padding:5px 14px;border-radius:5px;cursor:pointer}
+.broker-tab:hover{background:var(--bg)}
+.broker-tab.active{background:var(--green);border-color:var(--green);color:#fff}
+.broker-hint{font-size:11.5px;color:var(--sub);line-height:1.6;margin-bottom:8px}
+.broker-log{margin-bottom:10px}
+.broker-empty{font-size:12.5px;color:var(--sub);padding:8px 0}
+.broker-item{border-left:3px solid var(--green-mid);background:var(--bg);border-radius:0 6px 6px 0;padding:8px 12px;margin-bottom:8px}
+.broker-item-head{font-size:11px;color:var(--sub);font-weight:700;margin-bottom:3px;display:flex;align-items:center;gap:8px}
+.broker-item-del{margin-left:auto;border:none;background:transparent;color:var(--sub);font-size:11px;cursor:pointer;padding:0 2px;font-family:inherit}
+.broker-item-del:hover{color:var(--ng-fg)}
+.broker-item-text{font-size:13px;color:var(--ink);line-height:1.7;white-space:pre-wrap;word-break:break-word}
+.broker-input{min-height:76px}
+.broker-actions{margin-top:8px}
 .precision-box{background:#fff;border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:12px}
 .precision-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:4px 0;border-bottom:1px solid var(--line)}
 .precision-row:last-child{border-bottom:none}
@@ -730,6 +888,33 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 
     <div id="view-home" class="view" style="display:none">
       <div class="home-greeting" id="home-greeting">おはようございます、田中さん。</div>
+      <div class="home-alert" id="home-archplan-alert"></div>
+      <div class="filter-bar home-filter-bar">
+        <input class="search-input" type="text" id="home-search-input" placeholder="物件名・所在地で検索…" oninput="onHomeSearchInput(this)" onkeydown="onHomeSearchKeydown(event)">
+        <select class="filter-select" id="home-filter-type" onchange="renderHome()">
+          <option value="">すべての事業区分</option>
+        </select>
+        <select class="filter-select" id="home-filter-status" onchange="renderHome()">
+          <option value="">すべての検討状況</option>
+        </select>
+        <select class="filter-select" id="home-filter-prio" onchange="renderHome()">
+          <option value="">すべての優先度</option>
+          <option value="高">優先度 高</option>
+          <option value="中">優先度 中</option>
+          <option value="低">優先度 低</option>
+        </select>
+        <button class="btn btn-primary" onclick="commitHomeSearch()">検索</button>
+        <div class="home-sort">
+          <span class="home-sort-label">並び替え：</span>
+          <select class="filter-select" id="home-sort" onchange="renderHome()">
+            <option value="prio">優先度（高い順）</option>
+            <option value="price-desc">仕入価格（高い順）</option>
+            <option value="price-asc">仕入価格（安い順）</option>
+            <option value="date-desc">取得日（新しい順）</option>
+            <option value="date-asc">取得日（古い順）</option>
+          </select>
+        </div>
+      </div>
       <div class="home-lead-row">
         <div class="home-lead">
           <span>今日対応する案件（</span>
@@ -758,14 +943,15 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
         <button class="pl-sheet-tab active" id="list-tab-active" onclick="setListTab('active')">進行中</button>
         <button class="pl-sheet-tab" id="list-tab-past" onclick="setListTab('past')">過去</button>
       </div>
+      <div id="list-search-scope" class="list-scope-note" style="display:none"></div>
       <div class="filter-bar">
         <input class="search-input" type="text" id="search-input" placeholder="案件名・エリアで検索…" oninput="onSearchInput(this)" onkeydown="onSearchKeydown(event)">
         <select class="filter-select" id="filter-status" onchange="onStatusFilterChange()">
           <option value="">すべてのステータス</option>
-          <option>未着手</option><option>収支計算 済</option>
-          <option>市場調査 済</option><option>ヒアリング 済</option>
-          <option>建築プラン 済</option><option>買付検討中</option><option>買付提出 済</option>
-          <option>見送り</option><option>契約</option>
+          <option value="未着手">未着手</option><option value="収支計算 済">収支計算</option>
+          <option value="市場調査 済">市場調査</option><option value="ヒアリング 済">ヒアリング</option>
+          <option value="建築プラン 済">建築プラン</option><option value="買付検討中">買付検討中</option><option value="買付提出 済">買付提出</option>
+          <option value="見送り">見送り</option><option value="契約">契約</option>
         </select>
         <select class="filter-select" id="filter-staff" onchange="renderList()">
           <option value="">すべての担当</option>
@@ -878,14 +1064,17 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
           <div id="tab-summary" class="tab-content">
             <div class="step-bar" id="summary-step-bar"></div>
             <div class="step-note" id="summary-step-note"></div>
+            <div class="alert-line" id="summary-archplan-alert"></div>
+            <div class="summary-outcome" id="summary-outcome"></div>
 
             <div class="card mb16">
               <div class="card-body">
                 <div class="summary-2col">
-                  <div>
+                  <div class="summary-next-col">
                     <div class="next-card" id="summary-next-card" style="margin-bottom:0">
                       <div class="next-card-label">次に行うこと<span class="help-wrap" style="margin-left:4px"><button class="help-btn" onclick="toggleHelp(this)" title="この案内の説明">？</button><div class="help-pop help-pop-float" style="display:none">この案内は定型ルールで動いています（AIではありません）。文言は、要件定義で貴社の判断基準をお伺いして作り込みます。</div></span></div>
                       <div class="next-card-question" id="summary-question">—</div>
+                      <div class="next-card-sub" id="summary-next-sub"></div>
                       <button class="next-card-action-btn" id="summary-action-btn" onclick="">—</button>
                     </div>
                   </div>
@@ -901,8 +1090,21 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
               <div class="card-body">
                 <div class="summary-2col">
                   <div>
-                    <div class="sum-block-title">現在の収支サマリー</div>
+                    <div class="sum-block-title" id="summary-nums-title">現在の収支サマリー</div>
                     <div class="summary-3nums" id="summary-3nums"></div>
+                    <div class="broker-block">
+                      <div class="sum-block-title" style="margin-top:18px">仲介業者との会話</div>
+                      <div class="broker-tabs">
+                        <button type="button" class="broker-tab active" id="broker-tab-entry" onclick="setBrokerPhase('entry')"></button>
+                        <button type="button" class="broker-tab" id="broker-tab-preplan" onclick="setBrokerPhase('preplan')"></button>
+                      </div>
+                      <div class="broker-hint" id="broker-hint"></div>
+                      <div class="broker-log" id="broker-log"></div>
+                      <textarea class="form-textarea broker-input" id="broker-input" placeholder=""></textarea>
+                      <div class="broker-actions">
+                        <button class="btn btn-secondary btn-sm" onclick="addBrokerTalk()">記録する</button>
+                      </div>
+                    </div>
                   </div>
                   <div class="summary-2col-right">
                     <div class="why-box-title">判断ポイント</div>
@@ -918,6 +1120,19 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
                 <div class="shiryo-layout">
                   <div>
                     <div class="shiryo-photo" id="shiryo-top-photo"></div>
+                    <div class="sv-note" id="sv-note"></div>
+                    <div class="shiryo-map-box" id="shiryo-map-box">
+                      <div class="shiryo-map-stage" id="shiryo-map-stage">
+                        <div class="shiryo-map-canvas" id="shiryo-map"></div>
+                      </div>
+                      <div class="shiryo-map-foot">
+                        <button class="btn btn-primary btn-sm" id="shiryo-map-save" onclick="saveMapPin()" style="display:none">ピン位置を保存</button>
+                        <button class="btn btn-secondary btn-sm" id="shiryo-map-reset" onclick="resetMapPin()" style="display:none">元に戻す</button>
+                        <span class="shiryo-map-spacer"></span>
+                        <button class="btn btn-secondary btn-sm" onclick="openSvPicker()">ストリートビューから表紙を作成</button>
+                      </div>
+                      <div class="shiryo-map-caption" id="shiryo-map-caption"></div>
+                    </div>
                   </div>
                   <div>
                     <div class="shiryo-upload" id="shiryo-dropzone" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="shiryoDrop(event,this)">
@@ -968,7 +1183,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
             </div>
 
             <div class="pl-action-bar">
-              <button class="btn btn-secondary pl-action-btn pl-action-left" onclick="openHistoryView('shushi')">収支の変更履歴</button>
+              <button class="btn btn-secondary pl-action-btn pl-action-left" onclick="openHistoryView('shushi')">収支・ヒアリングの変更履歴</button>
               <button class="btn btn-primary pl-action-btn" onclick="registerPL()">保存</button>
               <button class="btn btn-secondary pl-action-btn" onclick="copyShareUrl()">共有URLコピー</button>
               <button class="btn btn-secondary pl-action-btn" onclick="downloadShushiExcel()">Excelダウンロード</button>
@@ -993,7 +1208,15 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
           </div>
 
           <div id="tab-hearing" class="tab-content">
-            <div class="form-section-title">ヒアリング（販売会社3社の比較）</div>
+            <div class="form-section-title">ヒアリング参考プラン（共通）</div>
+            <div class="hearing-common">
+              <div class="hearing-common-label">
+                <div class="hearing-common-name">参考CADプラン</div>
+                <div class="hearing-common-desc">3社へのヒアリングで使用した自社作成のCADプラン</div>
+              </div>
+              <div class="hearing-common-body" id="cad-plan-body"></div>
+              <button class="btn btn-secondary btn-sm" onclick="openCadPlanPicker()">ファイルを選択</button>
+            </div>
             <div class="hearing-cards">
               <div class="hearing-card">
                 <div class="hearing-card-title">販売会社1 <button class="hearing-clear-btn" onclick="clearHearingCard(1)">クリア</button></div>
@@ -1002,7 +1225,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
                 <div class="form-group"><label class="form-label">ヒアリング日</label><input class="form-input" type="date" id="hc-date-1"></div>
                 <div class="form-group"><label class="form-label">回答販売価格</label><div class="form-money-row"><input class="form-input" type="text" inputmode="numeric" id="hc-price-1" oninput="numFormat(this);calcHearing()"><span class="form-money-unit">円</span></div></div>
                 <div class="form-group"><label class="form-label">コメント</label><textarea class="hearing-note" id="hc-comment-1"></textarea></div>
-                <div class="shiryo-box mt12"><div class="shiryo-title">ヒアリング資料（PDF・画像）</div><div id="hearing-files-1"></div><button class="btn btn-secondary btn-sm mt8" onclick="openHearingFilePicker(1)">ファイルを選択（資料を追加）</button></div>
               </div>
               <div class="hearing-card">
                 <div class="hearing-card-title">販売会社2 <button class="hearing-clear-btn" onclick="clearHearingCard(2)">クリア</button></div>
@@ -1011,7 +1233,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
                 <div class="form-group"><label class="form-label">ヒアリング日</label><input class="form-input" type="date" id="hc-date-2"></div>
                 <div class="form-group"><label class="form-label">回答販売価格</label><div class="form-money-row"><input class="form-input" type="text" inputmode="numeric" id="hc-price-2" oninput="numFormat(this);calcHearing()"><span class="form-money-unit">円</span></div></div>
                 <div class="form-group"><label class="form-label">コメント</label><textarea class="hearing-note" id="hc-comment-2"></textarea></div>
-                <div class="shiryo-box mt12"><div class="shiryo-title">ヒアリング資料（PDF・画像）</div><div id="hearing-files-2"></div><button class="btn btn-secondary btn-sm mt8" onclick="openHearingFilePicker(2)">ファイルを選択（資料を追加）</button></div>
               </div>
               <div class="hearing-card">
                 <div class="hearing-card-title">販売会社3 <button class="hearing-clear-btn" onclick="clearHearingCard(3)">クリア</button></div>
@@ -1020,12 +1241,20 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
                 <div class="form-group"><label class="form-label">ヒアリング日</label><input class="form-input" type="date" id="hc-date-3"></div>
                 <div class="form-group"><label class="form-label">回答販売価格</label><div class="form-money-row"><input class="form-input" type="text" inputmode="numeric" id="hc-price-3" oninput="numFormat(this);calcHearing()"><span class="form-money-unit">円</span></div></div>
                 <div class="form-group"><label class="form-label">コメント</label><textarea class="hearing-note" id="hc-comment-3"></textarea></div>
-                <div class="shiryo-box mt12"><div class="shiryo-title">ヒアリング資料（PDF・画像）</div><div id="hearing-files-3"></div><button class="btn btn-secondary btn-sm mt8" onclick="openHearingFilePicker(3)">ファイルを選択（資料を追加）</button></div>
               </div>
+            </div>
+            <div class="hearing-common">
+              <div class="hearing-common-label">
+                <div class="hearing-common-name">ヒアリング資料（共通）</div>
+                <div class="hearing-common-desc">販売会社から受領した資料をまとめて保存します</div>
+              </div>
+              <div class="hearing-common-body" id="hearing-files-common"></div>
+              <button class="btn btn-secondary btn-sm" onclick="openHearingFilePicker()">ファイルを選択</button>
             </div>
             <div class="hearing-summary" id="hearing-summary" style="display:none"></div>
             <div class="flex gap8 mt16">
               <button class="btn btn-primary btn-sm" onclick="registerHearing()">登録</button>
+              <button class="btn btn-secondary btn-sm" onclick="openHistoryView('shushi')">収支・ヒアリングの変更履歴</button>
             </div>
           </div>
 
@@ -1063,16 +1292,19 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
             <div class="form-group" style="max-width:240px;margin-bottom:0"><div class="form-money-row"><input class="form-input" type="text" inputmode="numeric" id="kaitsuke-price" oninput="numFormat(this)"><span class="form-money-unit">円</span></div></div>
             <div class="form-section-title" style="margin-top:16px">買付提出日</div>
             <div class="form-group" style="max-width:240px;margin-bottom:0"><input class="form-input" type="date" id="kaitsuke-date"></div>
-            <div style="font-size:12px;color:var(--sub);margin-top:6px">入力して登録すると、ステータスが「買付提出 済」になります。</div>
+            <div style="font-size:12px;color:var(--sub);margin-top:6px">入力して登録すると、ステータスが「買付提出」になります。</div>
             <div class="form-section-title" style="margin-top:16px">買付結果</div>
             <div class="flex gap8" id="kaitsuke-result-wrap">
               <button type="button" class="nr-strategy-btn" data-result="回答待ち" onclick="selectKaitsukeResult(this)">回答待ち</button>
               <button type="button" class="nr-strategy-btn" data-result="契約" onclick="selectKaitsukeResult(this)">契約</button>
               <button type="button" class="nr-strategy-btn" data-result="見送り" onclick="selectKaitsukeResult(this)">見送り</button>
+              <button type="button" class="nr-strategy-btn" data-result="他決" onclick="selectKaitsukeResult(this)">他決</button>
             </div>
             <div id="kaitsuke-locked-note" style="font-size:12px;color:var(--sub);margin-top:8px"></div>
             <div class="form-section-title" style="margin-top:16px">補足コメント</div>
             <textarea class="form-textarea" style="min-height:120px" id="kaitsuke-comment" placeholder="買付価格・条件・売主の反応など自由記入"></textarea>
+            <div id="kaitsuke-comment-note" style="font-size:12px;color:var(--sub);margin-top:6px"></div>
+            <div class="field-error" id="kaitsuke-error"></div>
             <div class="flex gap8 mt16">
               <button class="btn btn-primary btn-sm" onclick="registerKaitsuke()">登録</button>
             </div>
@@ -1108,7 +1340,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
       <div class="view-header">
         <div>
           <div class="view-title" id="changelog-page-title">進行履歴</div>
-          <div class="view-desc">この案件の進み具合・担当・承認の記録と、収支計算の変更の記録を確認できます。</div>
+          <div class="view-desc">この案件の進み具合・担当・承認の記録と、収支計算・ヒアリングの変更の記録を確認できます。</div>
         </div>
         <button class="btn btn-secondary" onclick="returnToSummaryFromHistory()">サマリーに戻る</button>
       </div>
@@ -1116,7 +1348,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
         <div class="card-body">
           <div class="tabs" id="hist-tabs">
             <button class="tab-btn active" id="hist-tab-status" onclick="switchHistoryTab('status',this)">ステータス変更履歴</button>
-            <button class="tab-btn" id="hist-tab-shushi" onclick="switchHistoryTab('shushi',this)">収支変更履歴</button>
+            <button class="tab-btn" id="hist-tab-shushi" onclick="switchHistoryTab('shushi',this)">収支・ヒアリング変更履歴</button>
           </div>
 
           <div id="hist-pane-status">
@@ -1210,6 +1442,62 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
   </div>
 </div>
 
+<div id="sv-modal" class="modal-overlay" style="display:none" onclick="if(event.target===this)closeSvPicker()">
+  <div class="modal-box sv-box">
+    <div class="sv-head">
+      <div class="sv-head-text">
+        <div class="modal-title" id="sv-title" style="margin-bottom:2px">ストリートビューから表紙を作成</div>
+        <div class="preview-meta" id="sv-addr"></div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="closeSvPicker()">閉じる</button>
+    </div>
+    <div class="sv-hint">
+      左の地図で<b>ピンをドラッグ</b>して撮影する場所を決め、右の映像で<b>向き</b>を合わせてください。
+      「この向きで確定」を押すと、物件の表紙になります。
+    </div>
+    <div class="sv-panes">
+      <div class="sv-pane">
+        <div class="sv-pane-cap">場所を決める（ピンをドラッグ）</div>
+        <div class="sv-map" id="sv-map"></div>
+      </div>
+      <div class="sv-pane">
+        <div class="sv-pane-cap">向きを合わせる</div>
+        <div class="sv-view" id="sv-view">
+          <img id="sv-img" alt="ストリートビューの映像">
+          <button class="sv-turn is-left" onclick="turnSv(-45)" title="左を向く">‹</button>
+          <button class="sv-turn is-right" onclick="turnSv(45)" title="右を向く">›</button>
+          <div class="sv-compass" id="sv-compass">北向き</div>
+          <div class="sv-attr">Google</div>
+        </div>
+      </div>
+    </div>
+    <div class="sv-actions">
+      <button class="btn btn-secondary btn-sm" onclick="resetSvPicker()">最初の位置に戻す</button>
+      <span class="sv-spacer"></span>
+      <button class="btn btn-ghost btn-sm" onclick="closeSvPicker()">やめる</button>
+      <button class="btn btn-primary btn-sm" onclick="commitSvCover()">この向きで確定</button>
+    </div>
+    <div class="sv-limit">
+      ご確認は画面上のみとなります。画像として保存・ダウンロードすること、資料や印刷物へ転載することは、
+      地図サービスの規約により対応できません。<br>
+      ※この画面は動きを再現した図です。本実装では実際のGoogleの地図・ストリートビューが表示されます。
+    </div>
+  </div>
+</div>
+
+<div id="file-preview-modal" class="modal-overlay" style="display:none" onclick="if(event.target===this)closeFilePreview()">
+  <div class="modal-box preview-box">
+    <div class="preview-head">
+      <div class="preview-head-text">
+        <div class="modal-title" id="file-preview-name" style="margin-bottom:2px">資料</div>
+        <div class="preview-meta" id="file-preview-meta"></div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="closeFilePreview()">閉じる</button>
+    </div>
+    <div class="preview-body" id="file-preview-body"></div>
+  </div>
+</div>
+
 <div id="shiryo-list-modal" class="modal-overlay" style="display:none">
   <div class="modal-box">
     <div class="modal-title">資料一覧</div>
@@ -1259,29 +1547,34 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </div>
 
 <input type="file" id="shiryo-file-input" multiple accept="image/*,.pdf" style="display:none" onchange="onShiryoSelected(this)">
+<input type="file" id="cadplan-file-input" accept="image/*,.pdf" style="display:none" onchange="onShiryoSelected(this)">
 
 <script>
 const TODAY = '2026-07-11';
 const TODAY_DATE = new Date('2026-07-11');
 
 const DEALS = [
-  {id:1,name:'○○邸新築',area:'世田谷',status:'収支計算 済',staff:'田中',type:'戸建て建売',photo:'photos/house1.jpg',acquiredDate:'2026-06-01',price:null,note:'',reg:{market:false,pl:true,hearing:false,plan:false}},
-  {id:2,name:'△△町土地',area:'杉並',status:'市場調査 済',staff:'佐藤',type:'土地',photo:'photos/land1.jpg',acquiredDate:'2026-06-05',price:null,note:'',reg:{market:true,pl:false,hearing:false,plan:false}},
-  {id:3,name:'□□二丁目',area:'練馬',status:'買付提出 済',staff:'鈴木',type:'戸建て建売',photo:'photos/house2.jpg',acquiredDate:'2026-05-15',price:null,note:'',reg:{market:true,pl:true,hearing:true,plan:true},kaitsukeDate:'2026-07-03',kaitsukeResult:'回答待ち',shiryo:[{name:'物件概要書.pdf'},{name:'測量図.pdf'}]},
-  {id:4,name:'××ハイツ跡地',area:'中野',status:'見送り',staff:'田中',type:'土地',photo:'photos/land2.jpg',acquiredDate:'2026-05-20',price:null,note:'接道条件',reg:{market:true,pl:false,hearing:false,plan:false}},
-  {id:15,name:'大島六丁目土地',area:'江東',status:'ヒアリング 済',staff:'田中',type:'土地',photo:'photos/land3.jpg',acquiredDate:'2026-07-02',price:null,note:'',reg:{market:true,pl:true,hearing:true,plan:false}},
-  {id:5,name:'北葛西建売',area:'江戸川',status:'収支計算 済',staff:'田中',type:'戸建て建売',photo:'photos/house1.jpg',acquiredDate:'2026-06-10',price:82800000,note:'',approvedAt:'2026-07-28 14:05',reg:{market:false,pl:true,hearing:false,plan:false},shiryo:[{name:'物件概要書.pdf'},{name:'現地写真_南側.jpg'},{name:'公図.pdf'}]},
-  {id:16,name:'船堀アパート計画',area:'江戸川',status:'収支計算 済',staff:'佐藤',type:'アパート',photo:'photos/apt1.jpg',acquiredDate:'2026-06-18',price:null,note:'',reg:{market:false,pl:true,hearing:false,plan:false},shiryo:[{name:'物件概要書.pdf'},{name:'レントロール.xlsx'}]},
-  {id:17,name:'南葛西土地転売',area:'江戸川',status:'収支計算 済',staff:'鈴木',type:'土地',photo:'photos/land2.jpg',acquiredDate:'2026-06-25',price:null,note:'',reg:{market:false,pl:true,hearing:false,plan:false},shiryo:[{name:'物件概要書.pdf'}]},
-  {id:6,name:'板橋本町土地',area:'板橋',status:'未着手',staff:'佐藤',type:'土地',photo:'photos/land4.jpg',acquiredDate:'2026-06-20',price:null,note:'',reg:{market:false,pl:false,hearing:false,plan:false}},
-  {id:7,name:'荒川南千住',area:'荒川',status:'ヒアリング 済',staff:'鈴木',type:'戸建て建売',photo:'photos/house2.jpg',acquiredDate:'2026-06-08',price:null,note:'',reg:{market:false,pl:true,hearing:true,plan:false}},
-  {id:8,name:'葛飾立石',area:'葛飾',status:'建築プラン 済',staff:'田中',type:'戸建て建売',photo:'photos/house1.jpg',acquiredDate:'2026-06-03',price:null,note:'',reg:{market:true,pl:true,hearing:true,plan:true},shiryo:[{name:'建築プラン図面.pdf'}]},
-  {id:9,name:'足立梅島',area:'足立',status:'市場調査 済',staff:'佐藤',type:'土地',photo:'photos/land1.jpg',acquiredDate:'2026-05-07',price:null,note:'売主都合で動きなし',reg:{market:true,pl:true,hearing:false,plan:false}},
-  {id:10,name:'墨田横川',area:'墨田',status:'市場調査 済',staff:'鈴木',type:'戸建て建売',photo:'photos/house2.jpg',acquiredDate:'2026-06-15',price:null,note:'金融機関調整中',reg:{market:true,pl:false,hearing:false,plan:false}},
-  {id:11,name:'品川戸越',area:'品川',status:'契約',staff:'田中',type:'戸建て建売',photo:'photos/house1.jpg',acquiredDate:'2026-05-01',price:68000000,note:'',reg:{market:true,pl:true,hearing:true,plan:true},kaitsukeDate:'2026-06-12',kaitsukeResult:'契約'},
-  {id:12,name:'目黒碑文谷',area:'目黒',status:'契約',staff:'佐藤',type:'戸建て建売',photo:'photos/house2.jpg',acquiredDate:'2026-04-20',price:72000000,note:'',reg:{market:true,pl:true,hearing:true,plan:true},kaitsukeDate:'2026-06-10',kaitsukeResult:'契約'},
-  {id:13,name:'江東南砂',area:'江東',status:'見送り',staff:'鈴木',type:'土地',photo:'photos/land2.jpg',acquiredDate:'2026-06-25',price:null,note:'価格折り合わず',reg:{market:false,pl:false,hearing:false,plan:false}},
-  {id:14,name:'北区赤羽',area:'北',status:'未着手',staff:'佐藤',type:'土地',photo:'photos/land3.jpg',acquiredDate:'2026-07-01',price:null,note:'',reg:{market:false,pl:false,hearing:false,plan:false}},
+  {id:1,name:'○○邸新築',area:'世田谷',menseki:132.5,status:'収支計算 済',staff:'田中',type:'戸建て建売',photo:'photos/house1.jpg',acquiredDate:'2026-06-01',price:null,note:'',reg:{market:false,pl:true,hearing:false,plan:false}},
+  {id:2,name:'△△町土地',area:'杉並',menseki:198.4,status:'市場調査 済',staff:'佐藤',type:'土地',photo:'photos/land1.jpg',acquiredDate:'2026-06-05',price:null,note:'',reg:{market:true,pl:false,hearing:false,plan:false}},
+  {id:3,name:'□□二丁目',area:'練馬',menseki:145.0,status:'買付提出 済',staff:'鈴木',type:'戸建て建売',photo:'photos/house2.jpg',acquiredDate:'2026-05-15',price:null,note:'',reg:{market:true,pl:true,hearing:true,plan:true},kaitsukeDate:'2026-07-03',kaitsukeResult:'回答待ち',shiryo:[{name:'物件概要書.pdf'},{name:'測量図.pdf'}],planFiles:{1:[{name:'A社_プラン図面.pdf',size:1840000}],2:[{name:'B社_プラン図面.pdf',size:1620000}]}},
+  {id:4,name:'××ハイツ跡地',area:'中野',menseki:210.8,status:'見送り',staff:'田中',type:'土地',photo:'photos/land2.jpg',acquiredDate:'2026-05-20',price:null,note:'接道条件',reg:{market:true,pl:false,hearing:false,plan:false}},
+  {id:15,name:'大島六丁目土地',area:'江東',menseki:176.3,status:'ヒアリング 済',staff:'田中',type:'土地',photo:'photos/land3.jpg',acquiredDate:'2026-07-02',price:null,note:'',reg:{market:true,pl:true,hearing:true,plan:false},brokerTalks:[
+    {phase:'entry',date:'2026-07-02',by:'田中',text:'売主は年内決済を希望。紹介元に条件を確認したうえで、検討に進む。'},
+    {phase:'preplan',date:'2026-07-28',by:'田中',text:'「どうなれば纏められるか」を確認。価格の折り合いがつけば売主を説得できるとのこと。建築プランの依頼に進む。'},
+  ]},
+  {id:5,name:'北葛西建売',area:'江戸川',menseki:118.4,status:'収支計算 済',staff:'田中',type:'戸建て建売',photo:'photos/house1.jpg',acquiredDate:'2026-06-10',price:null,note:'',approvedAt:'2026-07-28 14:05',reg:{market:false,pl:true,hearing:false,plan:false},
+  shiryo:[{name:'物件概要書.pdf'},{name:'現地写真_南側.jpg',url:'photos/house1.jpg',size:284000},{name:'公図.pdf'}]},
+  {id:16,name:'船堀アパート計画',area:'江戸川',menseki:284.1,status:'収支計算 済',staff:'佐藤',type:'アパート',photo:'photos/apt1.jpg',acquiredDate:'2026-06-18',price:null,note:'',reg:{market:false,pl:true,hearing:false,plan:false},shiryo:[{name:'物件概要書.pdf'},{name:'レントロール.xlsx'}]},
+  {id:17,name:'南葛西土地転売',area:'江戸川',menseki:255.7,status:'収支計算 済',staff:'鈴木',type:'土地',photo:'photos/land2.jpg',acquiredDate:'2026-06-25',price:null,note:'',reg:{market:false,pl:true,hearing:false,plan:false},shiryo:[{name:'物件概要書.pdf'}]},
+  {id:6,name:'板橋本町土地',area:'板橋',menseki:118.9,status:'未着手',staff:'佐藤',type:'土地',photo:'photos/land4.jpg',acquiredDate:'2026-06-20',price:null,note:'',reg:{market:false,pl:false,hearing:false,plan:false}},
+  {id:7,name:'荒川南千住',area:'荒川',menseki:127.4,status:'ヒアリング 済',staff:'鈴木',type:'戸建て建売',photo:'photos/house2.jpg',acquiredDate:'2026-06-08',price:null,note:'',reg:{market:false,pl:true,hearing:true,plan:false}},
+  {id:8,name:'葛飾立石',area:'葛飾',menseki:163.2,status:'建築プラン 済',staff:'田中',type:'戸建て建売',photo:'photos/house1.jpg',acquiredDate:'2026-06-03',price:null,note:'',reg:{market:true,pl:true,hearing:true,plan:true},shiryo:[{name:'建築プラン図面.pdf'}],planFiles:{1:[{name:'A社_プラン図面.pdf',size:2100000},{name:'A社_見積書.pdf',size:640000}],2:[{name:'B社_プラン図面.pdf',size:1980000}]},cadPlan:{name:'自社作成CADプラン_2026-07-11.pdf',size:2516582},hearingFiles:[{name:'A社_査定書.pdf',size:842000},{name:'B社_販売提案資料.pdf',size:1310720}]},
+  {id:9,name:'足立梅島',area:'足立',menseki:189.6,status:'市場調査 済',staff:'佐藤',type:'土地',photo:'photos/land1.jpg',acquiredDate:'2026-05-07',price:null,note:'売主都合で動きなし',reg:{market:true,pl:true,hearing:false,plan:false}},
+  {id:10,name:'墨田横川',area:'墨田',menseki:151.0,status:'市場調査 済',staff:'鈴木',type:'戸建て建売',photo:'photos/house2.jpg',acquiredDate:'2026-06-15',price:null,note:'金融機関調整中',reg:{market:true,pl:false,hearing:false,plan:false}},
+  {id:11,name:'品川戸越',area:'品川',menseki:138.7,status:'契約',staff:'田中',type:'戸建て建売',photo:'photos/house1.jpg',acquiredDate:'2026-05-01',price:68000000,note:'',reg:{market:true,pl:true,hearing:true,plan:true},kaitsukeDate:'2026-06-12',kaitsukeResult:'契約'},
+  {id:12,name:'目黒碑文谷',area:'目黒',menseki:154.9,status:'契約',staff:'佐藤',type:'戸建て建売',photo:'photos/house2.jpg',acquiredDate:'2026-04-20',price:72000000,note:'',reg:{market:true,pl:true,hearing:true,plan:true},kaitsukeDate:'2026-06-10',kaitsukeResult:'契約',planFiles:{1:[{name:'A社_プラン図面.pdf',size:1750000}]}},
+  {id:13,name:'江東南砂',area:'江東',menseki:167.5,status:'見送り',staff:'鈴木',type:'土地',photo:'photos/land2.jpg',acquiredDate:'2026-05-10',price:null,note:'他決：他社が上値で成約',reg:{market:true,pl:true,hearing:true,plan:true,kaitsuke:true},kaitsukeDate:'2026-06-20',kaitsukeResult:'他決',kaitsukePrice:58000000,kaitsukeComment:'他社が上値で成約'},
+  {id:14,name:'北区赤羽',area:'北',menseki:203.2,status:'未着手',staff:'佐藤',type:'土地',photo:'photos/land3.jpg',acquiredDate:'2026-07-01',price:null,note:'',reg:{market:false,pl:false,hearing:false,plan:false}},
 ];
 
 const HISTORY = [
@@ -1322,7 +1615,12 @@ const HISTORY = [
   {dealId:12,date:'2026-06-01',from:'建築プラン 済',to:'買付検討中',by:'佐藤'},
   {dealId:12,date:'2026-06-10',from:'買付検討中',to:'買付提出 済',by:'佐藤'},
   {dealId:12,date:'2026-06-20',from:'買付提出 済',to:'契約',by:'佐藤'},
-  {dealId:13,date:'2026-07-01',from:'未着手',to:'見送り',by:'鈴木',reason:'販売価格が合わない'},
+  {dealId:13,date:'2026-05-15',from:'未着手',to:'収支計算 済',by:'鈴木'},
+  {dealId:13,date:'2026-05-22',from:'収支計算 済',to:'市場調査 済',by:'鈴木'},
+  {dealId:13,date:'2026-05-29',from:'市場調査 済',to:'ヒアリング 済',by:'鈴木'},
+  {dealId:13,date:'2026-06-08',from:'ヒアリング 済',to:'建築プラン 済',by:'鈴木'},
+  {dealId:13,date:'2026-06-20',from:'建築プラン 済',to:'買付提出 済',by:'鈴木'},
+  {dealId:13,date:'2026-07-01',from:'買付提出 済',to:'見送り',by:'鈴木',reason:'他決：他社が上値で成約'},
 ];
 
 const DEMO_TODAY = '2026-07-28';
@@ -1418,6 +1716,66 @@ function recordShushiChangesOnSave(deal, sheet) {
     if (rows.length) changelogFor(deal.id).push.apply(changelogFor(deal.id), rows);
   }
   SHUSHI_SAVE_SNAPSHOT[key] = current;
+}
+const HEARING_SAVE_SNAPSHOT = {};
+const HEARING_LOG_FIELDS = [
+  { id: 'hc-name-',    label: '販売会社名' },
+  { id: 'hc-tanto-',   label: '担当者名' },
+  { id: 'hc-date-',    label: 'ヒアリング日' },
+  { id: 'hc-price-',   label: '回答販売価格', num: true },
+  { id: 'hc-comment-', label: 'コメント' },
+];
+function hearingLogValue(field, raw) {
+  const s = String(raw === undefined || raw === null ? '' : raw).trim();
+  return field.num ? normalizeLogValue(s) : s;
+}
+function hearingSnapshot() {
+  const snap = {};
+  for (let i = 1; i <= 3; i++) {
+    HEARING_LOG_FIELDS.forEach(f => { snap[f.id + i] = hearingLogValue(f, gvs(f.id + i)); });
+  }
+  return snap;
+}
+const HEARING_STATE = {};
+function persistCurrentHearingState() {
+  if (currentDealId === null) return;
+  const st = {};
+  for (let i = 1; i <= 3; i++) {
+    HEARING_LOG_FIELDS.forEach(f => { st[f.id + i] = gvs(f.id + i); });
+  }
+  HEARING_STATE[currentDealId] = st;
+}
+function restoreHearingState(dealId) {
+  const st = HEARING_STATE[dealId];
+  if (!st) return;
+  Object.keys(st).forEach(k => sv(k, st[k]));
+}
+function recordHearingChangesOnSave(deal) {
+  if (!deal) return;
+  const current = hearingSnapshot();
+  const previous = HEARING_SAVE_SNAPSHOT[deal.id];
+  if (previous) {
+    const rows = [];
+    for (let i = 1; i <= 3; i++) {
+      HEARING_LOG_FIELDS.forEach(f => {
+        const key = f.id + i;
+        if (String(previous[key]) === String(current[key])) return;
+        rows.push({
+          at: nowMinuteStr(),
+          by: currentActorName(deal),
+          type: 'edit',
+          sheet: 'ヒアリング',
+          cell: '販売会社' + i + ' ' + f.label,
+          label: 'ヒアリング 販売会社' + i + ' ' + f.label,
+          before: previous[key],
+          after: current[key],
+          comment: ''
+        });
+      });
+    }
+    if (rows.length) changelogFor(deal.id).push.apply(changelogFor(deal.id), rows);
+  }
+  HEARING_SAVE_SNAPSHOT[deal.id] = current;
 }
 function formatLogValue(v) {
   if (v === undefined || v === null || v === '') return '';
@@ -1519,7 +1877,7 @@ function renderStatusHistory(deal) {
       const days = (prevStatusDate && h.date) ? Math.floor((new Date(h.date) - new Date(prevStatusDate)) / 86400000) : null;
       const daysTxt = (days !== null && isFinite(days) && days >= 0) ? days + '日' : '—';
       prevStatusDate = h.date || prevStatusDate;
-      const fromTxt = (!h.from || h.from === '—') ? '（新規登録）' : statusLabel(h.from);
+      const fromTxt = (!h.from || h.from === '—') ? '（新規登録）' : escapeHtml(statusLabel(h.from));
       return trOpen
         + '<td>' + escapeHtml(h.date || '') + '</td>'
         + '<td class="num">' + daysTxt + '</td>'
@@ -1650,13 +2008,14 @@ function renderChangelogPage() {
     .filter(item => item.row.type !== 'approve' && item.row.type !== 'staff')
     .sort((a, b) => String(b.row.at || '').localeCompare(String(a.row.at || '')));
   if (rows.length === 0) {
-    body.innerHTML = '<div class="shiryo-empty">まだ収支の変更はありません</div>';
+    body.innerHTML = '<div class="shiryo-empty">まだ収支・ヒアリングの変更はありません</div>';
     return;
   }
   body.innerHTML = '<table class="data-table changelog-table"><thead><tr><th>日時</th><th>変更者</th><th>変更項目</th><th>変更前</th><th>変更後</th><th>コメント</th></tr></thead><tbody>'
     + rows.map(item => {
       const r = item.row;
-      return '<tr><td>' + escapeHtml(r.at || '') + '</td><td>' + escapeHtml(r.by || '') + '</td><td>' + escapeHtml(r.label || r.cell || '') + '</td><td class="num">' + formatLogValue(r.before) + '</td><td class="num">' + formatLogValue(r.after) + '</td><td class="changelog-comment"><input class="form-input changelog-comment-input" type="text" data-log-index="' + item.index + '" value="' + escapeHtml(r.comment || '') + '" placeholder="変更の意図・経緯を記入" oninput="updateChangelogComment(this.dataset.logIndex,this.value)"></td></tr>';
+      const vcls = v => (typeof v === 'number' && isFinite(v)) ? ' class="num"' : ' style="white-space:normal"';
+      return '<tr><td>' + escapeHtml(r.at || '') + '</td><td>' + escapeHtml(r.by || '') + '</td><td style="white-space:normal">' + escapeHtml(r.label || r.cell || '') + '</td><td' + vcls(r.before) + '>' + formatLogValue(r.before) + '</td><td' + vcls(r.after) + '>' + formatLogValue(r.after) + '</td><td class="changelog-comment"><input class="form-input changelog-comment-input" type="text" data-log-index="' + item.index + '" value="' + escapeHtml(r.comment || '') + '" placeholder="変更の意図・経緯を記入" oninput="updateChangelogComment(this.dataset.logIndex,this.value)"></td></tr>';
     }).join('') + '</tbody></table>';
 }
 function updateChangelogComment(index, value) {
@@ -1764,8 +2123,10 @@ function setInner(id, html) {
 const STATUS_STEP_INDEX = { '収支計算 済':1, '市場調査 済':2, 'ヒアリング 済':3, '建築プラン 済':4 };
 function statusLabel(status) {
   const i = STATUS_STEP_INDEX[status];
-  return i === undefined ? status : STEP_LABELS[i] + ' 済';
+  if (i !== undefined) return STEP_LABELS[i];
+  return STATUS_DISPLAY[status] || status;
 }
+const STATUS_DISPLAY = { '買付提出 済': '買付提出' };
 const NEXT_STEP_INDEX = { '未着手':1, '収支計算 済':2, '市場調査 済':3, 'ヒアリング 済':4, '建築プラン 済':5 };
 function nextActionLabel(status) {
   const i = NEXT_STEP_INDEX[status];
@@ -1775,10 +2136,12 @@ function expandSteps(text) {
   return String(text).replace(/\{S([0-5])\}/g, (whole, i) => STEP_LABELS[Number(i)] || whole);
 }
 function statusChip(status) {
-  return '<span class="chip chip-status">' + statusLabel(status) + '</span>';
+  return '<span class="chip chip-status">' + escapeHtml(statusLabel(status)) + '</span>';
 }
 function toLabel(h) {
-  return (h.to === '見送り' && h.reason) ? '見送り（理由：' + h.reason + '）' : statusLabel(h.to);
+  return (h.to === '見送り' && h.reason)
+    ? '見送り（理由：' + escapeHtml(h.reason) + '）'
+    : escapeHtml(statusLabel(h.to));
 }
 function renderStatusFilter() {
   const sel = document.getElementById('filter-status');
@@ -1847,6 +2210,7 @@ function doShowView(name, el) {
 
 function openListAll(el) {
   listTab = 'active';
+  listTabPinned = false;
   const fs = document.getElementById('filter-status');
   if (fs) fs.value = '';
   showView('list', el);
@@ -1859,17 +2223,89 @@ function onStatusFilterChange() {
 
 let currentDealId = null;
 
+const CURRENT_STAFF = '田中';
 const PAST_STATUSES = ['見送り', '契約'];
+function dealOutcome(deal) {
+  if (!deal || !PAST_STATUSES.includes(deal.status)) return null;
+  if (deal.status === '契約') return {label: '契約', tone: 'keiyaku'};
+  if (deal.kaitsukeResult === '他決') return {label: '他決', tone: 'takets'};
+  return {label: '見送り', tone: 'miokuri'};
+}
+const ARCHPLAN_ALERT_STRATEGIES = ['戸建て建売', 'アパート'];
+function hasAnyPlanFiles(deal) {
+  if (!deal || !deal.planFiles) return false;
+  return [1, 2].some(no => {
+    const arr = deal.planFiles[no];
+    return Array.isArray(arr) && arr.some(f => f && f.name);
+  });
+}
+function dealReachedKaitsuke(deal) {
+  if (!deal) return false;
+  if (deal.kaitsukeResult || deal.kaitsukeDate || (deal.reg && deal.reg.kaitsuke)) return true;
+  const ref = (deal.status === '見送り') ? statusBeforeMiokuri(deal) : deal.status;
+  const i = STATUS_ORDER.indexOf(ref);
+  return i !== -1 && i >= STATUS_ORDER.indexOf('買付検討中');
+}
+function archPlanAlert(deal) {
+  if (!deal) return null;
+  if (!dealStrategies(deal).some(s => ARCHPLAN_ALERT_STRATEGIES.includes(s))) return null;
+  if (hasAnyPlanFiles(deal)) return null;
+  if (!dealReachedKaitsuke(deal)) return null;
+  const outcome = dealOutcome(deal);
+  if (outcome) {
+    return '{S4}の工程は完了していますが、資料が登録されないまま「' + outcome.label + '」で終了しています。'
+      + '後から振り返れるよう、{S4}タブに資料を登録してください。';
+  }
+  return '{S4}の資料が登録されないまま{S5}に進んでいます。'
+    + '{S4}タブに資料を登録してください。';
+}
+function outcomeDetailParts(deal) {
+  const parts = [];
+  const byKaitsuke = !!deal.kaitsukeResult;
+  if (byKaitsuke) {
+    if (deal.kaitsukeDate) parts.push('買付提出日 ' + deal.kaitsukeDate);
+    if (deal.kaitsukePrice != null && deal.kaitsukePrice > 0) parts.push('買付価格 ' + manOkuStr(deal.kaitsukePrice));
+  }
+  const raw = byKaitsuke ? (deal.kaitsukeComment || deal.note) : deal.note;
+  const reason = String(raw || '').replace(/^他決：/, '').trim();
+  if (reason) parts.push('理由 ' + reason);
+  return parts;
+}
+function outcomeTooltip(deal, outcome) {
+  const parts = outcomeDetailParts(deal);
+  return outcome.label + (parts.length ? '（' + parts.join('／') + '）' : '');
+}
 let listTab = 'active';
+let listTabPinned = false;
 function setListTab(tab) {
   listTab = tab;
+  if (currentSearchKeyword()) listTabPinned = true;
   renderList();
 }
+function unpinListTab() {
+  listTabPinned = false;
+  renderList();
+}
+function currentSearchKeyword() {
+  return ((document.getElementById('search-input') || {value:''}).value || '').trim();
+}
+function listTabApplies() {
+  return !currentSearchKeyword() || listTabPinned;
+}
 function syncListTabBtns() {
+  const applies = listTabApplies();
   const a = document.getElementById('list-tab-active');
   const p = document.getElementById('list-tab-past');
-  if (a) a.classList.toggle('active', listTab === 'active');
-  if (p) p.classList.toggle('active', listTab === 'past');
+  if (a) a.classList.toggle('active', applies && listTab === 'active');
+  if (p) p.classList.toggle('active', applies && listTab === 'past');
+  const note = document.getElementById('list-search-scope');
+  if (!note) return;
+  if (!currentSearchKeyword()) { note.style.display = 'none'; note.innerHTML = ''; return; }
+  note.style.display = '';
+  note.innerHTML = applies
+    ? '<span>「' + (listTab === 'past' ? '過去' : '進行中') + '」に絞り込んで検索しています。</span>'
+      + '<button type="button" class="list-scope-reset" onclick="unpinListTab()">両方から探す</button>'
+    : '<span>進行中・過去の両方から探しています。上のタブを押すと、その範囲に絞り込めます。</span>';
 }
 
 function renderStagnantBanner() {
@@ -1903,8 +2339,11 @@ function renderList() {
     return da - db;
   });
 
+  if (!kw) listTabPinned = false;
   syncListTabBtns();
-  deals = deals.filter(d => listTab === 'past' ? PAST_STATUSES.includes(d.status) : !PAST_STATUSES.includes(d.status));
+  if (listTabApplies()) {
+    deals = deals.filter(d => listTab === 'past' ? PAST_STATUSES.includes(d.status) : !PAST_STATUSES.includes(d.status));
+  }
   if (kw)      { const kwN = chomeNorm(kw); deals = deals.filter(d => chomeNorm(d.name).includes(kwN) || chomeNorm(d.area).includes(kwN)); }
   if (fStatus) deals = deals.filter(d => d.status === fStatus);
   if (fStaff)  deals = deals.filter(d => d.staff === fStaff);
@@ -1925,11 +2364,11 @@ function renderList() {
       const sh = d.shiryo || [];
       return '<tr class="' + pastCls + '" onclick="openDetail(' + d.id + ')">'
         + '<td>' + listDealCellHtml(d, holdInfo) + '</td>'
-        + '<td>' + d.staff + '</td>'
-        + '<td>' + d.acquiredDate + '</td>'
-        + '<td>' + d.type + '</td>'
+        + '<td>' + escapeHtml(d.staff) + '</td>'
+        + '<td>' + escapeHtml(d.acquiredDate) + '</td>'
+        + '<td>' + escapeHtml(d.type) + '</td>'
         + '<td>' + statusChip(d.status) + '</td>'
-        + '<td style="font-size:12px;color:var(--green);font-weight:600;white-space:nowrap">' + nextActionLabel(d.status) + '</td>'
+        + '<td style="font-size:12px;color:var(--green);font-weight:600;white-space:nowrap">' + escapeHtml(nextActionLabel(d.status)) + '</td>'
         + '<td style="text-align:right">' + listProfitStr(d) + '</td>'
         + '<td style="text-align:right">' + priceStr + '</td>'
         + '<td style="color:var(--sub);font-size:12px">' + escapeHtml(d.note || '') + '</td>'
@@ -1961,6 +2400,46 @@ function onSearchKeydown(e) {
 }
 function chomeNorm(s) { return formatChomeKanji(String(s || '')).toLowerCase(); }
 
+function dealLandAreaM2(deal) {
+  if (!deal) return 0;
+  if (deal.reg && deal.reg.pl) {
+    const c = shushiCalculatedCellsForDeal(deal, strategyToSheet(dealStrategies(deal)[0]));
+    const v = n(c, 'B6');
+    if (v > 0) return v;
+  }
+  return deal.menseki > 0 ? deal.menseki : 0;
+}
+function dealBuildingAreaM2(deal) {
+  if (!deal || !deal.reg || !deal.reg.pl) return 0;
+  const c = shushiCalculatedCellsForDeal(deal, strategyToSheet(dealStrategies(deal)[0]));
+  const v = n(c, 'B7');
+  return v > 0 ? v : 0;
+}
+function tsuboStr(m2) {
+  return (m2 * 0.3025).toLocaleString('ja-JP', {minimumFractionDigits: 1, maximumFractionDigits: 1}) + '坪';
+}
+function manOkuStr(yen) {
+  if (!isFinite(yen)) return '—';
+  if (yen === 0) return '0円';
+  const minus = yen < 0 ? '-' : '';
+  const abs = Math.abs(yen);
+  if (abs < 10000) return minus + Math.round(abs).toLocaleString('ja-JP') + '円';
+  const man = Math.round(abs / 10000);
+  const oku = Math.floor(man / 10000);
+  const rest = man % 10000;
+  if (oku > 0) return minus + oku + '億' + (rest > 0 ? rest.toLocaleString('ja-JP') + '万円' : '円');
+  return minus + man.toLocaleString('ja-JP') + '万円';
+}
+function dealShiireStr(deal) {
+  if (!deal) return '—';
+  if (deal.price != null) return manOkuStr(deal.price);
+  if (deal.reg && deal.reg.pl) {
+    const c = shushiCalculatedCellsForDeal(deal, strategyToSheet(dealStrategies(deal)[0]));
+    const land = n(c, 'C16');
+    if (land > 0) return manOkuStr(land);
+  }
+  return '—';
+}
 function listProfitStr(deal) {
   if (!deal || !deal.reg || !deal.reg.pl) return '—';
   const sheet = strategyToSheet(dealStrategies(deal)[0]);
@@ -1971,8 +2450,10 @@ function listProfitStr(deal) {
 }
 
 function listDealCellHtml(deal, holdInfo) {
-  const thumb = deal.photo
-    ? '<div class="list-thumb"><img src="' + deal.photo + '" alt="' + deal.name + '"></div>'
+  const src = dealThumbSrc(deal);
+  const thumb = src
+    ? '<div class="list-thumb"><img src="' + escapeHtml(src) + '" alt="' + escapeHtml(deal.name) + '">'
+        + (dealThumbIsSv(deal) ? '<span class="sv-mark">SV</span>' : '') + '</div>'
     : '<div class="list-thumb" aria-label="物件写真なし"><span class="list-thumb-icon">⌂</span></div>';
   return '<div class="list-deal-cell">'
     + thumb
@@ -2000,10 +2481,264 @@ function getPlanFiles(deal, no) {
   if (!deal.planFiles[no]) deal.planFiles[no] = [];
   return deal.planFiles[no];
 }
-function getHearingFiles(deal, no) {
-  if (!deal.hearingFiles) deal.hearingFiles = {};
-  if (!deal.hearingFiles[no]) deal.hearingFiles[no] = [];
-  return deal.hearingFiles[no];
+function getHearingFiles(deal) {
+  if (Array.isArray(deal.hearingFiles)) return deal.hearingFiles;
+  const merged = [];
+  if (deal.hearingFiles && typeof deal.hearingFiles === 'object') {
+    Object.keys(deal.hearingFiles).sort().forEach(k => {
+      const arr = deal.hearingFiles[k];
+      if (Array.isArray(arr)) arr.forEach(f => { if (f && f.name) merged.push(f); });
+    });
+  }
+  deal.hearingFiles = merged;
+  return deal.hearingFiles;
+}
+function getCadPlan(deal) {
+  return (deal && deal.cadPlan) ? deal.cadPlan : null;
+}
+function fileSizeStr(bytes) {
+  if (bytes == null || !(bytes > 0)) return '';
+  if (bytes >= 1024 * 1024) return (bytes / 1024 / 1024).toFixed(1) + 'MB';
+  return Math.max(1, Math.round(bytes / 1024)) + 'KB';
+}
+function fileExtLabel(name) {
+  const m = String(name || '').match(/\.([a-z0-9]+)$/i);
+  return m ? m[1].toUpperCase() : '';
+}
+function fileIconHtml(name) {
+  return '<span class="file-icon" aria-hidden="true">' + escapeHtml(fileExtLabel(name)) + '</span>';
+}
+function fileRowHtml(file, opsHtml) {
+  if (!file || !file.name) return '';
+  const ext = fileExtLabel(file.name);
+  const size = fileSizeStr(file.size);
+  const meta = [ext, size].filter(Boolean).join('・');
+  return '<div class="hearing-file-row">' + fileIconHtml(file.name)
+    + '<div class="hearing-file-text"><div class="hearing-file-name" title="' + escapeHtml(file.name) + '">' + escapeHtml(file.name) + '</div>'
+    + (meta ? '<div class="hearing-file-meta">' + escapeHtml(meta) + '</div>' : '') + '</div>'
+    + (opsHtml ? '<div class="hearing-file-ops">' + opsHtml + '</div>' : '') + '</div>';
+}
+
+const SV_DIRS = [
+  { deg: 0,   name: '北向き' }, { deg: 45,  name: '北東向き' },
+  { deg: 90,  name: '東向き' }, { deg: 135, name: '南東向き' },
+  { deg: 180, name: '南向き' }, { deg: 225, name: '南西向き' },
+  { deg: 270, name: '西向き' }, { deg: 315, name: '北西向き' },
+];
+const SV_DEMO_VIEWS = ['photos/house1.jpg','photos/land1.jpg','photos/house2.jpg','photos/land2.jpg',
+                       'photos/apt1.jpg','photos/land3.jpg','photos/apt2.jpg','photos/land4.jpg'];
+let svState = null;
+
+function svDirName(heading) {
+  const d = ((heading % 360) + 360) % 360;
+  const hit = SV_DIRS.find(v => v.deg === d);
+  return hit ? hit.name : d + '°';
+}
+function svDemoImage(heading) {
+  const d = ((heading % 360) + 360) % 360;
+  return SV_DEMO_VIEWS[Math.round(d / 45) % 8];
+}
+function openSvPicker() {
+  const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
+  if (!deal) { showToast('案件を選択してください'); return; }
+  const saved = deal.svCover;
+  const num = (v, def, lo, hi) => {
+    const n = Number(v);
+    return (isFinite(n) && n >= lo && n <= hi) ? n : def;
+  };
+  if (mapPinDraft && mapPinDealId === deal.id) saveMapPin();
+  const base = mapPinPos(deal);
+  svState = {
+    dealId: deal.id,
+    x: num(saved && saved.x, base.x, 0, 100),
+    y: num(saved && saved.y, base.y, 0, 100),
+    heading: num(saved && saved.heading, 0, 0, 359),
+  };
+  setText('sv-title', 'ストリートビューから表紙を作成');
+  setText('sv-addr', (deal.address || deal.name || '') + '　の周辺');
+  drawSvMap();
+  renderSvView();
+  const m = document.getElementById('sv-modal');
+  if (m) m.style.display = 'flex';
+}
+function closeSvPicker() {
+  if (svDragStop) svDragStop();
+  const m = document.getElementById('sv-modal');
+  if (m) m.style.display = 'none';
+  svState = null;
+}
+function resetSvPicker() {
+  if (!svState) return;
+  const deal = DEALS.find(d => d.id === svState.dealId);
+  const base = mapPinPos(deal);
+  svState.x = base.x; svState.y = base.y; svState.heading = 0;
+  drawSvMap(); renderSvView();
+}
+function turnSv(delta) {
+  if (!svState) return;
+  svState.heading = (((svState.heading + delta) % 360) + 360) % 360;
+  renderSvView();
+}
+function drawSvMap() {
+  const box = document.getElementById('sv-map');
+  if (!box || !svState) return;
+  box.innerHTML =
+    '<svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%">'
+    + '<rect x="0" y="0" width="100" height="100" fill="#eef2f5"/>'
+    + '<rect x="0" y="46" width="100" height="9" fill="#fff"/>'
+    + '<rect x="42" y="0" width="8" height="100" fill="#fff"/>'
+    + '<rect x="8" y="12" width="28" height="28" fill="#e3e8ec"/>'
+    + '<rect x="56" y="12" width="34" height="28" fill="#e3e8ec"/>'
+    + '<rect x="8" y="62" width="28" height="30" fill="#e3e8ec"/>'
+    + '<rect x="56" y="62" width="34" height="30" fill="#dff0e4" stroke="#1fab53" stroke-width="0.7" stroke-dasharray="2 1.4"/>'
+    + '<text x="73" y="79" font-size="4.2" fill="#0f7a37" text-anchor="middle" font-weight="700">この物件</text>'
+    + '</svg>'
+    + '<div id="sv-pin" style="position:absolute;left:' + svState.x + '%;top:' + svState.y + '%;transform:translate(-50%,-100%);'
+    + 'width:22px;height:30px;cursor:grab;filter:drop-shadow(0 1px 2px rgba(0,0,0,.35))">'
+    + '<svg viewBox="0 0 22 30" style="width:100%;height:100%">'
+    + '<path d="M11 0C5 0 0 5 0 11c0 8 11 19 11 19s11-11 11-19C22 5 17 0 11 0z" fill="#c62828"/>'
+    + '<circle cx="11" cy="11" r="4.2" fill="#fff"/></svg></div>';
+  const pin = document.getElementById('sv-pin');
+  if (pin) pin.addEventListener('pointerdown', startSvDrag);
+}
+let svDragStop = null;
+function startSvDrag(e) {
+  e.preventDefault();
+  const box = document.getElementById('sv-map');
+  if (!box || !svState) return;
+  box.classList.add('dragging');
+  const move = (ev) => {
+    if (!svState) { up(); return; }
+    const r = box.getBoundingClientRect();
+    svState.x = Math.min(96, Math.max(4, ((ev.clientX - r.left) / r.width) * 100));
+    svState.y = Math.min(96, Math.max(8, ((ev.clientY - r.top) / r.height) * 100));
+    const pin = document.getElementById('sv-pin');
+    if (pin) { pin.style.left = svState.x + '%'; pin.style.top = svState.y + '%'; }
+    renderSvView();
+  };
+  const up = () => {
+    box.classList.remove('dragging');
+    window.removeEventListener('pointermove', move);
+    window.removeEventListener('pointerup', up);
+    window.removeEventListener('pointercancel', up);
+    svDragStop = null;
+  };
+  svDragStop = up;
+  window.addEventListener('pointermove', move);
+  window.addEventListener('pointerup', up);
+  window.addEventListener('pointercancel', up);
+}
+function renderSvView() {
+  if (!svState) return;
+  const img = document.getElementById('sv-img');
+  const seed = Math.round(svState.x / 25) + Math.round(svState.y / 25);
+  const src = svDemoImage(svState.heading + seed * 45);
+  if (img && img.getAttribute('src') !== src) img.setAttribute('src', src);
+  setText('sv-compass', svDirName(svState.heading));
+}
+function commitSvCover() {
+  const deal = (svState && svState.dealId !== null) ? DEALS.find(d => d.id === svState.dealId) : null;
+  if (!deal) return;
+  deal.svCover = {
+    x: svState.x, y: svState.y, heading: svState.heading,
+    panoId: 'demo-' + deal.id + '-' + Math.round(svState.x) + '-' + Math.round(svState.y),
+    preview: svDemoImage(svState.heading + (Math.round(svState.x / 25) + Math.round(svState.y / 25)) * 45),
+    at: TODAY,
+  };
+  closeSvPicker();
+  refreshShiryoViews();
+  renderShiryoTab();
+  showToast('ストリートビューの' + svDirName(deal.svCover.heading) + 'を表紙にしました');
+}
+function removeSvCover() {
+  const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
+  if (!deal || !deal.svCover) return;
+  deal.svCover = null;
+  refreshShiryoViews();
+  renderShiryoTab();
+  showToast('ストリートビューの表紙を外しました');
+}
+function dealThumbSrc(deal) {
+  if (!deal) return '';
+  if (deal.photo) return deal.photo;
+  return (deal.svCover && deal.svCover.preview) ? deal.svCover.preview : '';
+}
+function dealThumbIsSv(deal) {
+  return !!(deal && !deal.photo && deal.svCover);
+}
+
+function pickedFile(f) {
+  return { name: f.name, size: f.size, blob: f };
+}
+function isSafeViewUrl(url) {
+  const u = String(url || '').replace(/[\u0000-\u0020\u007f-\u009f\u200b-\u200f\ufeff]/g, '');
+  if (!u) return false;
+  if (u.slice(0, 5).toLowerCase() === 'blob:') return true;
+  if (/^[a-z][a-z0-9+.-]*:/i.test(u)) return false;
+  if (u.slice(0, 2) === '//') return false;
+  if (u.charAt(0) === '\\') return false;
+  return true;
+}
+function fileViewUrl(file) {
+  if (!file) return '';
+  if (file.blobUrl) return file.blobUrl;
+  if (file.blob && window.URL && URL.createObjectURL) {
+    const mime = shiryoIsPdf(file.name) ? 'application/pdf'
+      : (/\.png$/i.test(file.name) ? 'image/png'
+      : (/\.gif$/i.test(file.name) ? 'image/gif'
+      : (/\.webp$/i.test(file.name) ? 'image/webp'
+      : (shiryoIsImg(file.name) ? 'image/jpeg' : ''))));
+    if (!mime) return '';
+    file.blobUrl = URL.createObjectURL(new Blob([file.blob], { type: mime }));
+    return file.blobUrl;
+  }
+  return isSafeViewUrl(file.url) ? file.url : '';
+}
+function releaseFileUrl(file) {
+  if (file && file.blobUrl && window.URL && URL.revokeObjectURL) {
+    URL.revokeObjectURL(file.blobUrl);
+    file.blobUrl = '';
+  }
+}
+function openFilePreview(file) {
+  if (!file || !file.name) return;
+  const nameEl = document.getElementById('file-preview-name');
+  const metaEl = document.getElementById('file-preview-meta');
+  const bodyEl = document.getElementById('file-preview-body');
+  const modal  = document.getElementById('file-preview-modal');
+  if (!bodyEl || !modal) return;
+  if (nameEl) { nameEl.textContent = file.name; nameEl.title = file.name; }
+  const meta = [fileExtLabel(file.name), fileSizeStr(file.size)].filter(Boolean).join('・');
+  if (metaEl) metaEl.textContent = meta;
+  const url = fileViewUrl(file);
+  if (url && shiryoIsImg(file.name)) {
+    bodyEl.innerHTML = '<img src="' + escapeHtml(url) + '" alt="' + escapeHtml(file.name) + '">';
+  } else if (url && shiryoIsPdf(file.name)) {
+    bodyEl.innerHTML = '<embed src="' + escapeHtml(url) + '" type="application/pdf" title="' + escapeHtml(file.name) + '">';
+  } else if (!shiryoIsImg(file.name) && !shiryoIsPdf(file.name)) {
+    bodyEl.innerHTML = '<div class="preview-blank">' + fileIconHtml(file.name)
+      + '<div class="preview-blank-name">' + escapeHtml(file.name) + '</div>'
+      + '<div class="preview-blank-note">この形式は画面では開けません。<br>ダウンロードしてご確認ください。</div></div>';
+  } else {
+    bodyEl.innerHTML = '<div class="preview-blank">' + fileIconHtml(file.name)
+      + '<div class="preview-blank-name">' + escapeHtml(file.name) + '</div>'
+      + '<div class="preview-blank-note">このデモの見本ファイルは中身が入っていません。<br>本番では、ここに資料の中身が表示されます。<br>「ファイルを選択」でご自身の資料を登録すると、この画面で開けます。</div></div>';
+  }
+  modal.style.display = 'flex';
+}
+function closeFilePreview() {
+  const modal = document.getElementById('file-preview-modal');
+  const bodyEl = document.getElementById('file-preview-body');
+  if (modal) modal.style.display = 'none';
+  if (bodyEl) bodyEl.innerHTML = '';
+}
+function viewBtnHtml(handler) {
+  return '<button class="shiryo-op-btn" onclick="' + handler + '">表示</button>';
+}
+function fileEmptyHtml(text, note) {
+  return '<div class="hearing-file-row">' + fileIconHtml('')
+    + '<div class="hearing-file-text"><div class="hearing-file-name" style="font-weight:600;color:var(--sub)">' + escapeHtml(text) + '</div>'
+    + (note ? '<div class="hearing-file-meta">' + escapeHtml(note) + '</div>' : '') + '</div></div>';
 }
 function getKaitsukeFiles(deal) {
   if (!deal.kaitsukeFiles) deal.kaitsukeFiles = [];
@@ -2022,7 +2757,8 @@ function renderKaitsukeFiles() {
   const files = deal ? getKaitsukeFiles(deal) : [];
   list.innerHTML = files.length === 0
     ? '<div class="shiryo-empty">まだ資料がありません。買付書などを添付してください。</div>'
-    : files.map((f, i) => '<div class="shiryo-item"><span style="flex:1">' + escapeHtml(f.name) + '</span>'
+    : files.map((f, i) => !f || !f.name ? '' : '<div class="shiryo-item"><span style="flex:1">' + escapeHtml(f.name) + '</span>'
+        + viewBtnHtml('previewKaitsukeFile(' + i + ')')
         + '<button class="shiryo-del" title="この資料を削除" onclick="removeKaitsukeFile(' + i + ')">✕ 削除</button></div>').join('');
 }
 function removeKaitsukeFile(idx) {
@@ -2031,6 +2767,7 @@ function removeKaitsukeFile(idx) {
   const files = getKaitsukeFiles(deal);
   if (!files[idx]) return;
   const removed = files.splice(idx, 1);
+  releaseFileUrl(removed[0]);
   showToast('資料「' + removed[0].name + '」を削除しました');
   renderKaitsukeFiles();
 }
@@ -2040,11 +2777,30 @@ function openPlanFilePicker(no) {
   const inp = document.getElementById('shiryo-file-input');
   if (inp) { inp.value = ''; inp.click(); }
 }
-function openHearingFilePicker(no) {
+function openHearingFilePicker() {
   if (currentDealId === null) { showToast('案件を選択してください'); return; }
-  shiryoTargetId = '__hearing' + no + '__';
+  shiryoTargetId = '__hearing__';
   const inp = document.getElementById('shiryo-file-input');
   if (inp) { inp.value = ''; inp.click(); }
+}
+function openCadPlanPicker() {
+  if (currentDealId === null) { showToast('案件を選択してください'); return; }
+  shiryoTargetId = '__cadplan__';
+  const inp = document.getElementById('cadplan-file-input');
+  if (inp) { inp.value = ''; inp.click(); }
+}
+function viewCadPlan() {
+  const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
+  openFilePreview(deal ? getCadPlan(deal) : null);
+}
+function removeCadPlan() {
+  const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
+  const cad = deal ? getCadPlan(deal) : null;
+  if (!cad) return;
+  releaseFileUrl(cad);
+  deal.cadPlan = null;
+  showToast('参考CADプラン「' + cad.name + '」を削除しました');
+  renderHearingFiles();
 }
 function renderPlanFiles() {
   const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
@@ -2054,21 +2810,31 @@ function renderPlanFiles() {
     const files = deal ? getPlanFiles(deal, no) : [];
     list.innerHTML = files.length === 0
       ? '<div class="shiryo-empty">まだ資料がありません。プラン図面・見積書などを添付してください。</div>'
-      : files.map((f, i) => '<div class="shiryo-item"><span style="flex:1">' + escapeHtml(f.name) + '</span>'
+      : files.map((f, i) => !f || !f.name ? '' : '<div class="shiryo-item"><span style="flex:1">' + escapeHtml(f.name) + '</span>'
+          + viewBtnHtml('previewPlanFile(' + no + ',' + i + ')')
           + '<button class="shiryo-del" title="この資料を削除" onclick="removePlanFile(' + no + ',' + i + ')">✕ 削除</button></div>').join('');
   });
 }
 function renderHearingFiles() {
   const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
-  [1, 2, 3].forEach(no => {
-    const list = document.getElementById('hearing-files-' + no);
-    if (!list) return;
-    const files = deal ? getHearingFiles(deal, no) : [];
+  const cadEl = document.getElementById('cad-plan-body');
+  if (cadEl) {
+    const cad = deal ? getCadPlan(deal) : null;
+    cadEl.innerHTML = cad
+      ? fileRowHtml(cad,
+          '<button class="shiryo-op-btn" onclick="viewCadPlan()">表示</button>'
+          + '<button class="shiryo-op-btn shiryo-op-del" onclick="removeCadPlan()">削除</button>')
+      : fileEmptyHtml('CADプランはまだ登録されていません', '1件のみ保存できます（差し替えると前のファイルは置き換わります）');
+  }
+  const list = document.getElementById('hearing-files-common');
+  if (list) {
+    const files = deal ? getHearingFiles(deal) : [];
     list.innerHTML = files.length === 0
-      ? '<div class="shiryo-empty">まだ資料がありません。査定書・提案資料などを添付してください。</div>'
-      : files.map((f, i) => '<div class="shiryo-item"><span style="flex:1">' + escapeHtml(f.name) + '</span>'
-          + '<button class="shiryo-del" title="この資料を削除" onclick="removeHearingFile(' + no + ',' + i + ')">✕ 削除</button></div>').join('');
-  });
+      ? fileEmptyHtml('資料はまだ登録されていません', '複数ファイル可')
+      : files.map((f, i) => !f || !f.name ? '' : fileRowHtml(f,
+          viewBtnHtml('previewHearingFile(' + i + ')')
+          + '<button class="shiryo-op-btn shiryo-op-del" onclick="removeHearingFile(' + i + ')">削除</button>')).join('');
+  }
 }
 function removePlanFile(no, idx) {
   const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
@@ -2076,15 +2842,17 @@ function removePlanFile(no, idx) {
   const files = getPlanFiles(deal, no);
   if (!files[idx]) return;
   const removed = files.splice(idx, 1);
+  releaseFileUrl(removed[0]);
   showToast('資料「' + removed[0].name + '」を削除しました');
   renderPlanFiles();
 }
-function removeHearingFile(no, idx) {
+function removeHearingFile(idx) {
   const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
   if (!deal) return;
-  const files = getHearingFiles(deal, no);
+  const files = getHearingFiles(deal);
   if (!files[idx]) return;
   const removed = files.splice(idx, 1);
+  releaseFileUrl(removed[0]);
   showToast('資料「' + removed[0].name + '」を削除しました');
   renderHearingFiles();
 }
@@ -2096,26 +2864,37 @@ function openShiryoPickerNewreg() {
 function onShiryoSelected(inp) {
   if (!inp.files || inp.files.length === 0) return;
   const planMatch = typeof shiryoTargetId === 'string' ? shiryoTargetId.match(/^__plan(\d+)__$/) : null;
-  const hearingMatch = typeof shiryoTargetId === 'string' ? shiryoTargetId.match(/^__hearing(\d+)__$/) : null;
   if (planMatch) {
     const no = Number(planMatch[1]);
     const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
     if (deal) {
       const files = getPlanFiles(deal, no);
-      Array.from(inp.files).forEach(f => files.push({ name: f.name }));
+      Array.from(inp.files).forEach(f => files.push(pickedFile(f)));
       showToast('建築会社' + (no === 1 ? '①' : '②') + 'の資料を' + inp.files.length + '件追加しました');
       renderPlanFiles();
     }
     inp.value = '';
     return;
   }
-  if (hearingMatch) {
-    const no = Number(hearingMatch[1]);
+  if (shiryoTargetId === '__hearing__') {
     const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
     if (deal) {
-      const files = getHearingFiles(deal, no);
-      Array.from(inp.files).forEach(f => files.push({ name: f.name }));
-      showToast('販売会社' + no + 'の資料を' + inp.files.length + '件追加しました');
+      const files = getHearingFiles(deal);
+      Array.from(inp.files).forEach(f => files.push(pickedFile(f)));
+      showToast('ヒアリング資料を' + inp.files.length + '件追加しました');
+      renderHearingFiles();
+    }
+    inp.value = '';
+    return;
+  }
+  if (shiryoTargetId === '__cadplan__') {
+    const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
+    if (deal) {
+      const f = inp.files[0];
+      const had = !!deal.cadPlan;
+      releaseFileUrl(deal.cadPlan);
+      deal.cadPlan = pickedFile(f);
+      showToast(had ? '参考CADプランを「' + f.name + '」に差し替えました' : '参考CADプラン「' + f.name + '」を登録しました');
       renderHearingFiles();
     }
     inp.value = '';
@@ -2125,7 +2904,7 @@ function onShiryoSelected(inp) {
     const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
     if (deal) {
       const files = getKaitsukeFiles(deal);
-      Array.from(inp.files).forEach(f => files.push({ name: f.name }));
+      Array.from(inp.files).forEach(f => files.push(pickedFile(f)));
       showToast('買付資料を' + inp.files.length + '件追加しました');
       renderKaitsukeFiles();
     }
@@ -2133,7 +2912,7 @@ function onShiryoSelected(inp) {
     return;
   }
   if (shiryoTargetId === '__newreg__') {
-    Array.from(inp.files).forEach(f => newregShiryo.push({name: f.name}));
+    Array.from(inp.files).forEach(f => newregShiryo.push(pickedFile(f)));
     showToast('資料を' + inp.files.length + '件添付しました（登録時に案件へ保存されます）');
     inp.value = '';
     const err = document.getElementById('newreg-shiryo-error');
@@ -2144,7 +2923,7 @@ function onShiryoSelected(inp) {
   const deal = DEALS.find(d => d.id === shiryoTargetId);
   if (!deal) return;
   const arr = getShiryo(deal);
-  Array.from(inp.files).forEach(f => arr.push({name: f.name}));
+  Array.from(inp.files).forEach(f => arr.push(pickedFile(f)));
   showToast('資料を' + inp.files.length + '件追加しました（' + deal.name + '）');
   inp.value = '';
   refreshShiryoViews();
@@ -2153,6 +2932,7 @@ function removeShiryo(dealId, idx) {
   const deal = DEALS.find(d => d.id === dealId);
   if (!deal || !deal.shiryo || !deal.shiryo[idx]) return;
   const removed = deal.shiryo.splice(idx, 1);
+  releaseFileUrl(removed[0]);
   showToast('資料「' + removed[0].name + '」を削除しました');
   refreshShiryoViews();
 }
@@ -2226,6 +3006,7 @@ function renderShiryoListModal() {
   body.innerHTML = sh.map((f, i) => {
     const name = escapeHtml(f.name);
     return '<div class="shiryo-modal-row"><span class="shiryo-modal-name" title="' + name + '">' + name + '</span>'
+    + viewBtnHtml('previewShiryo(' + deal.id + ',' + i + ')')
     + '<button class="shiryo-dl" title="この資料をダウンロード" onclick="downloadShiryo(' + deal.id + ',' + i + ')">↓ ダウンロード</button>'
     + '<button class="shiryo-del" title="この資料を削除" onclick="removeShiryo(' + deal.id + ',' + i + ')">✕ 削除</button></div>'
   }).join('');
@@ -2236,13 +3017,15 @@ function renderShiryoNewreg() {
   list.innerHTML = newregShiryo.length === 0
     ? '<div class="shiryo-empty">まだ資料がありません。物件概要書・現地写真・図面などを添付してください。</div>'
     : newregShiryo.map((f, i) =>
-        '<div class="shiryo-item"><span style="flex:1">' + f.name + '</span>'
+        '<div class="shiryo-item"><span style="flex:1">' + escapeHtml(f.name) + '</span>'
+        + viewBtnHtml('previewShiryoNewreg(' + i + ')')
         + '<button class="shiryo-del" title="この資料を削除" onclick="removeShiryoNewreg(' + i + ')">✕ 削除</button></div>'
       ).join('');
 }
 function removeShiryoNewreg(idx) {
   if (!newregShiryo[idx]) return;
   const removed = newregShiryo.splice(idx, 1);
+  releaseFileUrl(removed[0]);
   showToast('資料「' + removed[0].name + '」を削除しました');
   renderShiryoNewreg();
 }
@@ -2254,7 +3037,136 @@ function renderShiryoPL() {
   const sh = getShiryo(deal);
   list.innerHTML = sh.length === 0
     ? '<div class="shiryo-empty">まだ資料がありません。物件概要書・現地写真・図面などを添付できます。</div>'
-    : sh.map(f => '<div class="shiryo-item"><span style="flex:1">' + f.name + '</span></div>').join('');
+    : sh.map(f => '<div class="shiryo-item"><span style="flex:1">' + escapeHtml(f.name) + '</span></div>').join('');
+}
+
+const SHOW_MAP_FEATURE = false;
+const DEAL_GEO = {5:[35.6690,139.8600],17:[35.6530,139.8750],16:[35.6870,139.8710],9:[35.7770,139.7950]};
+const AREA_GEO = {'世田谷':[35.6466,139.6532],'杉並':[35.6994,139.6364],'練馬':[35.7357,139.6516],'中野':[35.7074,139.6638],'江東':[35.6730,139.8173],'江戸川':[35.7069,139.8683],'板橋':[35.7512,139.7093],'荒川':[35.7361,139.7834],'葛飾':[35.7434,139.8470],'足立':[35.7750,139.8047],'墨田':[35.7107,139.8016],'品川':[35.6092,139.7302],'目黒':[35.6414,139.6982],'北':[35.7528,139.7336]};
+const MAP_ZOOM = 17;
+const MAP_SPAN_LAT = 0.007, MAP_SPAN_LNG = 0.012;
+const MAP_PIN_MAX_LAT = 0.05, MAP_PIN_MAX_LNG = 0.06;
+let mapPinDraft = null;
+let mapPinDealId = null;
+let shiryoMap = null;
+let shiryoMarker = null;
+let shiryoMapViewDealId = null;
+
+function dealGeo(deal) { return (deal && (DEAL_GEO[deal.id] || AREA_GEO[deal.area])) || null; }
+function mapPinLatLng(deal) {
+  const geo = dealGeo(deal);
+  const fallback = geo ? { lat: geo[0], lng: geo[1] } : { lat: 35.6812, lng: 139.7671 };
+  const draft = (deal && mapPinDraft && mapPinDealId === deal.id) ? mapPinDraft : null;
+  const src = draft || (deal && deal.mapPin) || null;
+  if (!src) return fallback;
+  const lat = Number(src.lat), lng = Number(src.lng);
+  if (!isFinite(lat) || !isFinite(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) return fallback;
+  if (geo && (Math.abs(lat - geo[0]) > MAP_PIN_MAX_LAT || Math.abs(lng - geo[1]) > MAP_PIN_MAX_LNG)) return fallback;
+  return { lat: lat, lng: lng };
+}
+function mapPinPos(deal) {
+  const geo = dealGeo(deal);
+  if (!geo) return { x: 50, y: 50 };
+  const p = mapPinLatLng(deal);
+  const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+  return {
+    x: clamp(50 + ((p.lng - geo[1]) / MAP_SPAN_LNG) * 100, 4, 96),
+    y: clamp(50 - ((p.lat - geo[0]) / MAP_SPAN_LAT) * 100, 8, 96),
+  };
+}
+function updateMapPinUi(deal) {
+  const saveBtn = document.getElementById('shiryo-map-save');
+  const resetBtn = document.getElementById('shiryo-map-reset');
+  const cap = document.getElementById('shiryo-map-caption');
+  const moved = !!(deal && mapPinDraft && mapPinDealId === deal.id);
+  const saved = !!(deal && deal.mapPin);
+  if (saveBtn) saveBtn.style.display = moved ? '' : 'none';
+  if (resetBtn) resetBtn.style.display = (moved || saved) ? '' : 'none';
+  if (cap) {
+    const state = moved
+      ? 'ピンを動かしました。「ピン位置を保存」を押すと確定します。'
+      : (saved
+        ? 'ピン位置：' + escapeHtml(String(deal.mapPin.at || '')) + ' に調整済み。ドラッグでさらに直せます。'
+        : 'ご登録の所在地から自動で表示しています。ピンがずれている場合は、ドラッグして正しい位置に直せます。');
+    cap.innerHTML = state + '<br>※デモでは概略の位置を別の地図で表示しています。本実装ではGoogleマップになります。';
+  }
+}
+function showMapFallback() {
+  const canvas = document.getElementById('shiryo-map');
+  if (canvas && !canvas.querySelector('.shiryo-map-fallback')) {
+    canvas.innerHTML = '<div class="shiryo-map-fallback">地図を読み込めませんでした。<br>通信の状態をご確認のうえ、画面を開き直してください。</div>';
+  }
+  ['shiryo-map-save','shiryo-map-reset'].forEach(id => {
+    const b = document.getElementById(id); if (b) b.style.display = 'none';
+  });
+}
+function ensureShiryoMap(center) {
+  if (shiryoMap) return shiryoMap;
+  if (typeof L === 'undefined' || !document.getElementById('shiryo-map')) return null;
+  shiryoMap = L.map('shiryo-map', {
+    center: [center.lat, center.lng], zoom: MAP_ZOOM, minZoom: 12, maxZoom: 19,
+    scrollWheelZoom: true,
+  });
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19, attribution: '&copy; OpenStreetMap',
+  }).addTo(shiryoMap);
+  shiryoMarker = L.marker([center.lat, center.lng], {
+    draggable: true,
+    title: 'ドラッグして位置を直せます',
+    icon: L.divIcon({
+      className: 'shiryo-pin-icon', iconSize: [22, 30], iconAnchor: [11, 30],
+      html: '<svg viewBox="0 0 22 30" width="22" height="30">'
+        + '<path d="M11 0C5 0 0 5 0 11c0 8 11 19 11 19s11-11 11-19C22 5 17 0 11 0z" fill="#c62828"/>'
+        + '<circle cx="11" cy="11" r="4.2" fill="#fff"/></svg>',
+    }),
+  }).addTo(shiryoMap);
+  shiryoMarker.on('drag', onMapPinMoved);
+  shiryoMarker.on('dragend', onMapPinMoved);
+  return shiryoMap;
+}
+function onMapPinMoved() {
+  const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
+  if (!deal || !shiryoMarker) return;
+  const ll = shiryoMarker.getLatLng();
+  mapPinDealId = deal.id;
+  mapPinDraft = { lat: ll.lat, lng: ll.lng };
+  updateMapPinUi(deal);
+}
+function renderShiryoMap(deal) {
+  const box = document.getElementById('shiryo-map-box');
+  if (!box) return;
+  if (!SHOW_MAP_FEATURE) { box.style.display = 'none'; return; }
+  const geo = dealGeo(deal);
+  if (!geo) { box.style.display = 'none'; return; }
+  box.style.display = '';
+  if (mapPinDealId !== deal.id) { mapPinDraft = null; mapPinDealId = deal.id; }
+  const pin = mapPinLatLng(deal);
+  const map = ensureShiryoMap({ lat: geo[0], lng: geo[1] });
+  if (!map) { showMapFallback(); return; }
+  if (shiryoMapViewDealId !== deal.id) {
+    map.setView([geo[0], geo[1]], MAP_ZOOM);
+    shiryoMapViewDealId = deal.id;
+  }
+  if (shiryoMarker) shiryoMarker.setLatLng([pin.lat, pin.lng]);
+  setTimeout(() => { if (shiryoMap) shiryoMap.invalidateSize(); }, 0);
+  updateMapPinUi(deal);
+}
+function saveMapPin() {
+  const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
+  if (!deal || !mapPinDraft || mapPinDealId !== deal.id) return;
+  deal.mapPin = { lat: mapPinDraft.lat, lng: mapPinDraft.lng, at: TODAY };
+  mapPinDraft = null;
+  renderShiryoMap(deal);
+  showToast('ピンの位置を保存しました');
+}
+function resetMapPin() {
+  const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
+  if (!deal) return;
+  mapPinDraft = null;
+  deal.mapPin = null;
+  shiryoMapViewDealId = null;
+  renderShiryoMap(deal);
+  showToast('ピンの位置を所在地に戻しました');
 }
 
 function shiryoIsImg(n) { return /\.(jpe?g|png|gif|webp)$/i.test(n); }
@@ -2264,14 +3176,28 @@ function renderShiryoTab() {
   const listBody = document.getElementById('shiryo-tab-list');
   if (!photoBox || !listBody) return;
   const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
-  if (!deal) { photoBox.innerHTML = '写真未登録'; listBody.innerHTML = ''; return; }
+  if (!deal) { photoBox.innerHTML = '写真未登録'; listBody.innerHTML = ''; renderShiryoMap(null); return; }
+  renderShiryoMap(deal);
   const sh = getShiryo(deal);
   if (deal.shiryoTopName && !sh.some(f => f.name === deal.shiryoTopName)) deal.shiryoTopName = null;
   if (!deal.shiryoTopName) { const first = sh.find(f => shiryoIsImg(f.name)); if (first) deal.shiryoTopName = first.name; }
   if (deal.shiryoTopName && shiryoIsPdf(deal.shiryoTopName)) {
     photoBox.innerHTML = '<div class="shiryo-pdf-cover"><div class="shiryo-pdf-badge">PDF</div><div class="shiryo-pdf-name">' + escapeHtml(deal.shiryoTopName) + '</div><div class="shiryo-pdf-note">1ページ目を表紙として表示します（本実装で画像化）</div></div>';
+  } else if (deal.photo) {
+    photoBox.innerHTML = '<img src="' + escapeHtml(deal.photo) + '" alt="' + escapeHtml(deal.name) + '">';
+  } else if (deal.svCover && deal.svCover.preview) {
+    photoBox.innerHTML = '<img src="' + escapeHtml(deal.svCover.preview) + '" alt="' + escapeHtml(deal.name) + 'のストリートビュー">'
+      + '<span class="sv-badge">ストリートビュー ' + escapeHtml(svDirName(deal.svCover.heading)) + '</span>';
   } else {
-    photoBox.innerHTML = deal.photo ? '<img src="' + deal.photo + '" alt="' + escapeHtml(deal.name) + '">' : '写真未登録';
+    photoBox.innerHTML = '写真未登録';
+  }
+  const svNoteEl = document.getElementById('sv-note');
+  if (svNoteEl) {
+    svNoteEl.innerHTML = !SHOW_MAP_FEATURE ? ''
+      : deal.svCover
+      ? '現在の表紙：ストリートビュー（' + escapeHtml(svDirName(deal.svCover.heading)) + '・' + escapeHtml(deal.svCover.at) + ' 設定）'
+        + '　<button class="shiryo-del" onclick="removeSvCover()">外す</button>'
+      : '現地写真が無い物件でも、地図から外観を選んで表紙にできます。';
   }
   listBody.innerHTML = sh.length === 0
     ? '<tr><td colspan="3" class="shiryo-empty-cell">まだ資料がありません。物件概要書・現地写真・図面などをアップロードできます。</td></tr>'
@@ -2282,7 +3208,7 @@ function renderShiryoTab() {
         return '<tr><td title="' + name + '">' + name + '</td><td class="shiryo-col-top">' + (isCover ? '<span class="shiryo-cover-chip">表紙</span>' : '') + '</td>'
           + '<td class="shiryo-col-op"><div class="shiryo-op-wrap">'
           + (coverable ? '<button class="shiryo-op-btn" onclick="setShiryoCover(' + deal.id + ',' + i + ')">表紙に設定</button>' : '')
-          + '<button class="shiryo-op-btn" onclick="previewShiryo(' + deal.id + ',' + i + ')">プレビュー</button>'
+          + viewBtnHtml('previewShiryo(' + deal.id + ',' + i + ')')
           + '<button class="shiryo-op-btn" onclick="downloadShiryo(' + deal.id + ',' + i + ')">ダウンロード</button>'
           + '<button class="shiryo-op-btn shiryo-op-del" onclick="removeShiryo(' + deal.id + ',' + i + ')">削除</button></div></td></tr>';
       }).join('');
@@ -2299,8 +3225,26 @@ function setShiryoCover(dealId, idx) {
 }
 function previewShiryo(dealId, idx) {
   const deal = DEALS.find(d => d.id === dealId);
-  if (!deal || !getShiryo(deal)[idx]) return;
-  showToast('「' + getShiryo(deal)[idx].name + '」をプレビュー表示します（本実装で対応）');
+  if (!deal) return;
+  openFilePreview(getShiryo(deal)[idx]);
+}
+function previewShiryoNewreg(idx) {
+  openFilePreview(newregShiryo[idx]);
+}
+function previewHearingFile(idx) {
+  const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
+  if (!deal) return;
+  openFilePreview(getHearingFiles(deal)[idx]);
+}
+function previewPlanFile(no, idx) {
+  const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
+  if (!deal) return;
+  openFilePreview(getPlanFiles(deal, no)[idx]);
+}
+function previewKaitsukeFile(idx) {
+  const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
+  if (!deal) return;
+  openFilePreview(getKaitsukeFiles(deal)[idx]);
 }
 function shiryoDrop(e, el) {
   e.preventDefault();
@@ -2309,7 +3253,7 @@ function shiryoDrop(e, el) {
   const deal = DEALS.find(d => d.id === currentDealId);
   if (!deal || !e.dataTransfer || !e.dataTransfer.files || e.dataTransfer.files.length === 0) return;
   const arr = getShiryo(deal);
-  Array.from(e.dataTransfer.files).forEach(f => arr.push({name: f.name}));
+  Array.from(e.dataTransfer.files).forEach(f => arr.push(pickedFile(f)));
   showToast('資料を' + e.dataTransfer.files.length + '件追加しました（' + deal.name + '）');
   refreshShiryoViews();
 }
@@ -2396,22 +3340,29 @@ function renderDetailHeader() {
     const sh = strategyToSheet(s);
     return '<button type="button" class="deal-chip deal-chip-sheet' + (sh === activeShushiSheet ? ' active' : '') + '" onclick="switchShushiSheet(\'' + sh + '\')" title="このフォーマットに切替">' + escapeHtml(s) + '</button>';
   }).join('');
+  const outcome = dealOutcome(deal);
+  const outcomeBadge = outcome
+    ? '<span class="deal-result-badge is-' + outcome.tone + '" title="' + escapeHtml(outcomeTooltip(deal, outcome)) + '">' + escapeHtml(outcome.label) + '</span>'
+    : '';
   const approvedDate = deal.approvedAt ? String(deal.approvedAt).slice(0, 10) : '';
   const approveHtml = approvedDate
     ? escapeHtml(approvedDate)
     : (currentRole === 'president' ? '<button type="button" class="deal-approve-btn" onclick="approveDeal()">承認</button>' : '');
-  el.innerHTML = '<div><h1 class="deal-title">' + escapeHtml(name) + '</h1>'
+  el.innerHTML = '<div><div class="deal-titlerow"><h1 class="deal-title">' + escapeHtml(name) + '</h1>' + outcomeBadge + '</div>'
     + (addr ? '<div class="deal-addr">' + escapeHtml(addr) + '</div>' : '')
     + '<div class="deal-chips">' + chips + '<button class="deal-chip-edit" onclick="openStrategyModal()" title="仕入れ形態を変更">変更</button>'
     + '<button class="deal-chip-edit" onclick="openHistoryView(\'status\')" title="進み具合・担当・承認と、収支の変更の記録を見る">進行履歴</button>'
     + (PAST_STATUSES.includes(deal.status) ? '' : '<button class="deal-chip-edit" onclick="openKentoEndModal()" title="この案件の検討を終了し、見送りとして記録">検討終了</button>')
     + '</div></div>'
-    + '<div class="deal-header-side"><span class="deal-staff">担当：' + escapeHtml(deal.staff) + staffAvatar(deal.staff)
+    + '<div class="deal-header-side">'
+    + '<span class="deal-staff">担当：' + escapeHtml(deal.staff) + staffAvatar(deal.staff)
     + (currentRole === 'president' ? '<button type="button" class="deal-chip-edit" onclick="openStaffModal()">変更</button>' : '')
     + '</span>'
+    + '<span class="deal-side-dates">'
     + '<span class="deal-side-row"><span class="deal-side-label">取得日：</span><span class="deal-side-val">' + escapeHtml(deal.acquiredDate || '—') + '</span></span>'
     + '<span class="deal-side-row"><span class="deal-side-label">作成日：</span><span class="deal-side-val">' + escapeHtml(TODAY) + '</span></span>'
     + '<span class="deal-side-row"><span class="deal-side-label">承認日：</span><span class="deal-side-val">' + approveHtml + '</span></span>'
+    + '</span>'
     + '</div>';
 }
 let strategyModalChanged = false;
@@ -2460,6 +3411,7 @@ function closeStrategyModal() {
 
 function openDetail(id) {
   persistCurrentShushiState();
+  persistCurrentHearingState();
   currentDealId = id;
   plDirty = false;
   setHash('deal' + id);
@@ -2508,6 +3460,9 @@ function openDetail(id) {
   for (let i = 1; i <= 2; i++) { sv('ap-name-' + i, ''); sv('ap-date-' + i, ''); sv('ap-ans-' + i, ''); sv('ap-cost-' + i, ''); sv('ap-comment-' + i, ''); }
   renderPlanFiles();
   renderHearingFiles();
+  restoreHearingState(id);
+  if (typeof calcHearing === 'function') calcHearing();
+  if (!HEARING_SAVE_SNAPSHOT[deal.id]) HEARING_SAVE_SNAPSHOT[deal.id] = hearingSnapshot();
 
   setInner('sheet-dup-warning', '');
   setShushiSheetByDeal(deal);
@@ -3640,6 +4595,11 @@ const REG_STEPS = {
   hearing: {label:'ヒアリング', status:'ヒアリング 済'},
   plan:    {label:'建築プラン', status:'建築プラン 済'},
 };
+const REG_STEP_INDEX = { pl: 1, market: 2, hearing: 3, plan: 4 };
+function stepLabelOf(kind) {
+  const i = REG_STEP_INDEX[kind];
+  return (i !== undefined && STEP_LABELS[i]) ? STEP_LABELS[i] : ((REG_STEPS[kind] || {}).label || '');
+}
 
 function registerStep(kind, extraNote) {
   if (currentDealId === null) { showToast('案件を選択してください'); return; }
@@ -3647,6 +4607,7 @@ function registerStep(kind, extraNote) {
   const step = REG_STEPS[kind];
   if (!deal || !step) return;
   if (!deal.reg) deal.reg = {market:false, pl:false, hearing:false, plan:false};
+  if (kind === 'hearing') recordHearingChangesOnSave(deal);
   deal.reg[kind] = true;
   const cur = STATUS_ORDER.indexOf(deal.status);
   const target = STATUS_ORDER.indexOf(step.status);
@@ -3658,7 +4619,7 @@ function registerStep(kind, extraNote) {
     promoted = true;
   }
   refreshAfterReg(deal);
-  showToast(step.label + 'を' + (kind === 'pl' ? '保存' : '登録') + 'しました'
+  showToast(stepLabelOf(kind) + 'を' + (kind === 'pl' ? '保存' : '登録') + 'しました'
     + (promoted ? '（ステップを「' + statusLabel(step.status) + '」に進めました）' : '')
     + (extraNote || ''));
 }
@@ -3688,10 +4649,13 @@ function renderKaitsukeTab() {
       b.style.cursor = locked ? 'default' : '';
     });
   }
+  syncKaitsukeCommentNote();
+  const errEl = document.getElementById('kaitsuke-error');
+  if (errEl) errEl.textContent = '';
   const note = document.getElementById('kaitsuke-locked-note');
   if (note) {
     note.textContent = locked
-      ? '※ この案件は「' + deal.status + '」として終了しているため、買付結果は変更できません（資料・買付提出日・補足コメントは追加できます）。'
+      ? '※ この案件は「' + statusLabel(deal.status) + '」として終了しているため、買付結果は変更できません（資料・買付提出日・補足コメントは追加できます）。'
       : '';
   }
   const dt = document.getElementById('kaitsuke-date');
@@ -3701,12 +4665,24 @@ function renderKaitsukeTab() {
   const ta = document.getElementById('kaitsuke-comment');
   if (ta) ta.value = deal ? (deal.kaitsukeComment || '') : '';
 }
+const KAITSUKE_COMMENT_REQUIRED = ['見送り', '他決'];
+function syncKaitsukeCommentNote() {
+  const note = document.getElementById('kaitsuke-comment-note');
+  if (!note) return;
+  const r = selectedKaitsukeResult();
+  note.textContent = KAITSUKE_COMMENT_REQUIRED.includes(r)
+    ? '「' + r + '」を選んだ場合は、理由を補足コメントにご記入ください（未記入では登録できません）。'
+    : '';
+}
 function selectKaitsukeResult(btn) {
   const wrap = document.getElementById('kaitsuke-result-wrap');
   if (!wrap) return;
   const already = btn.classList.contains('active');
   wrap.querySelectorAll('.nr-strategy-btn').forEach(b => b.classList.remove('active'));
   if (!already) btn.classList.add('active');
+  syncKaitsukeCommentNote();
+  const err = document.getElementById('kaitsuke-error');
+  if (err) err.textContent = '';
 }
 function selectedKaitsukeResult() {
   const el = document.querySelector('#kaitsuke-result-wrap .nr-strategy-btn.active');
@@ -3727,9 +4703,17 @@ function registerKaitsuke() {
     if (comment) deal.kaitsukeComment = comment;
     refreshAfterReg(deal);
     renderKaitsukeTab();
-    showToast('買付資料・買付価格・買付提出日・補足コメントを保存しました（この案件は「' + deal.status + '」として終了しているため、ステータスは変更しません）');
+    showToast('買付資料・買付価格・買付提出日・補足コメントを保存しました（この案件は「' + statusLabel(deal.status) + '」として終了しているため、ステータスは変更しません）');
     return;
   }
+  const err = document.getElementById('kaitsuke-error');
+  if (KAITSUKE_COMMENT_REQUIRED.includes(result) && !comment) {
+    if (err) err.textContent = '「' + result + '」で登録する場合は、理由を補足コメントにご記入ください。';
+    const ta = document.getElementById('kaitsuke-comment');
+    if (ta) ta.focus();
+    return;
+  }
+  if (err) err.textContent = '';
   if (result === '契約') {
     openShiireModal({dealId: deal.id, result: result, submitDate: submitDate, comment: comment, kaitsukePrice: kaitsukePrice});
     return;
@@ -3745,14 +4729,18 @@ function commitKaitsuke(deal, result, submitDate, comment, kaitsukePrice, shiire
   deal.reg.kaitsuke = true;
   const from = deal.status;
   let msg = '買付を登録しました';
-  if (result === '契約' || result === '見送り') {
-    if (deal.status !== result) {
+  if (result === '契約' || result === '見送り' || result === '他決') {
+    const newStatus = (result === '契約') ? '契約' : '見送り';
+    if (deal.status !== newStatus) {
       if (result === '契約' && shiirePrice != null) deal.price = shiirePrice;
-      deal.status = result;
-      const h = {dealId: deal.id, date: TODAY, from: from, to: result, by: deal.staff};
-      if (result === '見送り') { h.reason = comment || '買付結果：見送り'; if (comment) deal.note = comment; }
+      deal.status = newStatus;
+      const h = {dealId: deal.id, date: TODAY, from: from, to: newStatus, by: deal.staff};
+      if (newStatus === '見送り') {
+        h.reason = (result === '他決' ? '他決：' : '') + (comment || '買付結果：' + result);
+        if (comment) deal.note = (result === '他決' ? '他決：' : '') + comment;
+      }
       HISTORY.push(h);
-      msg += '（ステータスを「' + result + '」に変更しました）';
+      msg += '（ステータスを「' + statusLabel(newStatus) + '」に変更しました）';
     }
   } else {
     const target = submitDate ? '買付提出 済' : '買付検討中';
@@ -3761,9 +4749,9 @@ function commitKaitsuke(deal, result, submitDate, comment, kaitsukePrice, shiire
     if (cur !== -1 && ti !== -1 && cur < ti) {
       deal.status = target;
       HISTORY.push({dealId: deal.id, date: TODAY, from: from, to: target, by: deal.staff});
-      msg += '（ステータスを「' + target + '」に進めました）';
+      msg += '（ステータスを「' + statusLabel(target) + '」に進めました）';
     }
-    if (result === '回答待ち' && !submitDate) msg += '（買付提出日を入力すると「買付提出 済」になります）';
+    if (result === '回答待ち' && !submitDate) msg += '（買付提出日を入力すると「買付提出」になります）';
   }
   refreshForDeal(deal);
   if (deal.id === currentDealId) renderKaitsukeTab();
@@ -4012,6 +5000,7 @@ function toggleNrStrategy(btn) {
 
 function openNewReg(el) {
   ['nr-name','nr-address','nr-chiban','nr-menseki','nr-ensen','nr-ekimei','nr-eki'].forEach(id => sv(id, ''));
+  newregShiryo.forEach(releaseFileUrl);
   newregShiryo = [];
   newregStrategies = ['戸建て建売'];
   document.querySelectorAll('#nr-strategy-wrap .nr-strategy-btn').forEach(b => b.classList.toggle('active', b.dataset.strategy === '戸建て建売'));
@@ -4116,8 +5105,8 @@ function activeInputScope(el) {
   return view || document.body;
 }
 function focusableInputsInScope(scope) {
-  return Array.from(scope.querySelectorAll('input, select'))
-    .filter(el => el.tagName !== 'TEXTAREA' && isElementVisible(el) && !el.disabled && el.type !== 'hidden' && el.type !== 'file');
+  return Array.from(scope.querySelectorAll('input, select, textarea'))
+    .filter(el => isElementVisible(el) && !el.disabled && el.type !== 'hidden' && el.type !== 'file');
 }
 function inputRect(el) {
   const r = el.getBoundingClientRect();
@@ -4313,6 +5302,7 @@ function miokuriSubmit() {
   HISTORY.push({dealId: deal.id, date: TODAY, from: '—', to: '見送り', by: '田中', reason: reason});
   closeMiokuriModal();
   listTab = 'past';
+  listTabPinned = true;
   const fs = document.getElementById('filter-status');
   if (fs) fs.value = '';
   showView('list', document.querySelector('[data-view=list]'));
@@ -4436,7 +5426,7 @@ function checkDuplicateSheet() {
   }).slice(0, 3);
   if (hits.length === 0) { box.innerHTML = ''; return; }
   box.innerHTML = '<div class="dup-warning" style="margin:0 0 8px">'
-    + hits.map(d => '似た案件があります：' + d.name + '（担当：' + d.staff + '・' + statusLabel(d.status) + '）').join('<br>')
+    + hits.map(d => '似た案件があります：' + escapeHtml(d.name) + '（担当：' + escapeHtml(d.staff) + '・' + escapeHtml(statusLabel(d.status)) + '）').join('<br>')
     + '</div>';
 }
 
@@ -4538,7 +5528,7 @@ function renderSettings() {
   wrap.innerHTML = STEP_LABELS.map((label, i) =>
     '<div class="form-group">'
     + '<label class="form-label">ステップ' + (i + 1) + '</label>'
-    + '<input class="form-input" type="text" value="' + label + '" oninput="updateStepLabel(' + i + ', this.value)">'
+    + '<input class="form-input" type="text" value="' + escapeHtml(label) + '" oninput="updateStepLabel(' + i + ', this.value)">'
     + '</div>'
   ).join('');
 }
@@ -4565,8 +5555,8 @@ function syncTabLabels() {
 
 const NEXT_RULES = {
   '未着手': {
-    question: '物件の基本情報を整理し、{S1}を作成しましょう。販売想定①に出値価格を入力しましょう。',
-    action:   '{S1}に概要を入力する',
+    question: '価格・面積・権利関係などの基本情報を整理し、事業化の可能性を確認したうえで、概算収支を作成しましょう。',
+    action:   '概算収支を作成する',
     tab:      'pl',
     why: [
       '先に収支の想定を置くことで、検討に値する案件かを早く見極められます。',
@@ -4576,8 +5566,8 @@ const NEXT_RULES = {
     theme: '基本情報の整理と収支計算の作成',
   },
   '収支計算 済': {
-    question: '{S1}が出たら、エリアの相場を確認しましょう。近隣の販売在庫を{S2}タブに入力しましょう。',
-    action:   '近隣在庫を入力する',
+    question: '想定販売価格が周辺相場と乖離していないか、販売中物件と類似成約事例から、販売価格・販売期間の妥当性を確認しましょう。',
+    action:   '{S2}を入力する',
     tab:      'market',
     why: [
       '想定した出値が相場とずれていないかを、近隣の販売在庫で裏取りできます。',
@@ -4587,7 +5577,7 @@ const NEXT_RULES = {
     theme: '市場相場の確認',
   },
   '市場調査 済': {
-    question: '相場の裏取りができたら、販売会社に価格感をヒアリングしましょう。',
+    question: '{S2}の結果をもとに、販売価格・商品企画・販売期間の妥当性を販売会社へ確認しましょう。{S3}は原則3社に行いましょう。',
     action:   '{S3}を開始する',
     tab:      'hearing',
     why: [
@@ -4598,8 +5588,8 @@ const NEXT_RULES = {
     theme: '販売価格の精度向上',
   },
   'ヒアリング 済': {
-    question: '{S3}が揃ったら、{S4}の依頼へ進みましょう。',
-    action:   '{S4}を入力する',
+    question: '{S3}結果を収支に反映し、紹介元の仲介業者へ購入できる可能性と必要な買付条件を確認したうえで、{S4}を依頼しましょう。',
+    action:   '{S4}を依頼する',
     tab:      'archplan',
     why: [
       '建築費の確度が上がると、収支の精度が高まります。',
@@ -4609,9 +5599,9 @@ const NEXT_RULES = {
     theme: '原価精度の向上',
   },
   '建築プラン 済': {
-    question: 'プランの回答が揃ったら、収支の最終確認を行い、{S5}に進みましょう。',
-    action:   '{S1}を最終確認する',
-    tab:      'pl',
+    question: '{S4}・工事費・その他の見積りが揃ったら、想定利益・販売価格・販売期間・物件固有のリスク・取得条件を総合的に確認し、買付の可否と条件を判断しましょう。',
+    action:   '{S5}判断を行う',
+    tab:      'kaitsuke',
     why: [
       '建築費の確定値を収支計算に反映すると、利益率の確度が上がります。',
       '買付前の最終チェックとして、下限価格でも利益率が確保できているかを確認しましょう。',
@@ -4631,8 +5621,8 @@ const NEXT_RULES = {
     theme: '買付価格の決定',
   },
   '買付提出 済': {
-    question: '買付を提出済みです。売主の回答を待ち、結果が出たら{S5}タブに記録しましょう。',
-    action:   '買付結果を登録する',
+    question: '{S5}を提出済みです。売主の回答を待ち、結果が出たら{S5}タブに記録しましょう。',
+    action:   '{S5}結果を登録する',
     tab:      'kaitsuke',
     why: [
       '買付後も価格交渉が発生する場合があります。想定の変化を記録しておきましょう。',
@@ -4642,7 +5632,7 @@ const NEXT_RULES = {
     theme: '売主回答待ち・状況確認',
   },
   '見送り': {
-    question: 'この案件は見送りです。下の「これまでの経緯」で、いつ・どの段階で見送ったかを確認できます。',
+    question: 'この案件は見送りです。上部の「進行履歴」で、いつ・どの段階で見送ったかを確認できます。',
     action:   '',
     tab:      '',
     why: [
@@ -4651,6 +5641,17 @@ const NEXT_RULES = {
       '判断の経緯が蓄積されることで、組織の判断基準が明確になっていきます。',
     ],
     theme: '見送り理由の記録',
+  },
+  '他決': {
+    question: 'この案件は他決です。上部の「進行履歴」で、いつ・どの条件で他決になったかを確認できます。',
+    action:   '',
+    tab:      '',
+    why: [
+      '価格・条件のどこで差がついたかを残すと、次の買付条件の検討に活きます。',
+      '他決の件数と条件が蓄積されると、買付価格の水準を見直す材料になります。',
+      '判断の経緯が蓄積されることで、組織の判断基準が明確になっていきます。',
+    ],
+    theme: '他決理由の記録',
   },
   '契約': {
     question: '契約済みです。販売計画を確認し、進捗を記録しましょう。',
@@ -4674,6 +5675,7 @@ const JUDGE_HINTS = {
   '買付検討中': ['買付価格は、規定利益を確保できる仕入上限の範囲内かを最終確認します。','競合がいる場合は、価格以外の条件（決済時期・契約条件）も判断材料になります。'],
   '買付提出 済': ['売主の回答待ちの間に、契約後の段取り（決済・着工）を整理しておくとスムーズです。'],
   '見送り': ['見送り理由を分類して残すと、会社全体の判断の傾向が見えるようになります。'],
+  '他決': ['買付価格と成約条件の差が分かる場合は残しておくと、次の買付価格の目安になります。','他決が続くエリア・価格帯が見えると、買付の出し方を見直す材料になります。'],
   '契約': ['計画時の想定価格・原価を残してあるため、販売後に判断の振り返りができます。'],
 };
 
@@ -4725,12 +5727,12 @@ function calcDeal5Nums() {
 }
 
 const HOME_ACTION_TEXT = {
-  '未着手': '基本情報を確認し、収支計算を作成する',
+  '未着手': '基本情報を確認し、{S1}を作成する',
   '収支計算 済': '近隣の販売在庫を確認し、相場を裏取りする',
-  '市場調査 済': '販売会社3社に価格感をヒアリングする',
-  'ヒアリング 済': '建築プランと建築費の回答を登録する',
-  '建築プラン 済': '収支の前提を再確認し、買付に進めるか確認する',
-  '買付検討中': '買付価格と条件を整理し、提出判断を行う',
+  '市場調査 済': '販売会社3社に価格感を{S3}する',
+  'ヒアリング 済': '{S4}と建築費の回答を登録する',
+  '建築プラン 済': '収支の前提を再確認し、{S5}に進めるか確認する',
+  '買付検討中': '{S5}価格と条件を整理し、提出判断を行う',
   '買付提出 済': '売主回答を記録し、条件変更があれば収支を再確認する',
 };
 
@@ -4764,6 +5766,13 @@ function dealProfitRateA(deal) {
   return sellA > 0 && isFinite(rateA) ? rateA : NaN;
 }
 
+function dealPriorityRank(deal) {
+  const rate = dealProfitRateA(deal);
+  if (!isFinite(rate)) return '';
+  if (rate >= 0.10) return '高';
+  if (rate >= 0.08) return '中';
+  return '低';
+}
 function homePriorityBadge(deal) {
   const rate = dealProfitRateA(deal);
   if (!isFinite(rate)) return '';
@@ -4773,8 +5782,10 @@ function homePriorityBadge(deal) {
 }
 
 function homeThumbHtml(deal) {
-  if (deal.photo) return '<div class="home-thumb"><img src="' + deal.photo + '" alt="' + deal.name + '"></div>';
-  return '<div class="home-thumb" aria-label="物件写真なし"><span class="home-thumb-icon">⌂</span></div>';
+  const src = dealThumbSrc(deal);
+  if (!src) return '<div class="home-thumb" aria-label="物件写真なし"><span class="home-thumb-icon">⌂</span></div>';
+  return '<div class="home-thumb"><img src="' + escapeHtml(src) + '" alt="' + escapeHtml(deal.name) + '">'
+    + (dealThumbIsSv(deal) ? '<span class="sv-mark">SV</span>' : '') + '</div>';
 }
 
 function processSteps() {
@@ -4788,13 +5799,24 @@ function processSteps() {
   ];
 }
 
+function statusBeforeMiokuri(deal) {
+  if (!deal) return '';
+  const rows = HISTORY
+    .map((h, i) => ({h: h, i: i}))
+    .filter(x => x.h.dealId === deal.id && x.h.to === '見送り' && STATUS_ORDER.indexOf(x.h.from) !== -1)
+    .sort((a, b) => String(a.h.date).localeCompare(String(b.h.date)) || (a.i - b.i));
+  return rows.length ? rows[rows.length - 1].h.from : '';
+}
 function processStepStates(deal) {
-  const curIdx = STATUS_ORDER.indexOf(deal.status);
+  const ended = PAST_STATUSES.includes(deal.status);
+  const refStatus = (deal.status === '見送り') ? statusBeforeMiokuri(deal) : deal.status;
+  const curIdx = STATUS_ORDER.indexOf(refStatus);
   return processSteps().map((step, i) => {
     const stepMaxIdx = Math.max(...step.statuses.map(s => STATUS_ORDER.indexOf(s)));
-    const isPast = curIdx > stepMaxIdx && deal.status !== '見送り';
-    const isCurrent = step.statuses.includes(deal.status);
-    const isMissed = isPast && step.reg && deal.reg && !deal.reg[step.reg];
+    const stepMinIdx = Math.min(...step.statuses.map(s => STATUS_ORDER.indexOf(s)));
+    const isPast = ended ? (curIdx !== -1 && curIdx >= stepMinIdx) : (curIdx > stepMaxIdx);
+    const isCurrent = !ended && step.statuses.includes(deal.status);
+    const isMissed = !ended && isPast && step.reg && deal.reg && !deal.reg[step.reg];
     let circleClass, labelClass, circleTxt;
     if (isMissed) {
       circleClass = 'step-circle missed'; labelClass = 'step-label missed'; circleTxt = '！';
@@ -4833,31 +5855,58 @@ function homeProcessStepsHtml(deal) {
     + '</div>';
 }
 
-function renderHomeCards(items, startIndex) {
-  if (items.length === 0) {
-    return '<div style="color:var(--sub);font-size:13px;padding:16px 0">表示する案件はありません。</div>';
+function homeListHeadHtml() {
+  return '<div class="home-list-head" aria-hidden="true">'
+    + '<div></div><div></div>'
+    + '<div>物件</div>'
+    + '<div>仕入価格・土地面積</div>'
+    + '<div>検討状況</div>'
+    + '<div class="home-col-value">事業性</div>'
+    + '<div>次に行うこと</div>'
+    + '<div></div>'
+    + '</div>';
+}
+function renderHomeRows(rows) {
+  if (rows.length === 0) {
+    return '<div class="home-empty">表示する案件はありません。</div>';
   }
-  return items.map((item, i) => {
+  return homeListHeadHtml() + rows.map(row => {
+    const item = row.item;
+    const i = row.no - 1;
+    const startIndex = 1;
     const deal = item.deal || item;
-    const action = HOME_ACTION_TEXT[deal.status] || '次の判断に必要な情報を確認する';
+    const action = expandSteps(HOME_ACTION_TEXT[deal.status] || '次の判断に必要な情報を確認する');
+    const shiire = dealShiireStr(deal);
+    const landM2 = dealLandAreaM2(deal);
+    const bldM2 = dealBuildingAreaM2(deal);
+    const rate = dealProfitRateA(deal);
     return '<article class="home-deal-card" onclick="openDetail(' + deal.id + ')" tabindex="0" onkeydown="homeCardKey(event,' + deal.id + ')">'
-      + '<div class="home-deal-num">' + (startIndex + i) + '</div>'
+      + '<div class="home-deal-num">' + row.no + '</div>'
       + homeThumbHtml(deal)
-      + '<div class="home-card-main">'
-      + '<div class="home-card-top">'
-      + '<span class="home-card-name">' + deal.name + '</span>'
-      + '<span class="strategy-badge">' + homeStrategyLabel(deal.type) + '</span>'
-      + homePriorityBadge(deal)
-      + '<span class="home-stage-inline"><span class="home-stage-label">ステータス：</span><span class="home-stage-val">' + escapeHtml(statusLabel(deal.status)) + '</span></span>'
+      + '<div class="home-col home-col-name">'
+      + '<div class="home-card-name">' + escapeHtml(deal.name) + '</div>'
+      + '<div class="home-card-addr">' + escapeHtml(deal.address || deal.area || '') + '</div>'
+      + '<div class="home-card-kubun"><span class="strategy-badge">' + escapeHtml(homeStrategyLabel(deal.type)) + '</span></div>'
       + '</div>'
-      + '<div class="home-stage-block">'
+      + '<div class="home-col home-col-money">'
+      + '<div class="home-money">' + escapeHtml(shiire) + '</div>'
+      + (landM2 > 0 ? '<div class="home-size"><span class="home-size-label">土地</span>' + escapeHtml(tsuboStr(landM2)) + '</div>' : '')
+      + (bldM2 > 0 ? '<div class="home-size"><span class="home-size-label">建物</span>' + escapeHtml(tsuboStr(bldM2)) + '</div>' : '')
+      + '</div>'
+      + '<div class="home-col home-col-steps">'
+      + '<div class="home-stage-inline"><span class="home-stage-label">ステータス：</span><span class="home-stage-val">' + escapeHtml(statusLabel(deal.status)) + '</span></div>'
       + homeProcessStepsHtml(deal)
       + '</div>'
+      + '<div class="home-col home-col-value">'
+      + '<div class="home-value-label">想定利益率</div>'
+      + '<div class="home-value-num">' + (isFinite(rate) ? pct(rate) : '—') + '</div>'
+      + homePriorityBadge(deal)
       + '</div>'
-      + '<div class="home-card-side">'
+      + '<div class="home-col home-card-side">'
       + '<div class="home-card-q-label">次に行うこと</div>'
-      + '<div class="home-card-question">' + action + '</div>'
+      + '<div class="home-card-question">' + escapeHtml(action) + '</div>'
       + '</div>'
+      + '<div class="home-card-chevron" aria-hidden="true">›</div>'
       + '</article>';
   }).join('');
 }
@@ -4868,21 +5917,220 @@ function homeCardKey(e, id) {
   openDetail(id);
 }
 
+function onHomeSearchInput(el) {
+  applyFieldRule(el, formatChomeKanji);
+  renderHome();
+}
+function commitHomeSearch() {
+  const el = document.getElementById('home-search-input');
+  if (el) {
+    const after = formatChomeKanji(el.value);
+    if (after !== el.value) el.value = after;
+  }
+  renderHome();
+}
+function onHomeSearchKeydown(e) {
+  if (e.key !== 'Enter' || e.isComposing || e.keyCode === 229) return;
+  e.preventDefault();
+  commitHomeSearch();
+}
+function homeSearchMatch(deal, kwN) {
+  if (!kwN) return true;
+  return chomeNorm(deal.name).includes(kwN)
+    || chomeNorm(deal.address || '').includes(kwN)
+    || chomeNorm(deal.area || '').includes(kwN);
+}
+function renderHomeFilters() {
+  const t = document.getElementById('home-filter-type');
+  if (t) {
+    const keep = t.value;
+    t.innerHTML = '<option value="">すべての事業区分</option>'
+      + ['戸建て', '土地転売', 'アパート'].map(v => '<option value="' + v + '">' + v + '</option>').join('');
+    t.value = keep;
+  }
+  const st = document.getElementById('home-filter-status');
+  if (st) {
+    const keep = st.value;
+    st.innerHTML = '<option value="">すべての検討状況</option>'
+      + STATUS_ORDER.filter(x => !PAST_STATUSES.includes(x))
+          .map(x => '<option value="' + escapeHtml(x) + '">' + escapeHtml(statusLabel(x)) + '</option>').join('');
+    st.value = keep;
+  }
+}
+function dealShiireValue(deal) {
+  if (!deal) return 0;
+  if (deal.price != null) return deal.price;
+  if (deal.reg && deal.reg.pl) {
+    const c = shushiCalculatedCellsForDeal(deal, strategyToSheet(dealStrategies(deal)[0]));
+    const land = n(c, 'C16');
+    if (land > 0) return land;
+  }
+  return 0;
+}
+function sortHomeItems(list, key) {
+  const val = o => {
+    const d = o.item.deal || o.item;
+    if (key === 'prio') { const r = dealProfitRateA(d); return isFinite(r) ? r : null; }
+    if (key === 'price-desc' || key === 'price-asc') { const v = dealShiireValue(d); return v > 0 ? v : null; }
+    return d.acquiredDate || null;
+  };
+  const asc = (key === 'price-asc' || key === 'date-asc');
+  return list.slice().sort((a, b) => {
+    const va = val(a), vb = val(b);
+    if (va === null && vb === null) return 0;
+    if (va === null) return 1;
+    if (vb === null) return -1;
+    if (va === vb) return 0;
+    return (va > vb ? 1 : -1) * (asc ? 1 : -1);
+  });
+}
+function homeFilterMatch(deal, f) {
+  if (f.type && homeStrategyLabel(deal.type) !== f.type) return false;
+  if (f.status && deal.status !== f.status) return false;
+  if (f.prio && dealPriorityRank(deal) !== f.prio) return false;
+  return true;
+}
 function renderHome() {
   const priority = calcPriorityDeals();
-  setText('home-n-count', priority.length);
+  renderHomeFilters();
 
+  const kw = ((document.getElementById('home-search-input') || {value:''}).value || '').trim().toLowerCase();
+  const kwN = kw ? chomeNorm(kw) : '';
+  const f = {
+    type: (document.getElementById('home-filter-type') || {value:''}).value,
+    status: (document.getElementById('home-filter-status') || {value:''}).value,
+    prio: (document.getElementById('home-filter-prio') || {value:''}).value,
+  };
   const priorityIds = priority.map(x => x.deal.id);
   const activeDeals = DEALS.filter(d => !PAST_STATUSES.includes(d.status) && !priorityIds.includes(d.id));
+  const shown = o => { const d = o.item.deal || o.item; return homeSearchMatch(d, kwN) && homeFilterMatch(d, f); };
+  const sortKey = (document.getElementById('home-sort') || {value:'prio'}).value;
+  const priorityShown = sortHomeItems(priority.map(x => ({item:x})).filter(shown), sortKey);
+  const activeShown = sortHomeItems(activeDeals.map(d => ({item:d})).filter(shown), sortKey);
+  priorityShown.forEach((o, i) => { o.no = i + 1; });
+  activeShown.forEach((o, i) => { o.no = priorityShown.length + 1 + i; });
+  setText('home-n-count', priorityShown.length);
+  renderHomeArchPlanAlert();
   const priorityEl = document.getElementById('home-priority-list');
   const allEl = document.getElementById('home-all-list');
-  if (priorityEl) priorityEl.innerHTML = renderHomeCards(priority, 1);
-  if (allEl) allEl.innerHTML = renderHomeCards(activeDeals, priority.length + 1);
+  if (priorityEl) priorityEl.innerHTML = renderHomeRows(priorityShown);
+  if (allEl) allEl.innerHTML = renderHomeRows(activeShown);
+}
+
+const SHOW_SHUSHI_SUMMARY = false;
+
+const BROKER_PHASES = {
+  entry:   { label: '{S0}時',
+             hint: 'この案件を検討する理由と背景を、紹介元の仲介業者との会話をもとに残します。',
+             ph: '例：売主は年内決済を希望' },
+  preplan: { label: '{S4}依頼前',
+             hint: 'この案件が「どうなれば纏められるのか」を仲介業者に確認した内容を残します。',
+             ph: '例：価格の折り合いがつけば売主を説得できるとのこと' },
+};
+let brokerPhase = 'entry';
+let brokerViewDealId = null;
+function getBrokerTalks(deal) {
+  if (!deal) return [];
+  if (!Array.isArray(deal.brokerTalks)) {
+    const rescued = [];
+    if (deal.brokerTalks && typeof deal.brokerTalks === 'object') {
+      Object.keys(deal.brokerTalks).forEach(k => {
+        const v = deal.brokerTalks[k];
+        if (Array.isArray(v)) v.forEach(t => { if (t && t.text) rescued.push(t); });
+        else if (v && v.text) rescued.push(v);
+      });
+    }
+    deal.brokerTalks = rescued;
+  }
+  return deal.brokerTalks;
+}
+function setBrokerPhase(phase) {
+  if (!BROKER_PHASES[phase]) return;
+  brokerPhase = phase;
+  renderBrokerTalks();
+}
+function needsBrokerPreplan(deal) {
+  if (!deal || deal.status !== 'ヒアリング 済') return false;
+  return !getBrokerTalks(deal).some(t => t && t.phase === 'preplan' && t.text);
+}
+function focusBrokerPreplan() {
+  setBrokerPhase('preplan');
+  const block = document.querySelector('.broker-block');
+  if (block && block.scrollIntoView) block.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  const el = document.getElementById('broker-input');
+  if (el) setTimeout(() => el.focus(), 320);
+}
+function renderBrokerTalks() {
+  const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
+  const cfg = BROKER_PHASES[brokerPhase];
+  Object.keys(BROKER_PHASES).forEach(k => {
+    const b = document.getElementById('broker-tab-' + k);
+    if (!b) return;
+    b.classList.toggle('active', k === brokerPhase);
+    b.textContent = expandSteps(BROKER_PHASES[k].label);
+  });
+  const hintEl = document.getElementById('broker-hint');
+  if (hintEl) hintEl.textContent = expandSteps(cfg.hint);
+  const inputEl = document.getElementById('broker-input');
+  if (inputEl) inputEl.placeholder = cfg.ph;
+  const logEl = document.getElementById('broker-log');
+  if (!logEl) return;
+  const rows = getBrokerTalks(deal)
+    .map((t, i) => ({ t: t, i: i }))
+    .filter(x => x.t && x.t.phase === brokerPhase && x.t.text);
+  logEl.innerHTML = rows.length === 0
+    ? '<div class="broker-empty">まだ記録がありません。</div>'
+    : rows.map(x =>
+        '<div class="broker-item"><div class="broker-item-head"><span>' + escapeHtml(x.t.date || '') + '</span>'
+        + '<span>' + escapeHtml(x.t.by || '') + '</span>'
+        + '<button class="broker-item-del" onclick="removeBrokerTalk(' + escapeHtml(String(x.i)) + ')">削除</button></div>'
+        + '<div class="broker-item-text">' + escapeHtml(x.t.text) + '</div></div>'
+      ).join('');
+}
+function addBrokerTalk() {
+  const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
+  const inputEl = document.getElementById('broker-input');
+  if (!deal || !inputEl) return;
+  const text = String(inputEl.value || '').trim();
+  if (!text) { showToast('会話の内容を入力してください'); inputEl.focus(); return; }
+  getBrokerTalks(deal).push({ phase: brokerPhase, date: TODAY, by: deal.staff, text: text });
+  inputEl.value = '';
+  renderBrokerTalks();
+  renderSummaryTab(deal);
+  showToast('「' + expandSteps(BROKER_PHASES[brokerPhase].label) + '」の会話を記録しました');
+}
+function removeBrokerTalk(idx) {
+  const deal = (currentDealId !== null) ? DEALS.find(d => d.id === currentDealId) : null;
+  if (!deal) return;
+  const talks = getBrokerTalks(deal);
+  if (!talks[idx]) return;
+  talks.splice(idx, 1);
+  renderBrokerTalks();
+  renderSummaryTab(deal);
+  showToast('会話の記録を削除しました');
+}
+
+function renderHomeArchPlanAlert() {
+  const el = document.getElementById('home-archplan-alert');
+  if (!el) return;
+  const mine = DEALS.filter(d => d.staff === CURRENT_STAFF && archPlanAlert(d));
+  if (mine.length === 0) { el.innerHTML = ''; return; }
+  el.innerHTML = '<div class="home-alert-title"><span class="alert-mark" aria-hidden="true">!</span>'
+    + escapeHtml(expandSteps('{S4}')) + 'の資料が未登録の案件が' + mine.length + '件あります</div>'
+    + mine.map(d => {
+        const outcome = dealOutcome(d);
+        const note = outcome ? '（' + outcome.label + 'で終了）' : '（' + statusLabel(d.status) + '）';
+        return '<div class="home-alert-item">'
+          + '<span class="home-alert-name" onclick="openDetail(' + escapeHtml(String(d.id)) + ');gotoTab(\'archplan\')">' + escapeHtml(d.name) + '</span>'
+          + '<span class="home-alert-note">' + escapeHtml(note) + '</span></div>';
+      }).join('');
 }
 
 function renderSummaryTab(deal) {
   if (!deal) return;
-  const rule = NEXT_RULES[deal.status] || {};
+  const outcomeKey = (dealOutcome(deal) || {}).label;
+  const ruleKey = (outcomeKey === '他決') ? '他決' : deal.status;
+  const rule = NEXT_RULES[ruleKey] || {};
   const summaryNoteEl = document.getElementById('summary-note');
   if (summaryNoteEl) { summaryNoteEl.dataset.dealId = String(deal.id); syncNoteBox(deal); }
 
@@ -4903,10 +6151,10 @@ function renderSummaryTab(deal) {
         titleTxt = step.label + '（クリックで入力画面へ）';
       }
       const clickAttr = step.tab
-        ? ' onclick="gotoTab(\'' + step.tab + '\')" style="cursor:pointer" title="' + titleTxt + '"'
+        ? ' onclick="gotoTab(\'' + step.tab + '\')" style="cursor:pointer" title="' + escapeHtml(titleTxt) + '"'
         : '';
       html += '<div class="step-item">'
-        + '<div class="step-node"><div class="' + step.circleClass + '"' + clickAttr + '>' + step.circleTxt + '</div><div class="' + step.labelClass + '">' + step.label + '</div></div>';
+        + '<div class="step-node"><div class="' + step.circleClass + '"' + clickAttr + '>' + step.circleTxt + '</div><div class="' + step.labelClass + '">' + escapeHtml(step.label) + '</div></div>';
       if (i < steps.length - 1) {
         html += '<div class="step-arrow' + (step.isPast && !step.isMissed ? ' done' : '') + '"></div>';
       }
@@ -4917,16 +6165,50 @@ function renderSummaryTab(deal) {
   const noteEl = document.getElementById('summary-step-note');
   if (noteEl) {
     noteEl.innerHTML = missedLabels.length
-      ? '※ ' + missedLabels.join('・') + 'が未登録です（後からでも登録できます）'
+      ? '※ ' + escapeHtml(missedLabels.join('・')) + 'が未登録です（後からでも登録できます）'
       : '';
+  }
+
+  const apEl = document.getElementById('summary-archplan-alert');
+  if (apEl) {
+    const msg = archPlanAlert(deal);
+    apEl.innerHTML = msg
+      ? '<span class="alert-mark" aria-hidden="true">!</span><span>' + escapeHtml(expandSteps(msg)) + '</span>'
+        + '<button class="alert-link" onclick="gotoTab(\'archplan\')">' + escapeHtml(expandSteps('{S4}')) + 'を開く</button>'
+      : '';
+  }
+
+  const outEl = document.getElementById('summary-outcome');
+  if (outEl) {
+    const outcome = dealOutcome(deal);
+    if (!outcome) {
+      outEl.innerHTML = '';
+    } else {
+      const parts = outcomeDetailParts(deal);
+      const label = deal.kaitsukeResult ? expandSteps('{S5}後の結果') : '検討の結果';
+      outEl.innerHTML = '<span class="summary-outcome-label">' + escapeHtml(label) + '</span>'
+        + '<span class="summary-outcome-chip is-' + outcome.tone + '">' + escapeHtml(outcome.label) + '</span>'
+        + (parts.length ? '<span class="summary-outcome-detail">' + escapeHtml(parts.join('　／　')) + '</span>' : '');
+    }
   }
 
   const qEl  = document.getElementById('summary-question');
   const aBtn = document.getElementById('summary-action-btn');
   if (qEl)  qEl.textContent  = expandSteps(rule.question || '—');
+  const guideBroker = needsBrokerPreplan(deal);
+  const subEl = document.getElementById('summary-next-sub');
+  if (subEl) {
+    subEl.textContent = guideBroker
+      ? expandSteps('確認した内容は、下の「仲介業者との会話（{S4}依頼前）」に記録してから依頼に進みましょう。')
+      : '';
+  }
   if (aBtn) {
     const VALID_TABS = {summary:true, pl:true, market:true, hearing:true, archplan:true, kaitsuke:true};
-    if (rule.tab && VALID_TABS[rule.tab]) {
+    if (guideBroker) {
+      aBtn.style.display = '';
+      aBtn.textContent = '仲介業者との会話を記録する';
+      aBtn.onclick = () => { focusBrokerPreplan(); };
+    } else if (rule.tab && VALID_TABS[rule.tab]) {
       aBtn.style.display = '';
       aBtn.textContent = expandSteps(rule.action || '詳細を開く');
       aBtn.onclick = () => { gotoTab(rule.tab); };
@@ -4938,12 +6220,15 @@ function renderSummaryTab(deal) {
   const whyEl = document.getElementById('summary-why-items');
   if (whyEl && rule.why) {
     whyEl.innerHTML = rule.why.map((w, i) =>
-      '<div class="why-item"><div class="why-num">' + (i + 1) + '</div><div>' + expandSteps(w) + '</div></div>'
+      '<div class="why-item"><div class="why-num">' + (i + 1) + '</div><div>' + escapeHtml(expandSteps(w)) + '</div></div>'
     ).join('');
   }
 
+  const numsTitleEl = document.getElementById('summary-nums-title');
+  if (numsTitleEl) numsTitleEl.style.display = SHOW_SHUSHI_SUMMARY ? '' : 'none';
   const nums3El = document.getElementById('summary-3nums');
-  if (nums3El) {
+  if (nums3El) nums3El.style.display = SHOW_SHUSHI_SUMMARY ? '' : 'none';
+  if (nums3El && SHOW_SHUSHI_SUMMARY) {
     const sellA = gv('pl-sell-a');
     const sellB = gv('pl-sell-b');
     const sellC = gv('pl-sell-c');
@@ -4967,9 +6252,17 @@ function renderSummaryTab(deal) {
     }
   }
 
+  if (brokerViewDealId !== deal.id) {
+    brokerViewDealId = deal.id;
+    brokerPhase = 'entry';
+    const brokerInput = document.getElementById('broker-input');
+    if (brokerInput) brokerInput.value = '';
+  }
+  renderBrokerTalks();
+
   const precEl = document.getElementById('summary-precision-box');
   if (precEl) {
-    const hints = (JUDGE_HINTS[deal.status] || []);
+    const hints = (JUDGE_HINTS[ruleKey] || []);
     precEl.innerHTML = hints.length
       ? hints.map(h => '<div class="hint-item"><span class="hint-dot"></span><span>' + h + '</span></div>').join('')
       : '<div style="color:var(--sub);font-size:12.5px">この段階の判断ポイントは要件定義で作り込みます。</div>';
