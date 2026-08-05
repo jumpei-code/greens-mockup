@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GREENS 仕入れ検討管理（ご提案デモ）</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous"></script>
 <style>
 :root {
   --green:#1fab53; --green-2:#29bd68; --green-light:#e8f7ee; --green-mid:#bfe6cd;
@@ -133,6 +137,9 @@ input,select,textarea{font-family:inherit;font-size:13px}
 .shiryo-photo{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#edf1f4;min-height:220px;display:flex;align-items:center;justify-content:center;color:var(--sub);font-size:12px}
 .shiryo-photo img{width:100%;height:100%;object-fit:cover;display:block}
 .shiryo-map-box{margin-top:12px;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff}
+.opt-chip{display:inline-block;background:#6b7280;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;white-space:nowrap}
+.shiryo-map-head{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:7px 10px;border-bottom:1px solid var(--line);background:#f9fafb}
+.shiryo-map-head-note{font-size:11px;color:#6b7280;line-height:1.5}
 .shiryo-map-stage{position:relative;z-index:0;height:240px;background:#eef2f5}
 .shiryo-map-canvas{width:100%;height:100%}
 .shiryo-pin-icon{background:none;border:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.35));cursor:grab}
@@ -1122,6 +1129,10 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
                     <div class="shiryo-photo" id="shiryo-top-photo"></div>
                     <div class="sv-note" id="sv-note"></div>
                     <div class="shiryo-map-box" id="shiryo-map-box">
+                      <div class="shiryo-map-head">
+                        <span class="opt-chip">追加オプション機能</span>
+                        <span class="shiryo-map-head-note">別途お見積りの機能です（イメージのご確認用）</span>
+                      </div>
                       <div class="shiryo-map-stage" id="shiryo-map-stage">
                         <div class="shiryo-map-canvas" id="shiryo-map"></div>
                       </div>
@@ -1446,7 +1457,10 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
   <div class="modal-box sv-box">
     <div class="sv-head">
       <div class="sv-head-text">
-        <div class="modal-title" id="sv-title" style="margin-bottom:2px">ストリートビューから表紙を作成</div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:2px">
+          <div class="modal-title" id="sv-title">ストリートビューから表紙を作成</div>
+          <span class="opt-chip">追加オプション機能</span>
+        </div>
         <div class="preview-meta" id="sv-addr"></div>
       </div>
       <button class="btn btn-ghost btn-sm" onclick="closeSvPicker()">閉じる</button>
@@ -3040,7 +3054,7 @@ function renderShiryoPL() {
     : sh.map(f => '<div class="shiryo-item"><span style="flex:1">' + escapeHtml(f.name) + '</span></div>').join('');
 }
 
-const SHOW_MAP_FEATURE = false;
+const SHOW_MAP_FEATURE = true;
 const DEAL_GEO = {5:[35.6690,139.8600],17:[35.6530,139.8750],16:[35.6870,139.8710],9:[35.7770,139.7950]};
 const AREA_GEO = {'世田谷':[35.6466,139.6532],'杉並':[35.6994,139.6364],'練馬':[35.7357,139.6516],'中野':[35.7074,139.6638],'江東':[35.6730,139.8173],'江戸川':[35.7069,139.8683],'板橋':[35.7512,139.7093],'荒川':[35.7361,139.7834],'葛飾':[35.7434,139.8470],'足立':[35.7750,139.8047],'墨田':[35.7107,139.8016],'品川':[35.6092,139.7302],'目黒':[35.6414,139.6982],'北':[35.7528,139.7336]};
 const MAP_ZOOM = 17;
